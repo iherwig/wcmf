@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\persistence\validator\impl;
 
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\validator\ValidateType;
 use wcmf\lib\util\GraphicsUtil;
 
@@ -33,7 +34,7 @@ class Image implements ValidateType {
    * @see ValidateType::validate
    * $options is an associative array with keys 'width' (optional) and 'height' (optional)
    */
-  public function validate($value, $options=null) {
+  public function validate($value, Message $message, $options=null) {
     if (strlen($value) == 0) {
       return true;
     }

@@ -68,15 +68,15 @@ class I18nUtil {
   }
 
   /**
-   * Get all messages from a file. Searches for parameters of the Message::get method
-   * and usage of the smarty 'translate' function.
+   * Get all messages from a file. Searches for parameters of the Message::getText
+   * method and usage of the smarty 'translate' function.
    * @param $file The file to search in
    * @return An array of strings.
-   * @note This method searches for occurences of 'Message::get('Text to translate')',
+   * @note This method searches for occurences of '->getText('Text to translate')',
    * 'Dict.translate("Text to translate")' or {translate:"Text to translate"} where
    * 'Text to translate' is supposed to be the message to translate. So it might not
-   * find the usage of the Message::get() method with concatenated strings
-   * (like Message::get($login." says hello")). For replacements
+   * find the usage of the getText() method with concatenated strings
+   * (like $message->getText($login." says hello")). For replacements
    * use method signatures, that support parameters.
    */
   public static function getMessagesFromFile($file) {
@@ -86,7 +86,7 @@ class I18nUtil {
       $content = fread($fh, filesize ($file));
       fclose($fh);
       $messagePatterns = array(
-          'Message::get\(([\'"])(.*?)\\1',    // usage in PHP code, e.g. Message::get("Text to translate")
+          '->getText\(([\'"])(.*?)\\1',    // usage in PHP code, e.g. $message->getText("Text to translate")
           'Dict\.translate\(([\'"])(.*?)\\3', // usage in JS code, e.g. Dict.translate("Text to translate")
           '\{translate:(.*?)[\|\}]', // usage in dojo template, e.g. {translate:Text to translate}, {translate:Text to translate|...}
           '\{translate.*? text=([\'"])(.*?)\\6', // usage in Smarty template, e.g. {translate text="Text to translate"}

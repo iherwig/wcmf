@@ -11,7 +11,6 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\persistence\BuildDepth;
@@ -159,7 +158,8 @@ abstract class AbstractQuery {
    */
   protected static function checkMapper(PersistenceMapper $mapper) {
     if (!($mapper instanceof RDBMapper)) {
-      throw new PersistenceException(Message::get('Only PersistenceMappers of type RDBMapper are supported.'));
+      $message = ObjectFactory::getInstance('message');
+      throw new PersistenceException($message->getText('Only PersistenceMappers of type RDBMapper are supported.'));
     }
   }
 }

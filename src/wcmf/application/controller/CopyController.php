@@ -11,8 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\persistence\ObjectId;
@@ -76,7 +74,7 @@ class CopyController extends BatchController {
 
     // initialize controller
     if ($request->getAction() != 'continue') {
-      $session = ObjectFactory::getInstance('session');
+      $session = $this->getInstance('session');
 
       // set defaults
       if (!$request->hasValue('nodesPerCall')) {
@@ -119,7 +117,7 @@ class CopyController extends BatchController {
       // check if the parent accepts this node type (only when not adding to root)
       $addOk = true;
       if ($request->hasValue('targetoid')) {
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $persistenceFacade = $this->getInstance('persistenceFacade');
         $targetOID = ObjectId::parse($request->getValue('targetoid'));
         $nodeOID = ObjectId::parse($request->getValue('oid'));
 
@@ -154,12 +152,13 @@ class CopyController extends BatchController {
    */
   protected function getWorkPackage($number) {
     $request = $this->getRequest();
+    $message = $this->getInstance('message');
     $name = '';
     if ($request->getAction() == 'move') {
-      $name = Message::get('Moving');
+      $name = $message->getText('Moving');
     }
     else if ($request->getAction() == 'copy') {
-      $name = Message::get('Copying');
+      $name = $message->getText('Copying');
     }
     $name .= ': '.$request->getValue('oid');
 
@@ -176,7 +175,7 @@ class CopyController extends BatchController {
    * @param $oids The oids to process
    */
   protected function startProcess($oids) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -186,7 +185,7 @@ class CopyController extends BatchController {
 
     // do the action
     if ($action == 'move') {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $persistenceFacade = $this->getInstance('persistenceFacade');
       $transaction = $persistenceFacade->getTransaction();
       $transaction->begin();
       // with move action, we only need to attach the Node to the new target
@@ -236,7 +235,8 @@ class CopyController extends BatchController {
           $iteratorID = $iterator->save();
           $session->set($this->ITERATOR_ID, $iteratorID);
 
-          $name = Message::get('Copying tree: continue with %0%', array($iterator->current()));
+          $name = $this->getInstance('message')->getText('Copying tree: continue with %0%',
+                  array($iterator->current()));
           $this->addWorkPackage($name, 1, array(null), 'copyNodes');
         }
         else {
@@ -252,7 +252,7 @@ class CopyController extends BatchController {
    * @param $oids The oids to process
    */
   protected function copyNodes($oids) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -289,7 +289,8 @@ class CopyController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Copying tree: continue with %0%', array($iterator->current()));
+      $name = $this->getInstance('message')->getText('Copying tree: continue with %0%',
+              array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'copyNodes');
     }
     else {
@@ -306,7 +307,7 @@ class CopyController extends BatchController {
     $response = $this->getResponse();
     $response->setValue('oid', $oid);
 
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
 
     // clear session variables
     $tmp = null;
@@ -326,7 +327,7 @@ class CopyController extends BatchController {
     if ($logger->isDebugEnabled()) {
       $logger->debug("Copying node ".$oid);
     }
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
 
@@ -390,7 +391,7 @@ class CopyController extends BatchController {
   protected function getTargetNode(ObjectId $targetOID) {
     if ($this->_targetNode == null) {
       // load parent node
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $persistenceFacade = $this->getInstance('persistenceFacade');
       $targetNode = $persistenceFacade->load($targetOID);
       $this->_targetNode = $targetNode;
     }
@@ -403,7 +404,7 @@ class CopyController extends BatchController {
    * @param $copyNode A reference to the copied node
    */
   protected function registerCopy(PersistentObject $origNode, PersistentObject $copyNode) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     $registry = $session->get($this->OBJECT_MAP);
     // store oid in the registry
     $registry[$origNode->getOID()->__toString()] = $copyNode->getOID()->__toString();
@@ -415,7 +416,7 @@ class CopyController extends BatchController {
    * @param $oidMap Map of changed oids (key: old value, value: new value)
    */
   protected function updateCopyOIDs(array $oidMap) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     $registry = $session->get($this->OBJECT_MAP);
     // registry maybe deleted already if it's the last step
     if ($registry) {
@@ -438,7 +439,7 @@ class CopyController extends BatchController {
    * @return ObjectId or null, if it does not exist already
    */
   protected function getCopyOID(ObjectId $origOID) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     $registry = $session->get($this->OBJECT_MAP);
 
     // check if the oid exists in the registry
@@ -463,7 +464,7 @@ class CopyController extends BatchController {
   protected function getCopy(ObjectId $origOID) {
     $copyOID = $this->getCopyOID($origOID);
     if ($copyOID != null) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $persistenceFacade = $this->getInstance('persistenceFacade');
       $nodeCopy = $persistenceFacade->load($copyOID);
       return $nodeCopy;
     }

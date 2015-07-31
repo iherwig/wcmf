@@ -12,7 +12,6 @@ namespace wcmf\lib\search\impl;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
@@ -95,12 +94,13 @@ class LuceneSearch implements IndexedSearch {
    * @see Search::check()
    */
   public function check($word) {
+    $message = ObjectFactory::getInstance('message');
     // check for length and stopwords
     if (strlen($word) < 3) {
-      return (Message::get("The search term is too short"));
+      return ($message->getText("The search term is too short"));
     }
     if (in_array($word, $this->getStopWords())) {
-      return (Message::get("The search terms are too common"));
+      return ($message->getText("The search terms are too common"));
     }
     return true;
   }

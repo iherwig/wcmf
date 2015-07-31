@@ -11,6 +11,7 @@
 namespace wcmf\lib\persistence\validator;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\config\ConfigurationException;
 
 /**
@@ -28,9 +29,10 @@ class Validator {
    * @param $validateTypeDesc A string in the form validateType:options, where
    *     validateType is a key in the configuration section 'validators' and
    *     options is a JSON encoded string as used in the 'restrictions_match' definition
+   * @param $message The Message instance used to provide translations
    * @return Boolean
    */
-  public static function validate($value, $validateTypeDesc) {
+  public static function validate($value, $validateTypeDesc, Message $message) {
 
     list($validateTypeName, $validateOptions) = preg_split('/:/', $validateTypeDesc, 2);
 
@@ -38,9 +40,10 @@ class Validator {
     $validator = self::getValidateType($validateTypeName);
     $decodedOptions = json_decode($validateOptions, true);
     if ($decodedOptions === null) {
-      throw new ConfigurationException("No valid JSON format: ".$validateOptions);
+      throw new ConfigurationException($message->getText("No valid JSON format: %1%",
+              array($validateOptions)));
     }
-    return $validator->validate($value, $decodedOptions);
+    return $validator->validate($value, $message, $decodedOptions);
   }
 
   /**

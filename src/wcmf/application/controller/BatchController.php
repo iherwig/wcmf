@@ -10,8 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\i18n\Message;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
@@ -86,7 +84,7 @@ abstract class BatchController extends Controller {
   public function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     if ($request->getAction() == 'continue') {
       // get step for current call from session
       if ($session->exist(self::STEP_SESSION_VARNAME)) {
@@ -137,7 +135,7 @@ abstract class BatchController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     $response = $this->getResponse();
 
     // check if a download was triggered in the last step
@@ -219,7 +217,7 @@ abstract class BatchController extends Controller {
               ApplicationError::getGeneral("Wrong work package description '".$name."': No callback given."));
     }
 
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     $workPackages = $session->get(self::WORK_PACKAGES_VARNAME);
 
     $counter = 1;
@@ -282,8 +280,7 @@ abstract class BatchController extends Controller {
    * @return Integer
    */
   protected function getNumberOfSteps() {
-    $session = ObjectFactory::getInstance('session');
-    return $session->get(self::NUM_STEPS_VARNAME);
+    return $this->getInstance('session')->get(self::NUM_STEPS_VARNAME);
   }
 
   /**
@@ -291,7 +288,7 @@ abstract class BatchController extends Controller {
    * @param $step The step number
    */
   protected function getDisplayText($step) {
-    return Message::get("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
+    return $this->getInstance('message')->getText("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
   }
 
   /**

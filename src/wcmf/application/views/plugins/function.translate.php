@@ -8,7 +8,7 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-use wcmf\lib\i18n\Message;
+use wcmf\lib\core\ObjectFactory;
 
 /*
 * Smarty plugin
@@ -27,7 +27,8 @@ function smarty_function_translate($params, \Smarty_Internal_Template $template)
       $variables[] = $params[$key];
     }
   }
-  $value = isset($params['text']) ? Message::get($params['text'], $variables, isset($params['lang']) ? $params['lang'] : null) : "";
+  $message = ObjectFactory::getInstance('message');
+  $value = isset($params['text']) ? $message->getText($params['text'], $variables, isset($params['lang']) ? $params['lang'] : null) : "";
   if (isset($params['varname'])) {
     $template->assign($params['varname'], $value);
   }

@@ -32,6 +32,7 @@ class ObjectFactory {
       'session' =>               'wcmf\lib\core\Session',
       'configuration' =>         'wcmf\lib\config\Configuration',
       'localization' =>          'wcmf\lib\i18n\Localization',
+      'message' =>               'wcmf\lib\i18n\Message',
       'cache' =>                 'wcmf\lib\io\Cache',
       'persistenceFacade' =>     'wcmf\lib\persistence\PersistenceFacade',
       'transaction' =>           'wcmf\lib\persistence\Transaction',
@@ -162,6 +163,9 @@ class ObjectFactory {
             $paramName = $param->name;
             if (isset($configuration[$paramName])) {
               $cParams[$paramName] = self::resolveValue($configuration[$paramName]);
+            }
+            elseif (self::$_configuration->hasSection($paramName)) {
+              $cParams[$paramName] = self::getInstance($paramName);
             }
           }
         }

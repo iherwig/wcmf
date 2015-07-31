@@ -10,8 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use \Exception;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
@@ -54,7 +52,7 @@ class DeleteController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
     $logger = $this->getLogger();
@@ -74,7 +72,7 @@ class DeleteController extends Controller {
         else {
           if($this->confirmDelete($doomedNode)) {
             // commit changes
-            $localization = ObjectFactory::getInstance('localization');
+            $localization = $this->getInstance('localization');
             if ($this->isLocalizedRequest()) {
               // delete the translations for the requested language
               $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));
@@ -96,7 +94,7 @@ class DeleteController extends Controller {
         array('lockedOids' => array($oid->__toString()))));
       $transaction->rollback();
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       $response->addError(ApplicationError::fromException($ex));
       $transaction->rollback();
     }

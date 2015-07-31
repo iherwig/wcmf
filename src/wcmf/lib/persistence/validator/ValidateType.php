@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\persistence\validator;
 
+use wcmf\lib\i18n\Message;
+
 /**
  * ValidateType defines the interface for all validator classes.
  *
@@ -20,9 +22,10 @@ interface ValidateType {
   /**
    * Validate a given value. The options format is type specific.
    * @param $value The value to validate
+   * @param $message The Message instance used to provide translations
    * @param $options Optional implementation specific options passed as an associative array
    * @return Boolean
    */
-  function validate($value, $options=null);
+  function validate($value, Message $message, $options=null);
 }
 ?>

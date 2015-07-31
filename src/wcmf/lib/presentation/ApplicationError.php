@@ -11,7 +11,7 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\i18n\Message;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\util\StringUtil;
 
@@ -28,11 +28,11 @@ define('ERROR_LEVEL_FATAL',   'fatal');
  *
  * This class only allows to use predefined errors by
  * using the ApplicationError::get() method.
- * Errors must be defined in the following way:
+ * Errors are defined in the following way:
 
  * @code
  * define('GENERAL_WARNING', serialize(array('GENERAL_WARNING',
- *   Message::get('An unspecified warning occured.'), ERROR_LEVEL_WARNING)));
+ *   $message->getText('An unspecified warning occured.'), ERROR_LEVEL_WARNING)));
  * @endcode
  *
  * To use the error in the code:
@@ -78,7 +78,7 @@ class ApplicationError {
    * @return The message
    */
   public function getMessage() {
-    return Message::get($this->_message);
+    return $this->_message;
   }
 
   /**
@@ -152,75 +152,76 @@ class ApplicationError {
 /**
  * Predefined errors
  */
+$message = ObjectFactory::getInstance('message');
 define('GENERAL_WARNING', serialize(array('GENERAL_WARNING',
-  Message::get('An unspecified warning occured.'), ERROR_LEVEL_WARNING)));
+  $message->getText('An unspecified warning occured.'), ERROR_LEVEL_WARNING)));
 define('GENERAL_ERROR', serialize(array('GENERAL_ERROR',
-  Message::get('An unspecified error occured.', ERROR_LEVEL_ERROR))));
+  $message->getText('An unspecified error occured.', ERROR_LEVEL_ERROR))));
 define('GENERAL_FATAL', serialize(array('GENERAL_FATAL',
-  Message::get('An unspecified fatal error occured.'), ERROR_LEVEL_FATAL)));
+  $message->getText('An unspecified fatal error occured.'), ERROR_LEVEL_FATAL)));
 
 define('ACTION_INVALID', serialize(array('ACTION_INVALID',
-  Message::get('The requested action is unknown.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The requested action is unknown.'), ERROR_LEVEL_ERROR)));
 define('SESSION_INVALID', serialize(array('SESSION_INVALID',
-  Message::get('The session is invalid.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The session is invalid.'), ERROR_LEVEL_ERROR)));
 define('PARAMETER_MISSING', serialize(array('PARAMETER_MISSING',
-  Message::get('One or more parameters are missing.'), ERROR_LEVEL_ERROR)));
+  $message->getText('One or more parameters are missing.'), ERROR_LEVEL_ERROR)));
 define('PARAMETER_INVALID', serialize(array('PARAMETER_INVALID',
-  Message::get('One or more parameters are invalid.'), ERROR_LEVEL_ERROR)));
+  $message->getText('One or more parameters are invalid.'), ERROR_LEVEL_ERROR)));
 define('OID_INVALID', serialize(array('OID_INVALID',
-  Message::get('One or more object ids are invalid.'), ERROR_LEVEL_ERROR)));
+  $message->getText('One or more object ids are invalid.'), ERROR_LEVEL_ERROR)));
 define('CLASS_NAME_INVALID', serialize(array('CLASS_NAME_INVALID',
-  Message::get('One or more classes are invalid.'), ERROR_LEVEL_ERROR)));
+  $message->getText('One or more classes are invalid.'), ERROR_LEVEL_ERROR)));
 
 define('AUTHENTICATION_FAILED', serialize(array('AUTHENTICATION_FAILED',
-  Message::get('Authentication failed.'), ERROR_LEVEL_ERROR)));
+  $message->getText('Authentication failed.'), ERROR_LEVEL_ERROR)));
 
 define('LIMIT_NEGATIVE', serialize(array('LIMIT_NEGATIVE',
-  Message::get('The passed limit is a negative number.'), ERROR_LEVEL_WARNING)));
+  $message->getText('The passed limit is a negative number.'), ERROR_LEVEL_WARNING)));
 define('OFFSET_OUT_OF_BOUNDS', serialize(array('OFFSET_OUT_OF_BOUNDS',
-  Message::get('The passed offset is negative or greater than the number of entries matching the parameters.'), ERROR_LEVEL_WARNING)));
+  $message->getText('The passed offset is negative or greater than the number of entries matching the parameters.'), ERROR_LEVEL_WARNING)));
 define('SORT_FIELD_UNKNOWN', serialize(array('SORT_FIELD_UNKNOWN',
-  Message::get('The passed sortFieldName is no valid attribute of the passed class.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The passed sortFieldName is no valid attribute of the passed class.'), ERROR_LEVEL_ERROR)));
 define('SORT_DIRECTION_UNKNOWN', serialize(array('SORT_DIRECTION_UNKNOWN',
-  Message::get('The passed sortDirection has an invalid value.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The passed sortDirection has an invalid value.'), ERROR_LEVEL_ERROR)));
 
 define('DEPTH_INVALID', serialize(array('DEPTH_INVALID',
-  Message::get('The passed depth is a negative number other than -1.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The passed depth is a negative number other than -1.'), ERROR_LEVEL_ERROR)));
 
 define('ATTRIBUTE_NAME_INVALID', serialize(array('ATTRIBUTE_NAME_INVALID',
-  Message::get('The attribute name passed cannot be found in the selected class.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The attribute name passed cannot be found in the selected class.'), ERROR_LEVEL_ERROR)));
 define('ATTRIBUTE_VALUE_INVALID', serialize(array('ATTRIBUTE_VALUE_INVALID',
-  Message::get('The attribute value passed is invalid for the attribute.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The attribute value passed is invalid for the attribute.'), ERROR_LEVEL_ERROR)));
 define('CONCURRENT_UPDATE', serialize(array('CONCURRENT_UPDATE',
-  Message::get('The server detected a concurrent update.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The server detected a concurrent update.'), ERROR_LEVEL_ERROR)));
 
 define('ROLE_INVALID', serialize(array('ROLE_INVALID',
-  Message::get('The role passed cannot be found in the selected source class.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The role passed cannot be found in the selected source class.'), ERROR_LEVEL_ERROR)));
 define('ASSOCIATION_INVALID', serialize(array('ASSOCIATION_INVALID',
-  Message::get('There is no association between the source and the target class.'), ERROR_LEVEL_ERROR)));
+  $message->getText('There is no association between the source and the target class.'), ERROR_LEVEL_ERROR)));
 define('ASSOCIATION_NOT_FOUND', serialize(array('ASSOCIATION_NOT_FOUND',
-  Message::get('No current association matching the input parameters can be found.'), ERROR_LEVEL_WARNING)));
+  $message->getText('No current association matching the input parameters can be found.'), ERROR_LEVEL_WARNING)));
 
 define('SEARCH_NOT_SUPPORTED', serialize(array('SEARCH_NOT_SUPPORTED',
-  Message::get('There selected class does not support searching.'), ERROR_LEVEL_ERROR)));
+  $message->getText('There selected class does not support searching.'), ERROR_LEVEL_ERROR)));
 
 define('ORDER_UNDEFINED', serialize(array('ORDER_UNDEFINED',
-  Message::get('There is no order defined for the root object.'), ERROR_LEVEL_WARNING)));
+  $message->getText('There is no order defined for the root object.'), ERROR_LEVEL_WARNING)));
 
 define('REFERENCE_INVALID', serialize(array('REFERENCE_INVALID',
-  Message::get('There reference object cannot be found in the container object.'), ERROR_LEVEL_ERROR)));
+  $message->getText('There reference object cannot be found in the container object.'), ERROR_LEVEL_ERROR)));
 define('ORDER_NOT_SUPPORTED', serialize(array('ORDER_NOT_SUPPORTED',
-  Message::get('The container class does not support ordered references.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The container class does not support ordered references.'), ERROR_LEVEL_ERROR)));
 
 define('CLASSES_DO_NOT_MATCH', serialize(array('CLASSES_DO_NOT_MATCH',
-  Message::get('The classes of insertOid and referenceOid do not match.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The classes of insertOid and referenceOid do not match.'), ERROR_LEVEL_ERROR)));
 
 define('HISTORY_NOT_SUPPORTED', serialize(array('HISTORY_NOT_SUPPORTED',
-  Message::get('There selected class does not support history.'), ERROR_LEVEL_ERROR)));
+  $message->getText('There selected class does not support history.'), ERROR_LEVEL_ERROR)));
 
 define('PERMISSION_DENIED', serialize(array('PERMISSION_DENIED',
-  Message::get('The user does not have the permission to perform this action.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The user does not have the permission to perform this action.'), ERROR_LEVEL_ERROR)));
 
 define('OBJECT_IS_LOCKED', serialize(array('OBJECT_IS_LOCKED',
-  Message::get('The object is currently locked by another user.'), ERROR_LEVEL_ERROR)));
+  $message->getText('The object is currently locked by another user.'), ERROR_LEVEL_ERROR)));
 ?>

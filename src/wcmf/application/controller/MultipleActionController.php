@@ -10,8 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use Exception;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\StringUtil;
@@ -118,9 +116,9 @@ class MultipleActionController extends Controller {
     $actions = array_keys($data);
     $numActions = sizeof($actions);
     $exceptions = array();
-    $actionMapper = ObjectFactory::getInstance('actionMapper');
+    $actionMapper = $this->getInstance('actionMapper');
 
-    $formats = ObjectFactory::getInstance('formats');
+    $formats = $this->getInstance('formats');
     $nullFormat = $formats['null'];
 
     for($i=0; $i<$numActions; $i++) {
@@ -136,7 +134,7 @@ class MultipleActionController extends Controller {
       $context = isset($actionData['context']) ? $actionData['context'] : '';
       $action = isset($actionData['action']) ? $actionData['action'] : '';
       $params = isset($actionData['params']) ? $actionData['params'] : array();
-      $requestPart = ObjectFactory::getInstance('request');
+      $requestPart = $this->getInstance('request');
       $requestPart->setContext($context);
       $requestPart->setAction($action);
       $requestPart->setValues($params);
@@ -147,7 +145,7 @@ class MultipleActionController extends Controller {
       try {
         $responsePart = $actionMapper->processAction($requestPart);
       }
-      catch (Exception $ex) {
+      catch (\Exception $ex) {
         $logger->error($ex->__toString());
         $exceptions[] = $ex;
       }
@@ -218,7 +216,7 @@ class MultipleActionController extends Controller {
       if (sizeof($matches > 0)) {
         $variableName = $matches[1];
         $parameters = $matches[2];
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $persistenceFacade = $this->getInstance('persistenceFacade');
 
         // last_created_oid
         if ($variableName == 'last_created_oid') {

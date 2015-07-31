@@ -12,7 +12,6 @@ namespace wcmf\lib\presentation\control\lists\impl;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 
 /**
@@ -45,8 +44,9 @@ class ConfigListStrategy implements ListStrategy {
       $config = ObjectFactory::getConfigurationInstance();
       $map = $config->getSection($section);
       $result = array();
+      $message = ObjectFactory::getInstance('message');
       foreach ($map as $key => $value) {
-        $result[$key] = Message::get($value, null, $language);
+        $result[$key] = $message->getText($value, null, $language);
       }
       $this->_lists[$listKey] = $result;
     }

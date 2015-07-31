@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\persistence;
 
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
@@ -29,6 +30,18 @@ interface PersistenceMapper {
    * @return String
    */
   public function getType();
+
+  /**
+   * Get the display name of the type.
+   * @param $message Message instance used for translation
+   */
+  public function getTypeDisplayName(Message $message);
+
+  /**
+   * Get the description of the type.
+   * @param $message Message instance used for translation
+   */
+  public function getTypeDescription(Message $message);
 
   /**
    * Get the names of the primary key values.
@@ -107,6 +120,20 @@ interface PersistenceMapper {
    * @return AttributeDescription or null if the attribute does not exist
    */
   public function getAttribute($name);
+
+  /**
+   * Get the display name of the type.
+   * @param $name The attribute name
+   * @param $message Message instance used for translation
+   */
+  public function getAttributeDisplayName($name, Message $message);
+
+  /**
+   * Get the description of the attribute.
+   * @param $name The attribute name
+   * @param $message Message instance used for translation
+   */
+  public function getAttributeDescription($name, Message $message);
 
   /**
    * Get meta information on the mapped class.

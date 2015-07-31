@@ -12,6 +12,7 @@ namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistentObject;
@@ -273,14 +274,14 @@ class PersistentObjectProxy implements PersistentObject {
   /**
    * @see PersistentObject::validateValues()
    */
-  public function validateValues() {
+  public function validateValues(Message $message) {
     return $this->__call(__FUNCTION__, array());
   }
 
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value) {
+  public function validateValue($name, $value, Message $message) {
     return $this->__call(__FUNCTION__, array($name, $value));
   }
 
@@ -360,38 +361,6 @@ class PersistentObjectProxy implements PersistentObject {
    */
   public function getDisplayValue() {
     return $this->getOID()->__toString();
-  }
-
-  /**
-   * @see PersistentObject::getObjectDisplayName()
-   * @note Subclasses will override this for special application requirements
-   */
-  public function getObjectDisplayName() {
-    return Message::get($this->getType());
-  }
-
-  /**
-   * @see PersistentObject::getObjectDescription()
-   * @note Subclasses will override this for special application requirements
-   */
-  public function getObjectDescription() {
-    return Message::get($this->getType());
-  }
-
-  /**
-   * @see PersistentObject::getValueDisplayName()
-   * @note Subclasses will override this for special application requirements
-   */
-  public function getValueDisplayName($name) {
-    return Message::get($name);
-  }
-
-  /**
-   * @see PersistentObject::getValueDescription()
-   * @note Subclasses will override this for special application requirements
-   */
-  public function getValueDescription($name) {
-    return Message::get($name);
   }
 
   /**

@@ -11,8 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
@@ -74,11 +72,12 @@ class DisplayController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $permissionManager = $this->getInstance('permissionManager');
     $request = $this->getRequest();
     $response = $this->getResponse();
     $logger = $this->getLogger();
+    $message = $this->getInstance('message');
 
     // load model
     $oid = ObjectId::parse($request->getValue('oid'));
@@ -90,12 +89,12 @@ class DisplayController extends Controller {
       }
       $node = $persistenceFacade->load($oid, $buildDepth);
       if ($node == null) {
-        throw new IllegalArgumentException(Message::get("The object with oid '%0%' does not exist.", array($oid)));
+        throw new IllegalArgumentException($message->getText("The object with oid '%0%' does not exist.", array($oid)));
       }
 
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest()) {
-        $localization = ObjectFactory::getInstance('localization');
+        $localization = $this->getInstance('localization');
         $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
       }
 
@@ -118,8 +117,8 @@ class DisplayController extends Controller {
       $response->setValue('object', $node);
     }
     else {
-      throw new AuthorizationException(Message::get("Authorization failed for action '%0%' on '%1%'.",
-              array(Message::get('read'), $oid)));
+      throw new AuthorizationException($message->getText("Authorization failed for action '%0%' on '%1%'.",
+              array($message->getText('read'), $oid)));
     }
     // success
     $response->setAction('ok');

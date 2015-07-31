@@ -12,7 +12,6 @@ namespace wcmf\lib\presentation\control;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -53,7 +52,7 @@ class ValueListProvider {
     // add empty item, if defined
     $items = array();
     if (isset($decodedDefinition['emptyItem'])) {
-      $items[''] = Message::get($decodedDefinition['emptyItem'], null, $language);
+      $items[''] = ObjectFactory::getInstance('message')->getText($decodedDefinition['emptyItem'], null, $language);
     }
 
     // build list

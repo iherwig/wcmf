@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NullNode;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -68,7 +67,7 @@ class SortController extends Controller {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
 
     $isOrderBottom = $this->isOrderBotton($request);
 
@@ -148,7 +147,7 @@ class SortController extends Controller {
   protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $transaction = $this->getInstance('persistenceFacade')->getTransaction();
 
     // do actions
     $transaction->begin();
@@ -168,7 +167,7 @@ class SortController extends Controller {
    */
   protected function doMoveBefore() {
     $request = $this->getRequest();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     $isOrderBottom = $this->isOrderBotton($request);
 
     // load the moved object and the reference object
@@ -236,7 +235,7 @@ class SortController extends Controller {
    */
   protected function doInsertBefore() {
     $request = $this->getRequest();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     $isOrderBottom = $this->isOrderBotton($request);
 
     // load the moved object, the reference object and the conainer object

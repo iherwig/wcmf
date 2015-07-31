@@ -10,8 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
@@ -81,7 +79,7 @@ class ListController extends Controller {
    */
   protected function doExecute() {
     $request = $this->getRequest();
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager = $this->getInstance('permissionManager');
 
     // unveil the query value if it is ofuscated
     $query = null;
@@ -126,7 +124,7 @@ class ListController extends Controller {
 
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
-      $localization = ObjectFactory::getInstance('localization');
+      $localization = $this->getInstance('localization');
       for ($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         $nodes[$i] = $localization->loadTranslation($nodes[$i], $this->_request->getValue('language'), true, true);
       }
@@ -155,14 +153,15 @@ class ListController extends Controller {
    * @return Array of Node instances
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     if (!$persistenceFacade->isKnownType($type)) {
       return array();
     }
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager = $this->getInstance('permissionManager');
     if (!$permissionManager->authorize($type, '', PersistenceAction::READ)) {
-      throw new AuthorizationException(Message::get("Authorization failed for action '%0%' on '%1%'.",
-              array(Message::get('read'), $persistenceFacade->getSimpleType($type))));
+      $message = $this->getInstance('message');
+      throw new AuthorizationException($message->getText("Authorization failed for action '%0%' on '%1%'.",
+              array($message->getText('read'), $persistenceFacade->getSimpleType($type))));
     }
     $objects = array();
     $query = new StringQuery($type);

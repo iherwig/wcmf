@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\i18n\Message;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -56,7 +55,7 @@ class MessageController extends Controller {
 
     // get all messages
     $lang = $request->getValue('language');
-    $messages = Message::getAll($lang);
+    $messages = $this->getInstance('message')->getAll($lang);
     $response->setValues($messages);
 
     // success

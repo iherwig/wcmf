@@ -12,8 +12,6 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
 
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\search\IndexedSearch;
 
@@ -40,11 +38,11 @@ class SearchIndexController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      $search = ObjectFactory::getInstance('search');
+      $search = $this->getInstance('search');
       if ($search instanceof IndexedSearch) {
         // get all types to index
         $types = array();
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $persistenceFacade = $this->getInstance('persistenceFacade');
         foreach ($persistenceFacade->getKnownTypes() as $type) {
           $tpl = $persistenceFacade->create($type);
           if ($search->isSearchable($tpl)) {
@@ -52,7 +50,8 @@ class SearchIndexController extends BatchController {
           }
         }
         $search->resetIndex();
-        return array('name' => Message::get('Collect objects'), 'size' => 1, 'oids' => $types, 'callback' => 'collect');
+        return array('name' => $this->getInstance('message')->getText('Collect objects'),
+            'size' => 1, 'oids' => $types, 'callback' => 'collect');
       }
       else {
         // no index to be updated
@@ -70,13 +69,14 @@ class SearchIndexController extends BatchController {
    * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
    */
   protected function collect($types) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     foreach ($types as $type) {
       $oids = $persistenceFacade->getOIDs($type);
       if (sizeof($oids) == 0) {
         $oids = array(1);
       }
-      $this->addWorkPackage(Message::get('Indexing %0%', array($type)), 10, $oids, 'index');
+      $this->addWorkPackage($this->getInstance('message')->getText('Indexing %0%', array($type)),
+              10, $oids, 'index');
     }
   }
 
@@ -86,8 +86,8 @@ class SearchIndexController extends BatchController {
    * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
    */
   protected function index($oids) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $search = ObjectFactory::getInstance('search');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $search = $this->getInstance('search');
     foreach($oids as $oid) {
       if (ObjectId::isValid($oid)) {
         $obj = $persistenceFacade->load($oid);
@@ -97,7 +97,8 @@ class SearchIndexController extends BatchController {
     $search->commitIndex(false);
 
     if ($this->getStepNumber() == $this->getNumberOfSteps()) {
-      $this->addWorkPackage(Message::get('Optimizing index'), 1, array(0), 'optimize');
+      $this->addWorkPackage($this->getInstance('message')->getText('Optimizing index'),
+              1, array(0), 'optimize');
     }
   }
 
@@ -107,7 +108,7 @@ class SearchIndexController extends BatchController {
    * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
    */
   protected function optimize($oids) {
-    $search = ObjectFactory::getInstance('search');
+    $search = $this->getInstance('search');
     $search->optimizeIndex();
   }
   // PROTECTED REGION END

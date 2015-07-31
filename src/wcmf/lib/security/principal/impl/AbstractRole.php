@@ -40,19 +40,19 @@ abstract class AbstractRole extends Node implements Role {
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value) {
-    parent::validateValue($name, $value);
+  public function validateValue($name, $value, Message $message) {
+    parent::validateValue($name, $value, $message);
 
     // validate the name property
     // the name is expected to be stored in the 'name' value
     if ($name == 'name') {
       if (strlen(trim($value)) == 0) {
-        throw new ValidationException(Message::get("The role requires a name"));
+        throw new ValidationException($message->getText("The role requires a name"));
       }
       $principalFactory = ObjectFactory::getInstance('principalFactory');
       $role = $principalFactory->getRole($value);
       if ($role != null && $role->getOID() != $this->getOID()) {
-        throw new ValidationException(Message::get("The role '%0%' already exists", array($value)));
+        throw new ValidationException($message->getText("The role '%0%' already exists", array($value)));
       }
     }
   }

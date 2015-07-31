@@ -11,8 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
@@ -65,7 +63,7 @@ class BatchDisplayController extends BatchController {
 
     // initialize controller
     if ($request->getAction() != 'continue') {
-      $session = ObjectFactory::getInstance('session');
+      $session = $this->getInstance('session');
 
       // set defaults
       if (!$request->hasValue('nodesPerCall')) {
@@ -108,7 +106,8 @@ class BatchDisplayController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      return array('name' => Message::get('Loading'), 'size' => 1, 'oids' => array(1), 'callback' => 'startProcess');
+      return array('name' => $this->getInstance('message')->getText('Loading'),
+          'size' => 1, 'oids' => array(1), 'callback' => 'startProcess');
     }
     else {
       return null;
@@ -120,7 +119,7 @@ class BatchDisplayController extends BatchController {
    * @param $oids The oids to process
    */
   protected function startProcess($oids) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -141,7 +140,8 @@ class BatchDisplayController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Loading tree: continue with %0%', array($iterator->current()));
+      $name = $this->getInstance('message')->getText('Loading tree: continue with %0%',
+              array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'loadNodes');
     }
     else {
@@ -155,7 +155,7 @@ class BatchDisplayController extends BatchController {
    * @param $oids The oids to process
    */
   protected function loadNodes($oids) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -189,7 +189,8 @@ class BatchDisplayController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Loading tree: continue with %0%', array($iterator->current()));
+      $name = $this->getInstance('message')->getText('Loading tree: continue with %0%',
+              array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'loadNodes');
     }
     else {
@@ -202,7 +203,7 @@ class BatchDisplayController extends BatchController {
    * Finish the process and set the result
    */
   protected function endProcess() {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
 
     // clear session variables
     $tmp = null;
@@ -220,8 +221,8 @@ class BatchDisplayController extends BatchController {
     if ($this->isRegistered($oid)) {
       return;
     }
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $session = ObjectFactory::getInstance('session');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $session = $this->getInstance('session');
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -234,7 +235,7 @@ class BatchDisplayController extends BatchController {
 
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
-      $localization = ObjectFactory::getInstance('localization');
+      $localization = $this->getInstance('localization');
       $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
     }
 
@@ -268,7 +269,7 @@ class BatchDisplayController extends BatchController {
    * @param $oid The object id to register
    */
   protected function register(ObjectId $oid) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     $registry = $session->get($this->REGISTRY);
     $registry[] = $oid;
     $session->set($this->REGISTRY, $registry);
@@ -280,7 +281,7 @@ class BatchDisplayController extends BatchController {
    * @return Boolean whether the oid is registered or not
    */
   protected function isRegistered(ObjectId $oid) {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     $registry = $session->get($this->REGISTRY);
 
     return in_array($oid, $registry);

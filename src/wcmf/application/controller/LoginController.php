@@ -10,8 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use \Exception;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
@@ -88,19 +86,19 @@ class LoginController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $session = ObjectFactory::getInstance('session');
+    $session = $this->getInstance('session');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
     if ($request->getAction() == 'login') {
       // authenticate
-      $authManager = ObjectFactory::getInstance('authenticationManager');
+      $authManager = $this->getInstance('authenticationManager');
 
       // try to login
       try {
         $authUser = $authManager->login($request->getValue('user'), $request->getValue('password'));
       }
-      catch (Exception $ex) {
+      catch (\Exception $ex) {
         $authUser = null;
         $this->getLogger()->error("Could not log in: ".$ex);
       }

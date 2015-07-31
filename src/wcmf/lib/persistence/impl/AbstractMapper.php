@@ -12,7 +12,6 @@ namespace wcmf\lib\persistence\impl;
 
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\output\OutputStrategy;
@@ -189,7 +188,8 @@ abstract class AbstractMapper implements PersistenceMapper {
     }
 
     // validate object
-    $object->validateValues();
+    $message = ObjectFactory::getInstance('message');
+    $object->validateValues($message);
 
     // check concurrency
     $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
@@ -346,7 +346,8 @@ abstract class AbstractMapper implements PersistenceMapper {
    */
   protected function authorizationFailedError($resource, $action) {
     // when reading only log the error to avoid errors on the display
-    $msg = Message::get("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
+    $message = ObjectFactory::getInstance('message');
+    $msg = $message->getText("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
     if ($action == PersistenceAction::READ) {
       self::$_logger->error($msg."\n".ErrorHandler::getStackTrace());
     }

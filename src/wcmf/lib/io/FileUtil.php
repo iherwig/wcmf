@@ -11,7 +11,7 @@
 namespace wcmf\lib\io;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\i18n\Message;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\IOException;
 
 /**
@@ -31,6 +31,8 @@ class FileUtil {
    */
   public static function uploadFile($mediaFile, $destName, $mimeTypes=null, $override=true) {
     $filename = null;
+    $message = ObjectFactory::getInstance('message');
+
     // check if the file was uploaded
     if (is_uploaded_file($mediaFile['tmp_name'])) {
       // check mime type
@@ -50,12 +52,12 @@ class FileUtil {
         $filename = basename($destName);
       }
       else {
-        throw new IOException(Message::get("File '%0%' has wrong mime type: %1%. Allowed types: %2%.",
+        throw new IOException($message->getText("File '%0%' has wrong mime type: %1%. Allowed types: %2%.",
           array($mediaFile['name'], $mediaFile['type'], join(", ", $mimeTypes))));
       }
     }
     else {
-      $msg = Message::get("Possible file upload attack: filename %0%.", array($mediaFile['name']));
+      $msg = $message->getText("Possible file upload attack: filename %0%.", array($mediaFile['name']));
       throw new IOException($msg);
     }
     return $filename;
@@ -106,7 +108,8 @@ class FileUtil {
       $d->close();
     }
     else {
-      throw new IllegalArgumentException(Message::get("The directory '%0%' does not exist.", array($directory)));
+      $message = ObjectFactory::getInstance('message');
+      throw new IllegalArgumentException($message->getText("The directory '%0%' does not exist.", array($directory)));
     }
     krsort($result);
     return array_values($result);
@@ -152,7 +155,8 @@ class FileUtil {
       $d->close();
     }
     else {
-      throw new IllegalArgumentException(Message::get("The directory '%0%' does not exist.", array($directory)));
+      $message = ObjectFactory::getInstance('message');
+      throw new IllegalArgumentException($message->getText("The directory '%0%' does not exist.", array($directory)));
     }
     return $result;
   }
@@ -171,7 +175,8 @@ class FileUtil {
       self::copyRecDir($source, $dest);
     }
     else {
-      throw new IllegalArgumentException(Message::get("Cannot copy %0% (it's neither a file nor a directory).", array($source)));
+      $message = ObjectFactory::getInstance('message');
+      throw new IllegalArgumentException($message->getText("Cannot copy %0% (it's neither a file nor a directory).", array($source)));
     }
   }
 

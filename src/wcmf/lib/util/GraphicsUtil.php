@@ -10,9 +10,6 @@
  */
 namespace wcmf\lib\util;
 
-use \Exception;
-use wcmf\lib\i18n\Message;
-
 use PHPImageWorkshop\ImageWorkshop;
 use GifFrameExtractor\GifFrameExtractor;
 use GifCreator\GifCreator;
@@ -55,7 +52,7 @@ class GraphicsUtil {
     try {
       ImageWorkshop::initFromPath($imgname);
       return true;
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       return false;
     }
   }
@@ -85,14 +82,15 @@ class GraphicsUtil {
   public function isValidImageWidth($imgname, $width, $exact=true) {
     try {
       $image = ImageWorkshop::initFromPath($imgname);
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       return true;
     }
     $imgWitdh = $image->getWidth();
     $dimOk = ($exact && $imgWitdh == $width) || (!$exact && $imgWitdh <= $width);
     if (!$dimOk) {
-      $constraint = $exact ? Message::get("exactly") : Message::get("smaller than");
-      $this->_errorMsg = Message::get("Wrong image width. Image width must be %1% %2%px - actual image width is %3%px.",
+      $message = ObjectFactory::getInstance('message');
+      $constraint = $exact ? $message->getText("exactly") : $message->getText("smaller than");
+      $this->_errorMsg = $message->getText("Wrong image width. Image width must be %1% %2%px - actual image width is %3%px.",
         array($constraint, $width, $imgWitdh));
       $this->_errorMsg .= "\n";
     }
@@ -110,14 +108,15 @@ class GraphicsUtil {
   public function isValidImageHeight($imgname, $height, $exact=true) {
     try {
       $image = ImageWorkshop::initFromPath($imgname);
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       return true;
     }
     $imgHeight = $image->getHeight();
     $dimOk = ($exact && $imgHeight == $height) || (!$exact && $imgHeight <= $height);
     if (!$dimOk) {
-      $constraint = $exact ? Message::get("exactly") : Message::get("smaller than");
-      $this->_errorMsg .= Message::get("Wrong image height. Image height must be %1% %2%px - actual image height is %3%px.",
+      $message = ObjectFactory::getInstance('message');
+      $constraint = $exact ? $message->getText("exactly") : $message->getText("smaller than");
+      $this->_errorMsg .= $message->getText("Wrong image height. Image height must be %1% %2%px - actual image height is %3%px.",
         array($constraint, $height, $imgHeight));
       $this->_errorMsg .= "\n";
     }
@@ -149,7 +148,7 @@ class GraphicsUtil {
         $height = $sourceHeight;
       }
       return array($width, $height);
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       $this->_errorMsg = $ex->getMessage();
       return null;
     }
@@ -170,7 +169,7 @@ class GraphicsUtil {
       $keepAspect = $width === null || $height === null;
       $this->processImageFunction($srcName, $destName, "resizeInPixel", array($width, $height, $keepAspect));
       return true;
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       $this->_errorMsg = $ex->getMessage();
       return false;
     }
@@ -198,7 +197,7 @@ class GraphicsUtil {
 
       $this->processImageFunction($srcName, $destName, "cropInPixel", array($width, $height, $x, $y, 'LT'));
       return true;
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       $this->_errorMsg = $ex->getMessage();
       return false;
     }
@@ -213,7 +212,7 @@ class GraphicsUtil {
     try {
       $this->processImageFunction($srcName, $destName, "applyFilter", array(IMG_FILTER_GRAYSCALE));
       return true;
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       $this->_errorMsg = $ex->getMessage();
       return false;
     }
@@ -356,7 +355,7 @@ class GraphicsUtil {
       $image->save(dirname($filename), basename($filename), true, null, 100);
       chmod($filename, 0644);
       return true;
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       $this->_errorMsg = $ex->getMessage();
       return false;
     }

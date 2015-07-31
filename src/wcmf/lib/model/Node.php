@@ -827,13 +827,6 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
-   * Delegates to NodeUtil::getDisplayValues
-   */
-  public function getDisplayValues() {
-    return NodeUtil::getDisplayValues($this);
-  }
-
-  /**
    * Get a string representation of the Node.
    * @return The string representation of the Node.
    */

@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
@@ -81,7 +80,7 @@ class ConcurrencyController extends Controller {
   function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $concurrencyManager = ObjectFactory::getInstance('concurrencyManager');
+    $concurrencyManager = $this->getInstance('concurrencyManager');
     $oid = ObjectId::parse($request->getValue('oid'));
     $lockType = $request->getValue('type', Lock::TYPE_OPTIMISTIC);
 

@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\ListController;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 
@@ -45,10 +44,10 @@ class SearchController extends ListController {
    * @see ListController::getObjects()
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $permissionManager = $this->getInstance('permissionManager');
 
     // search with searchterm (even if empty) if no query is given
-    $search = ObjectFactory::getInstance('search');
+    $search = $this->getInstance('search');
     $this->_hits = $search->find($queryCondition, $pagingInfo);
 
     $oids = array();
@@ -57,7 +56,7 @@ class SearchController extends ListController {
     }
 
     // load the objects
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     $objects = array();
     foreach($oids as $oid) {
       if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
@@ -74,7 +73,7 @@ class SearchController extends ListController {
   protected function modifyModel($nodes) {
     parent::modifyModel($nodes);
 
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
       $curNode = &$nodes[$i];
       $hit = $this->_hits[$curNode->getOID()->__toString()];

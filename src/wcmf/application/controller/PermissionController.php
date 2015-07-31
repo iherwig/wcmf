@@ -11,7 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\config\ActionKey;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -148,8 +147,13 @@ class PermissionController extends Controller {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $principalFactory = ObjectFactory::getInstance('principalFactory');
+    $permissionManager = $this->getInstance('permissionManager');
+    $principalFactory = $this->getInstance('principalFactory');
+    $transaction = $this->getInstance('persistenceFacade')->getTransaction();
+
+    $resource = $request->getValue('resource');
+    $context = $request->getValue('context');
+    $action = $request->getValue('action');
 
     // process actions
     if ($request->getAction() == 'checkPermissions') {
@@ -173,47 +177,29 @@ class PermissionController extends Controller {
       $response->setValue('result', $result);
     }
     elseif ($request->getAction() == 'getPermissions') {
-      $resource = $request->getValue('resource');
-      $context = $request->getValue('context');
-      $action = $request->getValue('action');
 
       $result = $permissionManager->getPermissions($resource, $context, $action);
       $response->setValue('result', $result);
     }
     elseif ($request->getAction() == 'setPermissions') {
-      $resource = $request->getValue('resource');
-      $context = $request->getValue('context');
-      $action = $request->getValue('action');
       $permissions = $request->getValue('permissions');
 
-      $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
-      $permissionManager = ObjectFactory::getInstance('permissionManager');
       $permissionManager->setPermissions($resource, $context, $action, $permissions);
       $transaction->commit();
     }
     elseif ($request->getAction() == 'createPermission') {
-      $resource = $request->getValue('resource');
-      $context = $request->getValue('context');
-      $action = $request->getValue('action');
       $role = $request->getValue('role');
       $modifier = $request->getValue('modifier');
 
-      $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
-      $permissionManager = ObjectFactory::getInstance('permissionManager');
       $permissionManager->createPermission($resource, $context, $action, $role, $modifier);
       $transaction->commit();
     }
     elseif ($request->getAction() == 'removePermission') {
-      $resource = $request->getValue('resource');
-      $context = $request->getValue('context');
-      $action = $request->getValue('action');
       $role = $request->getValue('role');
 
-      $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
-      $permissionManager = ObjectFactory::getInstance('permissionManager');
       $permissionManager->removePermission($resource, $context, $action, $role);
       $transaction->commit();
     }

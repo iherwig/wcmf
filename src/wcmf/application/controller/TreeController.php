@@ -89,8 +89,8 @@ class TreeController extends Controller {
    */
   protected function getChildren($oid) {
 
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $permissionManager = $this->getInstance('permissionManager');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
 
     // check read permission on type
     $type = $oid->getType();
@@ -204,8 +204,8 @@ class TreeController extends Controller {
     }
 
     // filter types by read permission
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $permissionManager = $this->getInstance('permissionManager');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     $nodes = array();
     foreach($types as $type) {
       if ($permissionManager->authorize($type, '', PersistenceAction::READ)) {

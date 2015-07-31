@@ -48,7 +48,7 @@ abstract class Controller {
    * Constructor
    */
   public function __construct() {
-    $this->_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+    $this->_logger = $this->getInstance('logManager')->getLogger(__CLASS__);
   }
 
   /**
@@ -135,17 +135,17 @@ abstract class Controller {
    */
   protected function executeSubAction($action) {
     $curRequest = $this->getRequest();
-    $subRequest = ObjectFactory::getInstance('request');
+    $subRequest = $this->getInstance('request');
     $subRequest->setSender(get_class($this));
     $subRequest->setContext($curRequest->getContext());
     $subRequest->setAction($action);
     $subRequest->setHeaders($curRequest->getHeaders());
     $subRequest->setValues($curRequest->getValues());
-    $formats = ObjectFactory::getInstance('formats');
+    $formats = $this->getInstance('formats');
     $nullFormat = $formats['null'];
     $subRequest->setFormat($nullFormat);
     $subRequest->setResponseFormat($nullFormat);
-    $response = ObjectFactory::getInstance('actionMapper')->processAction($subRequest);
+    $response = $this->getInstance('actionMapper')->processAction($subRequest);
     return $response;
   }
 
@@ -171,6 +171,15 @@ abstract class Controller {
    */
   protected function getLogger() {
     return $this->_logger;
+  }
+
+  /**
+   * Get an instance registered with ObjectFactory.
+   * @name The instance name
+   * @return Object
+   */
+  protected function getInstance($name) {
+    return ObjectFactory::getInstance($name);
   }
 
   /**
@@ -210,7 +219,7 @@ abstract class Controller {
   protected function isLocalizedRequest() {
     if ($this->_request->hasValue('language')) {
       $language = $this->_request->getValue('language');
-      $localization = ObjectFactory::getInstance('localization');
+      $localization = $this->getInstance('localization');
       if ($language != $localization->getDefaultLanguage()) {
         return true;
       }
@@ -226,7 +235,7 @@ abstract class Controller {
   protected function checkLanguageParameter() {
     if ($this->_request->hasValue('language')) {
       $language = $this->_request->getValue('language');
-      $localization = ObjectFactory::getInstance('localization');
+      $localization = $this->getInstance('localization');
       if (!in_array($language, array_keys($localization->getSupportedLanguages()))) {
         $this->_response->addError(ApplicationError::get('PARAMETER_INVALID',
                 array('invalidParameters' => array('language'))));

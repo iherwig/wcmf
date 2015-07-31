@@ -12,7 +12,6 @@ namespace wcmf\application\controller;
 
 use \Exception;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
@@ -79,7 +78,8 @@ class AssociateController extends Controller {
     }
 
     // check association
-    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($sourceOid->getType());
+    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $mapper = $persistenceFacade->getMapper($sourceOid->getType());
     // try role
     if ($request->hasValue('role')) {
       $relationDesc = $mapper->getRelation($request->getValue('role'));
@@ -103,9 +103,9 @@ class AssociateController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $persistenceFacade = $this->getInstance('persistenceFacade');
 
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();

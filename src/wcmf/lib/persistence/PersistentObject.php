@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\persistence;
 
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 
 /**
@@ -196,8 +197,9 @@ interface PersistentObject {
   /**
    * Validate all values by calling PersistentObject::validateValue()
    * Throws a ValidationException in case of invalid data.
+   * @param $message The Message instance used to provide translations.
    */
-  public function validateValues();
+  public function validateValues(Message $message);
 
   /**
    * Check if data may be set. The method is also called, when setting a value.
@@ -205,9 +207,10 @@ interface PersistentObject {
    * Throws a ValidationException in case of invalid data.
    * @param $name The name of the item to set.
    * @param $value The value of the item.
+   * @param $message The Message instance used to provide translations.
    * The default implementation calls PersistentObject::validateValueAgainstValidateType().
    */
-  public function validateValue($name, $value);
+  public function validateValue($name, $value, Message $message);
 
   /**
    * Get the list of changed attributes since creation, loading.
@@ -284,32 +287,6 @@ interface PersistentObject {
    * @return The value.
    */
   public function getDisplayValue();
-
-  /**
-   * Get the name of the type used for display.
-   * @return The name.
-   */
-  public function getObjectDisplayName();
-
-  /**
-   * Get the description of the type.
-   * @return The description.
-   */
-  public function getObjectDescription();
-
-  /**
-   * Get the name of a value used for display.
-   * @param $name The name of the value.
-   * @return The name of the value.
-   */
-  public function getValueDisplayName($name);
-
-  /**
-   * Get the description of a value.
-   * @param $name The name of the value.
-   * @return The description of the value.
-   */
-  public function getValueDescription($name);
 
   /**
    * Get a string representation of the values of the PersistentObject.

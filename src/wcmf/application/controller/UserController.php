@@ -10,9 +10,7 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -45,9 +43,9 @@ class UserController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $session = ObjectFactory::getInstance('session');
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $session = $this->getInstance('session');
+    $permissionManager = $this->getInstance('permissionManager');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -88,15 +86,16 @@ class UserController extends Controller {
    * @param $newPasswordRepeated The new password of the user again
    */
   public function changePassword(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
+    $message = $this->getInstance('message');
     // check old password
     if (!$user->verifyPassword($oldPassword, $user->getPassword())) {
-      throw new IllegalArgumentException(Message::get("The old password is incorrect"));
+      throw new IllegalArgumentException($message->getText("The old password is incorrect"));
     }
     if (strlen($newPassword) == 0) {
-      throw new IllegalArgumentException(Message::get("The password can't be empty"));
+      throw new IllegalArgumentException($message->getText("The password can't be empty"));
     }
     if ($newPassword != $newPasswordRepeated) {
-      throw new IllegalArgumentException(Message::get("The given passwords don't match"));
+      throw new IllegalArgumentException($message->getText("The given passwords don't match"));
     }
     // set password
     $user->setPassword($newPassword);

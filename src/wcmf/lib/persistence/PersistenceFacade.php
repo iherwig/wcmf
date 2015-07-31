@@ -26,28 +26,28 @@ interface PersistenceFacade {
    * Get a list of types defined in the application.
    * @return The list of fully qualified type names
    */
-  function getKnownTypes();
+  public function getKnownTypes();
 
   /**
    * Check if a type is defined in the application.
    * @param $type The type to check (either fully qualified or simple, if not ambiguous)
    * @return Boolean whether the type is defined or not
    */
-  function isKnownType($type);
+  public function isKnownType($type);
 
   /**
    * Get the fully qualified type name for a given simple type name.
    * @param $type Type name without namespace
    * @return Fully qualified type name (with namespace)
    */
-  function getFullyQualifiedType($type);
+  public function getFullyQualifiedType($type);
 
   /**
    * Get the simple type name for a given fully qualified type name.
    * @param $type Type name with namespace
    * @return Simple type name (without namespace)
    */
-  function getSimpleType($type);
+  public function getSimpleType($type);
 
   /**
    * Load an object from the storage. The object will be attached to the transaction,
@@ -61,7 +61,7 @@ interface PersistenceFacade {
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)
    * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
    */
-  function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE);
+  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE);
 
   /**
    * Construct the template of an object of a given type. The object will be
@@ -73,14 +73,14 @@ interface PersistenceFacade {
    *        (except BuildDepth::INFINITE, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)
    * @return PersistentObject
    */
-  function create($type, $buildDepth=BuildDepth::SINGLE);
+  public function create($type, $buildDepth=BuildDepth::SINGLE);
 
   /**
    * Get the object id of the last created object of a given type.
    * @param $type The type of the object (either fully qualified or simple, if not ambiguous)
    * @return ObjectId or null
    */
-  function getLastCreatedOID($type);
+  public function getLastCreatedOID($type);
 
   /**
    * Get the object ids of objects matching a given criteria. If a PagingInfo instance is passed it will be used and updated.
@@ -90,7 +90,7 @@ interface PersistenceFacade {
    * @param $pagingInfo A reference PagingInfo instance. (default: _null_)
    * @return Array containing the ObjectId instances
    */
-  function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Get the first object id of objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.
@@ -100,7 +100,7 @@ interface PersistenceFacade {
    * @param $pagingInfo A reference PagingInfo instance. (default: _null_)
    * @return ObjectId or null
    */
-  function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  public function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Load the objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.
@@ -112,7 +112,7 @@ interface PersistenceFacade {
    * @param $pagingInfo A reference PagingInfo instance (optional, default: _null_)
    * @return Array containing the PersistentObject instances
    */
-  function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Load the first object matching a given condition. If a PagingInfo instance is passed it will be used and updated.
@@ -124,39 +124,39 @@ interface PersistenceFacade {
    * @param $pagingInfo A reference PagingInfo instance (default: _null_)
    * @return PersistentObject or null
    */
-  function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  public function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Get the current business transaction.
    * @note There is only one transaction instance at the same time.
    * @return Transaction
    */
-  function getTransaction();
+  public function getTransaction();
 
   /**
    * Get the PersistenceMapper for a given type. If no mapper for this type is defined the mapper for type '*' will be returned
    * @param $type The type of the object to get the PersistenceMapper for (either fully qualified or simple, if not ambiguous)
    * @return PersistenceMapper or null on error
    */
-  function getMapper($type);
+  public function getMapper($type);
 
   /**
    * Explicitly set a PersistentMapper for a type
    * @param $type The type to set the mapper for (fully qualified)
    * @param $mapper PersistenceMapper instance
    */
-  function setMapper($type, PersistenceMapper $mapper);
+  public function setMapper($type, PersistenceMapper $mapper);
 
   /**
    * Set logging state for insert/update/delete actions.
    * @param $isLogging Boolean whether logging should be enabled or not
    */
-  function setLogging($isLogging);
+  public function setLogging($isLogging);
 
   /**
    * Check if the PersistenceMapper is logging.
    * @return Boolean whether the PersistenceMapper is logging.
    */
-  function isLogging();
+  public function isLogging();
 }
 ?>

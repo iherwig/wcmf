@@ -10,9 +10,7 @@
  */
 namespace wcmf\application\controller;
 
-use \Exception;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
@@ -65,10 +63,11 @@ class SaveController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $session = ObjectFactory::getInstance('session');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $session = $this->getInstance('session');
     $request = $this->getRequest();
     $response = $this->getResponse();
+    $message = $this->getInstance('message');
 
     // array of all involved nodes
     $nodeArray = array();
@@ -177,7 +176,7 @@ class SaveController extends Controller {
             if (!$isFile || ($isFile && sizeof($curRequestValue) > 0)) {
               try {
                 // validate the new value
-                $curNode->validateValue($curValueName, $curRequestValue);
+                $curNode->validateValue($curValueName, $curRequestValue, $message);
                 if ($this->confirmSaveValue($curNode, $curValueName, $curRequestValue)) {
                   // set the new value
                   $oldValue = $curNode->getValue($curValueName);
@@ -223,7 +222,7 @@ class SaveController extends Controller {
 
       // commit changes
       if ($needCommit && !$response->hasErrors()) {
-        $localization = ObjectFactory::getInstance('localization');
+        $localization = $this->getInstance('localization');
         $saveOids = array_keys($saveOids);
         for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
           $curOidStr = $saveOids[$i];
@@ -269,7 +268,7 @@ class SaveController extends Controller {
         array('currentState' => $currentState)));
       $transaction->rollback();
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       $this->getLogger()->error($ex);
       $response->addError(ApplicationError::fromException($ex));
       $transaction->rollback();
@@ -299,8 +298,10 @@ class SaveController extends Controller {
    * @return The final filename if the upload was successful, null on error
    */
   protected function saveUploadFile(ObjectId $oid, $valueName, array $data) {
-    $response = $this->getResponse();
     if ($data['name'] != '') {
+      $response = $this->getResponse();
+      $message = $this->getInstance('message');
+
       // upload request -> see if upload was succesfull
       if ($data['tmp_name'] != 'none') {
         // create FileUtil instance if not done already
@@ -309,7 +310,7 @@ class SaveController extends Controller {
         }
         // check if file was actually uploaded
         if (!is_uploaded_file($data['tmp_name'])) {
-          $message = Message::get("Possible file upload attack: filename %0%.", array($data['name']));
+          $message = $message->getText("Possible file upload attack: filename %0%.", array($data['name']));
           $response->addError(ApplicationError::get('GENERAL_ERROR', array('message' => $message)));
           return null;
         }
@@ -341,7 +342,7 @@ class SaveController extends Controller {
       }
       else {
         $response->addError(ApplicationError::get('GENERAL_ERROR',
-          array('message' => Message::get("Upload failed for %0%.", array($data['name'])))));
+          array('message' => $message->getText("Upload failed for %0%.", array($data['name'])))));
         return null;
       }
     }
@@ -417,7 +418,7 @@ class SaveController extends Controller {
     else {
       $config = ObjectFactory::getConfigurationInstance();
       if (ObjectId::isValid($oid)) {
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $persistenceFacade = $this->getInstance('persistenceFacade');
         $type = $persistenceFacade->getSimpleType($oid->getType());
         // check if uploadDir.type is defined in the configuration
         if ($type && ($dir = $config->getDirectoryValue('uploadDir.'.$type, 'media')) !== false) {

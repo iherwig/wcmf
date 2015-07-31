@@ -167,19 +167,19 @@ abstract class AbstractUser extends Node implements User {
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value) {
-    parent::validateValue($name, $value);
+  public function validateValue($name, $value, Message $message) {
+    parent::validateValue($name, $value, $message);
 
     // validate the login property
     // the login is expected to be stored in the 'login' value
     if ($name == 'login') {
       if (strlen(trim($value)) == 0) {
-        throw new ValidationException(Message::get("The user requires a login name"));
+        throw new ValidationException($message->getText("The user requires a login name"));
       }
       $principalFactory = ObjectFactory::getInstance('principalFactory');
       $user = $principalFactory->getUser($value);
       if ($user != null && $user->getOID() != $this->getOID()) {
-        throw new ValidationException(Message::get("The login '%0%' already exists", array($value)));
+        throw new ValidationException($message->getText("The login '%0%' already exists", array($value)));
       }
     }
 
@@ -187,7 +187,7 @@ abstract class AbstractUser extends Node implements User {
     // the password is expected to be stored in the 'password' value
     if ($name == 'password') {
       if ($this->getState() == self::STATE_NEW && strlen(trim($value)) == 0) {
-        throw new ValidationException(Message::get("The password can't be empty"));
+        throw new ValidationException($message->getText("The password can't be empty"));
       }
     }
   }

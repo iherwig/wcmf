@@ -12,7 +12,6 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\PersistentIterator;
@@ -75,7 +74,7 @@ class XMLExportController extends BatchController {
 
     // construct initial document info
     if ($request->getAction() != 'continue') {
-      $session = ObjectFactory::getInstance('session');
+      $session = $this->getInstance('session');
 
       $docFile = $request->hasValue('docFile') ? $request->getValue('docFile') : $this->getDownloadFile();
       $docType = $request->hasValue('docType') ? $request->getValue('docType') : $this->_DOCTYPE;
@@ -99,7 +98,8 @@ class XMLExportController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      return array('name' => Message::get('Initialization'), 'size' => 1, 'oids' => array(1), 'callback' => 'initExport');
+      return array('name' => $this->getInstance('message')->getText('Initialization'),
+          'size' => 1, 'oids' => array(1), 'callback' => 'initExport');
     }
     else {
       return null;
@@ -121,8 +121,8 @@ class XMLExportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function initExport($oids) {
-    $session = ObjectFactory::getInstance('session');
-    $cache = ObjectFactory::getInstance('cache');
+    $session = $this->getInstance('session');
+    $cache = $this->getInstance('cache');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
     $filename = $documentInfo['docFile'];
@@ -146,7 +146,7 @@ class XMLExportController extends BatchController {
     $config = ObjectFactory::getConfigurationInstance();
     $rootTypes = $config->getValue('rootTypes', 'application');
     if (is_array($rootTypes)) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $persistenceFacade = $this->getInstance('persistenceFacade');
       foreach($rootTypes as $rootType) {
         $rootOIDs = array_merge($rootOIDs, $persistenceFacade->getOIDs($rootType));
       }
@@ -161,7 +161,9 @@ class XMLExportController extends BatchController {
     $cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $tmp);
 
     // create work package for first root node
-    $this->addWorkPackage(Message::get('Exporting tree: start with %0%', array($nextOID)), 1, array($nextOID), 'exportNodes');
+    $this->addWorkPackage(
+            $this->getInstance('message')->getText('Exporting tree: start with %0%', array($nextOID)),
+            1, array($nextOID), 'exportNodes');
   }
 
   /**
@@ -177,8 +179,10 @@ class XMLExportController extends BatchController {
     // - If the oids array holds one value!=null this is assumed to be an root oid and a new iterator is constructed
     // - If there is no iterator and no oid given, we return
 
-    $session = ObjectFactory::getInstance('session');
-    $cache = ObjectFactory::getInstance('cache');
+    $session = $this->getInstance('session');
+    $cache = $this->getInstance('cache');
+    $message = $this->getInstance('message');
+
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -194,7 +198,7 @@ class XMLExportController extends BatchController {
     }
     // no iterator, no oid, finish
     if ($iterator == null) {
-      $this->addWorkPackage(Message::get('Finish'), 1, array(null), 'finishExport');
+      $this->addWorkPackage($message->getText('Finish'), 1, array(null), 'finishExport');
       return;
     }
 
@@ -225,7 +229,7 @@ class XMLExportController extends BatchController {
       $tmp = null;
       $session->set($this->ITERATOR_ID, $tmp);
 
-      $name = Message::get('Exporting tree: start with %0%', array($nextOID));
+      $name = $message->getText('Exporting tree: start with %0%', array($nextOID));
       $this->addWorkPackage($name, 1, array($nextOID), 'exportNodes');
     }
     elseif ($iterator->valid()) {
@@ -233,12 +237,12 @@ class XMLExportController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = Message::get('Exporting tree: continue with %0%', array($iterator->current()));
+      $name = $message->getText('Exporting tree: continue with %0%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'exportNodes');
     }
     else {
       // finish
-      $this->addWorkPackage(Message::get('Finish'), 1, array(null), 'finishExport');
+      $this->addWorkPackage($message->getText('Finish'), 1, array(null), 'finishExport');
     }
   }
 
@@ -248,8 +252,8 @@ class XMLExportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function finishExport($oids) {
-    $session = ObjectFactory::getInstance('session');
-    $cache = ObjectFactory::getInstance('cache');
+    $session = $this->getInstance('session');
+    $cache = $this->getInstance('cache');
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -295,8 +299,8 @@ class XMLExportController extends BatchController {
    * @return The updated document state
    */
   protected function writeNode($fileHandle, ObjectId $oid, $depth, $documentInfo) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $cache = ObjectFactory::getInstance('cache');
+    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $cache = $this->getInstance('cache');
 
     // load node and get element name
     $node = $persistenceFacade->load($oid);
@@ -356,7 +360,7 @@ class XMLExportController extends BatchController {
    * @return Integer
    */
   protected function getNumUnvisitedChildren(Node $node) {
-    $cache = ObjectFactory::getInstance('cache');
+    $cache = $this->getInstance('cache');
     $exportedOids = $cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
 
     $childOIDs = array();

@@ -330,7 +330,8 @@ class DefaultPersistentObject implements PersistentObject {
   public function setValue($name, $value, $forceSet=false, $trackChange=true) {
     if (!$forceSet) {
       try {
-        $this->validateValue($name, $value);
+        $message = ObjectFactory::getInstance('message');
+        $this->validateValue($name, $value, $message);
       }
       catch(ValidationException $ex) {
         $msg = "Invalid value (".$value.") for ".$this->getOID().".".$name.": ".$ex->getMessage();
@@ -383,13 +384,13 @@ class DefaultPersistentObject implements PersistentObject {
   /**
    * @see PersistentObject::validateValues()
    */
-  public function validateValues() {
+  public function validateValues(Message $message) {
     $errorMessage = '';
     $iter = new NodeValueIterator($this, false);
     for($iter->rewind(); $iter->valid(); $iter->next()) {
       $curNode = $iter->currentNode();
       try {
-        $curNode->validateValue($iter->key(), $iter->current());
+        $curNode->validateValue($iter->key(), $iter->current(), $message);
       }
       catch (ValidationException $ex) {
         $errorMessage .= $ex->getMessage()."\n";
@@ -403,8 +404,8 @@ class DefaultPersistentObject implements PersistentObject {
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value) {
-    $this->validateValueAgainstValidateType($name, $value);
+  public function validateValue($name, $value, Message $message) {
+    $this->validateValueAgainstValidateType($name, $value, $message);
   }
 
   /**
@@ -413,24 +414,25 @@ class DefaultPersistentObject implements PersistentObject {
    * Throws a ValidationException if the valud is not valid.
    * @param $name The name of the item to set.
    * @param $value The value of the item.
+   * @param $message The Message instance used to provide translations.
    */
-  protected function validateValueAgainstValidateType($name, $value) {
+  protected function validateValueAgainstValidateType($name, $value, Message $message) {
     $validateType = $this->getValueProperty($name, 'validate_type');
-    if (($validateType == '' || Validator::validate($value, $validateType))) {
+    if (($validateType == '' || Validator::validate($value, $validateType, $message))) {
       return;
     }
     // construct the error message
-    $errorMessage = Message::get("Wrong value for %0% (%1%). ", array($name, $value));
+    $errorMessage = $message->getText("Wrong value for %0% (%1%). ", array($name, $value));
 
     // use configured message if existing
     $validateDescription = $this->getValueProperty($name, 'validate_description');
     if (strlen($validateDescription) > 0) {
-      $errorMessage .= Message::get($validateDescription);
+      $errorMessage .= $validateDescription;
     }
     else {
       // construct default message
       if (strlen($validateType) > 0) {
-        $errorMessage .= Message::get("The value must match %0%.", array($validateType));
+        $errorMessage .= $message->getText("The value must match %0%.", array($validateType));
       }
     }
     throw new ValidationException($errorMessage);
@@ -563,38 +565,6 @@ class DefaultPersistentObject implements PersistentObject {
    */
   public function getDisplayValue() {
     return $this->getOID()->__toString();
-  }
-
-  /**
-   * @see PersistentObject::getObjectDisplayName()
-   * @note Subclasses will override this for special application requirements
-   */
-  public function getObjectDisplayName() {
-    return Message::get($this->getType());
-  }
-
-  /**
-   * @see PersistentObject::getObjectDescription()
-   * @note Subclasses will override this for special application requirements
-   */
-  public function getObjectDescription() {
-    return Message::get($this->getType());
-  }
-
-  /**
-   * @see PersistentObject::getValueDisplayName()
-   * @note Subclasses will override this for special application requirements
-   */
-  public function getValueDisplayName($name) {
-    return Message::get($name);
-  }
-
-  /**
-   * @see PersistentObject::getValueDescription()
-   * @note Subclasses will override this for special application requirements
-   */
-  public function getValueDescription($name) {
-    return Message::get($name);
   }
 
   /**
