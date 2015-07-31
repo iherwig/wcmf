@@ -183,7 +183,7 @@ class URIUtil {
    */
   public static function normalize($paths) {
     return preg_replace(
-            array("/\\\\/", "{^[^:]+:}", ), array('/', ''),
+            array("/\\\\/", "/^[^:]{1}:/", ), array('/', ''),
             $paths);
 
   }
