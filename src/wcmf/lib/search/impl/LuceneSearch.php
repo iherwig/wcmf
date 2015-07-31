@@ -132,17 +132,20 @@ class LuceneSearch implements IndexedSearch {
             $valueNames = $obj->getValueNames(true);
             foreach ($valueNames as $curValueName) {
               $inputType = $obj->getValueProperty($curValueName, 'input_type');
-              $value = $this->encodeValue($obj->getValue($curValueName), $inputType);
-              if (strlen($value) > 0) {
-                $highlighted = @$query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
-                $matches = array();
-                if (preg_match($highlightedRegex, $highlighted, $matches)) {
-                  $hitStr = $matches[3];
-                  $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
-                  $highlighted = trim(preg_replace('/&#13;|[\n\r\t]/', ' ', $highlighted));
-                  $excerpt = StringUtil::excerpt($highlighted, $hitStr, 300, '');
-                  $summary = $excerpt;
-                  break;
+              $value = $obj->getValue($curValueName);
+              if (!is_object($value) && !is_array($value)) {
+                $value = $this->encodeValue($value, $inputType);
+                if (strlen($value) > 0) {
+                  $highlighted = @$query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
+                  $matches = array();
+                  if (preg_match($highlightedRegex, $highlighted, $matches)) {
+                    $hitStr = $matches[3];
+                    $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
+                    $highlighted = trim(preg_replace('/&#13;|[\n\r\t]/', ' ', $highlighted));
+                    $excerpt = StringUtil::excerpt($highlighted, $hitStr, 300, '');
+                    $summary = $excerpt;
+                    break;
+                  }
                 }
               }
             }
@@ -237,15 +240,18 @@ class LuceneSearch implements IndexedSearch {
 
         foreach ($valueNames as $curValueName) {
           $inputType = $indexObj->getValueProperty($curValueName, 'input_type');
-          $value = $this->encodeValue($indexObj->getValue($curValueName), $inputType);
-          if (preg_match('/^text|^f?ckeditor/', $inputType)) {
-            $value = strip_tags($value);
-            $doc->addField(\Zend_Search_Lucene_Field::unStored($curValueName, $value, 'UTF-8'));
-          }
-          else {
-            $field = \Zend_Search_Lucene_Field::keyword($curValueName, $value, 'UTF-8');
-            $field->isStored = false;
-            $doc->addField($field);
+          $value = $indexObj->getValue($curValueName);
+          if (!is_object($value) && !is_array($value)) {
+            $value = $this->encodeValue($value, $inputType);
+            if (preg_match('/^text|^f?ckeditor/', $inputType)) {
+              $value = strip_tags($value);
+              $doc->addField(\Zend_Search_Lucene_Field::unStored($curValueName, $value, 'UTF-8'));
+            }
+            else {
+              $field = \Zend_Search_Lucene_Field::keyword($curValueName, $value, 'UTF-8');
+              $field->isStored = false;
+              $doc->addField($field);
+            }
           }
         }
 
