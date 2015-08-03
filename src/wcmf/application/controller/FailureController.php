@@ -39,7 +39,7 @@ class FailureController extends Controller {
   function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $response->setValue('errors', $request->getErrors());
+    $response->setErrors($request->getErrors());
     $response->setContext('');
     $response->setAction('ok');
   }

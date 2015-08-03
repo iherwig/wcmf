@@ -11,6 +11,7 @@
 namespace wcmf\lib\i18n\impl;
 
 use wcmf\lib\i18n\Message;
+use wcmf\lib\io\FileUtil;
 
 /**
  * FileMessage retrieves localized messages from files, that are
@@ -45,7 +46,7 @@ class FileMessage implements Message {
    * @param $language
    */
   public function __construct($localeDir, $language='') {
-    $this->_localeDir = $localeDir;
+    $this->_localeDir = FileUtil::realpath(WCMF_BASE.$localeDir).'/';
     if (strlen($language) > 0) {
       $this->_language = $language;
     }
