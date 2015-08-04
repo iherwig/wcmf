@@ -10,11 +10,14 @@
  */
 namespace wcmf\lib\persistence\impl;
 
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
+use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
 
 /**
@@ -29,6 +32,20 @@ class NullMapper implements PersistenceMapper {
    */
   public function getType() {
     return 'NULLType';
+  }
+
+  /**
+   * @see PersistenceMapper::getTypeDisplayName()
+   */
+  public function getTypeDisplayName(Message $message) {
+    return $message->getText('NULLType');
+  }
+
+  /**
+   * @see PersistenceMapper::getTypeDescription()
+   */
+  public function getTypeDescription(Message $message) {
+    return '';
   }
 
   /**
@@ -106,6 +123,20 @@ class NullMapper implements PersistenceMapper {
    */
   public function getAttribute($name) {
     return null;
+  }
+
+  /**
+   * @see PersistenceMapper::getAttributeDisplayName()
+   */
+  public function getAttributeDisplayName($name, Message $message) {
+    return $name;
+  }
+
+  /**
+   * @see PersistenceMapper::getAttributeDescription()
+   */
+  public function getAttributeDescription($name, Message $message) {
+    return '';
   }
 
   /**

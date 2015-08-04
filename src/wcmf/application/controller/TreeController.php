@@ -173,7 +173,8 @@ class TreeController extends Controller {
    */
   protected function getDisplayText(Node $node) {
     if ($this->isRootTypeNode($node->getOID())) {
-      return $node->getObjectDisplayName();
+      $mapper = $node->getMapper();
+      return $mapper->getTypeDisplayName(ObjectFactory::getInstance('message'));
     }
     else {
       return strip_tags(preg_replace("/[\r\n']/", " ", NodeUtil::getDisplayValue($node)));
