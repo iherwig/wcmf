@@ -275,14 +275,14 @@ class PersistentObjectProxy implements PersistentObject {
    * @see PersistentObject::validateValues()
    */
   public function validateValues(Message $message) {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, array($message));
   }
 
   /**
    * @see PersistentObject::validateValue()
    */
   public function validateValue($name, $value, Message $message) {
-    return $this->__call(__FUNCTION__, array($name, $value));
+    return $this->__call(__FUNCTION__, array($name, $value, $message));
   }
 
   /**

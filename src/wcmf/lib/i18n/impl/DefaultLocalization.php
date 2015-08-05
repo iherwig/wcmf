@@ -137,6 +137,7 @@ class DefaultLocalization implements Localization {
    */
   public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true) {
     $translatedObject = $this->loadTranslationImpl($object, $lang, $useDefaults);
+    $object->setProperty(__CLASS__.'.loaded', true);
 
     // recurse if requested
     if ($recursive) {
@@ -149,8 +150,8 @@ class DefaultLocalization implements Localization {
             $children = $relation->isMultiValued() ? $childValue : array($childValue);
             foreach ($children as $child) {
               // don't resolve proxies
-              if (!($child instanceof PersistentObjectProxy)) {
-                $translatedChild = $this->loadTranslationImpl($child, $lang, $useDefaults);
+              if (!($child instanceof PersistentObjectProxy) && $child->getProperty(__CLASS__.'.loaded') !== true) {
+                $translatedChild = $this->loadTranslation($child, $lang, $useDefaults, $recursive);
                 $translatedObject->addNode($translatedChild, $role);
               }
             }
@@ -217,7 +218,7 @@ class DefaultLocalization implements Localization {
         if ($obj->getOID() != $object->getOID()) {
           // don't resolve proxies
           if (!($obj instanceof PersistentObjectProxy)) {
-            $this->saveTranslationImpl($obj, $lang);
+            $this->saveTranslation($obj, $lang, $recursive);
           }
         }
       }
