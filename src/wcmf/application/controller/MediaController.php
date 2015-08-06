@@ -89,6 +89,14 @@ class MediaController extends Controller {
     $rootUrl = URIUtil::makeAbsolute($relRootPath, $refURL);
 
     // requested directory (ElFinder expects DIRECTORY_SEPARATOR)
+    if (!is_dir($request->getValue('directory'))) {
+      // empty if not valid
+      $request->clearValue('directory');
+    }
+    else {
+      // force ElFinder to use directory parameter
+      $request->setValue('target', '');
+    }
     $directory = $request->hasValue('directory') ? $request->getValue('directory') : $rootPath;
     $absDirectory = FileUtil::realpath($directory).'/';
 
@@ -119,7 +127,8 @@ class MediaController extends Controller {
 
       // run elFinder
       $connector = new ElFinderConnector(new ElFinder($opts));
-      $connector->run($_GET);
+      $queryParams = $request->getValues();
+      $connector->run($queryParams);
 
       // unreachable, since elFinder calls exit()
       $response->setAction('ok');
