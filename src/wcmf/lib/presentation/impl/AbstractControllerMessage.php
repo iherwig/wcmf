@@ -82,7 +82,7 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * @see Message::setContext()
    */
-  function setContext($context) {
+  public function setContext($context) {
     $this->_context = $context;
   }
 

@@ -241,10 +241,13 @@ class FileUtil {
       $parts = array_filter(explode("/", $path), 'strlen');
       $absolutes = array();
       foreach ($parts as $part) {
-        if ('.' == $part) continue;
+        if ('.' == $part) {
+          continue;
+        }
         if ('..' == $part) {
           array_pop($absolutes);
-        } else {
+        }
+        else {
           $absolutes[] = $part;
         }
       }

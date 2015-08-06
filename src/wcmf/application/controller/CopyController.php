@@ -484,4 +484,3 @@ class CopyController extends BatchController {
   }
 }
 ?>
-

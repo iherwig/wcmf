@@ -57,7 +57,7 @@ class ConcurrencyController extends Controller {
   /**
    * @see Controller::validate()
    */
-  function validate() {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $oid = ObjectId::parse($request->getValue('oid'));
@@ -77,7 +77,7 @@ class ConcurrencyController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  function doExecute() {
+  protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $concurrencyManager = $this->getInstance('concurrencyManager');
@@ -105,4 +105,3 @@ class ConcurrencyController extends Controller {
   }
 }
 ?>
-

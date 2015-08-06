@@ -374,7 +374,7 @@ class PersistentObjectProxy implements PersistentObject {
    * Get a string representation of the instance.
    * @return String
    */
-  function __toString() {
+  public function __toString() {
     return 'Proxy_'.$this->_oid->__toString();
   }
 }

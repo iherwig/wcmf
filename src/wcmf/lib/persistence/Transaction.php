@@ -26,68 +26,68 @@ interface Transaction {
    * @param $object PersistentObject instance
    * @return PersistentObject instance
    */
-  function registerLoaded(PersistentObject $object);
+  public function registerLoaded(PersistentObject $object);
 
   /**
    * Register a newly created object
    * @param $object PersistentObject instance
    */
-  function registerNew(PersistentObject $object);
+  public function registerNew(PersistentObject $object);
 
   /**
    * Register a dirty object.
    * @param $object PersistentObject instance
    */
-  function registerDirty(PersistentObject $object);
+  public function registerDirty(PersistentObject $object);
 
   /**
    * Register a deleted object.
    * @param $object PersistentObject instance
    */
-  function registerDeleted(PersistentObject $object);
+  public function registerDeleted(PersistentObject $object);
 
   /**
    * Set the transaction active (object changes will be recorded).
    */
-  function begin();
+  public function begin();
 
   /**
    * Commit the object changes to the storage.
    * Sets the transaction to inactive.
    * @return Map of oid changes (key: oid string before commit, value: oid string after commit)
    */
-  function commit();
+  public function commit();
 
   /**
    * Discard the object changes.
    * Sets the transaction to inactive.
    */
-  function rollback();
+  public function rollback();
 
   /**
    * Check if the transaction is active.
    * @return Boolean
    */
-  function isActive();
+  public function isActive();
 
   /**
    * Get a loaded object.
    * @param $oid ObjectId of the object
    * @return PersistentObject instance or null if not loaded yet
    */
-  function getLoaded(ObjectId $oid);
+  public function getLoaded(ObjectId $oid);
 
   /**
    * Detach an object from the transaction. All local changes will not
    * be stored. Afterwards the object is unknown to the transaction.
    * @param $oid The object id of the object
    */
-  function detach(ObjectId $oid);
+  public function detach(ObjectId $oid);
 
   /**
    * Get all objects currently involved in the transaction
    * @return Array of PersistentObject instances
    */
-  function getObjects();
+  public function getObjects();
 }
 ?>

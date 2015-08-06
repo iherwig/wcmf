@@ -27,18 +27,18 @@ interface Format {
    * Get the MIME type of the format
    * @return String
    */
-  function getMimeType();
+  public function getMimeType();
 
   /**
    * Deserialize Request data from the external representation into Nodes and scalars/arrays.
    * @param $request A reference to the Request instance
    */
-  function deserialize(Request $request);
+  public function deserialize(Request $request);
 
   /**
    * Serialize Response data according to the external representation.
    * @param $response A reference to the Response instance
    */
-  function serialize(Response $response);
+  public function serialize(Response $response);
 }
 ?>

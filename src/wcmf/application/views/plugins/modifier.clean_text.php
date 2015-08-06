@@ -25,4 +25,3 @@ function smarty_modifier_clean_text($text) {
   return trim($text);
 }
 ?>
-

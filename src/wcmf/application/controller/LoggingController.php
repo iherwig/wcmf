@@ -78,4 +78,3 @@ class LoggingController extends Controller {
   }
 }
 ?>
-

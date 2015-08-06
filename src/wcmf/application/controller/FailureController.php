@@ -36,7 +36,7 @@ class FailureController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  function doExecute() {
+  protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $response->setErrors($request->getErrors());

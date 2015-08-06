@@ -239,4 +239,3 @@ class MultipleActionController extends Controller {
   }
 }
 ?>
-

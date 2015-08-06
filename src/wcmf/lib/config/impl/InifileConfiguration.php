@@ -585,8 +585,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       }
       else {
         foreach(array_keys($array2[$key]) as $subkey) {
-          if ((array_key_exists($subkey, $result[$key]) && $override) || !isset($result[$key][$subkey]))
+          if ((array_key_exists($subkey, $result[$key]) && $override) || !isset($result[$key][$subkey])) {
             $result[$key][$subkey] = $array2[$key][$subkey];
+          }
         }
       }
     }

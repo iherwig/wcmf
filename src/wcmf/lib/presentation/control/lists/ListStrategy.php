@@ -25,14 +25,13 @@ interface ListStrategy {
    *                 default is Localization::getDefaultLanguage()
    * @return An assoziative array containing the key/value pairs
    */
-  function getList($options, $language=null);
+  public function getList($options, $language=null);
 
   /**
    * Check if the list values are static or changing.
    * @param $options Associative array of implementation specific configuration
    * @return Boolean
    */
-  function isStatic($options);
-
+  public function isStatic($options);
 }
 ?>

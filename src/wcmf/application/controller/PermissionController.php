@@ -106,7 +106,7 @@ class PermissionController extends Controller {
   /**
    * @see Controller::validate()
    */
-  function validate() {
+  protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $invalidParameters = array();

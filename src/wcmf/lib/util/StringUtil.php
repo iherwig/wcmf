@@ -175,29 +175,39 @@ class StringUtil {
     $p = 0;
     $l = strlen($string);
     while ($p < $l) {
-      while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) $p++;
+      while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) {
+        $p++;
+      }
       if ($string[$p] == '"') {
         $p++;
         $q = $p;
         while (($p < $l) && ($string[$p] != '"')) {
-          if ($string[$p] == '\\') { $p+=2; continue; }
+          if ($string[$p] == '\\') {
+            $p+=2; continue;
+          }
           $p++;
         }
         $r[] = stripslashes(substr($string, $q, $p-$q));
         $p++;
-        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) $p++;
+        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) {
+          $p++;
+        }
         $p++;
       }
       else if ($string[$p] == "'") {
         $p++;
         $q = $p;
         while (($p < $l) && ($string[$p] != "'")) {
-          if ($string[$p] == '\\') { $p+=2; continue; }
+          if ($string[$p] == '\\') {
+            $p+=2; continue;
+          }
           $p++;
         }
         $r[] = stripslashes(substr($string, $q, $p-$q));
         $p++;
-        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) $p++;
+        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) {
+          $p++;
+        }
         $p++;
       }
       else {
@@ -206,7 +216,9 @@ class StringUtil {
           $p++;
         }
         $r[] = stripslashes(trim(substr($string, $q, $p-$q)));
-        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) $p++;
+        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) {
+          $p++;
+        }
         $p++;
       }
     }

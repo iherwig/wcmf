@@ -185,7 +185,6 @@ class URIUtil {
     return preg_replace(
             array("/\\\\/", "/^[^:]{1}:/", ), array('/', ''),
             $paths);
-
   }
 }
 ?>

@@ -26,6 +26,6 @@ interface ValidateType {
    * @param $options Optional implementation specific options passed as an associative array
    * @return Boolean
    */
-  function validate($value, Message $message, $options=null);
+  public function validate($value, Message $message, $options=null);
 }
 ?>

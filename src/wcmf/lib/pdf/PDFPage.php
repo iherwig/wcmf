@@ -24,6 +24,6 @@ abstract class PDFPage {
    * @param $page The page number in the pdf document
    * @param $data An optional data object to get data from.
    */
-  function render($pdf, $page, $data=null);
+  public function render($pdf, $page, $data=null);
 }
 ?>

@@ -23,4 +23,3 @@ function smarty_modifier_utf8encode($text) {
   return htmlspecialchars(utf8_encode($text));
 }
 ?>
-

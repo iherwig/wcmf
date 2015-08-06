@@ -32,7 +32,7 @@ class PDF extends FPDI {
   /**
    * Overriden to set the template on the page
    */
-  function Header() {
+  public function Header() {
     parent::Header();
     $this->useTemplate($this->tpl);
   }
@@ -40,7 +40,7 @@ class PDF extends FPDI {
   /**
    * Call this method when rendering a new page
    */
-  function startPage() {
+  public function startPage() {
     $this->_pageStarted = true;
     $this->_pageEnded = false;
   }
@@ -48,7 +48,7 @@ class PDF extends FPDI {
   /**
    * Call this method when rendering a page finished
    */
-  function endPage() {
+  public function endPage() {
     $this->_pageEnded = true;
     $this->_pageStarted = false;
   }
@@ -57,7 +57,7 @@ class PDF extends FPDI {
    * Determine if a new page started
    * @return Boolean
    */
-  function isPageStarted() {
+  public function isPageStarted() {
     return $this->_pageStarted;
   }
 
@@ -65,7 +65,7 @@ class PDF extends FPDI {
    * Determine if a page finished
    * @return Boolean
    */
-  function isPageEnded() {
+  public function isPageEnded() {
     return $this->_pageEnded;
   }
 
@@ -73,7 +73,7 @@ class PDF extends FPDI {
    * Move the render position down by given units
    * @param $units The number of units to move
    */
-  function moveDown($units) {
+  public function moveDown($units) {
     $this->SetY($units+$this->GetY());
   }
 
@@ -81,7 +81,7 @@ class PDF extends FPDI {
    * Move the render position right by given units
    * @param $units The number of units to move
    */
-  function moveRight($units) {
+  public function moveRight($units) {
     $this->SetX($units+$this->GetX());
   }
 
@@ -91,7 +91,7 @@ class PDF extends FPDI {
    * @param $width The width
    * @param $text The text
    */
-  function numberOfLines($width, $text) {
+  public function numberOfLines($width, $text) {
     $nbLines = 0;
     $lines = preg_split('/\n/', $text);
     foreach ($lines as $line) {
@@ -110,7 +110,7 @@ class PDF extends FPDI {
    * @param $h The height
    * @return Boolean whether a new page was inserted or not
    */
-  function CheckPageBreak($h) {
+  public function CheckPageBreak($h) {
     if($this->GetY()+$h>$this->PageBreakTrigger) {
       $this->AddPage($this->CurOrientation);
       return true;
@@ -123,7 +123,7 @@ class PDF extends FPDI {
    * @param $w The width
    * @param $txt The text
    */
-  function NbLines($w, $txt) {
+  public function NbLines($w, $txt) {
     $cw=&$this->CurrentFont['cw'];
     if($w==0) {
       $w=$this->w-$this->rMargin-$this->x;

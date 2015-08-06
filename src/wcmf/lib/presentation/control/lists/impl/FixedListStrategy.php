@@ -43,7 +43,6 @@ class FixedListStrategy implements ListStrategy {
     }
     $items = $options['items'];
 
-
     // check if we have an array variable or a list definition
     if (!is_array($items) && strPos($options, '$') === 0) {
       $items = $GLOBALS[subStr($options, 1)];
