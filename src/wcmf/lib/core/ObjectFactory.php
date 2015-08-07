@@ -65,6 +65,7 @@ class ObjectFactory {
    * @param $configuration Configuration instance used to construct instances.
    */
   public static function configure(Configuration $configuration) {
+    // TODO get additional interfaces from configuration
     self::$_configuration = $configuration;
   }
 
@@ -77,6 +78,14 @@ class ObjectFactory {
       throw new ConfigurationException('No Configuration instance provided. Do this by calling the configure() method.');
     }
     return self::$_configuration;
+  }
+
+  /**
+   * Add interfaces that instances must implement.
+   * @param $interfaces Associative array with instance names as keys and interface names as values.
+   */
+  public static function addInterfaces(array $interfaces) {
+    self::$_requiredInterfaces = array_merge(self::$_requiredInterfaces, $interfaces);
   }
 
   /**
@@ -109,6 +118,23 @@ class ObjectFactory {
   }
 
   /**
+   * Create an instance of a class. Instances created with this method are not shared.
+   * @param $class The name of the class
+   * @param $dynamicConfiguration Associative array with key value pairs for
+   * dynamic instance properties (optional)
+   * @return Object
+   */
+  public static function getClassInstance($class, $dynamicConfiguration=array()) {
+    $configuration = array_merge(array(
+        '__class' => $class,
+        '__shared' => false
+    ), $dynamicConfiguration);
+
+    $instance = self::createInstance($class, $configuration, null);
+    return $instance;
+  }
+
+  /**
    * Register a shared instance with a given name.
    * @param $name The name of the instance.
    * @param $instance The instance
@@ -136,11 +162,13 @@ class ObjectFactory {
   /**
    * Create an instance from the given configuration array.
    * @param $name The name by which the instance may be retrieved later
-   * using ObjectFactory::getInstance()
+   * using ObjectFactory::getInstance(). The name is also used to check the interface
+   * (see ObjectFactory::addInterfaces())
    * @param $configuration Associative array with key value pairs for instance properties
    * passed to the constructor, setters or public properties and the special keys '__class'
    * (optional, denotes the instance class name), '__shared' (optional, if true, the
    * instance may be reused using ObjectFactory::getInstance())
+   * @param $instanceKey The name under which the instance is registered for later retrieval
    * @return Object
    */
   private static function createInstance($name, $configuration, $instanceKey) {
@@ -162,11 +190,14 @@ class ObjectFactory {
           foreach ($refParameters as $param) {
             $paramName = $param->name;
             if (isset($configuration[$paramName])) {
+              // parameter is explicitly defined in instance configuration
               $cParams[$paramName] = self::resolveValue($configuration[$paramName]);
             }
             elseif (self::$_configuration->hasSection($paramName)) {
+              // parameter exists in configuration
               $cParams[$paramName] = self::getInstance($paramName);
             }
+            // TODO check for class satisfying the dependency or throw exception
           }
         }
 
