@@ -146,7 +146,7 @@ class NodeUtil {
    * If search for 'display_value' gives no result the function returns an empty string.
    * Example: 'name|text' shows the name of the Node together with the content of the text attribute
    * @param $node A reference to the Node to display
-   * @param $language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
+   * @param $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
    * @note The display type is configured via the display_type property of a value. It describes how the value should be displayed.
    *       The description is of the form @code type @endcode or @code type[attributes] @endcode
    *       - type: text|image|link
@@ -160,7 +160,7 @@ class NodeUtil {
   /**
    * Does the same as NodeUtil::getDisplayValue but returns the display value as associative array
    * @param $node A reference to the Node to display
-   * @param $language The lanugage if values should be localized. Optional, default is Localization::getDefaultLanguage()
+   * @param $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
    * @return The display array
    */
   public static function getDisplayValues(Node $node, $language=null) {
@@ -174,16 +174,15 @@ class NodeUtil {
     $displayValueDef = $node->getProperty('display_value');
     if (strlen($displayValueDef) > 0) {
       $displayValuesNames = preg_split('/\|/', $displayValueDef);
+      $mapper = $node->getMapper();
       foreach($displayValuesNames as $displayValueName) {
         $inputType = ''; // needed for the translation of a list value
         if ($displayValueName != '') {
-          $curNode = $node;
-          $mapper = $curNode->getMapper();
           if ($mapper->hasAttribute($displayValueName)) {
             $attribute = $mapper->getAttribute($displayValueName);
             $inputType = $attribute->getInputType();
-            $tmpDisplay = $curNode->getValue($displayValueName);
           }
+          $tmpDisplay = $node->getValue($displayValueName);
         }
 
         // translate any list value
