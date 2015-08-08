@@ -30,8 +30,8 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
   /**
    * Replace backticks in the given sql string by the actual quote char
    * used in the connection
-   * @param $type The type defining the connection parameters
    * @param $sql
+   * @param $type The type defining the connection parameters
    * @return String
    */
   protected function fixQueryQuotes($sql, $type) {

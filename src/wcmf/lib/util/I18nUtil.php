@@ -116,10 +116,12 @@ class I18nUtil {
    * @return Boolean whether successful or not.
    */
   public static function createPHPLanguageFile($language, $messages) {
+    $fileUtil = new FileUtil();
+
     // get locale directory
     $config = ObjectFactory::getConfigurationInstance();
     $localeDir = $config->getDirectoryValue('localeDir', 'application');
-    FileUtil::mkdirRec($localeDir);
+    $fileUtil->mkdirRec($localeDir);
     $file = $localeDir.'messages_'.$language.'.php';
 
     // backup old file

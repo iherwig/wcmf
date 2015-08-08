@@ -168,23 +168,6 @@ class NullMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceMapper::enableLogging()
-   */
-  public function enableLogging(OutputStrategy $logStrategy) {}
-
-  /**
-   * @see PersistenceMapper::disableLogging()
-   */
-  public function disableLogging() {}
-
-  /**
-   * @see PersistenceMapper::isLogging()
-   */
-  public function isLogging() {
-    return false;
-  }
-
-  /**
    * @see PersistenceMapper::load()
    */
   public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {

@@ -33,7 +33,6 @@ use wcmf\lib\security\AuthorizationException;
  */
 abstract class AbstractMapper implements PersistenceMapper {
 
-  private $_logging = false;
   private $_logStrategy = null;
 
   private $_attributeNames = array();
@@ -48,6 +47,14 @@ abstract class AbstractMapper implements PersistenceMapper {
     if (self::$_logger == null) {
       self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
+  }
+
+  /**
+   * Set the OutputStrategy used for logging persistence actions.
+   * @param $logStrategy
+   */
+  public function setLogStrategy(OutputStrategy $logStrategy) {
+    $this->_logStrategy = $logStrategy;
   }
 
   /**
@@ -82,37 +89,6 @@ abstract class AbstractMapper implements PersistenceMapper {
       }
     }
     return false;
-  }
-
-  /**
-   * @see PersistenceMapper::enableLogging()
-   */
-  public function enableLogging(OutputStrategy $logStrategy) {
-    $this->_logStrategy = $logStrategy;
-    $this->_logging = true;
-  }
-
-  /**
-   * @see PersistenceMapper::disableLogging()
-   */
-  public function disableLogging() {
-    $this->_logging = false;
-  }
-
-  /**
-   * @see PersistenceMapper::isLogging()
-   */
-  public function isLogging() {
-    return $this->_logging;
-  }
-
-  /**
-   * @see PersistenceMapper::logAction()
-   */
-  public function logAction(PersistentObject $obj) {
-    if ($this->isLogging()) {
-      $this->_logStrategy->writeObject($obj);
-    }
   }
 
   /**
@@ -320,6 +296,16 @@ abstract class AbstractMapper implements PersistenceMapper {
       return $result;
     }
     return null;
+  }
+
+  /**
+   * Log the state of the given object
+   * @param $obj PersistentObject instance
+   */
+  protected function logAction(PersistentObject $obj) {
+    if ($this->_logStrategy) {
+      $this->_logStrategy->writeObject($obj);
+    }
   }
 
   /**

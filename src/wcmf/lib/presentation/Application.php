@@ -10,14 +10,9 @@
  */
 namespace wcmf\lib\presentation;
 
-use wcmf\lib\config\impl\InifileConfiguration;
-use wcmf\lib\core\ClassLoader;
 use wcmf\lib\core\ErrorHandler;
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
-
-new ClassLoader(WCMF_BASE);
 
 /**
  * Application is the main application class, that does all the initialization.
@@ -35,28 +30,13 @@ class Application {
 
   /**
    * Constructor
-   * @param $configPath The path where config files reside (as seen from the entry script) (optional, default: 'config/')
-   * @param $mainConfigFile The main configuration file to use (optional, default: 'config.ini')
    */
-  public function __construct($configPath='../config/', $mainConfigFile='config.ini') {
+  public function __construct() {
     $this->_startTime = microtime(true);
-
-    // create logger
     if (self::$_logger == null) {
-      self::$_logger = new \wcmf\lib\core\impl\Log4phpLogger(__CLASS__, $configPath.'log4php.php');
+      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
-
     ob_start(array($this, "outputHandler"));
-
-    // setup logging
-    $logManager = new LogManager(self::$_logger);
-    ObjectFactory::registerInstance('logManager', $logManager);
-
-    // setup configuration
-    $config = new InifileConfiguration($configPath);
-    $config->addConfiguration($mainConfigFile);
-    ObjectFactory::configure($config);
-
     new ErrorHandler();
   }
 
@@ -108,7 +88,7 @@ class Application {
     // load event listeners
     $listeners = $config->getValue('listeners', 'application');
     foreach ($listeners as $key) {
-      $listener = ObjectFactory::getInstance($key);
+      ObjectFactory::getInstance($key);
     }
 
     // set timezone

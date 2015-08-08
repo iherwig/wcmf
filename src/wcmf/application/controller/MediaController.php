@@ -81,10 +81,12 @@ class MediaController extends Controller {
   protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
+    
+    $fileUtil = new FileUtil();
 
     // get root path and root url for the browser
     $rootPath = $this->getResourceBaseDir();
-    $relRootPath = URIUtil::makeRelative($rootPath, dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])));
+    $relRootPath = URIUtil::makeRelative($rootPath, dirname($fileUtil->realpath($_SERVER['SCRIPT_FILENAME'])));
     $refURL = dirname(URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']).'/';
     $rootUrl = URIUtil::makeAbsolute($relRootPath, $refURL);
 
@@ -98,7 +100,7 @@ class MediaController extends Controller {
       $request->setValue('target', '');
     }
     $directory = $request->hasValue('directory') ? $request->getValue('directory') : $rootPath;
-    $absDirectory = FileUtil::realpath($directory).'/';
+    $absDirectory = $fileUtil->realpath($directory).'/';
 
     // set common response values
     if ($request->hasValue('fieldName')) {

@@ -45,6 +45,7 @@ class FileListStrategy implements ListStrategy {
     $paths = $options['paths'];
     $pattern = isset($options['pattern']) ? '/'.$options['pattern'].'/' : '/./';
 
+    $fileUtil = new FileUtil();
     $list = array();
     foreach ($paths as $path) {
       $recursive = preg_match('/\/\*$/', $path);
@@ -54,7 +55,7 @@ class FileListStrategy implements ListStrategy {
       // if multiple directories or recursive, we show the complete file path
       $prependDirectory = sizeof($paths) > 1 || $recursive;
 
-      $files = FileUtil::getFiles($path, $pattern, $prependDirectory, $recursive);
+      $files = $fileUtil->getFiles($path, $pattern, $prependDirectory, $recursive);
       foreach ($files as $file) {
         $list[$file] = $file;
       }

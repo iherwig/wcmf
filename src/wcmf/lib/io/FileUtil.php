@@ -30,36 +30,33 @@ class FileUtil {
    * @return The filename of the uploaded file
    */
   public static function uploadFile($mediaFile, $destName, $mimeTypes=null, $override=true) {
-    $filename = null;
     $message = ObjectFactory::getInstance('message');
 
     // check if the file was uploaded
-    if (is_uploaded_file($mediaFile['tmp_name'])) {
-      // check mime type
-      if ($mimeTypes == null || in_array($mediaFile['type'], $mimeTypes)) {
-        // check if we need a new name
-        if ($override == false && file_exists($destName)) {
-          $pieces = preg_split('/\./', basename($destName));
-          $extension = array_pop($pieces);
-          $name = join('.', $pieces);
-          $destName = dirname($destName)."/".$name.uniqid(rand()).".".$extension;
-        }
-        $result = move_uploaded_file($mediaFile['tmp_name'], $destName);
-        if ($result === false) {
-          throw new IOException("Failed to move %0% to %1%.", array($mediaFile['tmp_name'], $destName));
-        }
-        chmod($destName, 0644);
-        $filename = basename($destName);
-      }
-      else {
-        throw new IOException($message->getText("File '%0%' has wrong mime type: %1%. Allowed types: %2%.",
-          array($mediaFile['name'], $mediaFile['type'], join(", ", $mimeTypes))));
-      }
-    }
-    else {
+    if (!is_uploaded_file($mediaFile['tmp_name'])) {
       $msg = $message->getText("Possible file upload attack: filename %0%.", array($mediaFile['name']));
       throw new IOException($msg);
     }
+
+    // check mime type
+    if ($mimeTypes != null && !in_array($mediaFile['type'], $mimeTypes)) {
+      throw new IOException($message->getText("File '%0%' has wrong mime type: %1%. Allowed types: %2%.",
+        array($mediaFile['name'], $mediaFile['type'], join(", ", $mimeTypes))));
+    }
+
+    // check if we need a new name
+    if ($override == false && file_exists($destName)) {
+      $pieces = preg_split('/\./', basename($destName));
+      $extension = array_pop($pieces);
+      $name = join('.', $pieces);
+      $destName = dirname($destName)."/".$name.uniqid(rand()).".".$extension;
+    }
+    $result = move_uploaded_file($mediaFile['tmp_name'], $destName);
+    if ($result === false) {
+      throw new IOException("Failed to move %0% to %1%.", array($mediaFile['tmp_name'], $destName));
+    }
+    chmod($destName, 0644);
+    $filename = basename($destName);
     return $filename;
   }
 
@@ -78,39 +75,36 @@ class FileUtil {
    * @param $pattern The pattern (regexp) to match (default: _/./_)
    * @param $prependDirectoryName Boolean whether to prepend the directory name to each file (default: _false_)
    * @param $recursive Boolean whether to recurse into subdirectories (default: _false_)
-   * @return An array containing the filenames sorted by modification date or null if failed, error string provided by getErrorMsg()
+   * @return An array containing the filenames sorted by modification date
    */
   public static function getFiles($directory, $pattern='/./', $prependDirectoryName=false, $recursive=false) {
-    $result = null;
     if (strrpos($directory, '/') != strlen($directory)-1) {
       $directory .= '/';
     }
-    if (is_dir($directory)) {
-      $result = array();
-      $d = dir($directory);
-      $d->rewind();
-      while(false !== ($file = $d->read())) {
-        if($file != '.' && $file != '..') {
-          if ($recursive && is_dir($directory.$file)) {
-            $files = self::getFiles($directory.$file, $pattern, $prependDirectoryName, $recursive);
-            $result = array_merge($result, $files);
-          }
-          else if(is_file($directory.$file) && preg_match($pattern, $file)) {
-            $sortkey = filectime($directory.$file).',';
-            if ($prependDirectoryName) {
-              $file = $directory.$file;
-            }
-            $sortkey .= $file;
-            $result[$sortkey] = $file;
-          }
-        }
-      }
-      $d->close();
-    }
-    else {
+    if (!is_dir($directory)) {
       $message = ObjectFactory::getInstance('message');
       throw new IllegalArgumentException($message->getText("The directory '%0%' does not exist.", array($directory)));
     }
+    $result = array();
+    $d = dir($directory);
+    $d->rewind();
+    while(false !== ($file = $d->read())) {
+      if($file != '.' && $file != '..') {
+        if ($recursive && is_dir($directory.$file)) {
+          $files = self::getFiles($directory.$file, $pattern, $prependDirectoryName, $recursive);
+          $result = array_merge($result, $files);
+        }
+        else if(is_file($directory.$file) && preg_match($pattern, $file)) {
+          $sortkey = filectime($directory.$file).',';
+          if ($prependDirectoryName) {
+            $file = $directory.$file;
+          }
+          $sortkey .= $file;
+          $result[$sortkey] = $file;
+        }
+      }
+    }
+    $d->close();
     krsort($result);
     return array_values($result);
   }
@@ -121,43 +115,41 @@ class FileUtil {
    * @param $pattern The pattern (regexp) to match (default: _/./_)
    * @param $prependDirectoryName Boolean whether to prepend the directory name to each directory (default: _false_)
    * @param $recursive Boolean whether to recurse into subdirectories (default: _false_)
-   * @return An array containing the directory names or null if failed, error string provided by getErrorMsg()
+   * @return An array containing the directory names
    */
   public static function getDirectories($directory, $pattern='/./', $prependDirectoryName=false, $recursive=false) {
-    $result = null;
     if (strrpos($directory, '/') != strlen($directory)-1) {
       $directory .= '/';
     }
-    if (is_dir($directory)) {
-      $result = array();
-      $d = dir($directory);
-      $d->rewind();
-      // iterate over all files
-      while(false !== ($file = $d->read())) {
-        // exclude this and parent directory
-        if($file != '.' && $file != '..') {
-          // include directories only
-          if (is_dir($directory.$file)) {
-            // recurse
-            if ($recursive) {
-              $dirs = self::getDirectories($directory.$file, $pattern, $prependDirectoryName, $recursive);
-              $result = array_merge($result, $dirs);
-            }
-            if(preg_match($pattern, $file)) {
-              if ($prependDirectoryName) {
-                $file = $directory.$file;
-              }
-              $result[] = $file;
-            }
-          }
-        }
-      }
-      $d->close();
-    }
-    else {
+    if (!is_dir($directory)) {
       $message = ObjectFactory::getInstance('message');
       throw new IllegalArgumentException($message->getText("The directory '%0%' does not exist.", array($directory)));
     }
+
+    $result = array();
+    $d = dir($directory);
+    $d->rewind();
+    // iterate over all files
+    while(false !== ($file = $d->read())) {
+      // exclude this and parent directory
+      if($file != '.' && $file != '..') {
+        // include directories only
+        if (is_dir($directory.$file)) {
+          // recurse
+          if ($recursive) {
+            $dirs = self::getDirectories($directory.$file, $pattern, $prependDirectoryName, $recursive);
+            $result = array_merge($result, $dirs);
+          }
+          if(preg_match($pattern, $file)) {
+            if ($prependDirectoryName) {
+              $file = $directory.$file;
+            }
+            $result[] = $file;
+          }
+        }
+      }
+    }
+    $d->close();
     return $result;
   }
 
@@ -171,13 +163,11 @@ class FileUtil {
       $perms = fileperms($source);
       return copy($source, $dest) && chmod($dest, $perms);
     }
-    else if (is_dir($source)) {
-      self::copyRecDir($source, $dest);
-    }
-    else {
+    if (!is_dir($source)) {
       $message = ObjectFactory::getInstance('message');
       throw new IllegalArgumentException($message->getText("Cannot copy %0% (it's neither a file nor a directory).", array($source)));
     }
+    self::copyRecDir($source, $dest);
   }
 
   /**
@@ -236,27 +226,25 @@ class FileUtil {
     if (file_exists($path)) {
       return str_replace("\\", "/", realpath($path));
     }
-    else {
-      $path = str_replace("\\", "/", $path);
-      $parts = array_filter(explode("/", $path), 'strlen');
-      $absolutes = array();
-      foreach ($parts as $part) {
-        if ('.' == $part) {
-          continue;
-        }
-        if ('..' == $part) {
-          array_pop($absolutes);
-        }
-        else {
-          $absolutes[] = $part;
-        }
+    $path = str_replace("\\", "/", $path);
+    $parts = array_filter(explode("/", $path), 'strlen');
+    $absolutes = array();
+    foreach ($parts as $part) {
+      if ('.' == $part) {
+        continue;
       }
-      $result = implode("/", $absolutes);
-      if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
-        $result = '/'.$result;
+      if ('..' == $part) {
+        array_pop($absolutes);
       }
-      return $result;
+      else {
+        $absolutes[] = $part;
+      }
     }
+    $result = implode("/", $absolutes);
+    if (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') {
+      $result = '/'.$result;
+    }
+    return $result;
   }
 
   /**

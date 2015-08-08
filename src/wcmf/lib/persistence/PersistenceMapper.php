@@ -13,7 +13,6 @@ namespace wcmf\lib\persistence;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceOperation;
@@ -173,23 +172,6 @@ interface PersistenceMapper {
    * (ASC or DESC) and isSortkey (Boolean)
    */
   public function getDefaultOrder($roleName=null);
-
-  /**
-   * Enable logging using a given OutputStrategy to log insert/update/delete actions to a file.
-   * @param $logStrategy The OutputStrategy to use.
-   */
-  public function enableLogging(OutputStrategy $logStrategy);
-
-  /**
-   * Disable logging.
-   */
-  public function disableLogging();
-
-  /**
-   * Check if the PersistenceMapper is logging.
-   * @return Boolean whether the PersistenceMapper is logging.
-   */
-  public function isLogging();
 
   /**
    * Load a PersistentObject instance from the storage.

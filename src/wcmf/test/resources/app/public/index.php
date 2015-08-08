@@ -13,10 +13,29 @@ error_reporting(E_ALL | E_PARSE);
 define('WCMF_BASE', realpath(dirname(__FILE__).'/../..').'/');
 require_once(dirname(WCMF_BASE)."/vendor/autoload.php");
 
-use \Exception;
+use wcmf\lib\config\impl\InifileConfiguration;
+use wcmf\lib\core\ClassLoader;
+use wcmf\lib\core\impl\Log4phpLogger;
+use wcmf\lib\core\LogManager;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Application;
 
-$application = new Application(WCMF_BASE.'app/config/', 'config.ini');
+new ClassLoader(WCMF_BASE);
+
+$configPath = WCMF_BASE.'app/config/';
+
+// setup logging
+$logger = new Log4phpLogger('main', $configPath.'log4php.php');
+$logManager = new LogManager($logger);
+ObjectFactory::registerInstance('logManager', $logManager);
+
+// setup configuration
+$config = new InifileConfiguration($configPath);
+$config->addConfiguration('config.ini');
+ObjectFactory::configure($config);
+
+// create the application
+$application = new Application();
 try {
   // initialize the application
   $request = $application->initialize('', '', 'cms');
@@ -24,11 +43,11 @@ try {
   // run the application
   $application->run($request);
 }
-catch (Exception $ex) {
+catch (\Exception $ex) {
   try {
     $application->handleException($ex, isset($request) ? $request : null);
   }
-  catch (Exception $unhandledEx) {
+  catch (\Exception $unhandledEx) {
     $error = "An unhandled exception occured. Please see log file for details.";
   }
 }

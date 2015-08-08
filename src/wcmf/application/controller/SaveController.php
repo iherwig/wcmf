@@ -49,6 +49,14 @@ class SaveController extends Controller {
   private $_fileUtil = null;
 
   /**
+   * Constructor
+   */
+  public function __construct() {
+    parent::__construct();
+    $this->_fileUtil = new FileUtil();
+  }
+
+  /**
    * @see Controller::validate()
    */
   protected function validate() {
@@ -303,46 +311,38 @@ class SaveController extends Controller {
       $message = $this->getInstance('message');
 
       // upload request -> see if upload was succesfull
-      if ($data['tmp_name'] != 'none') {
-        // create FileUtil instance if not done already
-        if ($this->_fileUtil == null) {
-          $this->_fileUtil = new FileUtil();
-        }
-        // check if file was actually uploaded
-        if (!is_uploaded_file($data['tmp_name'])) {
-          $message = $message->getText("Possible file upload attack: filename %0%.", array($data['name']));
-          $response->addError(ApplicationError::get('GENERAL_ERROR', array('message' => $message)));
-          return null;
-        }
-
-        // get upload directory
-        $uploadDir = $this->getUploadDir($oid, $valueName);
-
-        // get the name for the uploaded file
-        $uploadFilename = $uploadDir.$this->getUploadFilename($oid, $valueName, $data['name']);
-
-        // check file validity
-        if (!$this->checkFile($oid, $valueName, $uploadFilename, $data['type'])) {
-          return null;
-        }
-
-        // get upload parameters
-        $override = $this->shouldOverride($oid, $valueName, $uploadFilename);
-
-        // upload file (mimeTypes parameter is set to null, because the mime type is already checked by checkFile method)
-        $filename = $this->_fileUtil->uploadFile($data, $uploadFilename, null, $override);
-        if (!$filename) {
-          $response->addError(ApplicationError::get('GENERAL_ERROR',
-            array('message' => $this->_fileUtil->getErrorMsg())));
-          return null;
-        }
-        else {
-          return $filename;
-        }
-      }
-      else {
+      if ($data['tmp_name'] == 'none') {
         $response->addError(ApplicationError::get('GENERAL_ERROR',
           array('message' => $message->getText("Upload failed for %0%.", array($data['name'])))));
+        return null;
+      }
+
+      // check if file was actually uploaded
+      if (!is_uploaded_file($data['tmp_name'])) {
+        $message = $message->getText("Possible file upload attack: filename %0%.", array($data['name']));
+        $response->addError(ApplicationError::get('GENERAL_ERROR', array('message' => $message)));
+        return null;
+      }
+
+      // get upload directory
+      $uploadDir = $this->getUploadDir($oid, $valueName);
+
+      // get the name for the uploaded file
+      $uploadFilename = $uploadDir.$this->getUploadFilename($oid, $valueName, $data['name']);
+
+      // check file validity
+      if (!$this->checkFile($oid, $valueName, $uploadFilename, $data['type'])) {
+        return null;
+      }
+
+      // get upload parameters
+      $override = $this->shouldOverride($oid, $valueName, $uploadFilename);
+
+      // upload file (mimeTypes parameter is set to null, because the mime type is already checked by checkFile method)
+      try {
+        return $this->_fileUtil->uploadFile($data, $uploadFilename, null, $override);
+      } catch (\Exception $ex) {
+        $response->addError(ApplicationError::fromException($ex));
         return null;
       }
     }
@@ -413,7 +413,7 @@ class SaveController extends Controller {
   protected function getUploadDir(ObjectId $oid, $valueName) {
     $request = $this->getRequest();
     if ($request->hasValue('uploadDir')) {
-      $uploadDir = FileUtil::realpath($request->getValue('uploadDir'));
+      $uploadDir = $this->_fileUtil->realpath($request->getValue('uploadDir'));
     }
     else {
       $config = ObjectFactory::getConfigurationInstance();
@@ -432,7 +432,7 @@ class SaveController extends Controller {
       }
     }
     // asure that the directory exists
-    FileUtil::mkdirRec($uploadDir);
+    $this->_fileUtil->mkdirRec($uploadDir);
     return $uploadDir;
   }
 

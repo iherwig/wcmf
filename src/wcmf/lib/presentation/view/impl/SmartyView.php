@@ -99,8 +99,10 @@ class SmartyView implements View {
   public function setCacheDir($cacheDir) {
     $this->_view->setCompileDir(WCMF_BASE.$cacheDir.'templates_c/');
     $this->_view->setCacheDir(WCMF_BASE.$cacheDir.'cache/');
-    FileUtil::mkdirRec($this->_view->getCompileDir());
-    FileUtil::mkdirRec($this->_view->getCacheDir());
+    
+    $fileUtil = new FileUtil();
+    $fileUtil->mkdirRec($this->_view->getCompileDir());
+    $fileUtil->mkdirRec($this->_view->getCacheDir());
   }
 
   /**

@@ -37,21 +37,27 @@ class DefaultOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
-    self::$_logger->info("DOCUMENT START.");
+    if (self::$_logger->isInfoEnabled()) {
+      self::$_logger->info("DOCUMENT START.");
+    }
   }
 
   /**
    * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
-    self::$_logger->info("DOCUMENT END.");
+    if (self::$_logger->isInfoEnabled()) {
+      self::$_logger->info("DOCUMENT END.");
+    }
   }
 
   /**
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    self::$_logger->info($obj->toString());
+    if (self::$_logger->isInfoEnabled()) {
+      self::$_logger->info($obj->toString());
+    }
   }
 }
 ?>

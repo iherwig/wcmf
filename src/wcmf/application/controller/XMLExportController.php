@@ -66,6 +66,16 @@ class XMLExportController extends BatchController {
   private $_DOCINDENT = "  ";
   private $_NODES_PER_CALL = 10;
 
+  private $_fileUtil = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    parent::__construct();
+    $this->_fileUtil = new FileUtil();
+  }
+
   /**
    * @see Controller::initialize()
    */
@@ -134,11 +144,11 @@ class XMLExportController extends BatchController {
 
     // start document
     $fileHandle = fopen($filename, "a");
-    FileUtil::fputsUnicode($fileHandle, '<?xml version="1.0" encoding="UTF-8"?>'.$documentInfo['docLinebreak']);
+    $this->_fileUtil->fputsUnicode($fileHandle, '<?xml version="1.0" encoding="UTF-8"?>'.$documentInfo['docLinebreak']);
     if ($documentInfo['docType'] != "") {
-      FileUtil::fputsUnicode($fileHandle, '<!DOCTYPE '.$documentInfo['docType'].' SYSTEM "'.$documentInfo['dtd'].'">'.$documentInfo['docLinebreak']);
+      $this->_fileUtil->fputsUnicode($fileHandle, '<!DOCTYPE '.$documentInfo['docType'].' SYSTEM "'.$documentInfo['dtd'].'">'.$documentInfo['docLinebreak']);
     }
-    FileUtil::fputsUnicode($fileHandle, '<'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
+    $this->_fileUtil->fputsUnicode($fileHandle, '<'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
     fclose($fileHandle);
 
     // get root types from ini file
@@ -260,7 +270,7 @@ class XMLExportController extends BatchController {
     // end document
     $fileHandle = fopen($documentInfo['docFile'], "a");
     $this->endTags($fileHandle, 0, $documentInfo);
-    FileUtil::fputsUnicode($fileHandle, '</'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
+    $this->_fileUtil->fputsUnicode($fileHandle, '</'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
     fclose($fileHandle);
 
     // clear session variables
@@ -284,7 +294,7 @@ class XMLExportController extends BatchController {
       for ($i=$lastIndent-$curIndent; $i>0; $i--) {
         $closeTag = array_shift($documentInfo['tagsToClose']);
         if ($closeTag) {
-          FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $closeTag["indent"]).'</'.$closeTag["name"].'>'.$documentInfo['docLinebreak']);
+          $this->_fileUtil->fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $closeTag["indent"]).'</'.$closeTag["name"].'>'.$documentInfo['docLinebreak']);
         }
       }
     }
@@ -319,20 +329,20 @@ class XMLExportController extends BatchController {
 
       // write object's content
       // open start tag
-      FileUtil::fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$elementName);
+      $this->_fileUtil->fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$elementName);
       // write object attributes
       $attributes = $mapper->getAttributes();
       foreach ($attributes as $curAttribute) {
         $attributeName = $curAttribute->getName();
         $value = $node->getValue($attributeName);
         if ($value) {
-          FileUtil::fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
+          $this->_fileUtil->fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
         }
       }
       // close start tag
-      FileUtil::fputsUnicode($fileHandle, '>');
+      $this->_fileUtil->fputsUnicode($fileHandle, '>');
       if ($hasUnvisitedChildren) {
-        FileUtil::fputsUnicode($fileHandle, $documentInfo['docLinebreak']);
+        $this->_fileUtil->fputsUnicode($fileHandle, $documentInfo['docLinebreak']);
       }
 
       // remember end tag if not closed
@@ -341,7 +351,7 @@ class XMLExportController extends BatchController {
         array_unshift($documentInfo['tagsToClose'], $closeTag);
       }
       else {
-        FileUtil::fputsUnicode($fileHandle, '</'.$elementName.'>'.$documentInfo['docLinebreak']);
+        $this->_fileUtil->fputsUnicode($fileHandle, '</'.$elementName.'>'.$documentInfo['docLinebreak']);
       }
       // remember current indent
       $documentInfo['lastIndent'] = $curIndent;

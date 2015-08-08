@@ -1,7 +1,7 @@
 <?php
 return array(
   'rootLogger' => array(
-    'level' => 'INFO',
+    'level' => 'ERROR',
     'appenders' => array('file'),
   ),
 

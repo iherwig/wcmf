@@ -17,10 +17,11 @@ register_shutdown_function("cleanup");
 function setup() {
   @unlink('log.txt');
   @unlink(WCMF_BASE.'app/test-db.sq3');
-  FileUtil::emptyDir(WCMF_BASE.'app/cache');
-  FileUtil::emptyDir(WCMF_BASE.'app/log');
-  FileUtil::emptyDir(WCMF_BASE.'app/searchIndex');
-  FileUtil::copyRecDir('resources/app/', WCMF_BASE.'app/');
+  $fileUtil = new FileUtil();
+  $fileUtil->emptyDir(WCMF_BASE.'app/cache');
+  $fileUtil->emptyDir(WCMF_BASE.'app/log');
+  $fileUtil->emptyDir(WCMF_BASE.'app/searchIndex');
+  $fileUtil->copyRecDir('resources/app/', WCMF_BASE.'app/');
 }
 
 /**

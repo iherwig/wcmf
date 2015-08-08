@@ -42,6 +42,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   private $_configPath = null;
   private $_configExtension = 'ini';
 
+  private $_fileUtil = null;
+
   private static $_logger = null;
 
   /**
@@ -50,6 +52,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   public function __construct($configPath) {
     $this->_configPath = $configPath;
+    $this->_fileUtil = new FileUtil();
     if (self::$_logger == null) {
       self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
     }
@@ -71,8 +74,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @see Configuration::getConfigurations()
    */
   public function getConfigurations() {
-    $fileUtil = new FileUtil();
-    return $fileUtil->getFiles($this->_configPath, '/\.'.$this->_configExtension.'$/', true);
+    return $this->_fileUtil->getFiles($this->_configPath, '/\.'.$this->_configExtension.'$/', true);
   }
 
   /**
@@ -233,7 +235,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $result = array();
     foreach ($values as $path) {
       $absPath = WCMF_BASE.$path;
-      $result[] = FileUtil::realpath($absPath).'/';
+      $result[] = $this->_fileUtil->realpath($absPath).'/';
     }
 
     return $isArray ? $result : (sizeof($result) > 0 ? $result[0] : null);
@@ -250,7 +252,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $result = array();
     foreach ($values as $path) {
       $absPath = WCMF_BASE.$path;
-      $result[] = FileUtil::realpath(dirname($absPath)).'/'.basename($absPath);
+      $result[] = $this->_fileUtil->realpath(dirname($absPath)).'/'.basename($absPath);
     }
 
     return $isArray ? $result : (sizeof($result) > 0 ? $result[0] : null);

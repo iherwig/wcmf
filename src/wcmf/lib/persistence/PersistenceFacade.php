@@ -146,17 +146,5 @@ interface PersistenceFacade {
    * @param $mapper PersistenceMapper instance
    */
   public function setMapper($type, PersistenceMapper $mapper);
-
-  /**
-   * Set logging state for insert/update/delete actions.
-   * @param $isLogging Boolean whether logging should be enabled or not
-   */
-  public function setLogging($isLogging);
-
-  /**
-   * Check if the PersistenceMapper is logging.
-   * @return Boolean whether the PersistenceMapper is logging.
-   */
-  public function isLogging();
 }
 ?>

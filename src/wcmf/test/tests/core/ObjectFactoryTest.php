@@ -21,18 +21,18 @@ use wcmf\lib\core\ObjectFactory;
 class ObjectFactoryTest extends BaseTestCase {
 
   public function testDIShared() {
-    $obj = ObjectFactory::getInstance('persistenceFacade');
-    $this->assertEquals('wcmf\lib\persistence\impl\DefaultPersistenceFacade', get_class($obj));
-    $this->assertFalse($obj->isLogging());
+    $obj = ObjectFactory::getInstance('search');
+    $this->assertEquals('wcmf\lib\search\impl\LuceneSearch', get_class($obj));
+    $this->assertEquals('1', preg_match('~app/searchIndex/$~', $obj->getIndexPath()));
 
     // modify instance
-    $obj->setLogging(true);
-    $this->assertTrue($obj->isLogging());
+    $obj->setIndexPath('app/searchIndex2');
+    $this->assertEquals('1', preg_match('~app/searchIndex2/$~', $obj->getIndexPath()));
 
     // get second time (same instance)
-    $obj2 = ObjectFactory::getInstance('persistenceFacade');
-    $this->assertEquals('wcmf\lib\persistence\impl\DefaultPersistenceFacade', get_class($obj2));
-    $this->assertTrue($obj2->isLogging());
+    $obj2 = ObjectFactory::getInstance('search');
+    $this->assertEquals('wcmf\lib\search\impl\LuceneSearch', get_class($obj2));
+    $this->assertEquals('1', preg_match('~app/searchIndex2/$~', $obj2->getIndexPath()));
   }
 
   public function testDINonShared() {

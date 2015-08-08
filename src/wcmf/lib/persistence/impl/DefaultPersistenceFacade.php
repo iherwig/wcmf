@@ -32,14 +32,15 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   private $_mappers = array();
   private $_simpleToFqNames = array();
   private $_createdOIDs = array();
-  private $_logging = false;
   private $_logStrategy = null;
   private $_currentTransaction = null;
 
   /**
    * Constructor
+   * @param $logStrategy OutputStrategy used for logging persistence actions.
    */
-  public function __construct() {
+  public function __construct(OutputStrategy $logStrategy) {
+    $this->_logStrategy = $logStrategy;
     // register as change listener to track the created oids, after save
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
             array($this, 'stateChanged'));
@@ -60,22 +61,16 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function setMappers($mappers) {
     $this->_mappers = $mappers;
-    // register simple type names
     foreach ($mappers as $fqName => $mapper) {
+      // register simple type names
       $name = $this->getSimpleType($fqName);
       if (!isset($this->_mappers[$name])) {
         $this->_mappers[$name] = $mapper;
         $this->_simpleToFqNames[$name] = $fqName;
       }
+      // set logging strategy
+      $mapper->setLogStrategy($this->_logStrategy);
     }
-  }
-
-  /**
-   * Set the OutputStrategy used for logging persistence actions.
-   * @param $logStrategy
-   */
-  public function setLogStrategy(OutputStrategy $logStrategy) {
-    $this->_logStrategy = $logStrategy;
   }
 
   /**
@@ -238,10 +233,6 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   public function getMapper($type) {
     if ($this->isKnownType($type)) {
       $mapper = $this->_mappers[$type];
-      // enable logging if desired
-      if ($this->isLogging() && !$mapper->isLogging()) {
-        $mapper->enableLogging($this->_logStrategy);
-      }
       return $mapper;
     }
     else {
@@ -254,20 +245,6 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function setMapper($type, PersistenceMapper $mapper) {
     $this->_mappers[$type] = $mapper;
-  }
-
-  /**
-   * @see PersistenceFacade::setMapper()
-   */
-  public function setLogging($isLogging) {
-    $this->_logging = $isLogging;
-  }
-
-  /**
-   * @see PersistenceFacade::isLogging()
-   */
-  public function isLogging() {
-    return $this->_logging;
   }
 
   /**

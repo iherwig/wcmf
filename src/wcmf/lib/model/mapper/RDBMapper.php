@@ -800,9 +800,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     }
 
     // log action
-    if ($this->isLogging()) {
-      $this->logAction($object);
-    }
+    $this->logAction($object);
 
     // delete object
     $oid = $object->getOID();

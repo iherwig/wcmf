@@ -26,6 +26,14 @@ class FileCache implements Cache {
 
   private $_cacheDir = null;
   private $_cache = null;
+  private $_fileUtil = null;
+
+  /**
+   * Constructor
+   */
+  public function __construct() {
+    $this->_fileUtil = new FileUtil();
+  }
 
   /**
    * Set the cache directory (defaults to session_save_path if not given).
@@ -74,11 +82,11 @@ class FileCache implements Cache {
       $directory = $cachBaseDir.dirname($section);
       if (is_dir($directory)) {
         $pattern = '/^'.preg_replace('/\*$/', '', basename($section)).'/';
-        $files = FileUtil::getFiles($directory, $pattern, true, true);
+        $files = $this->_fileUtil->getFiles($directory, $pattern, true, true);
         foreach ($files as $file) {
           $this->clear(str_replace($cachBaseDir, '', $file));
         }
-        $directories = FileUtil::getDirectories($directory, $pattern, true, true);
+        $directories = $this->_fileUtil->getDirectories($directory, $pattern, true, true);
         foreach ($directories as $directory) {
           $this->clear(str_replace($cachBaseDir, '', $directory).'/*');
           @rmdir($directory);
@@ -98,7 +106,7 @@ class FileCache implements Cache {
   public function clearAll() {
     $cacheDir = $this->getCacheDir();
     if (is_dir($cacheDir)) {
-      FileUtil::emptyDir($cacheDir);
+      $this->_fileUtil->emptyDir($cacheDir);
     }
     $this->_cache = null;
   }
@@ -126,7 +134,7 @@ class FileCache implements Cache {
   private function saveCache($section) {
     $content = serialize($this->_cache[$section]);
     $file = $this->getCacheFile($section);
-    FileUtil::mkdirRec(dirname($file));
+    $this->_fileUtil->mkdirRec(dirname($file));
     $fh = fopen($file, "w");
     if ($fh !== false) {
       fwrite($fh, $content);
