@@ -197,7 +197,15 @@ class ObjectFactory {
               // parameter exists in configuration
               $cParams[$paramName] = self::getInstance($paramName);
             }
-            // TODO check for class satisfying the dependency or throw exception
+            elseif (($paramClass = $param->getClass()) != null) {
+              // check for parameter's class from type hint
+              // will cause an exception, if the class does not exist
+              $cParams[$paramName] = self::getClassInstance($paramClass->name);
+            }
+            else {
+              throw new ConfigurationException('Constructor parameter \''.$paramName.
+                      '\' in class \''.$className.'\' cannot be injected.');
+            }
           }
         }
 
