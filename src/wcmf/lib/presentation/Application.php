@@ -107,10 +107,6 @@ class Application {
   public function run(Request $request) {
     // process the requested action
     $response = ObjectFactory::getInstance('actionMapper')->processAction($request);
-
-    // store the last successful request
-    $session = ObjectFactory::getInstance('session');
-    $session->set('lastRequest', $request);
     return $response;
   }
 
