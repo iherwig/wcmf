@@ -43,9 +43,9 @@ class UserController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $session = $this->getInstance('session');
-    $permissionManager = $this->getInstance('permissionManager');
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $session = $this->getSession();
+    $permissionManager = $this->getPermissionManager();
+    $persistenceFacade = $this->getPersistenceFacade();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -86,7 +86,7 @@ class UserController extends Controller {
    * @param $newPasswordRepeated The new password of the user again
    */
   public function changePassword(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
-    $message = $this->getInstance('message');
+    $message = $this->getMessage();
     // check old password
     if (!$user->verifyPassword($oldPassword, $user->getPassword())) {
       throw new IllegalArgumentException($message->getText("The old password is incorrect"));

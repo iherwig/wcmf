@@ -11,7 +11,14 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\config\ActionKey;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\PermissionManager;
+use wcmf\lib\security\principal\PrincipalFactory;
 
 /**
  * PermissionController checks permissions for a set of operations for
@@ -103,6 +110,28 @@ use wcmf\lib\presentation\Controller;
  */
 class PermissionController extends Controller {
 
+  private $_principalFactory = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $localization
+   * @param $message
+   * @param $principalFactory
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          Localization $localization,
+          Message $message,
+          PrincipalFactory $principalFactory) {
+    parent::__construct($session, $persistenceFacade,
+            $permissionManager, $localization, $message);
+    $this->_principalFactory = $principalFactory;
+  }
+
   /**
    * @see Controller::validate()
    */
@@ -147,9 +176,8 @@ class PermissionController extends Controller {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $permissionManager = $this->getInstance('permissionManager');
-    $principalFactory = $this->getInstance('principalFactory');
-    $transaction = $this->getInstance('persistenceFacade')->getTransaction();
+    $permissionManager = $this->getPermissionManager();
+    $transaction = $this->getPersistenceFacade()->getTransaction();
 
     $resource = $request->getValue('resource');
     $context = $request->getValue('context');
@@ -168,7 +196,7 @@ class PermissionController extends Controller {
     elseif ($request->getAction() == 'checkPermissionsOfUser') {
       $result = array();
       $permissions = $request->hasValue('operations') ? $request->getValue('operations') : array();
-      $user = $request->hasValue('user') ? $principalFactory->getUser($request->getValue('user')) : null;
+      $user = $request->hasValue('user') ? $this->_principalFactory->getUser($request->getValue('user')) : null;
       foreach($permissions as $permission) {
         $keyParts = ActionKey::parseKey($permission);
         $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action'],

@@ -55,7 +55,7 @@ class MessageController extends Controller {
 
     // get all messages
     $lang = $request->getValue('language');
-    $messages = $this->getInstance('message')->getAll($lang);
+    $messages = $this->getMessage()->getAll($lang);
     $response->setValues($messages);
 
     // success

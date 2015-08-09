@@ -11,8 +11,13 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * Controller is the base class of all controllers.
@@ -43,12 +48,31 @@ abstract class Controller {
   private $_response = null;
 
   private $_logger = null;
+  private $_session = null;
+  private $_persistenceFacade = null;
+  private $_permissionManager = null;
+  private $_localization = null;
+  private $_message = null;
 
   /**
    * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $localization
+   * @param $message
    */
-  public function __construct() {
-    $this->_logger = $this->getInstance('logManager')->getLogger(__CLASS__);
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          Localization $localization,
+          Message $message) {
+    $this->_logger = ObjectFactory::getInstance('logManager')->getLogger(get_class($this));
+    $this->_session = $session;
+    $this->_persistenceFacade = $persistenceFacade;
+    $this->_permissionManager = $permissionManager;
+    $this->_localization = $localization;
+    $this->_message = $message;
   }
 
   /**
@@ -135,51 +159,82 @@ abstract class Controller {
    */
   protected function executeSubAction($action) {
     $curRequest = $this->getRequest();
-    $subRequest = $this->getInstance('request');
+    $subRequest = ObjectFactory::getInstance('request');
     $subRequest->setSender(get_class($this));
     $subRequest->setContext($curRequest->getContext());
     $subRequest->setAction($action);
     $subRequest->setHeaders($curRequest->getHeaders());
     $subRequest->setValues($curRequest->getValues());
-    $formats = $this->getInstance('formats');
+    $formats = ObjectFactory::getInstance('formats');
     $nullFormat = $formats['null'];
     $subRequest->setFormat($nullFormat);
     $subRequest->setResponseFormat($nullFormat);
-    $response = $this->getInstance('actionMapper')->processAction($subRequest);
+    $response = ObjectFactory::getInstance('actionMapper')->processAction($subRequest);
     return $response;
   }
 
   /**
-   * Get the Request object.
-   * @return Request object
+   * Get the Request instance.
+   * @return Request
    */
   public function getRequest() {
     return $this->_request;
   }
 
   /**
-   * Get the Response object.
-   * @return Response object
+   * Get the Response instance.
+   * @return Response
    */
   public function getResponse() {
     return $this->_response;
   }
 
   /**
-   * Get the Logger object.
-   * @return Logger object
+   * Get the Logger instance.
+   * @return Logger
    */
   protected function getLogger() {
     return $this->_logger;
   }
 
   /**
-   * Get an instance registered with ObjectFactory.
-   * @name The instance name
-   * @return Object
+   * Get the Session instance.
+   * @return Session
    */
-  protected function getInstance($name) {
-    return ObjectFactory::getInstance($name);
+  protected function getSession() {
+    return $this->_session;
+  }
+
+  /**
+   * Get the PersistenceFacade instance.
+   * @return PersistenceFacade
+   */
+  protected function getPersistenceFacade() {
+    return $this->_persistenceFacade;
+  }
+
+  /**
+   * Get the PermissionManager instance.
+   * @return PermissionManager
+   */
+  protected function getPermissionManager() {
+    return $this->_permissionManager;
+  }
+
+  /**
+   * Get the Localization instance.
+   * @return Localization
+   */
+  protected function getLocalization() {
+    return $this->_localization;
+  }
+
+  /**
+   * Get the Message instance.
+   * @return Message
+   */
+  protected function getMessage() {
+    return $this->_message;
   }
 
   /**
@@ -219,8 +274,7 @@ abstract class Controller {
   protected function isLocalizedRequest() {
     if ($this->_request->hasValue('language')) {
       $language = $this->_request->getValue('language');
-      $localization = $this->getInstance('localization');
-      if ($language != $localization->getDefaultLanguage()) {
+      if ($language != $this->_localization->getDefaultLanguage()) {
         return true;
       }
     }
@@ -235,8 +289,7 @@ abstract class Controller {
   protected function checkLanguageParameter() {
     if ($this->_request->hasValue('language')) {
       $language = $this->_request->getValue('language');
-      $localization = $this->getInstance('localization');
-      if (!in_array($language, array_keys($localization->getSupportedLanguages()))) {
+      if (!in_array($language, array_keys($this->_localization->getSupportedLanguages()))) {
         $this->_response->addError(ApplicationError::get('PARAMETER_INVALID',
                 array('invalidParameters' => array('language'))));
         return false;

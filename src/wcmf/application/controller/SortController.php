@@ -67,7 +67,7 @@ class SortController extends Controller {
 
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
 
     $isOrderBottom = $this->isOrderBotton($request);
 
@@ -147,7 +147,7 @@ class SortController extends Controller {
   protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $transaction = $this->getInstance('persistenceFacade')->getTransaction();
+    $transaction = $this->getPersistenceFacade()->getTransaction();
 
     // do actions
     $transaction->begin();
@@ -167,7 +167,7 @@ class SortController extends Controller {
    */
   protected function doMoveBefore() {
     $request = $this->getRequest();
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
     $isOrderBottom = $this->isOrderBotton($request);
 
     // load the moved object and the reference object
@@ -235,7 +235,7 @@ class SortController extends Controller {
    */
   protected function doInsertBefore() {
     $request = $this->getRequest();
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
     $isOrderBottom = $this->isOrderBotton($request);
 
     // load the moved object, the reference object and the conainer object

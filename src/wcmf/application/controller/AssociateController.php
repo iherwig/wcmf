@@ -78,7 +78,7 @@ class AssociateController extends Controller {
     }
 
     // check association
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
     $mapper = $persistenceFacade->getMapper($sourceOid->getType());
     // try role
     if ($request->hasValue('role')) {
@@ -105,7 +105,7 @@ class AssociateController extends Controller {
   protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
 
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();

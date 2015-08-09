@@ -81,7 +81,7 @@ class MediaController extends Controller {
   protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    
+
     $fileUtil = new FileUtil();
 
     // get root path and root url for the browser

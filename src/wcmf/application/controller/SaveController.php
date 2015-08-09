@@ -11,15 +11,20 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * SaveController is a controller that saves Node data.
@@ -50,9 +55,19 @@ class SaveController extends Controller {
 
   /**
    * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $localization
+   * @param $message
    */
-  public function __construct() {
-    parent::__construct();
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          Localization $localization,
+          Message $message) {
+    parent::__construct($session, $persistenceFacade,
+            $permissionManager, $localization, $message);
     $this->_fileUtil = new FileUtil();
   }
 
@@ -71,11 +86,11 @@ class SaveController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $persistenceFacade = $this->getInstance('persistenceFacade');
-    $session = $this->getInstance('session');
+    $persistenceFacade = $this->getPersistenceFacade();
+    $session = $this->getSession();
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $message = $this->getInstance('message');
+    $message = $this->getMessage();
 
     // array of all involved nodes
     $nodeArray = array();
@@ -230,7 +245,7 @@ class SaveController extends Controller {
 
       // commit changes
       if ($needCommit && !$response->hasErrors()) {
-        $localization = $this->getInstance('localization');
+        $localization = $this->getLocalization();
         $saveOids = array_keys($saveOids);
         for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
           $curOidStr = $saveOids[$i];
@@ -308,7 +323,7 @@ class SaveController extends Controller {
   protected function saveUploadFile(ObjectId $oid, $valueName, array $data) {
     if ($data['name'] != '') {
       $response = $this->getResponse();
-      $message = $this->getInstance('message');
+      $message = $this->getMessage();
 
       // upload request -> see if upload was succesfull
       if ($data['tmp_name'] == 'none') {
@@ -418,7 +433,7 @@ class SaveController extends Controller {
     else {
       $config = ObjectFactory::getConfigurationInstance();
       if (ObjectId::isValid($oid)) {
-        $persistenceFacade = $this->getInstance('persistenceFacade');
+        $persistenceFacade = $this->getPersistenceFacade();
         $type = $persistenceFacade->getSimpleType($oid->getType());
         // check if uploadDir.type is defined in the configuration
         if ($type && ($dir = $config->getDirectoryValue('uploadDir.'.$type, 'media')) !== false) {

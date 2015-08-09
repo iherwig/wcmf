@@ -52,7 +52,7 @@ class DeleteController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
     $request = $this->getRequest();
     $response = $this->getResponse();
     $logger = $this->getLogger();
@@ -72,7 +72,7 @@ class DeleteController extends Controller {
         else {
           if($this->confirmDelete($doomedNode)) {
             // commit changes
-            $localization = $this->getInstance('localization');
+            $localization = $this->getLocalization();
             if ($this->isLocalizedRequest()) {
               // delete the translations for the requested language
               $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));

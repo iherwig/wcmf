@@ -11,8 +11,14 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\ListController;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\search\Search;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * SearchController executes a search and returns matching objects in a paged list.
@@ -38,17 +44,37 @@ use wcmf\lib\persistence\PersistenceAction;
  */
 class SearchController extends ListController {
 
-  protected $_hits = array();
+  private $_hits = array();
+  private $_search = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $localization
+   * @param $message
+   * @param $search
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          Localization $localization,
+          Message $message,
+          Search $search) {
+    parent::__construct($session, $persistenceFacade,
+            $permissionManager, $localization, $message);
+    $this->_search = $search;
+  }
 
   /**
    * @see ListController::getObjects()
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
-    $permissionManager = $this->getInstance('permissionManager');
+    $permissionManager = $this->getPermissionManager();
 
     // search with searchterm (even if empty) if no query is given
-    $search = $this->getInstance('search');
-    $this->_hits = $search->find($queryCondition, $pagingInfo);
+    $this->_hits = $this->_search->find($queryCondition, $pagingInfo);
 
     $oids = array();
     foreach ($this->_hits as $hit) {
@@ -56,7 +82,7 @@ class SearchController extends ListController {
     }
 
     // load the objects
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
     $objects = array();
     foreach($oids as $oid) {
       if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
@@ -73,7 +99,7 @@ class SearchController extends ListController {
   protected function modifyModel($nodes) {
     parent::modifyModel($nodes);
 
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
     for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
       $curNode = &$nodes[$i];
       $hit = $this->_hits[$curNode->getOID()->__toString()];

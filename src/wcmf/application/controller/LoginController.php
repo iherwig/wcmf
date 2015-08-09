@@ -10,10 +10,16 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\security\AuthenticationManager;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * LoginController handles the login process.
@@ -45,6 +51,28 @@ use wcmf\lib\presentation\Response;
  * @author ingo herwig <ingo@wemove.com>
  */
 class LoginController extends Controller {
+
+  private $_authenticationManager = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $localization
+   * @param $message
+   * @param $authenticationManager
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          Localization $localization,
+          Message $message,
+          AuthenticationManager $authenticationManager) {
+    parent::__construct($session, $persistenceFacade,
+            $permissionManager, $localization, $message);
+    $this->_authenticationManager = $authenticationManager;
+  }
 
   /**
    * @see Controller::initialize()
@@ -86,17 +114,15 @@ class LoginController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
     if ($request->getAction() == 'login') {
-      // authenticate
-      $authManager = $this->getInstance('authenticationManager');
-
       // try to login
       try {
-        $authUser = $authManager->login($request->getValue('user'), $request->getValue('password'));
+        $authUser = $this->_authenticationManager->login(
+                $request->getValue('user'), $request->getValue('password'));
       }
       catch (\Exception $ex) {
         $authUser = null;

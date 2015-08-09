@@ -12,12 +12,18 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\io\Cache;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * XMLExportController exports the content tree into an XML file.
@@ -66,13 +72,27 @@ class XMLExportController extends BatchController {
   private $_DOCINDENT = "  ";
   private $_NODES_PER_CALL = 10;
 
+  private $_cache = null;
   private $_fileUtil = null;
 
   /**
    * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $localization
+   * @param $message
+   * @param $cache
    */
-  public function __construct() {
-    parent::__construct();
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          Localization $localization,
+          Message $message,
+          Cache $cache) {
+    parent::__construct($session, $persistenceFacade,
+            $permissionManager, $localization, $message);
+    $this->_cache = $cache;
     $this->_fileUtil = new FileUtil();
   }
 
@@ -84,7 +104,7 @@ class XMLExportController extends BatchController {
 
     // construct initial document info
     if ($request->getAction() != 'continue') {
-      $session = $this->getInstance('session');
+      $session = $this->getSession();
 
       $docFile = $request->hasValue('docFile') ? $request->getValue('docFile') : $this->getDownloadFile();
       $docType = $request->hasValue('docType') ? $request->getValue('docType') : $this->_DOCTYPE;
@@ -108,7 +128,7 @@ class XMLExportController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      return array('name' => $this->getInstance('message')->getText('Initialization'),
+      return array('name' => $this->getMessage()->getText('Initialization'),
           'size' => 1, 'oids' => array(1), 'callback' => 'initExport');
     }
     else {
@@ -131,8 +151,7 @@ class XMLExportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function initExport($oids) {
-    $session = $this->getInstance('session');
-    $cache = $this->getInstance('cache');
+    $session = $this->getSession();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
     $filename = $documentInfo['docFile'];
@@ -156,7 +175,7 @@ class XMLExportController extends BatchController {
     $config = ObjectFactory::getConfigurationInstance();
     $rootTypes = $config->getValue('rootTypes', 'application');
     if (is_array($rootTypes)) {
-      $persistenceFacade = $this->getInstance('persistenceFacade');
+      $persistenceFacade = $this->getPersistenceFacade();
       foreach($rootTypes as $rootType) {
         $rootOIDs = array_merge($rootOIDs, $persistenceFacade->getOIDs($rootType));
       }
@@ -164,15 +183,15 @@ class XMLExportController extends BatchController {
 
     // store root object ids in session
     $nextOID = array_shift($rootOIDs);
-    $cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
+    $this->_cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
 
     // empty exported oids
     $tmp = array();
-    $cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $tmp);
+    $this->_cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $tmp);
 
     // create work package for first root node
     $this->addWorkPackage(
-            $this->getInstance('message')->getText('Exporting tree: start with %0%', array($nextOID)),
+            $this->getMessage()->getText('Exporting tree: start with %0%', array($nextOID)),
             1, array($nextOID), 'exportNodes');
   }
 
@@ -189,9 +208,8 @@ class XMLExportController extends BatchController {
     // - If the oids array holds one value!=null this is assumed to be an root oid and a new iterator is constructed
     // - If there is no iterator and no oid given, we return
 
-    $session = $this->getInstance('session');
-    $cache = $this->getInstance('cache');
-    $message = $this->getInstance('message');
+    $session = $this->getSession();
+    $message = $this->getMessage();
 
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
@@ -228,13 +246,13 @@ class XMLExportController extends BatchController {
     $session->set($this->DOCUMENT_INFO, $documentInfo);
 
     // decide what to do next
-    $rootOIDs = $cache->get(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS);
+    $rootOIDs = $this->_cache->get(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS);
     if (!$iterator->valid() && sizeof($rootOIDs) > 0) {
       // if the current iterator is finished, set iterator null and proceed with the next root oid
       $nextOID = array_shift($rootOIDs);
       $iterator = null;
       // store remaining root oids in session
-      $cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
+      $this->_cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
       // unset iterator id to start with new root oid
       $tmp = null;
       $session->set($this->ITERATOR_ID, $tmp);
@@ -262,8 +280,7 @@ class XMLExportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function finishExport($oids) {
-    $session = $this->getInstance('session');
-    $cache = $this->getInstance('cache');
+    $session = $this->getSession();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
@@ -275,7 +292,7 @@ class XMLExportController extends BatchController {
 
     // clear session variables
     $tmp = null;
-    $cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $tmp);
+    $this->_cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $tmp);
     $session->set($this->ITERATOR_ID, $tmp);
     $session->set($this->DOCUMENT_INFO, $tmp);
   }
@@ -309,15 +326,14 @@ class XMLExportController extends BatchController {
    * @return The updated document state
    */
   protected function writeNode($fileHandle, ObjectId $oid, $depth, $documentInfo) {
-    $persistenceFacade = $this->getInstance('persistenceFacade');
-    $cache = $this->getInstance('cache');
+    $persistenceFacade = $this->getPersistenceFacade();
 
     // load node and get element name
     $node = $persistenceFacade->load($oid);
     $elementName = $persistenceFacade->getSimpleType($node->getType());
 
     // check if the node is written already
-    $exportedOids = $cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
+    $exportedOids = $this->_cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
     if (!in_array($oid->__toString(), $exportedOids)) {
       // write node
       $mapper = $node->getMapper();
@@ -358,7 +374,7 @@ class XMLExportController extends BatchController {
 
       // register exported node
       $exportedOids[] = $oid->__toString();
-      $cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $exportedOids);
+      $this->_cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $exportedOids);
     }
     // return the updated document info
     return $documentInfo;
@@ -370,8 +386,7 @@ class XMLExportController extends BatchController {
    * @return Integer
    */
   protected function getNumUnvisitedChildren(Node $node) {
-    $cache = $this->getInstance('cache');
-    $exportedOids = $cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
+    $exportedOids = $this->_cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
 
     $childOIDs = array();
     $mapper = $node->getMapper();

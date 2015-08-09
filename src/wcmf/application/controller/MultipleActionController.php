@@ -10,8 +10,15 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -77,6 +84,28 @@ use wcmf\lib\util\StringUtil;
  */
 class MultipleActionController extends Controller {
 
+  private $_actionMapper = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $localization
+   * @param $message
+   * @param $actionMapper
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          Localization $localization,
+          Message $message,
+          ActionMapper $actionMapper) {
+    parent::__construct($session, $persistenceFacade,
+            $permissionManager, $localization, $message);
+    $this->_actionMapper = $actionMapper;
+  }
+
   /**
    * @see Controller::validate()
    */
@@ -116,9 +145,8 @@ class MultipleActionController extends Controller {
     $actions = array_keys($data);
     $numActions = sizeof($actions);
     $exceptions = array();
-    $actionMapper = $this->getInstance('actionMapper');
 
-    $formats = $this->getInstance('formats');
+    $formats = ObjectFactory::getInstance('formats');
     $nullFormat = $formats['null'];
 
     for($i=0; $i<$numActions; $i++) {
@@ -134,7 +162,7 @@ class MultipleActionController extends Controller {
       $context = isset($actionData['context']) ? $actionData['context'] : '';
       $action = isset($actionData['action']) ? $actionData['action'] : '';
       $params = isset($actionData['params']) ? $actionData['params'] : array();
-      $requestPart = $this->getInstance('request');
+      $requestPart = ObjectFactory::getInstance('request');
       $requestPart->setContext($context);
       $requestPart->setAction($action);
       $requestPart->setValues($params);
@@ -143,7 +171,7 @@ class MultipleActionController extends Controller {
 
       // execute the request
       try {
-        $responsePart = $actionMapper->processAction($requestPart);
+        $responsePart = $this->_actionMapper->processAction($requestPart);
       }
       catch (\Exception $ex) {
         $logger->error($ex->__toString());
@@ -216,7 +244,7 @@ class MultipleActionController extends Controller {
       if (sizeof($matches > 0)) {
         $variableName = $matches[1];
         $parameters = $matches[2];
-        $persistenceFacade = $this->getInstance('persistenceFacade');
+        $persistenceFacade = $this->getPersistenceFacade();
 
         // last_created_oid
         if ($variableName == 'last_created_oid') {

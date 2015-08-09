@@ -89,8 +89,8 @@ class TreeController extends Controller {
    */
   protected function getChildren($oid) {
 
-    $permissionManager = $this->getInstance('permissionManager');
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $permissionManager = $this->getPermissionManager();
+    $persistenceFacade = $this->getPersistenceFacade();
 
     // check read permission on type
     $type = $oid->getType();
@@ -174,7 +174,7 @@ class TreeController extends Controller {
   protected function getDisplayText(Node $node) {
     if ($this->isRootTypeNode($node->getOID())) {
       $mapper = $node->getMapper();
-      return $mapper->getTypeDisplayName(ObjectFactory::getInstance('message'));
+      return $mapper->getTypeDisplayName($this->getMessage());
     }
     else {
       return strip_tags(preg_replace("/[\r\n']/", " ", NodeUtil::getDisplayValue($node)));
@@ -205,8 +205,8 @@ class TreeController extends Controller {
     }
 
     // filter types by read permission
-    $permissionManager = $this->getInstance('permissionManager');
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $permissionManager = $this->getPermissionManager();
+    $persistenceFacade = $this->getPersistenceFacade();
     $nodes = array();
     foreach($types as $type) {
       if ($permissionManager->authorize($type, '', PersistenceAction::READ)) {

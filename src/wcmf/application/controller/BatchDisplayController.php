@@ -63,7 +63,7 @@ class BatchDisplayController extends BatchController {
 
     // initialize controller
     if ($request->getAction() != 'continue') {
-      $session = $this->getInstance('session');
+      $session = $this->getSession();
 
       // set defaults
       if (!$request->hasValue('nodesPerCall')) {
@@ -106,7 +106,7 @@ class BatchDisplayController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      return array('name' => $this->getInstance('message')->getText('Loading'),
+      return array('name' => $this->getMessage()->getText('Loading'),
           'size' => 1, 'oids' => array(1), 'callback' => 'startProcess');
     }
     else {
@@ -119,7 +119,7 @@ class BatchDisplayController extends BatchController {
    * @param $oids The oids to process
    */
   protected function startProcess($oids) {
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -140,7 +140,7 @@ class BatchDisplayController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = $this->getInstance('message')->getText('Loading tree: continue with %0%',
+      $name = $this->getMessage()->getText('Loading tree: continue with %0%',
               array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'loadNodes');
     }
@@ -155,7 +155,7 @@ class BatchDisplayController extends BatchController {
    * @param $oids The oids to process
    */
   protected function loadNodes($oids) {
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -189,7 +189,7 @@ class BatchDisplayController extends BatchController {
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
-      $name = $this->getInstance('message')->getText('Loading tree: continue with %0%',
+      $name = $this->getMessage()->getText('Loading tree: continue with %0%',
               array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'loadNodes');
     }
@@ -203,7 +203,7 @@ class BatchDisplayController extends BatchController {
    * Finish the process and set the result
    */
   protected function endProcess() {
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
 
     // clear session variables
     $tmp = null;
@@ -221,8 +221,8 @@ class BatchDisplayController extends BatchController {
     if ($this->isRegistered($oid)) {
       return;
     }
-    $persistenceFacade = $this->getInstance('persistenceFacade');
-    $session = $this->getInstance('session');
+    $persistenceFacade = $this->getPersistenceFacade();
+    $session = $this->getSession();
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -235,7 +235,7 @@ class BatchDisplayController extends BatchController {
 
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
-      $localization = $this->getInstance('localization');
+      $localization = $this->getLocalization();
       $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
     }
 
@@ -269,7 +269,7 @@ class BatchDisplayController extends BatchController {
    * @param $oid The object id to register
    */
   protected function register(ObjectId $oid) {
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
     $registry = $session->get($this->REGISTRY);
     $registry[] = $oid;
     $session->set($this->REGISTRY, $registry);
@@ -281,7 +281,7 @@ class BatchDisplayController extends BatchController {
    * @return Boolean whether the oid is registered or not
    */
   protected function isRegistered(ObjectId $oid) {
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
     $registry = $session->get($this->REGISTRY);
 
     return in_array($oid, $registry);

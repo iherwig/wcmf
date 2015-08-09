@@ -79,7 +79,7 @@ class ListController extends Controller {
    */
   protected function doExecute() {
     $request = $this->getRequest();
-    $permissionManager = $this->getInstance('permissionManager');
+    $permissionManager = $this->getPermissionManager();
 
     // unveil the query value if it is ofuscated
     $query = null;
@@ -124,7 +124,7 @@ class ListController extends Controller {
 
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
-      $localization = $this->getInstance('localization');
+      $localization = $this->getLocalization();
       for ($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         $nodes[$i] = $localization->loadTranslation($nodes[$i], $this->_request->getValue('language'), true, true);
       }
@@ -153,13 +153,13 @@ class ListController extends Controller {
    * @return Array of Node instances
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
     if (!$persistenceFacade->isKnownType($type)) {
       return array();
     }
-    $permissionManager = $this->getInstance('permissionManager');
+    $permissionManager = $this->getPermissionManager();
     if (!$permissionManager->authorize($type, '', PersistenceAction::READ)) {
-      $message = $this->getInstance('message');
+      $message = $this->getMessage();
       throw new AuthorizationException($message->getText("Authorization failed for action '%0%' on '%1%'.",
               array($message->getText('read'), $persistenceFacade->getSimpleType($type))));
     }

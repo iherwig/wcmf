@@ -101,7 +101,7 @@ class DefaultActionMapper implements ActionMapper {
     }
 
     // instantiate controller
-    $controllerObj = new $controllerClass();
+    $controllerObj = ObjectFactory::getClassInstance($controllerClass);
 
     // everything is right in place, start processing
     if ($isDebugEnabled) {

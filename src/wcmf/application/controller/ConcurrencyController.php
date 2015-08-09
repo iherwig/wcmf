@@ -10,11 +10,17 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
-use wcmf\lib\presentation\Controller;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * ConcurrencyController is used to lock/unlock objects.
@@ -54,6 +60,28 @@ use wcmf\lib\presentation\ApplicationError;
  */
 class ConcurrencyController extends Controller {
 
+  private $_concurrencyManager = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $localization
+   * @param $message
+   * @param $concurrencyManager
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          Localization $localization,
+          Message $message,
+          ConcurrencyManager $concurrencyManager) {
+    parent::__construct($session, $persistenceFacade,
+            $permissionManager, $localization, $message);
+    $this->_concurrencyManager = $concurrencyManager;
+  }
+
   /**
    * @see Controller::validate()
    */
@@ -80,19 +108,18 @@ class ConcurrencyController extends Controller {
   protected function doExecute() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $concurrencyManager = $this->getInstance('concurrencyManager');
     $oid = ObjectId::parse($request->getValue('oid'));
     $lockType = $request->getValue('type', Lock::TYPE_OPTIMISTIC);
 
     // process actions
     try {
       if ($request->getAction() == 'lock') {
-        $concurrencyManager->aquireLock($oid, $lockType);
-        $lock = $concurrencyManager->getLock($oid);
+        $this->_concurrencyManager->aquireLock($oid, $lockType);
+        $lock = $this->_concurrencyManager->getLock($oid);
         $response->setValue('type', $lock->getType());
       }
       elseif ($request->getAction() == 'unlock') {
-        $concurrencyManager->releaseLock($oid, $lockType);
+        $this->_concurrencyManager->releaseLock($oid, $lockType);
       }
     }
     catch (PessimisticLockException $ex) {

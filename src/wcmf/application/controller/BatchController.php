@@ -84,7 +84,7 @@ abstract class BatchController extends Controller {
   public function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
     if ($request->getAction() == 'continue') {
       // get step for current call from session
       if ($session->exist(self::STEP_SESSION_VARNAME)) {
@@ -135,7 +135,7 @@ abstract class BatchController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
     $response = $this->getResponse();
 
     // check if a download was triggered in the last step
@@ -217,7 +217,7 @@ abstract class BatchController extends Controller {
               ApplicationError::getGeneral("Wrong work package description '".$name."': No callback given."));
     }
 
-    $session = $this->getInstance('session');
+    $session = $this->getSession();
     $workPackages = $session->get(self::WORK_PACKAGES_VARNAME);
 
     $counter = 1;
@@ -280,7 +280,7 @@ abstract class BatchController extends Controller {
    * @return Integer
    */
   protected function getNumberOfSteps() {
-    return $this->getInstance('session')->get(self::NUM_STEPS_VARNAME);
+    return $this->getSession()->get(self::NUM_STEPS_VARNAME);
   }
 
   /**
@@ -288,7 +288,7 @@ abstract class BatchController extends Controller {
    * @param $step The step number
    */
   protected function getDisplayText($step) {
-    return $this->getInstance('message')->getText("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
+    return $this->getSession()->getText("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
   }
 
   /**

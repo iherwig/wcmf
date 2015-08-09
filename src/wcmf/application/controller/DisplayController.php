@@ -72,12 +72,12 @@ class DisplayController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $persistenceFacade = $this->getInstance('persistenceFacade');
-    $permissionManager = $this->getInstance('permissionManager');
+    $persistenceFacade = $this->getPersistenceFacade();
+    $permissionManager = $this->getPermissionManager();
     $request = $this->getRequest();
     $response = $this->getResponse();
     $logger = $this->getLogger();
-    $message = $this->getInstance('message');
+    $message = $this->getMessage();
 
     // load model
     $oid = ObjectId::parse($request->getValue('oid'));
@@ -94,7 +94,7 @@ class DisplayController extends Controller {
 
       // translate all nodes to the requested language if requested
       if ($this->isLocalizedRequest()) {
-        $localization = $this->getInstance('localization');
+        $localization = $this->getLocalization();
         $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
       }
 

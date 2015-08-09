@@ -76,7 +76,7 @@ class RESTController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     if ($request->hasValue('className') &&
-      !$this->getInstance('persistenceFacade')->isKnownType($request->getValue('className')))
+      !$this->getPersistenceFacade()->isKnownType($request->getValue('className')))
     {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
         array('invalidParameters' => array('className'))));
@@ -140,7 +140,7 @@ class RESTController extends Controller {
   protected function handleGet() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
 
     if ($request->getBooleanValue('collection') === false) {
       // read a specific object
@@ -325,7 +325,7 @@ class RESTController extends Controller {
       $subResponse = $this->executeSubAction('associate');
 
       // add related object to subresponse similar to default update action
-      $persistenceFacade = $this->getInstance('persistenceFacade');
+      $persistenceFacade = $this->getPersistenceFacade();
       $targetObj = $persistenceFacade->load($targetOid);
       $subResponse->setValue('oid', $targetOid);
       $subResponse->setValue($targetOidStr, $targetObj);
@@ -417,7 +417,7 @@ class RESTController extends Controller {
       if ($subResponse->getStatus() == Response::STATUS_200) {
         $targetOidStr = $request->getValue('targetOid');
         $targetOid = ObjectId::parse($targetOidStr);
-        $persistenceFacade = $this->getInstance('persistenceFacade');
+        $persistenceFacade = $this->getPersistenceFacade();
         $targetObj = $persistenceFacade->load($targetOid);
         $subResponse->setValue('oid', $targetOid);
         $subResponse->setValue($targetOidStr, $targetObj);
@@ -434,7 +434,7 @@ class RESTController extends Controller {
         if ($subResponse->getStatus() == Response::STATUS_200) {
           $targetOidStr = $this->getFirstRequestOid();
           $targetOid = ObjectId::parse($targetOidStr);
-          $persistenceFacade = $this->getInstance('persistenceFacade');
+          $persistenceFacade = $this->getPersistenceFacade();
           $targetObj = $persistenceFacade->load($targetOid);
           $subResponse->setValue('oid', $targetOid);
           $subResponse->setValue($targetOidStr, $targetObj);
@@ -536,7 +536,7 @@ class RESTController extends Controller {
    * @return String
    */
   protected function getRelatedType(ObjectId $sourceOid, $role) {
-    $persistenceFacade = $this->getInstance('persistenceFacade');
+    $persistenceFacade = $this->getPersistenceFacade();
     $sourceMapper = $persistenceFacade->getMapper($sourceOid->getType());
     $relation = $sourceMapper->getRelation($role);
     return $relation->getOtherType();
