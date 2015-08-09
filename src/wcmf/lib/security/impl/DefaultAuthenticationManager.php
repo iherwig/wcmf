@@ -36,7 +36,7 @@ class DefaultAuthenticationManager implements AuthenticationManager {
    * @see AuthenticationManager::login()
    */
   public function login($login, $password) {
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = ObjectFactory::getInstance('configuration');
 
     // try to receive the user with given credentials
     $user = $this->_principalFactory->getUser($login, true);

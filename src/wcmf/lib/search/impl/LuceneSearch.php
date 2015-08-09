@@ -11,6 +11,7 @@
 namespace wcmf\lib\search\impl;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\ObjectId;
@@ -44,7 +45,7 @@ class LuceneSearch implements IndexedSearch {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     // listen to object change events
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,

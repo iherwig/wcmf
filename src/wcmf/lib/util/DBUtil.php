@@ -11,12 +11,12 @@
 namespace wcmf\lib\util;
 
 use PDO;
-use Zend_Db;
-
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceException;
+use Zend_Db;
 
 /**
  * DBUtil provides database helper functions.
@@ -71,12 +71,12 @@ class DBUtil {
    * @return Boolean whether execution succeeded or not.
    */
   public static function executeScript($file, $initSection) {
-    $logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+    $logger = LogManager::getLogger(__CLASS__);
     if (file_exists($file)) {
       $logger->info('Executing SQL script '.$file.' ...');
 
       // find init params
-      $config = ObjectFactory::getConfigurationInstance();
+      $config = ObjectFactory::getInstance('configuration');
       if (($connectionParams = $config->getSection($initSection)) === false) {
         throw new ConfigurationException("No '".$initSection."' section given in configfile.");
       }
@@ -130,7 +130,7 @@ class DBUtil {
    * @param $password The password
    */
   public static function copyDatabase($srcName, $destName, $server, $user, $password) {
-    $logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+    $logger = LogManager::getLogger(__CLASS__);
     if ($srcName && $destName && $server && $user) {
       self::createDatabase($destName, $server, $user, $password);
 

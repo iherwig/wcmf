@@ -11,13 +11,13 @@
 namespace wcmf\lib\model\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\impl\AbstractNodeSerializer;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\model\NodeValueIterator;
-use wcmf\lib\model\impl\AbstractNodeSerializer;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * DionysosNodeSerializer is used to serialize Nodes into the Dionysos format and
@@ -45,6 +45,15 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
       'attributes'
   );
   private $_serializedOIDs = array();
+  private $_persistenceFacade = null;
+
+  /**
+   * Constructor
+   * @param $persistenceFacade
+   */
+  public function __construct(PersistenceFacade $persistenceFacade) {
+    $this->_persistenceFacade = $persistenceFacade;
+  }
 
   /**
    * @see NodeSerializer::isSerializedNode
@@ -84,8 +93,7 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
 
     // don't create all values by default (-> don't use PersistenceFacade::create() directly,
     // just for determining the class)
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $class = get_class($persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
+    $class = get_class($this->_persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
     $node->setOID($oid);
 

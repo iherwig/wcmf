@@ -32,6 +32,15 @@ class TransactionTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Publisher' => array(
         array('id' => 12345),
       ),
@@ -45,7 +54,7 @@ class TransactionTest extends DatabaseTestCase {
   }
 
   public function testSimple() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
@@ -78,11 +87,11 @@ class TransactionTest extends DatabaseTestCase {
     $author2 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
     $this->assertNull($author2);
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testChangesOutOfTxBoundaries() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
@@ -103,11 +112,11 @@ class TransactionTest extends DatabaseTestCase {
     $chapter2 = $persistenceFacade->load($chapter1->getOID());
     $this->assertEquals($modifiedName, $chapter2->getValue('name'));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testRollback() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
@@ -127,11 +136,11 @@ class TransactionTest extends DatabaseTestCase {
     $author2 = $persistenceFacade->load(ObjectId::parse($this->_authorOidStr));
     $this->assertNotNull($author2);
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testSingleInstancePerEntity() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
@@ -156,7 +165,7 @@ class TransactionTest extends DatabaseTestCase {
     $this->assertEquals($modifiedName, $publisher3->getValue('name'));
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

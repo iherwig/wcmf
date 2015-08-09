@@ -13,12 +13,13 @@ namespace wcmf\lib\presentation\view\impl;
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\view\View;
 
 if (!class_exists('Smarty')) {
-    throw new \wcmf\lib\config\ConfigurationException(
+    throw new ConfigurationException(
             'wcmf\lib\presentation\view\impl\SmartyView requires '.
             'Smarty. If you are using composer, add smarty/smarty '.
             'as dependency to your project');
@@ -45,7 +46,7 @@ class SmartyView implements View {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     $this->_view = new \Smarty();
     $this->_view->error_reporting = E_ALL;
@@ -189,9 +190,9 @@ class SmartyView implements View {
    * @see View::getTemplate()
    */
   public static function getTemplate($controller, $context, $action) {
+    $config = ObjectFactory::getInstance('configuration');
     if (self::$_actionKeyProvider == null) {
-      self::$_actionKeyProvider = new ConfigActionKeyProvider();
-      self::$_actionKeyProvider->setConfigSection('views');
+      self::$_actionKeyProvider = new ConfigActionKeyProvider($config, 'views');
     }
 
     $actionKey = ActionKey::getBestMatch(self::$_actionKeyProvider, $controller, $context, $action);
@@ -199,7 +200,6 @@ class SmartyView implements View {
       self::$_logger->debug('SmartyView::getTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey);
     }
     // get corresponding view
-    $config = ObjectFactory::getConfigurationInstance();
     try {
       $view = $config->getValue($actionKey, 'views', false);
     } catch (\Exception $ex) {

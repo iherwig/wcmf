@@ -26,7 +26,7 @@ use wcmf\lib\util\TestUtil;
 class ObjectQueryTest extends BaseTestCase {
 
   public function testSimple() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
     $sql = $query->getQueryString();
@@ -37,11 +37,11 @@ class ObjectQueryTest extends BaseTestCase {
     $cond = $query->getQueryCondition();
     $this->assertEquals('', $cond);
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testOneNode() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."2");
     $authorTpl = $query->getObjectTemplate('Author');
@@ -56,11 +56,11 @@ class ObjectQueryTest extends BaseTestCase {
     $cond = $query->getQueryCondition();
     $this->assertEquals($this->fixQueryQuotes("(`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%')", 'Author'), $cond);
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testOrderby() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."3");
     //
@@ -70,11 +70,11 @@ class ObjectQueryTest extends BaseTestCase {
     $expected = "SELECT DISTINCT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor` FROM `Author` ORDER BY `Author`.`name` ASC, `Author`.`created` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testOneNodeRegistered() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $authorTpl = $persistenceFacade->create('Author', BuildDepth::SINGLE);
@@ -89,11 +89,11 @@ class ObjectQueryTest extends BaseTestCase {
       "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testParentChild() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."5");
     $authorTpl = $query->getObjectTemplate('Author');
@@ -107,11 +107,11 @@ class ObjectQueryTest extends BaseTestCase {
       "WHERE (`Author`.`name` LIKE '%ingo%') AND (`Chapter`.`name` LIKE 'Chapter 1%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testParentChildSameType() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $query = new ObjectQuery('Chapter', __CLASS__.__METHOD__."6");
     $page1Tpl = $query->getObjectTemplate('Chapter');
@@ -128,11 +128,11 @@ class ObjectQueryTest extends BaseTestCase {
       "ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testManyToMany() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $query = new ObjectQuery('Publisher', __CLASS__.__METHOD__."7");
     $publisherTpl = $query->getObjectTemplate('Publisher');
@@ -146,11 +146,11 @@ class ObjectQueryTest extends BaseTestCase {
       "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `Publisher`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testSortManyToManyRelation() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $query = new ObjectQuery('Publisher', __CLASS__.__METHOD__."9");
     $publisherTpl = $query->getObjectTemplate('Publisher');
@@ -164,11 +164,11 @@ class ObjectQueryTest extends BaseTestCase {
       "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `NMPublisherAuthor`.`sortkey_publisher` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testComplex() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     /*
     WHERE (Author.name LIKE '%ingo%' AND Author.creator LIKE '%admin%') OR (Author.name LIKE '%herwig%') AND
@@ -213,7 +213,7 @@ class ObjectQueryTest extends BaseTestCase {
       "((`Chapter`.`name` LIKE 'Chapter 1%') OR (`Chapter`.`creator` = 'admin')) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

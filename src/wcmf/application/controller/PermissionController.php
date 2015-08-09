@@ -11,6 +11,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\config\ActionKey;
+use wcmf\lib\config\Configuration;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
@@ -126,9 +127,10 @@ class PermissionController extends Controller {
           PermissionManager $permissionManager,
           Localization $localization,
           Message $message,
+          Configuration $configuration,
           PrincipalFactory $principalFactory) {
     parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message);
+            $permissionManager, $localization, $message, $configuration);
     $this->_principalFactory = $principalFactory;
   }
 

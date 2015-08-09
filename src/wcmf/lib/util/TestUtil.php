@@ -12,6 +12,8 @@ namespace wcmf\lib\util;
 
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\InifileConfiguration;
+use wcmf\lib\core\impl\DefaultFactory;
+use wcmf\lib\core\impl\Log4phpLogger;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
@@ -32,19 +34,24 @@ class TestUtil {
    * @param $configPath The path to the configuration directory
    */
   public static function initFramework($configPath) {
-    ObjectFactory::clear();
-
     if (!file_exists($configPath) || is_file($configPath)) {
       throw new \Exception('Configuration path '.$configPath.' is not a directory. '.
               'Did you forget to generate code from the model?');
     }
 
-    $logManager = new LogManager(new \wcmf\lib\core\impl\Log4phpLogger('wcmf', 'log4php.php'));
-    ObjectFactory::registerInstance('logManager', $logManager);
+    // setup logging
+    $logger = new Log4phpLogger(__CLASS__, 'log4php.php');
+    LogManager::configure($logger);
 
-    $config = new InifileConfiguration($configPath);
-    $config->addConfiguration('config.ini');
-    ObjectFactory::configure($config);
+    // setup configuration
+    $configuration = new InifileConfiguration($configPath);
+    $configuration->addConfiguration('config.ini');
+
+    // setup object factory
+    ObjectFactory::configure(new DefaultFactory($configuration));
+    ObjectFactory::clear();
+    ObjectFactory::registerInstance('configuration', $configuration);
+
     $cache = ObjectFactory::getInstance('cache');
     $cache->clearAll();
   }
@@ -90,19 +97,6 @@ class TestUtil {
         exec("kill -9 $pid");
       }
     });
-  }
-
-  /**
-   * Turn authorization validation on/off.
-   * @param $isAnonymous Boolean whether to turn it off or on
-   */
-  public static function runAnonymous($isAnonymous) {
-    if (!self::$_nullPermissionManager) {
-      self::$_nullPermissionManager = new NullPermissionManager();
-      self::$_defaultPermissionManager = ObjectFactory::getInstance('permissionManager');
-    }
-    $permissionManager = $isAnonymous ? self::$_nullPermissionManager : self::$_defaultPermissionManager;
-    ObjectFactory::registerInstance('permissionManager', $permissionManager);
   }
 
   /**
@@ -159,7 +153,7 @@ class TestUtil {
    * @see Configuration::setValue()
    */
   public static function setConfigValue($key, $value, $section) {
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = ObjectFactory::getInstance('configuration');
     $config->setValue($key, $value, $section);
   }
 

@@ -86,7 +86,8 @@ class ListController extends Controller {
     if ($request->hasValue('query')) {
       $query = $request->getValue('query');
       if (strlen($query) > 0) {
-        $unveiled = Obfuscator::unveil($query);
+        $obfuscator = new Obfuscator($this->getSession());
+        $unveiled = $obfuscator->unveil($query);
         if (strlen($unveiled) > 0) {
           $query = stripslashes($unveiled);
         }

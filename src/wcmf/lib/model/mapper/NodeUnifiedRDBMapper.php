@@ -11,7 +11,6 @@
 namespace wcmf\lib\model\mapper;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
@@ -86,8 +85,6 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // handle relations
     if ($object instanceof Node) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-
       // added nodes
       $addedNodes = $object->getAddedNodes();
       foreach ($addedNodes as $role => $addedNodes) {
@@ -117,7 +114,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
               $thisEndRelation = $relationDesc->getThisEndRelation();
               $otherEndRelation = $relationDesc->getOtherEndRelation();
               $nmType = $thisEndRelation->getOtherType();
-              $nmObj = $persistenceFacade->create($nmType);
+              $nmObj = $this->_persistenceFacade->create($nmType);
               // add the parent nodes to the many to many object, don't
               // update the other side of the relation, because there may be no
               // relation defined to the many to many object
@@ -373,10 +370,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   protected function getManyToManyRelationSelectSQL(RelationDescription $relationDescription,
           array $otherObjectProxies, $otherRole, $criteria=null, $orderby=null,
           PagingInfo $pagingInfo=null) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $thisRelationDesc = $relationDescription->getThisEndRelation();
     $otherRelationDesc = $relationDescription->getOtherEndRelation();
-    $nmMapper = $persistenceFacade->getMapper($thisRelationDesc->getOtherType());
+    $nmMapper = $this->_persistenceFacade->getMapper($thisRelationDesc->getOtherType());
     $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
     $nmTablename = $nmMapper->getRealTableName();
 
@@ -510,15 +506,13 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @return SelectStatement
    */
   protected function addReferences(SelectStatement $selectStmt, $tableName) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-
     // collect all references first
     $references = array();
     foreach($this->getReferences() as $curReferenceDesc) {
       $referencedType = $curReferenceDesc->getOtherType();
       $referencedValue = $curReferenceDesc->getOtherName();
       $relationDesc = $this->getRelation($referencedType);
-      $otherMapper = $persistenceFacade->getMapper($relationDesc->getOtherType());
+      $otherMapper = $this->_persistenceFacade->getMapper($relationDesc->getOtherType());
       if ($otherMapper) {
         $otherTable = $otherMapper->getRealTableName();
         $otherAttributeDesc = $otherMapper->getAttribute($referencedValue);
@@ -701,9 +695,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   protected function loadRelationObjects(PersistentObjectProxy $objectProxy,
           PersistentObjectProxy $relativeProxy, RDBManyToManyRelationDescription $relationDesc,
           $includeTransaction=false) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-
-    $nmMapper = $persistenceFacade->getMapper($relationDesc->getThisEndRelation()->getOtherType());
+    $nmMapper = $this->_persistenceFacade->getMapper($relationDesc->getThisEndRelation()->getOtherType());
     $nmType = $nmMapper->getType();
 
     $thisId = $objectProxy->getOID()->getFirstId();
@@ -719,7 +711,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $nmObjects = $nmMapper->loadObjects($nmType, BuildDepth::SINGLE, $criteria);
 
     if ($includeTransaction) {
-      $transaction = $persistenceFacade->getTransaction();
+      $transaction = $this->_persistenceFacade->getTransaction();
       $objects = $transaction->getObjects();
       foreach ($objects as $object) {
         if ($object->getType() == $nmType && $object instanceof Node) {

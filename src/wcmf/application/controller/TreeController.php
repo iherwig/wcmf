@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
@@ -187,7 +186,7 @@ class TreeController extends Controller {
    */
   protected function getRootTypes() {
     $request = $this->getRequest();
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = $this->getConfiguration();
     $appConfig = $config->getSection('application');
 
     // get root types from configuration

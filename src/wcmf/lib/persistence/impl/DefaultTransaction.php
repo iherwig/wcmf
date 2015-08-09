@@ -10,12 +10,14 @@
  */
 namespace wcmf\lib\persistence\impl;
 
-use \Exception;
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\Transaction;
+use Exception;
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
+use wcmf\lib\persistence\Transaction;
 
 /**
  * Default implementation of Transaction.
@@ -27,6 +29,9 @@ class DefaultTransaction implements Transaction {
   private static $_isInfoEnabled = false;
   private static $_isDebugEnabled = false;
   private static $_logger = null;
+
+  private $_persistenceFacade = null;
+  private $_eventManager = null;
 
   private $_id = '';
   private $_isActive = false;
@@ -43,14 +48,20 @@ class DefaultTransaction implements Transaction {
   protected $_loadedObjects = array();
 
   /**
-   * Constructor.
+   * Constructor
+   * @param $persistenceFacade
+   * @param $eventManager
    */
-  public function __construct() {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          EventManager $eventManager) {
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
+    $this->_persistenceFacade = $persistenceFacade;
+    $this->_eventManager = $eventManager;
+
     $this->_id = __CLASS__.'_'.ObjectId::getDummyId();
-    ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
+    $this->_eventManager->addListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
     self::$_isInfoEnabled = self::$_logger->isInfoEnabled();
     self::$_isDebugEnabled = self::$_logger->isDebugEnabled();
@@ -60,7 +71,7 @@ class DefaultTransaction implements Transaction {
    * Destructor.
    */
   public function __destruct() {
-    ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
+    $this->_eventManager->removeListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
   }
 
@@ -181,12 +192,11 @@ class DefaultTransaction implements Transaction {
     }
     $changedOids = array();
     if ($this->_isActive) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $knowTypes = $persistenceFacade->getKnownTypes();
+      $knowTypes = $this->_persistenceFacade->getKnownTypes();
       try {
         // start transaction for each mapper
         foreach ($knowTypes as $type) {
-          $mapper = $persistenceFacade->getMapper($type);
+          $mapper = $this->_persistenceFacade->getMapper($type);
           $mapper->beginTransaction();
         }
         // process the recorded object changes, since new
@@ -207,7 +217,7 @@ class DefaultTransaction implements Transaction {
           self::$_logger->info("Committing transaction");
         }
         foreach ($knowTypes as $type) {
-          $mapper = $persistenceFacade->getMapper($type);
+          $mapper = $this->_persistenceFacade->getMapper($type);
           $mapper->commitTransaction();
         }
       }
@@ -215,7 +225,7 @@ class DefaultTransaction implements Transaction {
         // rollback transaction for each mapper
         self::$_logger->error("Rolling back transaction. Exception: ".$ex->__toString());
         foreach ($knowTypes as $type) {
-          $mapper = $persistenceFacade->getMapper($type);
+          $mapper = $this->_persistenceFacade->getMapper($type);
           $mapper->rollbackTransaction();
         }
         $this->rollback();

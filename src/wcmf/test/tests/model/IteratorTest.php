@@ -66,6 +66,15 @@ class IteratorTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Publisher' => array(
         array('id' => 200),
       ),
@@ -91,9 +100,13 @@ class IteratorTest extends DatabaseTestCase {
   }
 
   public function testPersistentIterater() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
-    $iterator1 = new PersistentIterator(ObjectId::parse($this->_authorOid));
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $session = ObjectFactory::getInstance('session');
+
+    $iterator1 = new PersistentIterator($persistenceFacade, $session,
+            ObjectId::parse($this->_authorOid));
     $count1 = 0;
     foreach($iterator1 as $depth => $oid) {
       $expectedResult = $this->_expectedResultsAuthor[$count1];
@@ -102,7 +115,8 @@ class IteratorTest extends DatabaseTestCase {
       $count1++;
     }
 
-    $iterator2 = new PersistentIterator(ObjectId::parse($this->_publisherOid));
+    $iterator2 = new PersistentIterator($persistenceFacade, $session,
+            ObjectId::parse($this->_publisherOid));
     $count2 = 0;
     foreach($iterator2 as $depth => $oid) {
       $expectedResult = $this->_expectedResultsPublisher[$count2];
@@ -111,7 +125,8 @@ class IteratorTest extends DatabaseTestCase {
       $count2++;
     }
 
-    $iterator3 = new PersistentIterator(ObjectId::parse($this->_bookOid));
+    $iterator3 = new PersistentIterator($persistenceFacade, $session,
+            ObjectId::parse($this->_bookOid));
     $count3 = 0;
     foreach($iterator3 as $depth => $oid) {
       $expectedResult = $this->_expectedResultsBook[$count3];
@@ -120,11 +135,11 @@ class IteratorTest extends DatabaseTestCase {
       $count3++;
     }
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testNodeIterater() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $iterator1 = new NodeIterator($persistenceFacade->load(ObjectId::parse($this->_authorOid)));
@@ -151,11 +166,11 @@ class IteratorTest extends DatabaseTestCase {
       $count3++;
     }
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testNodeIteraterReferences() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $node = $persistenceFacade->load(ObjectId::parse($this->_publisherOid));
@@ -170,11 +185,11 @@ class IteratorTest extends DatabaseTestCase {
     $this->assertEquals('modified name', $node->getValue('name'));
     $this->assertEquals(1, $count);
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function _testValueIterater() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $node = $persistenceFacade->load(ObjectId::parse($this->_publisherOid));
@@ -188,7 +203,7 @@ class IteratorTest extends DatabaseTestCase {
     }
     $this->assertEquals(12, $count, "The node has 12 attributes");
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

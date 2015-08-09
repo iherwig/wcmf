@@ -41,7 +41,7 @@ class ConfigListStrategy implements ListStrategy {
     $section = $options['section'];
     $listKey = $section.$language;
     if (!isset($this->_lists[$listKey])) {
-      $config = ObjectFactory::getConfigurationInstance();
+      $config = ObjectFactory::getInstance('configuration');
       $map = $config->getSection($section);
       $result = array();
       $message = ObjectFactory::getInstance('message');

@@ -32,6 +32,15 @@ class NodeRelationTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Publisher' => array(
         array('id' => 200),
       ),
@@ -76,7 +85,7 @@ class NodeRelationTest extends DatabaseTestCase {
   }
 
   public function testRelations() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     //$this->enableProfiler('Chapter');
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -127,11 +136,11 @@ class NodeRelationTest extends DatabaseTestCase {
     $transaction->rollback();
 
     //$this->printProfile('Chapter');
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testDeleteNode() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     //$this->enableProfiler('Chapter');
 
     // delete all relations
@@ -177,11 +186,11 @@ class NodeRelationTest extends DatabaseTestCase {
     $transaction->rollback();
 
     //$this->printProfile('Chapter');
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testLoadNM() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $author1 = $persistenceFacade->load($this->oids['author1'], BuildDepth::SINGLE);
@@ -191,11 +200,11 @@ class NodeRelationTest extends DatabaseTestCase {
     $author2 = $persistenceFacade->load($this->oids['author2'], BuildDepth::SINGLE);
     $publisher2 = $author2->getValue('Publisher');
     $this->assertEquals(1, sizeof($publisher2));
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testDelete() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
@@ -215,11 +224,11 @@ class NodeRelationTest extends DatabaseTestCase {
     $this->assertNotEquals(null, $persistenceFacade->load($this->oids['normalImage']));
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testNavigabilityManyToMany() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
@@ -240,7 +249,7 @@ class NodeRelationTest extends DatabaseTestCase {
     $this->assertNotNull($authors);
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

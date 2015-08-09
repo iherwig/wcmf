@@ -33,6 +33,15 @@ class SortTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Publisher' => array(
         array('id' => 12345),
       ),
@@ -56,7 +65,7 @@ class SortTest extends DatabaseTestCase {
   }
 
   public function testDefaultOrder() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $publisherMapper = $persistenceFacade->getMapper('Publisher');
@@ -67,11 +76,11 @@ class SortTest extends DatabaseTestCase {
     $this->assertEquals(true, $defaultAuthorOrder[0]['isSortkey']);
     $this->assertEquals('ASC', $defaultAuthorOrder[0]['sortDirection']);
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testImplicitOrderUpdateSimple() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -98,11 +107,11 @@ class SortTest extends DatabaseTestCase {
     $this->assertEquals($chapterOids[2], $subChapters2[0]->getOID()->__toString());
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testImplicitOrderUpdateManyToMany() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -129,11 +138,11 @@ class SortTest extends DatabaseTestCase {
     $this->assertEquals($authorOids[2], $authors2[0]->getOID()->__toString());
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testImplicitOrderUpdateMixedType() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -162,7 +171,7 @@ class SortTest extends DatabaseTestCase {
     $this->assertEquals($childOids[0], $children2[1]->getOID()->__toString());
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

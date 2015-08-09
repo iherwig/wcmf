@@ -11,7 +11,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\Configuration;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
@@ -89,9 +89,10 @@ class XMLExportController extends BatchController {
           PermissionManager $permissionManager,
           Localization $localization,
           Message $message,
+          Configuration $configuration,
           Cache $cache) {
     parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message);
+            $permissionManager, $localization, $message, $configuration);
     $this->_cache = $cache;
     $this->_fileUtil = new FileUtil();
   }
@@ -140,7 +141,6 @@ class XMLExportController extends BatchController {
    * @see BatchController::getDownloadFile()
    */
   protected function getDownloadFile() {
-    $config = ObjectFactory::getConfigurationInstance();
     $cacheDir = session_save_path().DIRECTORY_SEPARATOR;
     return $cacheDir.$this->_DOCFILE;
   }
@@ -172,7 +172,7 @@ class XMLExportController extends BatchController {
 
     // get root types from ini file
     $rootOIDs = array();
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = $this->getConfiguration();
     $rootTypes = $config->getValue('rootTypes', 'application');
     if (is_array($rootTypes)) {
       $persistenceFacade = $this->getPersistenceFacade();
@@ -209,6 +209,7 @@ class XMLExportController extends BatchController {
     // - If there is no iterator and no oid given, we return
 
     $session = $this->getSession();
+    $persistenceFacade = $this->getPersistenceFacade();
     $message = $this->getMessage();
 
     // restore document state from session
@@ -218,11 +219,11 @@ class XMLExportController extends BatchController {
     $iterator = null;
     $iteratorID = $session->get($this->ITERATOR_ID);
     if ($iteratorID != null) {
-      $iterator = PersistentIterator::load($iteratorID);
+      $iterator = PersistentIterator::load($persistenceFacade, $session, $iteratorID);
     }
     // no iterator but oid given, start with new root oid
     if ($iterator == null && sizeof($oids) > 0 && $oids[0] != null) {
-      $iterator = new PersistentIterator($oids[0]);
+      $iterator = new PersistentIterator($persistenceFacade, $session, $oids[0]);
     }
     // no iterator, no oid, finish
     if ($iterator == null) {

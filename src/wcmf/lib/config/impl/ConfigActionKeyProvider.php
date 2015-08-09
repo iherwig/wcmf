@@ -11,7 +11,7 @@
 namespace wcmf\lib\config\impl;
 
 use wcmf\lib\config\ActionKeyProvider;
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\Configuration;
 
 /**
  * ConfigActionKeyProvider searches for action keys in the
@@ -21,14 +21,17 @@ use wcmf\lib\core\ObjectFactory;
  */
 class ConfigActionKeyProvider implements ActionKeyProvider {
 
+  private $_configuration = null;
   private $_configSection = null;
   private $_id = null;
 
   /**
-   * Set the configuration section to search in.
-   * @param $configSection String
+   * Constructor
+   * @param $configuration Configuration instance
+   * @param $configSection The configuration section to search in
    */
-  public function setConfigSection($configSection) {
+  public function __construct(Configuration $configuration, $configSection) {
+    $this->_configuration = $configuration;
     $this->_configSection = $configSection;
     $this->_id = null;
   }
@@ -37,8 +40,7 @@ class ConfigActionKeyProvider implements ActionKeyProvider {
    * @see ActionKeyProvider::containsKey()
    */
   public function containsKey($actionKey) {
-    $config = ObjectFactory::getConfigurationInstance();
-    return $config->hasValue($actionKey, $this->_configSection);
+    return $this->_configuration->hasValue($actionKey, $this->_configSection);
   }
 
   /**
@@ -46,8 +48,7 @@ class ConfigActionKeyProvider implements ActionKeyProvider {
    */
   public function getKeyValue($actionKey) {
     if ($this->containsKey($actionKey)) {
-      $config = ObjectFactory::getConfigurationInstance();
-      return $config->getValue($actionKey, $this->_configSection);
+      return $this->_configuration->getValue($actionKey, $this->_configSection);
     }
     return null;
   }

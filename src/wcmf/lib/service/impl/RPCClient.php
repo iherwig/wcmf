@@ -10,9 +10,10 @@
  */
 namespace wcmf\lib\service\impl;
 
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\presentation\Request;
 use wcmf\lib\service\RemotingClient;
 
 /**
@@ -39,7 +40,7 @@ class RPCClient implements RemotingClient {
    */
   public function __construct($serverCli, $user) {
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     $this->_serverCli = realpath($serverCli);
     if (!file_exists($this->_serverCli)) {
@@ -47,7 +48,7 @@ class RPCClient implements RemotingClient {
     }
 
     // locate the php executable
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = ObjectFactory::getInstance('configuration');
     $this->_php = $config->getValue('php', 'system');
 
     // initialize the session variable for storing session

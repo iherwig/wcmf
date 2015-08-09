@@ -25,7 +25,7 @@ use wcmf\lib\util\TestUtil;
 class NodeTest extends BaseTestCase {
 
   public function testBuildDepth() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
@@ -97,7 +97,7 @@ class NodeTest extends BaseTestCase {
     }
 
     $transaction->rollback();
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

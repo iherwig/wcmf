@@ -10,8 +10,9 @@
  */
 namespace wcmf\lib\model;
 
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * PersistentIterator is used to iterate over a tree/list built of oids
@@ -23,6 +24,9 @@ use wcmf\lib\persistence\ObjectId;
  */
 class PersistentIterator implements \Iterator {
 
+  private $_persistenceFacade = null;
+  private $_session = null;
+
   protected $_end;              // indicates if the iteration is ended
   protected $_oidList;          // the list of oids to process
   protected $_processedOidList; // the list of all seen object ids
@@ -33,11 +37,19 @@ class PersistentIterator implements \Iterator {
 
   /**
    * Constructor.
+   * @param $persistenceFacade
+   * @param $session
    * @param $oid The oid to start from.
    * @param $aggregationKinds Array of aggregation kind values of relations to follow
    *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
-  public function __construct(ObjectId $oid, $aggregationKinds=array()) {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          Session $session,
+          ObjectId $oid,
+          $aggregationKinds=array()) {
+    $this->_persistenceFacade = $persistenceFacade;
+    $this->_session = $session;
+
     $this->_end = false;
     $this->_oidList = array();
     $this->_processedOidList = array();
@@ -52,29 +64,29 @@ class PersistentIterator implements \Iterator {
    * @return A unique id to provide for load, see PersistentIterator::load()
    */
   public function save() {
-    $session = ObjectFactory::getInstance('session');
-
     $uid = md5(uniqid(""));
     $state = array('end' => $this->_end, 'oidList' => $this->_oidList, 'processedOidList' => $this->_processedOidList,
       'currentOID' => $this->_currentOid, 'currentDepth' => $this->_currentDepth, 'aggregationKinds' => $this->_aggregationKinds);
-    $session->set('PersistentIterator.'.$uid, $state);
+    $this->_session->set('PersistentIterator.'.$uid, $state);
     return $uid;
   }
 
   /**
    * Load an iterator state from the session
+   * @param $persistenceFacade
+   * @param $session
    * @param $uid The unique id returned from the save method, see PersistentIterator::save()
    * @return PersistentIterator instance holding the saved state or null if unique id is not found
    */
-  public static function load($uid) {
+  public static function load($persistenceFacade, $session, $uid) {
     // get state from session
-    $session = ObjectFactory::getInstance('session');
     $state = $session->get('PersistentIterator.'.$uid);
     if ($state == null) {
       return null;
     }
     // create instance
-    $instance = new PersistentIterator($state['currentOID']);
+    $instance = new PersistentIterator($persistenceFacade, $session,
+            $state['currentOID']);
     $instance->_end = $state['end'];
     $instance->_oidList = $state['oidList'];
     $instance->_processedOidList = $state['processedOidList'];
@@ -106,8 +118,7 @@ class PersistentIterator implements \Iterator {
     // the current oid was processed
     $this->_processedOidList[] = $this->_currentOid->__toString();
 
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $node = $persistenceFacade->load($this->_currentOid);
+    $node = $this->_persistenceFacade->load($this->_currentOid);
 
     // collect navigable children for the given aggregation kinds
     $childOIDs = array();

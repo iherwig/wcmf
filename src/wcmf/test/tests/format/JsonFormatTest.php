@@ -15,9 +15,7 @@ use app\src\model\Book;
 use app\src\model\Chapter;
 use app\src\model\Image;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\impl\DionysosNodeSerializer;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\presentation\format\impl\JsonFormat;
 use wcmf\test\lib\BaseTestCase;
 
 /**
@@ -44,7 +42,7 @@ class JsonFormatTest extends BaseTestCase {
                 )
             ));
 
-    $format = new JsonFormat(new DionysosNodeSerializer());
+    $format = $this->createFormat();
     $format->deserialize($message);
 
     // test
@@ -78,7 +76,7 @@ class JsonFormatTest extends BaseTestCase {
                 )
             ));
 
-    $format = new JsonFormat(new DionysosNodeSerializer());
+    $format = $this->createFormat();
     $format->deserialize($message);
 
     // test
@@ -143,7 +141,7 @@ class JsonFormatTest extends BaseTestCase {
                 )
             ));
 
-    $format = new JsonFormat(new DionysosNodeSerializer());
+    $format = $this->createFormat();
     $format->deserialize($message);
 
     // test
@@ -200,7 +198,7 @@ class JsonFormatTest extends BaseTestCase {
                     )
                     )));
 
-    $format = new JsonFormat(new DionysosNodeSerializer());
+    $format = $this->createFormat();
     $format->deserialize($message);
 
     // test
@@ -236,7 +234,7 @@ class JsonFormatTest extends BaseTestCase {
                 )
             ));
 
-    $format = new JsonFormat(new DionysosNodeSerializer());
+    $format = $this->createFormat();
     $format->serialize($message);
 
     // test
@@ -270,7 +268,7 @@ class JsonFormatTest extends BaseTestCase {
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
             ));
 
-    $format = new JsonFormat(new DionysosNodeSerializer());
+    $format = $this->createFormat();
     $format->serialize($message);
 
     // test
@@ -318,7 +316,7 @@ class JsonFormatTest extends BaseTestCase {
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
         ));
 
-    $format = new JsonFormat(new DionysosNodeSerializer());
+    $format = $this->createFormat();
     $format->serialize($message);
 
     // test
@@ -376,7 +374,7 @@ class JsonFormatTest extends BaseTestCase {
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'list' => $list1));
 
-    $format = new JsonFormat(new DionysosNodeSerializer());
+    $format = $this->createFormat();
     $format->serialize($message);
 
     // test
@@ -397,6 +395,12 @@ class JsonFormatTest extends BaseTestCase {
     $this->assertEquals('app.src.model.Chapter:2', $chapters[1]['oid']);
     $this->assertEquals('app.src.model.Chapter', $chapters[2]['className']);
     $this->assertEquals('app.src.model.Chapter:3', $chapters[2]['oid']);
+  }
+
+  private function createFormat() {
+    $serializer = ObjectFactory::getClassInstance('wcmf\lib\model\impl\DionysosNodeSerializer');
+    return ObjectFactory::getClassInstance('wcmf\lib\presentation\format\impl\JsonFormat',
+            array('serializer' => $serializer));
   }
 }
 ?>

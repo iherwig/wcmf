@@ -10,13 +10,18 @@
  */
 namespace wcmf\lib\persistence\impl;
 
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
 use wcmf\lib\model\NodeIterator;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\impl\DefaultPersistenceFacade;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\persistence\impl\DefaultPersistenceFacade;
 use wcmf\lib\service\RemotingServer;
 
 /**
@@ -40,20 +45,26 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
 
   /**
    * Constructor
+   * @param $eventManager
+   * @param $logStrategy
+   * @param $session
    */
-  public function __construct() {
+  public function __construct(EventManager $eventManager,
+          OutputStrategy $logStrategy,
+          Session $session) {
+    parent::__construct($eventManager, $logStrategy);
+    $this->_session = $session;
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     // initialize session variables
-    $session = ObjectFactory::getInstance('session');
-    if (!$session->exist(self::PROXY_OBJECTS_SESSION_VARNAME)) {
+    if (!$this->_session->exist(self::PROXY_OBJECTS_SESSION_VARNAME)) {
       $proxies = array();
-      $session->set(self::PROXY_OBJECTS_SESSION_VARNAME, $proxies);
+      $this->_session->set(self::PROXY_OBJECTS_SESSION_VARNAME, $proxies);
     }
-    if (!$session->exist(self::REMOTE_OBJECTS_SESSION_VARNAME)) {
+    if (!$this->_session->exist(self::REMOTE_OBJECTS_SESSION_VARNAME)) {
       $objs = array();
-      $session->set(self::REMOTE_OBJECTS_SESSION_VARNAME, $objs);
+      $this->_session->set(self::REMOTE_OBJECTS_SESSION_VARNAME, $objs);
     }
     $this->_remotingServer = new RemotingServer();
     parent::__construct();
@@ -318,14 +329,13 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       $buildDepth=BuildDepth::SINGLE;
     }
     // save the object in the session
-    $session = ObjectFactory::getInstance('session');
     $umiStr = $umi->toString();
-    $objects = $session->get($varName);
+    $objects = $this->_session->get($varName);
     if (!isset($objects[$umiStr])) {
       $objects[$umiStr] = array();
     }
     $objects[$umiStr][$buildDepth] = $obj;
-    $session->set($varName, $objects);
+    $this->_session->set($varName, $objects);
   }
 
   /**
@@ -361,9 +371,8 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
     if ($buildDepth == 0) {
       $buildDepth=BuildDepth::SINGLE;
     }
-    $session = ObjectFactory::getInstance('session');
     $umiStr = $umi->toString();
-    $objects = $session->get($varName);
+    $objects = $this->_session->get($varName);
     if (isset($objects[$umiStr]) && isset($objects[$umiStr][$buildDepth])) {
       return $objects[$umiStr][$buildDepth];
     }

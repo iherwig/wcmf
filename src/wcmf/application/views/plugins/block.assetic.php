@@ -77,7 +77,7 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
         }
 
         // setup assetic
-        $config = ObjectFactory::getConfigurationInstance();
+        $config = ObjectFactory::getInstance('configuration');
         $cacheDir = WCMF_BASE.$config->getValue('cacheDir', 'View').'cache';
 
         // process resources

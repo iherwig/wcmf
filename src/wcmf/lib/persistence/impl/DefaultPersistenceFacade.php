@@ -11,16 +11,17 @@
 namespace wcmf\lib\persistence\impl;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\output\OutputStrategy;
+use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\StateChangeEvent;
-use wcmf\lib\persistence\output\OutputStrategy;
 
 /**
  * Default PersistenceFacade implementation.
@@ -32,17 +33,21 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   private $_mappers = array();
   private $_simpleToFqNames = array();
   private $_createdOIDs = array();
-  private $_logStrategy = null;
+  private $_eventManager = null;
   private $_currentTransaction = null;
+  private $_logStrategy = null;
 
   /**
    * Constructor
+   * @param $eventManager
    * @param $logStrategy OutputStrategy used for logging persistence actions.
    */
-  public function __construct(OutputStrategy $logStrategy) {
+  public function __construct(EventManager $eventManager,
+          OutputStrategy $logStrategy) {
+    $this->_eventManager = $eventManager;
     $this->_logStrategy = $logStrategy;
     // register as change listener to track the created oids, after save
-    ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
+    $this->_eventManager->addListener(StateChangeEvent::NAME,
             array($this, 'stateChanged'));
   }
 
@@ -50,7 +55,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * Destructor
    */
   public function __destruct() {
-    ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
+    $this->_eventManager->removeListener(StateChangeEvent::NAME,
             array($this, 'stateChanged'));
   }
 

@@ -10,14 +10,14 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\test\lib\ArrayDataSet;
-use wcmf\test\lib\DatabaseTestCase;
-
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\util\TestUtil;
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
 
 /**
  * PersistentObjectPerformanceTest.
@@ -38,6 +38,15 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Chapter' => $chapters,
     ));
   }
@@ -45,7 +54,7 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
   protected function setUp() {
     parent::setUp();
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -54,7 +63,7 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
    * @group performance
    */
   public function testCreateRandom() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $alphanum = "abcdefghijkmnpqrstuvwxyz23456789";
     $pf = ObjectFactory::getInstance('persistenceFacade');
     for ($i=0; $i<1000; $i++) {
@@ -67,46 +76,46 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
       $title = substr(str_shuffle($alphanum), 0, 15);
       $chapter->setValue('name', ucfirst($title));
     }
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   /**
    * @group performance
    */
   public function testLoadMany() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $start = time();
     $chapters = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE);
     self::$_logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
     self::$_logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   /**
    * @group performance
    */
   public function testLoadManyObjectQuery() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $start = time();
     $query = new ObjectQuery('Chapter');
     $chapters = $query->execute(BuildDepth::SINGLE);
     self::$_logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
     self::$_logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
    /**
    * @group performance
    */
   public function testLoadManyObjectQueryNoCache() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $start = time();
     $query = new ObjectQuery('Chapter', SelectStatement::NO_CACHE);
     $chapters = $query->execute(BuildDepth::SINGLE);
     self::$_logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
     self::$_logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

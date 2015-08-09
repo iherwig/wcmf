@@ -11,6 +11,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
+use wcmf\lib\config\Configuration;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
@@ -54,9 +55,10 @@ class SearchIndexController extends BatchController {
           PermissionManager $permissionManager,
           Localization $localization,
           Message $message,
+          Configuration $configuration,
           Search $search) {
     parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message);
+            $permissionManager, $localization, $message, $configuration);
     $this->_search = $search;
   }
 

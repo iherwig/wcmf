@@ -11,7 +11,8 @@
 namespace wcmf\lib\persistence\concurrency\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\LogManager;
+use wcmf\lib\core\Session;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
@@ -20,6 +21,7 @@ use wcmf\lib\persistence\concurrency\LockHandler;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\ReferenceDescription;
 
@@ -30,18 +32,25 @@ use wcmf\lib\persistence\ReferenceDescription;
  */
 class DefaultConcurrencyManager implements ConcurrencyManager {
 
+  private $_persistenceFacade = null;
   private $_lockHandler = null;
+  private $_session = null;
 
   private static $_logger = null;
 
   /**
-   * Set the LockHandler used for locking.
+   * Constructor
+   * @param $persistenceFacade
    * @param $lockHandler
    */
-  public function setLockHandler(LockHandler $lockHandler) {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          LockHandler $lockHandler,
+          Session $session) {
+    $this->_persistenceFacade = $persistenceFacade;
     $this->_lockHandler = $lockHandler;
+    $this->_session = $session;
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -56,8 +65,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
 
     // load the current state if not provided
     if ($type == Lock::TYPE_OPTIMISTIC && $currentState == null) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $currentState = $persistenceFacade->load($oid, BuildDepth::SINGLE);
+      $currentState = $this->_persistenceFacade->load($oid, BuildDepth::SINGLE);
     }
 
     $this->_lockHandler->aquireLock($oid, $type, $currentState);
@@ -109,8 +117,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
       // if there is a pessimistic lock on the object and it's not
       // owned by the current user, throw a PessimisticLockException
       if ($type == Lock::TYPE_PESSIMISTIC) {
-        $session = ObjectFactory::getInstance('session');
-        $currentUser = $session->getAuthUser();
+        $currentUser = $this->_session->getAuthUser();
         if ($lock->getLogin() != $currentUser->getLogin()) {
             throw new PessimisticLockException($lock);
         }
@@ -122,16 +129,15 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
         $originalState = $lock->getCurrentState();
         // temporarily detach the object from the transaction in order to get
         // the latest version from the store
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-        $transaction = $persistenceFacade->getTransaction();
+        $transaction = $this->_persistenceFacade->getTransaction();
         $transaction->detach($object->getOID());
-        $currentState = $persistenceFacade->load($oid, BuildDepth::SINGLE);
+        $currentState = $this->_persistenceFacade->load($oid, BuildDepth::SINGLE);
         // check for deletion
         if ($currentState == null) {
           throw new OptimisticLockException(null);
         }
         // check for modifications
-        $mapper = $persistenceFacade->getMapper($object->getType());
+        $mapper = $this->_persistenceFacade->getMapper($object->getType());
         $it = new NodeValueIterator($originalState, false);
         foreach($it as $valueName => $originalValue) {
           $attribute = $mapper->getAttribute($valueName);

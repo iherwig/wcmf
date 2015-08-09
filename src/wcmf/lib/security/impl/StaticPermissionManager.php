@@ -11,9 +11,12 @@
 namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
+use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\config\impl\InifileConfiguration;
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\LogManager;
+use wcmf\lib\core\Session;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\impl\AbstractPermissionManager;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\StringUtil;
@@ -28,19 +31,25 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
 
   const AUTHORIZATION_SECTION = 'authorization';
 
+  private $_configuration = null;
   private $_actionKeyProvider = null;
 
   private static $_logger = null;
 
   /**
    * Constructor
+   * @param $configuration
    */
-  public function __construct() {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          Session $session,
+          Configuration $configuration) {
+    parent::__construct($persistenceFacade, $session);
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
-    $this->_actionKeyProvider = new ConfigActionKeyProvider();
-    $this->_actionKeyProvider->setConfigSection(self::AUTHORIZATION_SECTION);
+    $this->_configuration = $configuration;
+    $this->_actionKeyProvider = new ConfigActionKeyProvider($this->_configuration,
+            self::AUTHORIZATION_SECTION);
   }
 
   /**
@@ -145,15 +154,14 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
    */
   protected function getConfigurationInstance() {
     // get config file to modify
-    $appConfig = ObjectFactory::getConfigurationInstance();
-    $configFiles = $appConfig->getConfigurations();
+    $configFiles = $this->_configuration->getConfigurations();
     if (sizeof($configFiles) == 0) {
       return false;
     }
 
     // create a writable configuration and modify the permission
     $mainConfig = $configFiles[0];
-    $config = new InifileConfiguration(dirname($mainConfig));
+    $config = new InifileConfiguration(dirname($mainConfig).'/');
     $config->addConfiguration(basename($mainConfig));
     return array(
       'instance' => $config,

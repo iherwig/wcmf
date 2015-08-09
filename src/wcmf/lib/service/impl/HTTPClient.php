@@ -10,14 +10,16 @@
  */
 namespace wcmf\lib\service\impl;
 
+use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ControllerMessage;
-use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\presentation\Request;
 use wcmf\lib\service\RemotingClient;
 
 if (!class_exists('Zend_Http_Client')) {
-    throw new \wcmf\lib\config\ConfigurationException(
+    throw new ConfigurationException(
             'wcmf\lib\service\impl\HTTPClient requires '.
             'Zend_Http_Client. If you are using composer, add zf1/zend-http '.
             'as dependency to your project');
@@ -45,7 +47,7 @@ class HTTPClient implements RemotingClient {
    */
   public function __construct($serverUrl, $user) {
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     $this->_client = new Zend_Http_Client($serverUrl, array(
         'keepalive' => true,

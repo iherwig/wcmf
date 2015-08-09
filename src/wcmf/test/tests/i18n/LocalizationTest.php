@@ -36,6 +36,15 @@ class LocalizationTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Book' => array(
         array('id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''),
         array('id' => 302, 'title' => '', 'description' => '', 'year' => ''),
@@ -67,7 +76,7 @@ class LocalizationTest extends DatabaseTestCase {
   }
 
   public function testTranslation() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = ObjectFactory::getInstance('localization');
@@ -107,11 +116,11 @@ class LocalizationTest extends DatabaseTestCase {
       "The translated title is 'title [de]'");
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testTranslationForNonTranslatableValues() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = ObjectFactory::getInstance('localization');
@@ -138,11 +147,11 @@ class LocalizationTest extends DatabaseTestCase {
       "There must be no translation for the untranslatable value in the translation table");
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testDontCreateEntriesForDefaultLanguage() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = ObjectFactory::getInstance('localization');
@@ -166,11 +175,11 @@ class LocalizationTest extends DatabaseTestCase {
       "There must be no translation for the default language in the translation table");
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testSaveEmptyValues() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = ObjectFactory::getInstance('localization');
@@ -195,11 +204,11 @@ class LocalizationTest extends DatabaseTestCase {
       "There must be translations for the untranslated values in the translation table");
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testDontCreateDuplicateEntries() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = ObjectFactory::getInstance('localization');
@@ -230,11 +239,11 @@ class LocalizationTest extends DatabaseTestCase {
       "There must be only one entry in the translation table");
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testTranslationWithDefaults() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = ObjectFactory::getInstance('localization');
@@ -265,11 +274,11 @@ class LocalizationTest extends DatabaseTestCase {
       "The translated value is empty");
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testDeleteTranslation() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = ObjectFactory::getInstance('localization');
@@ -330,11 +339,11 @@ class LocalizationTest extends DatabaseTestCase {
       "There must be no entry in the translation table for the object");
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testDeleteLanguage() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $localization = ObjectFactory::getInstance('localization');
@@ -387,7 +396,7 @@ class LocalizationTest extends DatabaseTestCase {
       "There must be entries in the translation table for the not deleted language");
     $transaction->rollback();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

@@ -12,6 +12,7 @@ namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
@@ -37,7 +38,7 @@ class DefaultActionMapper implements ActionMapper {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -46,12 +47,12 @@ class DefaultActionMapper implements ActionMapper {
    */
   public function processAction(Request $request) {
     $isDebugEnabled = self::$_logger->isDebugEnabled();
+    $config = ObjectFactory::getInstance('configuration');
 
     $eventManager = ObjectFactory::getInstance('eventManager');
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_ROUTE_ACTION, $request));
-    $actionKeyProvider = new ConfigActionKeyProvider();
-    $actionKeyProvider->setConfigSection('actionmapping');
+    $actionKeyProvider = new ConfigActionKeyProvider($config, 'actionmapping');
 
     $referrer = $request->getSender();
     $context = $request->getContext();
@@ -61,7 +62,6 @@ class DefaultActionMapper implements ActionMapper {
     $response->setContext($context);
     $response->setFormat($request->getResponseFormat());
 
-    $config = ObjectFactory::getConfigurationInstance();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
 
     // check authorization for controller/context/action triple

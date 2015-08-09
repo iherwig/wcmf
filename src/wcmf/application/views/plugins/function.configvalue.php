@@ -23,7 +23,7 @@ use wcmf\lib\core\ObjectFactory;
 * -------------------------------------------------------------
 */
 function smarty_function_configvalue($params, \Smarty_Internal_Template $template) {
-  $config = ObjectFactory::getConfigurationInstance();
+  $config = ObjectFactory::getInstance('configuration');
   $value = $config->getValue($params['key'], $params['section'], false);
   if (isset($params['varname'])) {
     $template->assign($params['varname'], $value);

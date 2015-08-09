@@ -199,7 +199,7 @@ abstract class AbstractUser extends Node implements User {
   protected static function getRoleConfigs() {
     if (self::$_roleConfig == null) {
       // load role config if existing
-      $config = ObjectFactory::getConfigurationInstance();
+      $config = ObjectFactory::getInstance('configuration');
       if (($roleConfig = $config->getSection('roleconfig')) !== false) {
         self::$_roleConfig = $roleConfig;
       }

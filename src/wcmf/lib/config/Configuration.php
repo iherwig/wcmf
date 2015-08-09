@@ -14,7 +14,7 @@ namespace wcmf\lib\config;
  * Implementations of Configuration give access to the application
  * configuration. An instance of a Configuration implementation must
  * be created on application startup and must be registered at ObjectFactory
- * using the ObjectFactory::configure() method.
+ * using the ObjectFactory::registerInstance() method.
  *
  * Configurations are supposed to be separated into sections, that contain
  * keys with values. Section names and keys are treated case insensitive.

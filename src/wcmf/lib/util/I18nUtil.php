@@ -119,7 +119,7 @@ class I18nUtil {
     $fileUtil = new FileUtil();
 
     // get locale directory
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = ObjectFactory::getInstance('configuration');
     $localeDir = $config->getDirectoryValue('localeDir', 'application');
     $fileUtil->mkdirRec($localeDir);
     $file = $localeDir.'messages_'.$language.'.php';

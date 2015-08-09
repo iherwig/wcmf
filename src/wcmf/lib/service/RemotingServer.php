@@ -64,7 +64,7 @@ class RemotingServer {
    */
   private function getClient($serverKey) {
     if (!isset($this->_clients[$serverKey])) {
-      $config = ObjectFactory::getConfigurationInstance();
+      $config = ObjectFactory::getInstance('configuration');
       $serverDef = $config->getValue($serverKey, 'remoteserver');
       // get remote the user
       $user = $this->getRemoteUser($serverKey);
@@ -88,7 +88,7 @@ class RemotingServer {
    */
   private function getRemoteUser($serverKey) {
     if (!isset($this->_users[$serverKey])) {
-      $config = ObjectFactory::getConfigurationInstance();
+      $config = ObjectFactory::getInstance('configuration');
       $remoteUser = $config->getValue($serverKey, 'remoteuser');
       if (is_array($remoteUser) && sizeof($remoteUser) == 2) {
         $this->_users[$serverKey] = array(

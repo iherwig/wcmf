@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\service;
 
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
@@ -36,7 +37,7 @@ class SoapServer extends \nusoap_server {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     $scriptURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $endpoint = dirname($scriptURL).'/soap';

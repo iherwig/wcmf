@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\presentation\impl;
 
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\format\Format;
 use wcmf\lib\presentation\impl\AbstractControllerMessage;
@@ -40,7 +41,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   public function __construct() {
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     // add header values to request
     foreach (self::getAllHeaders() as $name => $value) {
@@ -76,7 +77,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if (self::$_logger->isDebugEnabled()) {
       self::$_logger->debug("Request path: ".$requestPath);
     }
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = ObjectFactory::getInstance('configuration');
 
     $baseRequestValues = array();
     $defaultValuePattern = '([^/]+)';

@@ -10,9 +10,10 @@
  */
 namespace wcmf\lib\persistence\output\impl;
 
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\core\LogManager;
+use wcmf\lib\core\Session;
 use wcmf\lib\persistence\output\OutputStrategy;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
  * AuditingOutputStrategy outputs object changes to the logger category
@@ -23,13 +24,16 @@ use wcmf\lib\persistence\output\OutputStrategy;
 class AuditingOutputStrategy implements OutputStrategy {
 
   private static $_logger = null;
+  private $_session = null;
 
   /**
    * Constructor
+   * @param $session
    */
-  public function __construct() {
+  public function __construct(Session $session) {
+    $this->_session = $session;
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -52,8 +56,7 @@ class AuditingOutputStrategy implements OutputStrategy {
    */
   public function writeObject(PersistentObject $obj) {
     if (self::$_logger->isInfoEnabled()) {
-      $session = ObjectFactory::getInstance('session');
-      $user = $session->getAuthUser();
+      $user = $this->_session->getAuthUser();
 
       switch ($state = $obj->getState()) {
         // log insert action

@@ -10,7 +10,7 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\config\Configuration;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
@@ -65,9 +65,10 @@ class SaveController extends Controller {
           PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
           Localization $localization,
-          Message $message) {
+          Message $message,
+          Configuration $configuration) {
     parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message);
+            $permissionManager, $localization, $message, $configuration);
     $this->_fileUtil = new FileUtil();
   }
 
@@ -431,7 +432,7 @@ class SaveController extends Controller {
       $uploadDir = $this->_fileUtil->realpath($request->getValue('uploadDir'));
     }
     else {
-      $config = ObjectFactory::getConfigurationInstance();
+      $config = $this->getConfiguration();
       if (ObjectId::isValid($oid)) {
         $persistenceFacade = $this->getPersistenceFacade();
         $type = $persistenceFacade->getSimpleType($oid->getType());

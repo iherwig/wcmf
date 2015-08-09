@@ -120,13 +120,14 @@ class BatchDisplayController extends BatchController {
    */
   protected function startProcess($oids) {
     $session = $this->getSession();
+    $persistenceFacade = $this->getPersistenceFacade();
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
     $nodeOID = ObjectId::parse($request->getValue('oid'));
 
     // do the action
-    $iterator = new PersistentIterator($nodeOID);
+    $iterator = new PersistentIterator($persistenceFacade, $session, $nodeOID);
     $iteratorID = $iterator->save();
     $session->set($this->ITERATOR_ID, $iteratorID);
 
@@ -156,6 +157,7 @@ class BatchDisplayController extends BatchController {
    */
   protected function loadNodes($oids) {
     $session = $this->getSession();
+    $persistenceFacade = $this->getPersistenceFacade();
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -164,7 +166,7 @@ class BatchDisplayController extends BatchController {
     $iterator = null;
     $iteratorID = $session->get($this->ITERATOR_ID);
     if ($iteratorID != null) {
-      $iterator = PersistentIterator::load($iteratorID);
+      $iterator = PersistentIterator::load($persistenceFacade, $session, $iteratorID);
     }
 
     // no iterator, finish

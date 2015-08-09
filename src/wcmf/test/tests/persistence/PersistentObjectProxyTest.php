@@ -32,6 +32,15 @@ class PersistentObjectProxyTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Chapter' => array(
         array('id' => 123451, 'fk_chapter_id' => null, 'name' => 'Chapter1', 'sortkey' => 123451),
         array('id' => 123452, 'fk_chapter_id' => 123451, 'name' => 'Chapter2', 'sortkey' => 123452),
@@ -40,7 +49,7 @@ class PersistentObjectProxyTest extends DatabaseTestCase {
   }
 
   public function testLoadSimple() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $proxy1 = new PersistentObjectProxy(ObjectId::parse($this->_chapter1OidStr));
     $this->assertEquals("Chapter1", $proxy1->getValue('name'));
     $this->assertEquals(123451, $proxy1->getValue('sortkey'));
@@ -50,11 +59,11 @@ class PersistentObjectProxyTest extends DatabaseTestCase {
     $this->assertEquals("Chapter1", $proxy2->getValue('name'));
     $this->assertEquals(123451, $proxy2->getValue('sortkey'));
     $this->assertTrue($proxy2->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testLoadRelation() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $proxy = new PersistentObjectProxy(ObjectId::parse($this->_chapter1OidStr));
     $chapter1 = $proxy->getRealSubject();
     $this->assertEquals("Chapter1", $proxy->getValue('name'));

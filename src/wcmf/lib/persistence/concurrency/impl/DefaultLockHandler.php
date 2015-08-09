@@ -10,7 +10,8 @@
  */
 namespace wcmf\lib\persistence\concurrency\impl;
 
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\LogManager;
+use wcmf\lib\core\Session;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\Lock;
@@ -18,6 +19,7 @@ use wcmf\lib\persistence\concurrency\LockHandler;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 
 /**
@@ -31,14 +33,27 @@ class DefaultLockHandler implements LockHandler {
 
   const SESSION_VARNAME = 'DefaultLockHandler.locks';
 
+  private $_persistenceFacade = null;
+  private $_session = null;
   private $_lockType = null;
 
+  private static $_logger = null;
+
   /**
-   * Set the entity type name of PersistentLock instances.
-   * @param $lockType String
+   * Constructor
+   * @param $persistenceFacade
+   * @param $session
+   * @param $lockType Entity type name of PersistentLock instances
    */
-  public function setLockType($lockType) {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          Session $session,
+          $lockType) {
+    $this->_persistenceFacade = $persistenceFacade;
+    $this->_session = $session;
     $this->_lockType = $lockType;
+    if (self::$_logger == null) {
+      self::$_logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   /**
@@ -49,7 +64,6 @@ class DefaultLockHandler implements LockHandler {
     if (!$currentUser) {
       return;
     }
-    $session = ObjectFactory::getInstance('session');
 
     // check for existing locks
     $lock = $this->getLock($oid);
@@ -69,7 +83,7 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // create the lock instance
-    $lock = new Lock($type, $oid, $currentUser->getLogin(), $session->getID());
+    $lock = new Lock($type, $oid, $currentUser->getLogin(), $this->_session->getID());
 
     // set the current state for optimistic locks
     if ($type == Lock::TYPE_OPTIMISTIC) {
@@ -204,8 +218,7 @@ class DefaultLockHandler implements LockHandler {
     if ($lock->getType() == Lock::TYPE_PESSIMISTIC) {
       // pessimistic locks must be stored in the database in order
       // to be seen by other users
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $lockObj = $persistenceFacade->create($this->_lockType, BuildDepth::REQUIRED);
+      $lockObj = $this->_persistenceFacade->create($this->_lockType, BuildDepth::REQUIRED);
       $lockObj->setValue('objectid', $lock->getObjectId());
       $lockObj->setValue('login', $lock->getLogin());
       $lockObj->setValue('created', $lock->getCreated());
@@ -221,8 +234,7 @@ class DefaultLockHandler implements LockHandler {
    * @return User instance
    */
   protected function getCurrentUser() {
-    $session = ObjectFactory::getInstance('session');
-    return $session->getAuthUser();
+    return $this->_session->getAuthUser();
   }
 
   /**
@@ -231,9 +243,8 @@ class DefaultLockHandler implements LockHandler {
    * as keys and the Lock instances as values
    */
   protected function getSessionLocks() {
-    $session = ObjectFactory::getInstance('session');
-    if ($session->exist(self::SESSION_VARNAME)) {
-      return $session->get(self::SESSION_VARNAME);
+    if ($this->_session->exist(self::SESSION_VARNAME)) {
+      return $this->_session->get(self::SESSION_VARNAME);
     }
     return array();
   }
@@ -243,10 +254,9 @@ class DefaultLockHandler implements LockHandler {
    * @param $lock Lock instance
    */
   protected function addSessionLock(Lock $lock) {
-    $session = ObjectFactory::getInstance('session');
     $locks = $this->getSessionLocks();
     $locks[$lock->getObjectId()->__toString()] = $lock;
-    $session->set(self::SESSION_VARNAME, $locks);
+    $this->_session->set(self::SESSION_VARNAME, $locks);
   }
 
   /**
@@ -255,13 +265,12 @@ class DefaultLockHandler implements LockHandler {
    * @param $type One of the Lock::Type constants or null for all types (default: _null_)
    */
   protected function removeSessionLock(ObjectId $oid, $type) {
-    $session = ObjectFactory::getInstance('session');
     $locks = $this->getSessionLocks();
     if (isset($locks[$oid->__toString()])) {
       $lock = $locks[$oid->__toString()];
       if ($type == null || $type != null && $lock->getType() == $type) {
         unset($locks[$oid->__toString()]);
-        $session->set(self::SESSION_VARNAME, $locks);
+        $this->_session->set(self::SESSION_VARNAME, $locks);
       }
     }
   }

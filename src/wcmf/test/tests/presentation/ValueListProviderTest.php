@@ -32,6 +32,15 @@ class ValueListProviderTest extends DatabaseTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Author' => array(
         array('id' => 1, 'name' => 'A1'),
         array('id' => 2, 'name' => 'A2'),
@@ -99,7 +108,7 @@ class ValueListProviderTest extends DatabaseTestCase {
   }
 
   public function testNodeList() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $listDef = '{"type":"node","types":["Author"],"query":"Author.name LIKE \'A%\'"}';
     $list = ValueListProvider::getList($listDef);
     $this->assertEquals(2, sizeof(array_keys($list['items'])));
@@ -109,11 +118,11 @@ class ValueListProviderTest extends DatabaseTestCase {
     $inputType = 'select:{"list":'.$listDef.'}';
     $this->assertEquals('A1', ValueListProvider::translateValue('1', $inputType));
     $this->assertEquals('A1, A2', ValueListProvider::translateValue('1,2', $inputType));
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testEmptyItem() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $listDef1 = '{"type":"node","types":["Author"],"query":"Author.name LIKE \'A%\'","emptyItem":""}';
     $list1 = ValueListProvider::getList($listDef1);
     $this->assertEquals(3, sizeof(array_keys($list1['items'])));
@@ -123,7 +132,7 @@ class ValueListProviderTest extends DatabaseTestCase {
     $list2 = ValueListProvider::getList($listDef2);
     $this->assertEquals(3, sizeof(array_keys($list2['items'])));
     $this->assertEquals("- Please select -", $list2['items']['']);
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

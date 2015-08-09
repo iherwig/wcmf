@@ -10,10 +10,11 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\PersistenceAction;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\security\principal\User;
 
@@ -25,24 +26,25 @@ use wcmf\lib\security\principal\User;
  */
 class DefaultPrincipalFactory implements PrincipalFactory {
 
+  private $_persistenceFacade = null;
+  private $_permissionManager = null;
   private $_userType = null;
   private $_roleType = null;
 
   private $_roleRelationNames = null;
 
   /**
-   * Set the entity type name of User instances.
-   * @param $userType String
+   * Constructor
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $userType Entity type name of User instances
+   * @param $roleType Entity type name of Role instances
    */
-  public function setUserType($userType) {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager, $userType, $roleType) {
+    $this->_persistenceFacade = $persistenceFacade;
+    $this->_permissionManager = $permissionManager;
     $this->_userType = $userType;
-  }
-
-  /**
-   * Set the entity type name of Role instances.
-   * @param $roleType String
-   */
-  public function setRoleType($roleType) {
     $this->_roleType = $roleType;
   }
 
@@ -50,19 +52,17 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    * @see PrincipalFactory::getUser()
    */
   public function getUser($login, $useTempPermission=false) {
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
     if ($useTempPermission) {
-      $permissionManager->addTempPermission($this->_userType, '', PersistenceAction::READ);
+      $this->_permissionManager->addTempPermission($this->_userType, '', PersistenceAction::READ);
     }
 
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $user = $persistenceFacade->loadFirstObject($this->_userType, BuildDepth::SINGLE,
+    $user = $this->_persistenceFacade->loadFirstObject($this->_userType, BuildDepth::SINGLE,
                 array(
                     new Criteria($this->_userType, 'login', '=', $login)
                 ), null);
 
     if ($useTempPermission) {
-      $permissionManager->removeTempPermission($this->_userType, '', PersistenceAction::READ);
+      $this->_permissionManager->removeTempPermission($this->_userType, '', PersistenceAction::READ);
     }
     return $user;
   }
@@ -71,9 +71,8 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    * @see PrincipalFactory::getUserRoles()
    */
   public function getUserRoles(User $user, $useTempPermission=false) {
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
     if ($useTempPermission) {
-      $permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $this->_permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
     }
 
     // initialize role relation definition
@@ -90,7 +89,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
     }
 
     if ($useTempPermission) {
-      $permissionManager->removeTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $this->_permissionManager->removeTempPermission($this->_roleType, '', PersistenceAction::READ);
     }
 
     // TODO add role nodes from addedNodes array
@@ -102,19 +101,17 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    * @see PrincipalFactory::getRole()
    */
   public function getRole($name, $useTempPermission=false) {
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
     if ($useTempPermission) {
-      $permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $this->_permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
     }
 
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $role = $persistenceFacade->loadFirstObject($this->_roleType, BuildDepth::SINGLE,
+    $role = $this->_persistenceFacade->loadFirstObject($this->_roleType, BuildDepth::SINGLE,
                 array(
                     new Criteria($this->_roleType, 'name', '=', $name)
                 ), null);
 
     if ($useTempPermission) {
-      $permissionManager->removeTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $this->_permissionManager->removeTempPermission($this->_roleType, '', PersistenceAction::READ);
     }
     return $role;
   }

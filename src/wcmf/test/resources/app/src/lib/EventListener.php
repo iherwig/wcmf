@@ -11,20 +11,21 @@ use wcmf\lib\persistence\PersistenceEvent;
  */
 class EventListener {
 
+  private $_eventManager = null;
+
   /**
    * Constructor
    */
   public function __construct() {
-    ObjectFactory::getInstance('eventManager')->addListener(PersistenceEvent::NAME,
-      array($this, 'persisted'));
+    $this->_eventManager = ObjectFactory::getInstance('eventManager');
+    $this->_eventManager->addListener(PersistenceEvent::NAME, array($this, 'persisted'));
   }
 
   /**
    * Destructor
    */
   public function __destruct() {
-    ObjectFactory::getInstance('eventManager')->removeListener(PersistenceEvent::NAME,
-      array($this, 'persisted'));
+    $this->_eventManager->removeListener(PersistenceEvent::NAME, array($this, 'persisted'));
   }
 
   /**

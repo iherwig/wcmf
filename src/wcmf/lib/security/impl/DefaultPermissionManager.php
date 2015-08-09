@@ -12,10 +12,12 @@ namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\impl\PersistenceActionKeyProvider;
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\LogManager;
+use wcmf\lib\core\Session;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\impl\AbstractPermissionManager;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\StringUtil;
@@ -36,10 +38,13 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
 
   /**
    * Constructor
+   * @param $persistenceFacade
    */
-  public function __construct() {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          Session $session) {
+    parent::__construct($persistenceFacade, $session);
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     $this->_actionKeyProvider = new PersistenceActionKeyProvider();
     $this->_actionKeyProvider->setValueMap(array(
@@ -178,8 +183,7 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    * @return Instance of _permissionType
    */
   protected function createPermissionObject($resource, $context, $action, $roles) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $permission = $persistenceFacade->create($this->_permissionType);
+    $permission = $this->_persistenceFacade->create($this->_permissionType);
     $permission->setValue('resource', $resource);
     $permission->setValue('context', $context);
     $permission->setValue('action', $action);

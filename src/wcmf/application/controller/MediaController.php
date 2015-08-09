@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\GraphicsUtil;
@@ -191,7 +190,7 @@ class MediaController extends Controller {
    * @note Subclasses will override this method to implement special application requirements
    */
   protected function getResourceBaseDir() {
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = $this->getConfiguration();
     $rootPath = $config->getDirectoryValue('uploadDir', 'media');
     return $rootPath;
   }

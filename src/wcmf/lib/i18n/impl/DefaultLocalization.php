@@ -10,9 +10,9 @@
  */
 namespace wcmf\lib\i18n\impl;
 
+use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\NodeValueIterator;
@@ -20,6 +20,7 @@ use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 
@@ -52,40 +53,39 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  */
 class DefaultLocalization implements Localization {
 
+  private $_persistenceFacade = null;
+  private $_configuration = null;
+
   private $_supportedLanguages = null;
   private $_defaultLanguage = null;
   private $_translationType = null;
   private $_languageType = null;
 
   /**
-   * Set the default language.
+   * Configuration
+   * @param $persistenceFacade
+   * @param $configuration
    * @param $defaultLanguage
+   * @param $translationType Entity type name
+   * @param $languageType Entity type name
    */
-  public function setDefaultLanguage($defaultLanguage) {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          Configuration $configuration, $defaultLanguage, $translationType, $languageType) {
+    $this->_persistenceFacade = $persistenceFacade;
+    $this->_configuration = $configuration;
     $supportedLanguages = $this->getSupportedLanguages();
+
     if (!isset($supportedLanguages[$defaultLanguage])) {
       throw new ConfigurationException('No supported language equals the default language \''.$defaultLanguage.'\'');
     }
     $this->_defaultLanguage = $defaultLanguage;
-  }
 
-  /**
-   * Set the type to store translations in.
-   * @param $translationType Entity type name
-   */
-  public function setTranslationType($translationType) {
-    if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($translationType)) {
+    if (!$this->_persistenceFacade->isKnownType($translationType)) {
       throw new IllegalArgumentException('The translation type \''.$translationType.'\' is unknown.');
     }
     $this->_translationType = $translationType;
-  }
 
-  /**
-   * Set the type to store languages in.
-   * @param $languageType Entity type name
-   */
-  public function setLanguageType($languageType) {
-    if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($languageType)) {
+    if (!$this->_persistenceFacade->isKnownType($languageType)) {
       throw new IllegalArgumentException('The language type \''.$languageType.'\' is unknown.');
     }
     $this->_languageType = $languageType;
@@ -105,15 +105,13 @@ class DefaultLocalization implements Localization {
   public function getSupportedLanguages() {
     if ($this->_supportedLanguages == null) {
       // check if the configuration section exists
-      $config = ObjectFactory::getConfigurationInstance();
-      if (($languages = $config->getSection('languages')) !== false) {
+      if (($languages = $this->_configuration->getSection('languages')) !== false) {
         $this->_supportedLanguages = $languages;
       }
       // if not, use the languageType
       else {
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-        $languages = $persistenceFacade->loadObjects($this->_languageType, BuildDepth::SINGLE);
-        for($i=0; $i<sizeof($languages); $i++) {
+        $languages = $this->_persistenceFacade->loadObjects($this->_languageType, BuildDepth::SINGLE);
+        for($i=0, $count=sizeof($languages); $i<$count; $i++) {
           $curLanguage = $languages[$i];
           $this->_supportedLanguages[$curLanguage->getCode()] = $curLanguage->getName();
         }
@@ -126,8 +124,7 @@ class DefaultLocalization implements Localization {
    * @see Localization::loadTranslatedObject()
    */
   public function loadTranslatedObject(ObjectId $oid, $lang, $useDefaults=true) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $object = $persistenceFacade->load($oid, BuildDepth::SINGLE);
+    $object = $this->_persistenceFacade->load($oid, BuildDepth::SINGLE);
 
     return $this->loadTranslation($object, $lang, $useDefaults, false);
   }
@@ -183,9 +180,8 @@ class DefaultLocalization implements Localization {
     // load the translations and translate the object for any language
     // different to the default language
     if ($lang != $this->getDefaultLanguage()) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $transaction = $persistenceFacade->getTransaction();
-      $translatedObject = $persistenceFacade->create($object->getType());
+      $transaction = $this->_persistenceFacade->getTransaction();
+      $translatedObject = $this->_persistenceFacade->create($object->getType());
       $transaction->detach($translatedObject->getOID());
       $object->copyValues($translatedObject, true);
 
@@ -366,8 +362,7 @@ class DefaultLocalization implements Localization {
 
       // if not, create a new translation
       if ($translation == null) {
-        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-        $translation = $persistenceFacade->create($this->_translationType);
+        $translation = $this->_persistenceFacade->create($this->_translationType);
       }
 
       // set all required properties

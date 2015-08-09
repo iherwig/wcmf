@@ -28,7 +28,7 @@ class ErrorHandler {
   public function __construct() {
     set_error_handler(array($this, 'handleError'));
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 

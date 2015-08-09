@@ -26,7 +26,7 @@ use wcmf\lib\util\TestUtil;
 class NodeUtilTest extends BaseTestCase {
 
   public function testGetConnection() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     $paths1 = NodeUtil::getConnections('Author', null, 'Image', 'child');
     $this->assertEquals(2, sizeof($paths1));
@@ -79,11 +79,11 @@ class NodeUtilTest extends BaseTestCase {
     $this->assertEquals(1, sizeof($paths11));
     $this->assertEquals('Publisher', $paths11[0]->getEndRole());
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testGetQueryCondition() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
 
     // Chapter -> NormalImage
     $node1 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
@@ -132,7 +132,7 @@ class NodeUtilTest extends BaseTestCase {
       "WHERE ((`ParentChapter`.`id` = 10)) ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected3, 'Chapter'), str_replace("\n", "", $sql3));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

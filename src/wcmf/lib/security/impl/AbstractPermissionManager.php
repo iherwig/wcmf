@@ -11,12 +11,14 @@
 namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\LogManager;
+use wcmf\lib\core\Session;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\PermissionManager;
-use wcmf\lib\security\principal\User;
 use wcmf\lib\security\principal\impl\AnonymousUser;
+use wcmf\lib\security\principal\User;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -37,12 +39,20 @@ class AbstractPermissionManager {
 
   private static $_logger = null;
 
+  protected $_persistenceFacade = null;
+  protected $_session = null;
+
   /**
    * Constructor
+   * @param $persistenceFacade
+   * @param $session
    */
-  public function __construct() {
+  public function __construct(PersistenceFacade $persistenceFacade,
+          Session $session) {
+    $this->_persistenceFacade = $persistenceFacade;
+    $this->_session = $session;
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -51,13 +61,11 @@ class AbstractPermissionManager {
    */
   public function authorize($resource, $context, $action, User $user=null) {
     if ($user == null) {
-      $session = ObjectFactory::getInstance('session');
-      $user = $session->getAuthUser();
+      $user = $this->_session->getAuthUser();
     }
     if (self::$_logger->isDebugEnabled()) {
       self::$_logger->debug("Checking authorization for: '$resource?$context?$action' and user '".$user->getLogin()."'");
     }
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // normalize resource to string
     $resourceStr = ($resource instanceof ObjectId) ? $resource->__toString() : $resource;
@@ -81,11 +89,11 @@ class AbstractPermissionManager {
       $oidProperty = $resourceStr;
       $typeProperty = $type.substr($resourceStr, strlen($extensionRemoved));
     }
-    elseif ($persistenceFacade->isKnownType($resourceStr)) {
+    elseif ($this->_persistenceFacade->isKnownType($resourceStr)) {
       $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE;
       $type = $resourceStr;
     }
-    elseif ($persistenceFacade->isKnownType($extensionRemoved)) {
+    elseif ($this->_persistenceFacade->isKnownType($extensionRemoved)) {
       $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY;
       $type = $extensionRemoved;
       $typeProperty = $resourceStr;
@@ -142,12 +150,12 @@ class AbstractPermissionManager {
       if (self::$_logger->isDebugEnabled()) {
         self::$_logger->debug("Check parent objects");
       }
-      $mapper = $persistenceFacade->getMapper($type);
+      $mapper = $this->_persistenceFacade->getMapper($type);
       $parentRelations = $mapper->getRelations('parent');
       if (sizeof($parentRelations) > 0) {
 
         $this->addTempPermission($oidObj, $context, PersistenceAction::READ);
-        $object = $persistenceFacade->load($oidObj);
+        $object = $this->_persistenceFacade->load($oidObj);
         $this->removeTempPermission($oidObj, $context, PersistenceAction::READ);
 
         if ($object != null) {

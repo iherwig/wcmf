@@ -33,21 +33,24 @@ class ManyToManyTest extends DatabaseTestCase {
         array('id' => 1),
       ),
       'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
         array('id' => 50, 'login' => 'user1', 'config' => ''),
         array('id' => 60, 'login' => 'user2', 'config' => ''),
       ),
       'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
         array('id' => 51, 'name' => 'group1'),
         array('id' => 61, 'name' => 'group2'),
       ),
       'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
         array('fk_user_id' => 50, 'fk_role_id' => 51),
       ),
     ));
   }
 
   public function testRelation() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $userMapper = $persistenceFacade->getMapper('User');
@@ -57,11 +60,11 @@ class ManyToManyTest extends DatabaseTestCase {
     $this->assertEquals('0', $relationDescription->getOtherMinMultiplicity(), "The minimum multiplicity is 0");
     $this->assertEquals('none', $relationDescription->getOtherAggregationKind(), "The aggregation kind is none");
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testLoad() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $user1 = $persistenceFacade->load(new ObjectId('User', 50), 1);
@@ -73,11 +76,11 @@ class ManyToManyTest extends DatabaseTestCase {
     $role2 = $user2->getFirstChild('Role', null, null);
     $this->assertTrue($role2 instanceof Role, "The role is loaded as direct child");
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testCreate() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $newUser1 = $persistenceFacade->create('User', BuildDepth::SINGLE);
@@ -88,11 +91,11 @@ class ManyToManyTest extends DatabaseTestCase {
     $role = $newUser2->getFirstChild('Role');
     $this->assertTrue($role instanceof Role, "Role is a possible child of User");
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testSave() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
 
@@ -130,7 +133,7 @@ class ManyToManyTest extends DatabaseTestCase {
     $this->assertEquals(0, $numNM3, "The connection was deleted");
     $transaction->commit();
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

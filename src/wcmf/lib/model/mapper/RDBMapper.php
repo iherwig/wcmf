@@ -10,16 +10,18 @@
  */
 namespace wcmf\lib\model\mapper;
 
-use Exception;
 use PDO;
+use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\LogManager;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\DeleteOperation;
 use wcmf\lib\persistence\impl\AbstractMapper;
@@ -34,6 +36,7 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\UpdateOperation;
+use wcmf\lib\security\PermissionManager;
 use Zend_Db;
 
 /**
@@ -71,11 +74,21 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Constructor
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $concurrencyManager
+   * @param $eventManager
+   * @param $message
    */
-  public function __construct() {
-    parent::__construct();
+  public function __construct(PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          ConcurrencyManager $concurrencyManager,
+          EventManager $eventManager,
+          Message $message) {
+    parent::__construct($persistenceFacade, $permissionManager,
+            $concurrencyManager, $eventManager, $message);
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     self::$_isDebugEnabled = self::$_logger->isDebugEnabled();
   }
@@ -168,7 +181,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           // store the connection for reuse
           self::$_connections[$this->_connId] = $this->_conn;
         }
-        catch(Exception $ex) {
+        catch(\Exception $ex) {
           throw new PersistenceException("Connection to ".$this->_connectionParams['dbHostName'].".".
             $this->_connectionParams['dbName']." failed: ".$ex->getMessage());
         }
@@ -221,8 +234,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   protected function getNextId() {
     try {
       // get sequence table mapper
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $sequenceMapper = $persistenceFacade->getMapper(self::$SEQUENCE_CLASS);
+      $sequenceMapper = $this->_persistenceFacade->getMapper(self::$SEQUENCE_CLASS);
       if (!($sequenceMapper instanceof RDBMapper)) {
         throw new PersistenceException(self::$SEQUENCE_CLASS." is not mapped by RDBMapper.");
       }
@@ -251,7 +263,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $this->_idSelectStmt->closeCursor();
       return $id;
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       self::$_logger->error("The next id query caused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
@@ -319,7 +331,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         return $this->_conn->exec($sql);
       }
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       self::$_logger->error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
@@ -359,7 +371,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
       return $rows;
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       self::$_logger->error("The query: ".$selectStmt."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
@@ -412,7 +424,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         throw new IllegalArgumentException("Unsupported Operation: ".$operation);
       }
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       self::$_logger->error("The operation: ".$operation."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
@@ -648,13 +660,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   public function renderCriteria(Criteria $criteria, $placeholder=null, $tableName=null, $columnName=null) {
     $type = $criteria->getType();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    if (!$persistenceFacade->isKnownType($type)) {
+    if (!$this->_persistenceFacade->isKnownType($type)) {
       throw new IllegalArgumentException("Unknown type referenced in Criteria: $type");
     }
 
     // map type and attribute, if necessary
-    $mapper = $persistenceFacade->getMapper($type);
+    $mapper = $this->_persistenceFacade->getMapper($type);
     if ($tableName === null) {
       $tableName = $mapper->getRealTableName();
     }
@@ -710,8 +721,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::SINGLE, BuildDepth::REQUIRED))) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-
     // create the object
     $object = $this->createObjectFromData(array());
 
@@ -733,10 +742,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         )) ) {
           $childObject = null;
           if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
-            $childObject = $persistenceFacade->create($curRelationDesc->getOtherType(), BuildDepth::SINGLE);
+            $childObject = $this->_persistenceFacade->create($curRelationDesc->getOtherType(), BuildDepth::SINGLE);
           }
           else {
-            $childObject = $persistenceFacade->create($curRelationDesc->getOtherType(), $newBuildDepth);
+            $childObject = $this->_persistenceFacade->create($curRelationDesc->getOtherType(), $newBuildDepth);
           }
           $object->setValue($curRelationDesc->getOtherRole(), array($childObject), true, false);
         }
@@ -749,7 +758,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see AbstractMapper::saveImpl()
    */
   protected function saveImpl(PersistentObject $object) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if ($this->_conn == null) {
       $this->connect();
     }
@@ -761,7 +769,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       // insert new object
       $operations = $this->getInsertSQL($object);
       foreach($operations as $operation) {
-        $mapper = $persistenceFacade->getMapper($operation->getType());
+        $mapper = $this->_persistenceFacade->getMapper($operation->getType());
         $mapper->executeOperation($operation);
       }
       // log action
@@ -777,7 +785,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       // save object
       $operations = $this->getUpdateSQL($object);
       foreach($operations as $operation) {
-        $mapper = $persistenceFacade->getMapper($operation->getType());
+        $mapper = $this->_persistenceFacade->getMapper($operation->getType());
         $mapper->executeOperation($operation);
       }
     }
@@ -794,7 +802,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see AbstractMapper::deleteImpl()
    */
   protected function deleteImpl(PersistentObject $object) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if ($this->_conn == null) {
       $this->connect();
     }
@@ -807,7 +814,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $affectedRows = 0;
     $operations = $this->getDeleteSQL($oid);
     foreach($operations as $operation) {
-      $mapper = $persistenceFacade->getMapper($operation->getType());
+      $mapper = $this->_persistenceFacade->getMapper($operation->getType());
       $affectedRows += $mapper->executeOperation($operation);
     }
     // only delete children if the object was deleted
@@ -826,7 +833,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
         // load related objects
         $otherType = $relationDesc->getOtherType();
-        $otherMapper = $persistenceFacade->getMapper($otherType);
+        $otherMapper = $this->_persistenceFacade->getMapper($otherType);
         $allObjects = $this->loadRelationImpl(array($proxy), $relationDesc->getOtherRole());
         $oidStr = $proxy->getOID()->__toString();
         if (isset($allObjects[$oidStr])) {
@@ -933,7 +940,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       return $objects;
     }
 
-    $tx = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+    $tx = $this->_persistenceFacade->getTransaction();
     for ($i=0, $count=sizeof($data); $i<$count; $i++) {
       // create the object
       $object = $this->createObjectFromData($data[$i]);
@@ -1080,11 +1087,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     }
     $type = $objects[0]->getType();
 
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $otherRelationDescription = $this->getRelationImpl($role, true);
     if ($otherRelationDescription->getOtherNavigability() == true) {
       $otherType = $otherRelationDescription->getOtherType();
-      $otherMapper = $persistenceFacade->getMapper($otherType);
+      $otherMapper = $this->_persistenceFacade->getMapper($otherType);
       if (!($otherMapper instanceof RDBMapper)) {
         throw new PersistenceException("Can only load related objects, if they are mapped by an RDBMapper instance.");
       }

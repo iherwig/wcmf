@@ -11,6 +11,7 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\ErrorHandler;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\Request;
 
@@ -34,7 +35,7 @@ class Application {
   public function __construct() {
     $this->_startTime = microtime(true);
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
     ob_start(array($this, "outputHandler"));
     new ErrorHandler();
@@ -67,7 +68,7 @@ class Application {
    * @return Request instance representing the current HTTP request
    */
   public function initialize($defaultController='', $defaultContext='', $defaultAction='login') {
-    $config = ObjectFactory::getConfigurationInstance();
+    $config = ObjectFactory::getInstance('configuration');
 
     // create the Request instance
     $this->_initialRequest = ObjectFactory::getInstance('request');
@@ -123,7 +124,7 @@ class Application {
     self::$_logger->error($exception->getMessage()."\n".$exception->getTraceAsString());
 
     // rollback current transaction
-    if (ObjectFactory::getConfigurationInstance() != null) {
+    if (ObjectFactory::getInstance('configuration') != null) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $persistenceFacade->getTransaction()->rollback();
 

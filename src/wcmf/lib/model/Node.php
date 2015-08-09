@@ -12,6 +12,7 @@ namespace wcmf\lib\model;
 
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
@@ -58,7 +59,7 @@ class Node extends DefaultPersistentObject {
       self::$_parentGetValueMethod = $parent->getMethod('getValue');
     }
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 

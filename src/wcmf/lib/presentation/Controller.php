@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\presentation;
 
+use wcmf\lib\config\Configuration;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
@@ -53,6 +55,7 @@ abstract class Controller {
   private $_permissionManager = null;
   private $_localization = null;
   private $_message = null;
+  private $_configuration = null;
 
   /**
    * Constructor
@@ -61,18 +64,21 @@ abstract class Controller {
    * @param $permissionManager
    * @param $localization
    * @param $message
+   * @param $configuration
    */
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
           Localization $localization,
-          Message $message) {
-    $this->_logger = ObjectFactory::getInstance('logManager')->getLogger(get_class($this));
+          Message $message,
+          Configuration $configuration) {
+    $this->_logger = LogManager::getLogger(get_class($this));
     $this->_session = $session;
     $this->_persistenceFacade = $persistenceFacade;
     $this->_permissionManager = $permissionManager;
     $this->_localization = $localization;
     $this->_message = $message;
+    $this->_configuration = $configuration;
   }
 
   /**
@@ -235,6 +241,14 @@ abstract class Controller {
    */
   protected function getMessage() {
     return $this->_message;
+  }
+
+  /**
+   * Get the Configuration instance.
+   * @return Configuration
+   */
+  protected function getConfiguration() {
+    return $this->_configuration;
   }
 
   /**

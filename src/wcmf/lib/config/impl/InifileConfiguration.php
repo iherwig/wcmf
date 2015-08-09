@@ -14,6 +14,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\WritableConfiguration;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\IOException;
@@ -54,7 +55,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $this->_configPath = $configPath;
     $this->_fileUtil = new FileUtil();
     if (self::$_logger == null) {
-      self::$_logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+      self::$_logger = LogManager::getLogger(__CLASS__);
     }
   }
 

@@ -40,12 +40,21 @@ class PersistentObjectTest extends DatabaseTestCase {
       'DBSequence' => array(
         array('id' => 1),
       ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'NMUserRole' => array(
+        array('fk_user_id' => 0, 'fk_role_id' => 0),
+      ),
+      'Role' => array(
+        array('id' => 0, 'name' => 'administrators'),
+      ),
       'Chapter' => $chapters,
     ));
   }
 
   public function testCopyValues() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $chapter1 = new Chapter(new ObjectId('Chapter', 12));
     $chapter1->setValue('name', 'Chapter 1');
     $chapter1->setValue('created', null);
@@ -68,11 +77,11 @@ class PersistentObjectTest extends DatabaseTestCase {
     $this->assertEquals('Chapter 1', $chapter22->getValue('name'));
     $this->assertEquals('2011-05-31', $chapter22->getValue('created'));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testMergeValues() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $chapter1 = new Chapter(new ObjectId('Chapter', 12));
     $chapter1->setValue('name', 'Chapter 1');
     $chapter1->setValue('created', '2011-05-31');
@@ -87,11 +96,11 @@ class PersistentObjectTest extends DatabaseTestCase {
     $this->assertEquals(null, $chapter2->getValue('created'));
     $this->assertEquals('admin', $chapter2->getValue('creator'));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testClearValues() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $chapter1 = new Chapter(new ObjectId('Chapter', 12));
     $chapter1->setValue('name', 'Chapter 1');
     $chapter1->setValue('created', '2011-05-31');
@@ -101,11 +110,11 @@ class PersistentObjectTest extends DatabaseTestCase {
     $this->assertEquals(null, $chapter1->getValue('name'));
     $this->assertEquals(null, $chapter1->getValue('created'));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 
   public function testLoadPaging() {
-    TestUtil::runAnonymous(true);
+    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // lower bound 1
@@ -133,7 +142,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapters5 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo5);
     $this->assertEquals($this->_numChapters, sizeof($chapters5));
 
-    TestUtil::runAnonymous(false);
+    TestUtil::endSession();
   }
 }
 ?>

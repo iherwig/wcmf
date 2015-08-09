@@ -10,6 +10,7 @@
  */
 namespace wcmf\test\lib;
 
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
@@ -23,7 +24,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
   protected function setUp() {
     TestUtil::initFramework(WCMF_BASE.'app/config/');
     parent::setUp();
-    $logger = ObjectFactory::getInstance('logManager')->getLogger(__CLASS__);
+    $logger = LogManager::getLogger(__CLASS__);
     $logger->info("Running: ".get_class($this).".".$this->getName());
   }
 

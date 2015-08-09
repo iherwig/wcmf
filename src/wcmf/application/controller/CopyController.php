@@ -176,6 +176,7 @@ class CopyController extends BatchController {
    */
   protected function startProcess($oids) {
     $session = $this->getSession();
+    $persistenceFacade = $this->getPersistenceFacade();
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -213,7 +214,8 @@ class CopyController extends BatchController {
     else if ($action == 'copy') {
       // with copy action, we need to attach a copy of the Node to the new target,
       // the children need to be loaded and treated in the same way too
-      $iterator = new PersistentIterator($nodeOID, array('composite'));
+      $iterator = new PersistentIterator($persistenceFacade, $session, $nodeOID,
+              array('composite'));
       $iteratorID = $iterator->save();
       $session->set($this->ITERATOR_ID, $iteratorID);
 
@@ -253,6 +255,7 @@ class CopyController extends BatchController {
    */
   protected function copyNodes($oids) {
     $session = $this->getSession();
+    $persistenceFacade = $this->getPersistenceFacade();
 
     // restore the request from session
     $request = $session->get($this->REQUEST);
@@ -264,7 +267,7 @@ class CopyController extends BatchController {
     $iterator = null;
     $iteratorID = $session->get($this->ITERATOR_ID);
     if ($iteratorID != null) {
-      $iterator = PersistentIterator::load($iteratorID);
+      $iterator = PersistentIterator::load($persistenceFacade, $session, $iteratorID);
     }
 
     // no iterator, finish
