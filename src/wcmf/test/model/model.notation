@@ -1716,7 +1716,7 @@
         <layoutConstraint xmi:type="notation:Location" xmi:id="_xx9AUStFEeWoF5Z7Jotdrw" y="5"/>
       </children>
       <element xmi:type="uml:Class" href="model.uml#_-AiKMLRBEeOQ5oJFa1i8cg"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_B2S60bRCEeOQ5oJFa1i8cg" x="465" y="15" width="196" height="76"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_B2S60bRCEeOQ5oJFa1i8cg" x="465" y="180" width="196" height="76"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_VgE90LRCEeOQ5oJFa1i8cg" type="2008" lineColor="0">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_VgFk4LRCEeOQ5oJFa1i8cg" source="ShadowFigure">
@@ -1903,7 +1903,7 @@
         <layoutConstraint xmi:type="notation:Location" xmi:id="_xx9AVytFEeWoF5Z7Jotdrw" y="5"/>
       </children>
       <element xmi:type="uml:Class" href="model.uml#_S4bEsARHEeSxY9ess8EBIw"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_TfYXAQRHEeSxY9ess8EBIw" x="465" y="105" width="196" height="151"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_TfYXAQRHEeSxY9ess8EBIw" x="465" y="15" width="196" height="151"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_pvb7QFUxEeS4i-N-Z4Tllg" type="2008">
       <children xmi:type="notation:DecorationNode" xmi:id="_pvm6YFUxEeS4i-N-Z4Tllg" type="5029"/>
@@ -2351,14 +2351,6 @@
           </styles>
           <element xmi:type="uml:Property" href="model.uml#_bJMF8LRDEeOQ5oJFa1i8cg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_csqq4bRDEeOQ5oJFa1i8cg"/>
-        </children>
-        <children xmi:type="notation:Shape" xmi:id="_csqq4rRDEeOQ5oJFa1i8cg" type="3012" lineColor="0">
-          <styles xmi:type="notation:StringListValueStyle" xmi:id="_lWdY4DbKEeW4SLkzJtsk6g" name="maskLabel">
-            <stringListValue>defaultValue</stringListValue>
-            <stringListValue>name</stringListValue>
-          </styles>
-          <element xmi:type="uml:Property" href="model.uml#_bL2_cLRDEeOQ5oJFa1i8cg"/>
-          <layoutConstraint xmi:type="notation:Location" xmi:id="_csqq47RDEeOQ5oJFa1i8cg"/>
         </children>
         <children xmi:type="notation:Shape" xmi:id="_csqq5LRDEeOQ5oJFa1i8cg" type="3012" lineColor="0">
           <styles xmi:type="notation:StringListValueStyle" xmi:id="_mFHOoDbKEeW4SLkzJtsk6g" name="maskLabel">

@@ -288,7 +288,7 @@ abstract class BatchController extends Controller {
    * @param $step The step number
    */
   protected function getDisplayText($step) {
-    return $this->getSession()->getText("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
+    return $this->getMessage()->getText("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
   }
 
   /**

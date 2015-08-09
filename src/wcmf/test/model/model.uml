@@ -253,11 +253,6 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_iZH3YbRDEeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_iZJFgLRDEeOQ5oJFa1i8cg" value="$typeMapping"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_bL2_cLRDEeOQ5oJFa1i8cg" name="logging" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kVyYYLRDEeOQ5oJFa1i8cg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kVy_cLRDEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_kV1bsLRDEeOQ5oJFa1i8cg" value="false"/>
-                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_bOdAcLRDEeOQ5oJFa1i8cg" name="logStrategy" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_l5LdwLRDEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_l5ME0LRDEeOQ5oJFa1i8cg" value="1"/>

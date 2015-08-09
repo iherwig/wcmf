@@ -17,6 +17,7 @@ use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\search\IndexedSearch;
+use wcmf\lib\search\Search;
 use wcmf\lib\security\PermissionManager;
 
 /**
