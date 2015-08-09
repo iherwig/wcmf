@@ -53,7 +53,7 @@ catch (Exception $ex) {
     $application->handleException($ex, isset($request) ? $request : null);
   }
   catch (Exception $unhandledEx) {
-    $error = "An unhandled exception occured. Please see log file for details.";
+    echo("An unhandled exception occured. Please see log file for details.");
   }
 }
 ?>
