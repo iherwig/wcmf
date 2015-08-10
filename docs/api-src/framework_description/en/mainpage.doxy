@@ -49,7 +49,7 @@ increases productivity significantly. Creating a wCMF-based application basicall
 - Role based permission management (for actions, types, instances, instance properties)
 - <a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene</a> search engine integration
 - I18n support
-- Flexible logging (<a href="http://logging.apache.org/log4php/" target="_blank">Apache log4php</a>)
+- Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>)
 - SOAP and REST interface supporting CRUD operations on all objects
 - Code generator for model-driven software development
 - Available under an open source license (MIT)

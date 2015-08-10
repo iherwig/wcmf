@@ -12,6 +12,7 @@ namespace wcmf\lib\core\impl;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
 use wcmf\lib\config\ConfigurationException;
@@ -25,7 +26,7 @@ use wcmf\lib\util\StringUtil;
  * sectiona are supported:
  * - _root_:
  *     - _level_: default log level
- *     - _dir_: location of log files
+ *     - _target_: location of rotating log files or stream resource e.g. php://output
  * - _loggers_: Keys are the logger names, values the levels (_DEBUG_, _WARN_, ...)
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -35,7 +36,7 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
   private $_monologLogger = null;
 
   private static $_defaultLevel = Logger::ERROR;
-  private static $_logDir = '';
+  private static $_logTarget = '';
   private static $_levels = array();
 
   /**
@@ -52,9 +53,14 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
     $output = "[%datetime%] %level_name%: %channel%:%extra.line%: %message%\n";
     $formatter = new LineFormatter($output, null, true);
     $processor = new IntrospectionProcessor($level, array(__CLASS__));
-    $handler = new RotatingFileHandler(self::$_logDir.'.log', 0, $level);
+    if (preg_match('/^.+?:\/\//', self::$_logTarget)) {
+      $handler = new StreamHandler(self::$_logTarget, $level);
+    }
+    else {
+      $handler = new RotatingFileHandler(self::$_logTarget.'.log', 0, $level);
+      $handler->setFilenameFormat('{date}', 'Y-m-d');
+    }
     $handler->setFormatter($formatter);
-    $handler->setFilenameFormat('{date}', 'Y-m-d');
     $handler->pushProcessor($processor);
 
     $this->_monologLogger = new Logger($name, array($handler));
@@ -153,8 +159,8 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
       self::$_defaultLevel = isset($rootConfig['level']) ?
               constant('Monolog\Logger::'.strtoupper($rootConfig['level'])) :
               self::$_defaultLevel;
-      self::$_logDir = isset($rootConfig['dir']) ?
-              $rootConfig['dir'] : WCMF_BASE.self::$_logDir;
+      self::$_logTarget = isset($rootConfig['target']) ?
+              $rootConfig['target'] : WCMF_BASE.self::$_logTarget;
     }
 
     // log levels
