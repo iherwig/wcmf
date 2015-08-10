@@ -21,18 +21,18 @@ use wcmf\lib\core\ObjectFactory;
 class ObjectFactoryTest extends BaseTestCase {
 
   public function testDIShared() {
-    $obj = ObjectFactory::getInstance('search');
-    $this->assertEquals('wcmf\lib\search\impl\LuceneSearch', get_class($obj));
-    $this->assertEquals('1', preg_match('~app/searchIndex/$~', $obj->getIndexPath()));
+    $conf = ObjectFactory::getInstance('configuration');
+    $this->assertEquals('wcmf\lib\config\impl\InifileConfiguration', get_class($conf));
+    $this->assertEquals('WCMF TEST MODEL', $conf->getValue('title', 'Application'));
 
     // modify instance
-    $obj->setIndexPath('app/searchIndex2');
-    $this->assertEquals('1', preg_match('~app/searchIndex2/$~', $obj->getIndexPath()));
+    $conf->setValue('title', 'WCMF TEST MODEL2', 'Application');
+    $this->assertEquals('WCMF TEST MODEL2', $conf->getValue('title', 'Application'));
 
     // get second time (same instance)
-    $obj2 = ObjectFactory::getInstance('search');
-    $this->assertEquals('wcmf\lib\search\impl\LuceneSearch', get_class($obj2));
-    $this->assertEquals('1', preg_match('~app/searchIndex2/$~', $obj2->getIndexPath()));
+    $conf2 = ObjectFactory::getInstance('configuration');
+    $this->assertEquals('wcmf\lib\config\impl\InifileConfiguration', get_class($conf2));
+    $this->assertEquals('WCMF TEST MODEL2', $conf->getValue('title', 'Application'));
   }
 
   public function testDINonShared() {
