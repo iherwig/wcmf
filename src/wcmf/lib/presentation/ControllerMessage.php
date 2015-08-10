@@ -39,7 +39,7 @@ interface ControllerMessage {
    * Set the name of the context
    * @param $context The name of the context
    */
-  function setContext($context);
+  public function setContext($context);
 
   /**
    * Get the name of the context

@@ -356,7 +356,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @return The remote object or null if not found.
    */
   protected function getRegisteredRemoteObject(ObjectId $umi, $buildDepth) {
-    $object = $this->getRegisteredObject($umi, $buildDepth, self::REMOTE_OBJECTS_SESSION_VARNAME);;
+    $object = $this->getRegisteredObject($umi, $buildDepth, self::REMOTE_OBJECTS_SESSION_VARNAME);
     return $object;
   }
 

@@ -183,7 +183,8 @@ class StringUtil {
         $q = $p;
         while (($p < $l) && ($string[$p] != '"')) {
           if ($string[$p] == '\\') {
-            $p+=2; continue;
+            $p+=2;
+            continue;
           }
           $p++;
         }
@@ -199,7 +200,8 @@ class StringUtil {
         $q = $p;
         while (($p < $l) && ($string[$p] != "'")) {
           if ($string[$p] == '\\') {
-            $p+=2; continue;
+            $p+=2;
+            continue;
           }
           $p++;
         }
