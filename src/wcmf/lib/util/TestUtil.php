@@ -13,11 +13,10 @@ namespace wcmf\lib\util;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\impl\DefaultFactory;
-use wcmf\lib\core\impl\Log4phpLogger;
+use wcmf\lib\core\impl\MonologFileLogger;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
-use wcmf\lib\security\impl\NullPermissionManager;
 
 /**
  * TestUtil provides helper methods for testing wCMF functionality.
@@ -25,9 +24,6 @@ use wcmf\lib\security\impl\NullPermissionManager;
  * @author ingo herwig <ingo@wemove.com>
  */
 class TestUtil {
-
-  private static $_nullPermissionManager = null;
-  private static $_defaultPermissionManager = null;
 
   /**
    * Set up the wcmf framework
@@ -40,7 +36,7 @@ class TestUtil {
     }
 
     // setup logging
-    $logger = new Log4phpLogger(__CLASS__, 'log4php.php');
+    $logger = new MonologFileLogger('main', 'logging.ini');
     LogManager::configure($logger);
 
     // setup configuration

@@ -15,9 +15,9 @@ register_shutdown_function("cleanup");
  * Set up test resources
  */
 function setup() {
-  @unlink('log.txt');
   @unlink(WCMF_BASE.'app/test-db.sq3');
   $fileUtil = new FileUtil();
+  $fileUtil->emptyDir('log');
   $fileUtil->emptyDir(WCMF_BASE.'app/cache');
   $fileUtil->emptyDir(WCMF_BASE.'app/log');
   $fileUtil->emptyDir(WCMF_BASE.'app/searchIndex');

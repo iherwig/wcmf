@@ -18,12 +18,6 @@ namespace wcmf\lib\core;
 interface Logger {
 
   /**
-   * Print a trace message
-   * @param $message The message
-   */
-  public function trace($message);
-
-  /**
    * Print a debug message
    * @param $message The message
    */
