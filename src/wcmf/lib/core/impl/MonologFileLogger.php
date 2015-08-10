@@ -26,7 +26,7 @@ use wcmf\lib\util\StringUtil;
  * sectiona are supported:
  * - _root_:
  *     - _level_: default log level
- *     - _target_: location of rotating log files or stream resource e.g. php://output
+ *     - _target_: location of rotating log files or stream resource e.g. php://stdout
  * - _loggers_: Keys are the logger names, values the levels (_DEBUG_, _WARN_, ...)
  *
  * @author ingo herwig <ingo@wemove.com>
