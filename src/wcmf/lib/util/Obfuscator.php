@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\util;
 
+use wcmf\lib\core\Session;
+
 /**
  * Obfuscator allows to obfuscate strings. By passing an objuscated string
  * to the method Obfuscator::unveil() the orginal string is returned.
