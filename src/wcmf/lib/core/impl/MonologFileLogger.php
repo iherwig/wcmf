@@ -16,6 +16,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -26,7 +27,7 @@ use wcmf\lib\util\StringUtil;
  * sectiona are supported:
  * - _root_:
  *     - _level_: default log level
- *     - _target_: location of rotating log files or stream resource e.g. php://stdout
+ *     - _target_: location of rotating log files relative to WCMF_BASE or stream resource e.g. php://stdout
  * - _loggers_: Keys are the logger names, values the levels (_DEBUG_, _WARN_, ...)
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -47,13 +48,18 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
   public function __construct($name, $configFile='') {
     if (strlen($configFile) > 0) {
       self::configure($configFile);
+      if (!$this->isStreamTarget(self::$_logTarget)) {
+        $fileUtil = new FileUtil();
+        self::$_logTarget = $fileUtil->realpath(WCMF_BASE.self::$_logTarget).'/';
+        $fileUtil->mkdirRec(self::$_logTarget);
+      }
     }
     $level = isset(self::$_levels[$name]) ? self::$_levels[$name] : self::$_defaultLevel;
 
     $output = "[%datetime%] %level_name%: %channel%:%extra.line%: %message%\n";
     $formatter = new LineFormatter($output, null, true);
     $processor = new IntrospectionProcessor($level, array(__CLASS__));
-    if (preg_match('/^.+?:\/\//', self::$_logTarget)) {
+    if ($this->isStreamTarget(self::$_logTarget)) {
       $handler = new StreamHandler(self::$_logTarget, $level);
     }
     else {
@@ -177,6 +183,15 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
    */
   private function prepareMessage($message) {
     return is_string($message) ? $message : StringUtil::getDump($message);
+  }
+
+  /**
+   * Check if the given target is a stream resource
+   * @param $target
+   * @return Boolean
+   */
+  private function isStreamTarget($target) {
+    return preg_match('/^.+?:\/\//', $target);
   }
 }
 ?>
