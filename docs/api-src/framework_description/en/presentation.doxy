@@ -22,7 +22,7 @@ wCMF's default application.
 $application = new Application();
 try {
   // initialize the application
-  $request = $application->initialize(WCMF_BASE.'app/config/', 'config.ini', '', '', 'cms');
+  $request = $application->initialize('', '', 'cms');
 
   // run the application
   $response = $application->run($request);
@@ -469,14 +469,16 @@ events:
 
 ~~~~~~~~~~~~~{.php}
 class PersistenceEventListener {
+  private $_eventListener = null;
 
-  public function __construct() {
-    ObjectFactory::getInstance('eventManager')->addListener(PersistenceEvent::NAME,
+  public function __construct(EventListener $eventListener) {
+    $this->_eventListener = $eventListener;
+    $this->_eventListener->addListener(PersistenceEvent::NAME,
       array($this, 'persisted'));
   }
 
   public function __destruct() {
-    ObjectFactory::getInstance('eventManager')->removeListener(PersistenceEvent::NAME,
+    $this->_eventListener->removeListener(PersistenceEvent::NAME,
       array($this, 'persisted'));
   }
 
@@ -497,7 +499,8 @@ method __must__ be called, if the event listener is destroyed.
 To send a persistence event, the following code is used:
 
 ~~~~~~~~~~~~~{.php}
-ObjectFactory::getInstance('eventManager')->dispatch(PersistenceEvent::NAME,
+$eventListener = ObjectFactory::getInstance('eventManager');
+$eventListener->dispatch(PersistenceEvent::NAME,
         new PersistenceEvent($object, PersistenceAction::UPDATE));
 ~~~~~~~~~~~~~
 
@@ -521,19 +524,35 @@ configuration (see \ref conf_di).
 
 ## Logging ## {#pres_log}
 
-wCMF uses [log4php](http://logging.apache.org/log4php/) for logging. To simplify
-the usage, the \link wcmf::lib::core::Log `Log`\endlink class acts
-as a facade to the library.
+wCMF integrates the logging frameworks [log4php](http://logging.apache.org/log4php/)
+and [Monolog](https://github.com/Seldaek/monolog). To abstract from these libraries
+wCMF defines the \link wcmf::lib::core::Logger `Logger`\endlink interface and
+implementations for each framework. The decision, which framework to use is made
+by instantiating the appropriate logger instance and passing it to the
+\link wcmf::lib::core::LogManager::configure `LogManager::configure`\endlink
+method as shown for _Monolog_ in the following example:
+
+~~~~~~~~~~~~~{.php}
+$logger = new MonologFileLogger('main', WCMF_BASE.'app/config/logging.ini');
+LogManager::configure($logger);
+~~~~~~~~~~~~~
+
+After that \link wcmf::lib::core::Logger `Logger`\endlink instances may be retrieved
+by name using the following code:
+
+~~~~~~~~~~~~~{.php}
+$logger = LogManager::getLogger(__CLASS__);
+~~~~~~~~~~~~~
+
+It's a good practice to use the `__CLASS__` constant as logger name, since this
+allows to enable/disable loggers by class names in the configuration
+(see \ref conf_logging).
 
 The following example shows how to log an error message with a stack trace
 appended (see
 \link wcmf::lib::core::ErrorHandler::getStackTrace `ErrorHandler::getStackTrace`\endlink):
 
 ~~~~~~~~~~~~~{.php}
-Log::error("An error occured.\n".ErrorHandler::getStackTrace(), __CLASS__);
+$logger->error("An error occured.\n".ErrorHandler::getStackTrace());
 ~~~~~~~~~~~~~
-
-The second method parameter indicates the __logger name__. It's a good practice
-to set this to the `__CLASS__` constant, since this allows to enable/disable
-loggers by class names in the configuration (see \ref conf_logging).
 */
