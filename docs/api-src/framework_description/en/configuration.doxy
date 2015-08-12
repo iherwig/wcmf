@@ -63,8 +63,8 @@ in the directory that is passed to the constructor of
 
 The possibility to include configuration files into others is useful, if you want
 to __separate varying parts__ from static ones to simplify the deployment process.
-In the default application for example all server specific configuration (e.g.
-database connection) are separated into a file called _server.ini_.
+In the \ref app "default application" for example all server specific configuration
+(e.g. database connection) are separated into a file called _server.ini_.
 
 @note Configuration section and key names are treated case-insensitive.
 
@@ -144,7 +144,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 When requested the first time, the _PersistenceFacade_ instance is created in
 the following steps:
 
-1. _Satisfying constructor parameters_:
+1. _Constructor parameters_:
    - <em>$eventManager</em> is not explicitly defined in the instance configuration,
      so the factory looks it up in the configuration. Since there is a `EventManager`
      section, it uses it to create an instance of
@@ -224,7 +224,7 @@ assigned to it, if no individual configuration is set yet.
 
 ## Default application configuration ## {#conf_default_app}
 
-The default application uses some special configuration sections:
+The \ref app "default application" uses some special configuration sections:
 
 ~~~~~~~~~~~~~{.ini}
 [Application]

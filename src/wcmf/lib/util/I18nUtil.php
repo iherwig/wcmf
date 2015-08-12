@@ -72,7 +72,7 @@ class I18nUtil {
    * method and usage of the smarty 'translate' function.
    * @param $file The file to search in
    * @return An array of strings.
-   * @note This method searches for occurences of '->getText('Text to translate')',
+   * @note This method searches for occurrences of '->getText('Text to translate')',
    * 'Dict.translate("Text to translate")' or {translate:"Text to translate"} where
    * 'Text to translate' is supposed to be the message to translate. So it might not
    * find the usage of the getText() method with concatenated strings

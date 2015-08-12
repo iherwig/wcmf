@@ -155,8 +155,8 @@ in one direction, which is then defined as the child to parent direction.
 The association types differ in the treatment of children in case of __deletion__
 of the parent. In aggregations and normal associations children are not deleted,
 while composite children are deleted on parent deletion. On the other hand the
-default application allows __creation__ of child instances in a composition, while
-the other two types only allow adding existing instances.
+\ref app "default application" allows __creation__ of child instances in a
+composition, while the other two types only allow adding existing instances.
 
 The following table summarizes the behavior of the different association types
 regarding the operations allowed on child instances:
@@ -316,9 +316,9 @@ method and passing _database_ as `section` paramter.
 
 ### Default model ### {#model_default}
 
-The wCMF default application inlcudes a demo UML model located in `model/model.uml`.
-It is a good starting point for own experiments. For those who want to start from
-scratch there are also base models in _model/base/cwm/_ (for
+The \ref app "default application" inlcudes a demo UML model located in
+`model/model.uml`. It is a good starting point for own experiments. For those who
+want to start from scratch there are also base models in _model/base/cwm/_ (for
 [Chronos Web Modeler](http://sourceforge.net/projects/olympos/)) and
 _model/base/papyrus/_ (for [Eclipse Papyrus](http://www.eclipse.org/papyrus/)).
 
@@ -358,9 +358,9 @@ The default model has the following package structure:
             - `«ChiNode» EntityBase` Base class for domain classes with audit info
             - ...
           - __controller__ Controller package
-            - `«ChiController» RootController` Main controller of default application
+            - `«ChiController» RootController` Main controller of \ref app "default application"
           - __views__ Views package
-            - `«ChiView» cms` Main view of default application
+            - `«ChiView» cms` Main view of \ref app "default application"
 
 Application specific model elements will mostly reside in the __emphasized__ packages.
 
@@ -429,7 +429,7 @@ The __parameters__ are explained in the following table.
 | _targetDir_ | Path to the generated files | <em>../</em> |
 
 The __default values__ apply, if the generator is run from the _build_ directory of
-the wCMF default application.
+the \ref app "default application".
 
 Since the code generator is integrated into the __ant deployment script__ of the
 application, it's also sufficient to run the following command in the _build_

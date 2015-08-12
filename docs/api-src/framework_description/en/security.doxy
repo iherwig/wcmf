@@ -68,8 +68,8 @@ It will be replaced by an instance of the application's
 \link wcmf::lib::security::principal::User `User`\endlink type after successful
 authentication.
 
-The configuration of the authentication process in the default application looks
-like the following:
+The configuration of the authentication process in the \ref app "default application"
+looks like the following:
 
 ~~~~~~~~~~~~~{.ini}
 [AuthenticationManager]
@@ -243,7 +243,7 @@ app.src.model.wcmf.User??create = +administrators
   handles permissions that are stored in the database. The entity type that actually
   stores the permissions is required to have a _resource_, _context_, _action_
   and _roles_ attribute and is defined in the application configuration. The
-  following lines are taken from the configuration of the default application:
+  following lines are taken from the configuration of the \ref app "default application":
 
 ~~~~~~~~~~~~~{.ini}
 [DefaultPermissionManager]

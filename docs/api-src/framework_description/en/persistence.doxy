@@ -139,8 +139,8 @@ The following terms are important to know when working with wCMF's domain classe
   \link wcmf::lib::persistence::PersistentObject::getValueProperty `getValueProperty`\endlink/
   \link wcmf::lib::persistence::PersistentObject::setValueProperty `setValueProperty`\endlink
 - __Tags__ are a special property used on values to group them by certain
-  aspects. For example the edit forms in the default application only display
-  domain class values that are tagged with `DATATYPE_ATTRIBUTE` and only those
+  aspects. For example the edit forms in the \ref app "default application" only
+  display domain class values that are tagged with `DATATYPE_ATTRIBUTE` and only those
   attributes are editable in the translation form that are tagged with `TRANSLATABLE`.
   Tags are defined in the model using the _tag_ `app_data_type` (see \ref model_chivalue).
 
@@ -568,7 +568,7 @@ The actual storage and retrieval of
 \link wcmf::lib::persistence::concurrency::Lock `Lock`\endlink instances is
 delegated to
 \link wcmf::lib::persistence::concurrency::LockHandler `LockHandler`\endlink.
-The following lines show the concurrency configuration in the default application:
+The following lines show the concurrency configuration in the \ref app "default application":
 
 ~~~~~~~~~~~~~{.ini}
 [ConcurrencyManager]

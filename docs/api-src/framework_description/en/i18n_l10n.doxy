@@ -13,10 +13,10 @@ encoded), it is sufficient to focus on text.
 ## Static text ## {#i18n_static}
 
 Static text refers to text used in __application templates__ or __messages__ generated
-while the application is executed. To keep the application language agnostic only
-so called _text identifiers_ are used in these places and the actual translation
-is retrieved by calling the \link wcmf::lib::i18n::Message::getText `Message::getText`\endlink
-method:
+while the application is executed. To keep the application code language agnostic
+only so called _text identifiers_ are used in these places and the actual
+translation is retrieved by calling the
+\link wcmf::lib::i18n::Message::getText `Message::getText`\endlink method:
 
 ~~~~~~~~~~~~~{.php}
 $textId = 'An error occured';
@@ -37,8 +37,8 @@ default language.
 
 If no language parameter is passed to the
 \link wcmf::lib::i18n::Message::getText `Message::getText`\endlink method, the
-returned translation will be in the application's __default language__. This
-language is determined in the following way:
+returned translation will be in the application's __default user interface language__.
+This language is determined in the following way:
 
 1. Use the value of the `language` parameter of the `Message` configuration section
 2. If not defined use the value of the global variable <code>$_SERVER['HTTP_ACCEPT_LANGUAGE']</code>
@@ -49,7 +49,7 @@ and they are replaced in the order of the values passed into the
 \link wcmf::lib::i18n::Message::getText `Message::getText`\endlink method:
 
 ~~~~~~~~~~~~~{.php}
-$textId = 'User %0$ is logged in since %1%';
+$textId = 'Logged in as %0% since %1%';
 $parameters = array($username, $date);
 
 // retrieve the translation
@@ -60,7 +60,7 @@ $loginMessage = $message->getText($textId, $parameters);
 $view->setValue('loginMessage', $loginMessage);
 ~~~~~~~~~~~~~
 
-### Providing translations ### {#i18n_static_trans}
+### Localization ### {#i18n_static_locale}
 
 Since \link wcmf::lib::i18n::Message `Message`\endlink defines the interface, it
 needs concrete implementations to actually get the translations. The
@@ -113,33 +113,98 @@ language.
 
 ### Templates ### {#i18n_static_tpl}
 
-<span class="label label-danger">TODO</span>
+wCMF provides the `translate` plugin for embedding language dependent text into
+_Smarty_ templates. The plugin is included automatically and used in the following
+way:
+
+~~~~~~~~~~~~~{.php}
+{translate text="An error occured"}
+
+{* with variables *}
+{translate text="Logged in as %0% since %1%" r0=$login r1=$logindate}
+~~~~~~~~~~~~~
 
 ### Tools ### {#i18n_static_tools}
 
-<span class="label label-danger">TODO</span>
+The \ref app "default application" ships with a tool for finding translatable text
+and generating localization files from it. After installing the application
+it is available under `http://localhost/wcmf-default-app/tools/locale/`.
+
+The tool uses \link wcmf::lib::util::I18nUtil `I18nUtil`\endlink internally to
+search for occurrences of
+
+- <code>->getText('Text to translate', ...)</code> as used in
+  <code>$message->getText('Text to translate', ...)</code> in PHP code
+- `{translate:"Text to translate" ...}` as used in Smarty templates
+- `Dict.translate("Text to translate", ...)` as used in the Javascript code of the
+  \ref app "default application"
+
+_Text to translate_ is supposed to be the message to be localized. The tool generates
+one localization file for each language puts it into the appropriate directory.
+It's capable of merging already existing translations into the newly generated
+files.
+
+The tool's configuration is defined in the file _config.ini_ in the tool's directory
+and defaults to:
+
+~~~~~~~~~~~~~{.ini}
+[Application]
+localeDir = app/locale/
+
+[I18n]
+searchDirs = {vendor/wcmf/wcmf/src/wcmf, app/}
+exclude = {vendor, .git, .svn, test}
+languages = {de, en}
+~~~~~~~~~~~~~
 
 ## Model content ## {#i18n_dynamic}
 
-<span class="label label-danger">TODO</span>
+Model content is initially created in the application's __default model language__,
+which might differ from the _default user interface language_ (see \ref i18n_static).
+Localization of this content is done by using implementations of
+\link wcmf::lib::i18n::Localization `Localization`\endlink. There are several
+strategies for storing localized versions of the content, all having advantages
+and disadvantages regarding extensibility and performance.
 
-_config.ini_
+The idea behind the
+\link wcmf::lib::i18n::impl::DefaultLocalization `DefaultLocalization`\endlink
+implementation is to keep the domain model clear of localization related attributes
+by storing translations in a separate entity type. Using one entity type for all
+content leads to more flexibility when extending the domain model.
+
+The __translation entity type__ must have the following attributes:
+
+- `objectid` object id of the translated entity (e.g. _Book:1_)
+- `attribute` translated attribute (e.g. _title_)
+- `language` the language code of the translation (e.g. _en_)
+- `translation` the actual translation
+
+The supported content languages are either defined in the `Languages` configuration
+section (see below) or in the language entity type that is used by
+\link wcmf::lib::i18n::impl::DefaultLocalization `DefaultLocalization`\endlink,
+if the configuration section does not exist.
+
+The __language entity type__ must have the following attributes:
+
+- `code` language code (e.g. _en_)
+- `name` language name (e.g. _English_)
+
+The localization configuration of the \ref app "default application" is the
+following:
 
 ~~~~~~~~~~~~~{.ini}
 [Localization]
 __class = wcmf\lib\i18n\impl\DefaultLocalization
-languageType = Language
-translationType = Translation
-~~~~~~~~~~~~~
-
-_server.ini_
-
-~~~~~~~~~~~~~{.ini}
-[Localization]
 defaultLanguage = en
+languageType = app.src.model.wcmf.Language
+translationType = app.src.model.wcmf.Translation
 
 [Languages]
 de = Deutsch
 en = English
 ~~~~~~~~~~~~~
+
+This means that the _default model language_ is English and the
+_language entity type_ is ignored, because the available languages are defined
+in the configuration.
 */
