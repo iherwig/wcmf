@@ -46,15 +46,16 @@ $password = $request->getValue('password');
 
 try {
   // try to login using the credentials
-  $authManager = ObjectFactory::getInstance('authenticationManager');
-  $authUser = $authManager->login($login, $password);
-
-  // set the authenticated user in the session
-  $session = ObjectFactory::getInstance('session');
-  $session->setAuthUser($authUser);
+  $authUser = $this->_authenticationManager->login($login, $password);
 }
 catch (Exception $ex) {
   Log::error("Could not log in: ".$ex, __CLASS__);
+}
+
+// set the authenticated user in the session
+if ($authUser) {
+  // login succeeded
+  $session->setAuthUser($authUser);
 }
 ~~~~~~~~~~~~~
 

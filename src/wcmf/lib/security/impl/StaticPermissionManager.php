@@ -38,6 +38,8 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
 
   /**
    * Constructor
+   * @param $persistenceFacade
+   * @param $session
    * @param $configuration
    */
   public function __construct(PersistenceFacade $persistenceFacade,

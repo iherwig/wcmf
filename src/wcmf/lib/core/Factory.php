@@ -11,7 +11,8 @@
 namespace wcmf\lib\core;
 
 /**
- * Interface for Factory implementations.
+ * Interface for Factory implementations. A Factory is used to instantiate
+ * services to be used by clients.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

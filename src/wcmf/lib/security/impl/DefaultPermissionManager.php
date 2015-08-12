@@ -39,6 +39,7 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
   /**
    * Constructor
    * @param $persistenceFacade
+   * @param $session
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           Session $session) {

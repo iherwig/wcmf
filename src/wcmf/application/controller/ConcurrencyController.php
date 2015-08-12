@@ -70,6 +70,7 @@ class ConcurrencyController extends Controller {
    * @param $permissionManager
    * @param $localization
    * @param $message
+   * @param $configuration
    * @param $concurrencyManager
    */
   public function __construct(Session $session,

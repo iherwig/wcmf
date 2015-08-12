@@ -7,30 +7,26 @@
 Application configuration is handled by implementations of
 \link wcmf::lib::config::Configuration `Configuration`\endlink. To use the configuration
 throughout the application, an instance of the appropriate implementation is
-passed to \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink. This class
-provides \ref conf_di and access to the configuration.
+passed to \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink.
 
-The following code demonstrates how to set up and use the configuration in code:
+The following code demonstrates how to set up and use the
+\link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink
+configuration in code:
 
 ~~~~~~~~~~~~~{.php}
-$configPath = '../config/';
-$configFile = 'config.ini';
+$configPath = WCMF_BASE.'app/config/';
 
-// configure ObjectFactory
-$config = new InifileConfiguration($configPath);
-$config->addConfiguration($configFile);
-ObjectFactory::configure($config);
+// setup configuration
+$configuration = new InifileConfiguration($configPath);
+$configuration->addConfiguration('config.ini');
 
-// get a pre-configured instance
-$session = ObjectFactory::getInstance('session');
+// register with object factory
+ObjectFactory::registerInstance('configuration', $configuration);
 
 // get a configuration value
-$config = ObjectFactory::getConfigurationInstance();
-$tz = $config->getValue('timezone', 'application');
+$configuration = ObjectFactory::getInstance('configuration');
+$tz = $configuration->getValue('timezone', 'application');
 ~~~~~~~~~~~~~
-
-If you are using the \link wcmf::lib::presentation::Application `Application`\endlink
-class to bootstrap the application, the configuration setup is done automatically.
 
 ## Configuration Format ## {#conf_format}
 
@@ -70,20 +66,24 @@ to __separate varying parts__ from static ones to simplify the deployment proces
 In the default application for example all server specific configuration (e.g.
 database connection) are separated into a file called _server.ini_.
 
+@note Configuration section and key names are treated case-insensitive.
+
 ## Dependency injection ## {#conf_di}
 
 wCMF supports [Dependency injection](http://en.wikipedia.org/wiki/Dependency_injection)
-through the \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink class.
+through \link wcmf::lib::core::Factory `ObjectFactory`\endlink and it's
+\link wcmf::lib::core::impl::DefaultFactory `DefaultFactory`\endlink implementation.
 This class implements _constructor_ and _setter injection_, which means that dependencies
 are either set through the _constructor_ or a _setter method_ of the client class
 or a _public member variable_.
 
 Assembly details for client instances are defined in the application configuration
 in special sections containing a  `__class` key. The value of the key denotes the
-class to be used to create the client instance. All other keys are mapped to
-setters/members of that class. Complex dependencies of an instance may be set by
-using the `$` notation, which refers to another configuration section. If a section
-does not contain a `__class` key it is instantiated as an associative array.
+class to be used to create the client instance. All other keys are tried to be
+mapped to constructor parameters or setters/members of that class. Complex
+dependencies of an instance may be set by using the `$` notation, which refers
+to another configuration section. If a section does not contain a `__class` key
+it is instantiated as an associative array.
 
 The following example demonstrates the pattern by means of the
 \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink instance:
@@ -92,7 +92,6 @@ The following example demonstrates the pattern by means of the
 [PersistenceFacade]
 __class = wcmf\lib\persistence\impl\DefaultPersistenceFacade
 mappers = $typeMapping
-logging = false
 logStrategy = $auditingLogStragegy
 
 [AuditingLogStragegy]
@@ -117,23 +116,59 @@ dbName = app/test-db.sq3
 dbUserName =
 dbPassword =
 dbCharSet = utf8
+
+[EventManager]
+__class = wcmf\lib\core\impl\DefaultEventManager
 ~~~~~~~~~~~~~
 
 The first section defines that the instance named _PersistenceFacade_ is an object of
 the class \link wcmf::lib::persistence::impl::DefaultPersistenceFacade `DefaultPersistenceFacade`\endlink.
-The _logging_ property is set to _false_, the _logStrategy_ property is set to an
-instance of \link wcmf::lib::persistence::output::impl::AuditingOutputStrategy `AuditingOutputStrategy`\endlink.
-The _TypeMapping_ section does not contain a `__class` key, which means that the
-_mappers_ property of _PersistenceFacade_ will be an associative array. In our
-case it maps class names (e.g. _app.src.model.wcmf.DBSequence_) to mapper instances
-(e.g. `DBSequenceRDBMapper`). Further sections show that the _connectionParams_
-property of the `DBSequenceRDBMapper` instance is set to an associative array
-describing the database connection (section _Database_).
 
-@note Configuration section and key names are treated case-insensitive.
+So let's have a look at the relevant code in
+\link wcmf::lib::persistence::impl::DefaultPersistenceFacade `DefaultPersistenceFacade`\endlink:
+
+~~~~~~~~~~~~~{.php}
+class DefaultPersistenceFacade implements PersistenceFacade {
+
+  public function __construct(EventManager $eventManager,
+          OutputStrategy $logStrategy) {
+    ...
+  }
+
+  public function setMappers($mappers) {
+    ...
+  }
+}
+~~~~~~~~~~~~~
+
+When requested the first time, the _PersistenceFacade_ instance is created in
+the following steps:
+
+1. _Satisfying constructor parameters_:
+   - <em>$eventManager</em> is not explicitly defined in the instance configuration,
+     so the factory looks it up in the configuration. Since there is a `EventManager`
+     section, it uses it to create an instance of
+     \link wcmf::lib::core::impl::DefaultEventManager `DefaultEventManager`\endlink
+     and injects it into the constructor. If there would be no section with
+     this name, the factory would use the _type hint_ and search for a class
+     called `EventManager`.
+   - <em>$logStrategy</em> is explicitly defined as an instance of
+     \link wcmf::lib::persistence::output::impl::AuditingOutputStrategy `AuditingOutputStrategy`\endlink.
+     This is an example of a complex dependency that is defined in another
+     configuration section.
+2. _Setter injection of the remaining parameters_:
+   - The _mappers_ configuration parameter is not used in the constructor.
+     The factory searches for a _setter method_ (_setMappers_) or a public member
+     variable (<em>$mappers</em>). Since the class defines a setter method, it us used
+     to inject the dependency. The `TypeMapping` section does not contain a
+     `__class` key, which means that the _mappers_ property will be an associative
+     array. In this example it maps class names (e.g. _app.src.model.wcmf.DBSequence_)
+     to mapper instances (e.g. `DBSequenceRDBMapper`). Further sections show that
+     the _connectionParams_ property of the `DBSequenceRDBMapper` instance is set
+     to an associative array describing the database connection (section `Database`).
 
 The \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink
-instance may be retrieved later by using the following code:
+instance can be retrieved by using the following code:
 
 ~~~~~~~~~~~~~{.php}
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -144,7 +179,7 @@ $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 By default all instances created by \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink
 are _shared_ instances, which means, that they will be created on the first call
 and only returned by succeeding calls. If you want to create a _non-shared_ instance,
-you must use the `__shared` key in configuration and set it to _false_.
+you must use the `__shared` key in the configuration and set it to _false_.
 
 The following example shows the configuration of a non-shared
 \link wcmf::lib::presentation::view::View `View`\endlink instance:
@@ -159,13 +194,24 @@ cacheLifetime = 3600
 cacheDir = app/cache/smarty/
 ~~~~~~~~~~~~~
 
+### Circular dependencies ### {#conf_circulardi}
+
+Since \link wcmf::lib::core::impl::DefaultFactory `DefaultFactory`\endlink tries
+to resolve all dependencies when constructing an instance, it might happen that
+a dependency depends on the instance being currently constructed. This is called
+a _circular dependency_ and would cause infinite recursion. To solve this problem
+the dependency in question _must not_ be injected in the constructor, but in a
+setter method or member variable. This allows the factory to construct the initial
+instance first without requiring the child dependency. It is then available
+when constructing the child dependency.
+
 ## Configuration for individual users ## {#conf_peruser}
 
 wCMF's user base class \link wcmf::lib::security::principal::impl::AbstractUser `AbstractUser`\endlink
 has a persistent property `config` which may be used to set a individual configuration
 for a user. This will be loaded after the standard configuration and extends its settings.
 If two keys have the same name the one from the user configuration overwrites the standard one.
-Using the _RoleConfig_ configuration section, you can easily assign configuration files
+Using the `RoleConfig` configuration section, you can easily assign configuration files
 to groups:
 
 ~~~~~~~~~~~~~{.ini}
@@ -184,9 +230,7 @@ The default application uses some special configuration sections:
 [Application]
 title = WCMF TEST MODEL
 color = #428BCA
-localeDir = app/locale/
 rootTypes = {Author, Book, Publisher}
-language = en
 timezone = Europe/Berlin
 listeners = {Search, EventListener}
 
@@ -197,10 +241,6 @@ uploadDir = app/public/media/
 - `Application`
   - `title` Application title
   - `color` Color to be used in the header of the login screen
-  - `localeDir` Directory, where localization files are located (used by
-    \link wcmf::lib::i18n::Message `Message`\endlink class)
-  - `language` UI language (used by
-    \link wcmf::lib::i18n::Message `Message`\endlink class)
   - `rootTypes` List of entity types to create tabs for
   - `timezone` Application timezone
   - `listeners` List of listeners to install (see \ref pres_listeners)
@@ -210,29 +250,76 @@ uploadDir = app/public/media/
 
 ## Logging configuration ## {#conf_logging}
 
-wCMF uses [log4php](http://logging.apache.org/log4php/) for logging. The logging
-configuration is expected to be stored in a file called _log4php.php_, located in
-the same directory as the other configuration files (see \ref conf_format).
+Since logging is potentially required right from application startup, it is
+usually the first service to set up - even before setting up the application
+configuration. This implies that logging should not depend on other services,
+especially not on the application configuration.
 
-The configuration is applied as follows:
+wCMF provides integrations for [log4php](http://logging.apache.org/log4php/)
+and [Monolog](https://github.com/Seldaek/monolog) through implementations
+of the \link wcmf::lib::core::Logger `Logger`\endlink interface. The concrete
+classes are configured using a configuration file, that is passed to the constructor.
+An instance of the concrete class is then passed to the
+\link wcmf::lib::core::LogManager::configure `LogManager::configure`\endlink
+method.
+
+### Monolog ### {#conf_monolog}
+
+To use the _log4php_ library, instantiate
+\link wcmf::lib::core::impl::MonologFileLogger `MonologFileLogger`\endlink in the
+following way:
 
 ~~~~~~~~~~~~~{.php}
-$configPath = '../config/';
-Log::configure($configPath.'log4php.php');
+$logger = new MonologFileLogger('main', WCMF_BASE.'app/config/logging.ini');
+LogManager::configure($logger);
 ~~~~~~~~~~~~~
 
-If you are using the \link wcmf::lib::presentation::Application `Application`\endlink
-class to bootstrap the application, the logging setup is done automatically.
+\link wcmf::lib::core::impl::MonologFileLogger `MonologFileLogger`\endlink is
+a simple wrapper class that allows logging to files or streams. The configuration is defined
+in the [INI file](http://en.wikipedia.org/wiki/INI_file) format using the following
+sections and keys:
 
-wCMF uses log4php's
+- `root` section defines properties valid for all loggers unless otherwise stated
+  - `level` The default log level
+  - `target` The logging target. This could be either a
+    - _directory_ (e.g. _app/log/_) for daily rotating log files or a
+    - _stream_ (e.g. _php://output_) for logging to a stream
+- `loggers` section defines log levels for individual loggers
+  - _logger name_ (e.g. <em>wcmf\\lib\\presentation\\Application</em>) is used as
+    key and the log level (e.g. `DEBUG`) as value
+
+Since in wCMF each class uses it's own logger named after the class name, setting
+up the log level for individual classes is straightforward.
+
+The following configuration sets the default log level to `ERROR` and the
+log level for the
+\link wcmf::lib::presentation::Controller `Controller`\endlink class to `DEBUG`:
+
+~~~~~~~~~~~~~{.ini}
+[root]
+level = ERROR
+target = app/log/
+
+[loggers]
+wcmf\lib\presentation\Controller = DEBUG
+~~~~~~~~~~~~~
+
+### log4php ### {#conf_log4php}
+
+To use the _log4php_ library, instantiate
+\link wcmf::lib::core::impl::Log4phpLogger `Log4phpLogger`\endlink in the following
+way:
+
+~~~~~~~~~~~~~{.php}
+$logger = new Log4phpLogger('main', WCMF_BASE.'app/config/log4php.php');
+LogManager::configure($logger);
+~~~~~~~~~~~~~
+
+The configuration file _log4php.php_ uses log4php's
 [PHP configuration format](https://logging.apache.org/log4php/docs/configuration.html#PHP).
-By default the log level is set to `ERROR` and a daily log file is created in the
-directory _app/log/_.
 
-Since in wCMF each class uses it's own logger named after the class, it's easy
-to set the log level for individual classes.
-
-The following configuration sets the log level of the
+The following configuration sets the default log level to `ERROR` and the
+log level for the
 \link wcmf::lib::presentation::Controller `Controller`\endlink class to `DEBUG`:
 
 ~~~~~~~~~~~~~{.php}
@@ -243,7 +330,7 @@ return array(
   ),
 
   'loggers' => array(
-    'wcmf\lib\presentation\Controller' => array('level' => 'DEBUG', 'appenders' => array('dailyFile')),
+    'wcmf.lib.presentation.Controller' => array('level' => 'DEBUG', 'appenders' => array('dailyFile')),
   ),
 
   ...

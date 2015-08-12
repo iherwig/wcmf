@@ -1,0 +1,145 @@
+/*!
+\page i18n_l10n I18n & l10n
+<div class="has-toc"></div>
+
+# Internationalization & localization # {#i18n_main}
+
+_Internationalization_ of an application requires to identify all language dependent
+resources and make them exchangeable for the actual _localization_ into a specific
+language. This includes __static__ and __dynamic texts__ as well as __images__.
+Since images are referenced by their filename or represented as text (e.g. _base64_
+encoded), it is sufficient to focus on text.
+
+## Static text ## {#i18n_static}
+
+Static text refers to text used in __application templates__ or __messages__ generated
+while the application is executed. To keep the application language agnostic only
+so called _text identifiers_ are used in these places and the actual translation
+is retrieved by calling the \link wcmf::lib::i18n::Message::getText `Message::getText`\endlink
+method:
+
+~~~~~~~~~~~~~{.php}
+$textId = 'An error occured';
+
+// retrieve the translation
+$message = ObjectFactory::getInstance('Message');
+$errorText = $message->getText($textId);
+
+// use the translation
+$ex = new Exception($errorText);
+~~~~~~~~~~~~~
+
+@note Implementations of \link wcmf::lib::i18n::Message `Message`\endlink
+must return the _text identifier_, if no translation is found or the translation
+is empty. This helps to simplify the translation process, if the default language
+is used in _text identifiers_. In this case, no translation is required for the
+default language.
+
+If no language parameter is passed to the
+\link wcmf::lib::i18n::Message::getText `Message::getText`\endlink method, the
+returned translation will be in the application's __default language__. This
+language is determined in the following way:
+
+1. Use the value of the `language` parameter of the `Message` configuration section
+2. If not defined use the value of the global variable <code>$_SERVER['HTTP_ACCEPT_LANGUAGE']</code>
+
+If parts of the text vary depending on the application state, it is necessary to
+put  __variables__ into the text identifier. Variable names are `%0%`, `%1%`, ...
+and they are replaced in the order of the values passed into the
+\link wcmf::lib::i18n::Message::getText `Message::getText`\endlink method:
+
+~~~~~~~~~~~~~{.php}
+$textId = 'User %0$ is logged in since %1%';
+$parameters = array($username, $date);
+
+// retrieve the translation
+$message = ObjectFactory::getInstance('Message');
+$loginMessage = $message->getText($textId, $parameters);
+
+// use the translation
+$view->setValue('loginMessage', $loginMessage);
+~~~~~~~~~~~~~
+
+### Providing translations ### {#i18n_static_trans}
+
+Since \link wcmf::lib::i18n::Message `Message`\endlink defines the interface, it
+needs concrete implementations to actually get the translations. The
+\link wcmf::lib::i18n::impl::FileMessage `FileMessage`\endlink class retrieves
+translations from the file system. It expects one file per language defining
+a language dependent array that maps text identifiers to translations.
+The language code (e.g. _en_) is used to identify the language of the translation.
+The file must be named like <em>messages_</em>code.<em>php</em>,
+the variable like <em>$messages_</em>code.
+
+The following __examples__ show definitions for English (_en_) and German (_de_)
+texts, where the array keys are the text identifiers used in the application and
+the values are the translations in the appropriate language.
+
+<em>messages_en.php</em>
+
+~~~~~~~~~~~~~{.php}
+$messages_en = array();
+$messages_en['%0% selected'] = '';
+$messages_en['Author'] = '';
+$messages_en['Book'] = '';
+~~~~~~~~~~~~~
+
+<em>messages_de.php</em>
+
+~~~~~~~~~~~~~{.php}
+$messages_de = array();
+$messages_de['%0% selected'] = '%0% ausgewählt';
+$messages_de['Author'] = 'Autor';
+$messages_de['Book'] = 'Buch';
+~~~~~~~~~~~~~
+
+@note Note that the text identifiers are in the application's default language
+(_en_) and therefor no translations need to be provided.
+
+The default __configuration__ of \link wcmf::lib::i18n::Message `Message`\endlink
+is as follows:
+
+~~~~~~~~~~~~~{.ini}
+[Message]
+__class = wcmf\lib\i18n\impl\FileMessage
+localeDir = app/locale/
+language = en
+~~~~~~~~~~~~~
+
+The parameter `localeDir` defines the directory where
+\link wcmf::lib::i18n::impl::FileMessage `FileMessage`\endlink searchs for
+translation files and the `language` parameter defines the application's default
+language.
+
+### Templates ### {#i18n_static_tpl}
+
+<span class="label label-danger">TODO</span>
+
+### Tools ### {#i18n_static_tools}
+
+<span class="label label-danger">TODO</span>
+
+## Model content ## {#i18n_dynamic}
+
+<span class="label label-danger">TODO</span>
+
+_config.ini_
+
+~~~~~~~~~~~~~{.ini}
+[Localization]
+__class = wcmf\lib\i18n\impl\DefaultLocalization
+languageType = Language
+translationType = Translation
+~~~~~~~~~~~~~
+
+_server.ini_
+
+~~~~~~~~~~~~~{.ini}
+[Localization]
+defaultLanguage = en
+
+[Languages]
+de = Deutsch
+en = English
+~~~~~~~~~~~~~
+*/

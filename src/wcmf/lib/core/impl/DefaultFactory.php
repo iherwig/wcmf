@@ -16,7 +16,41 @@ use wcmf\lib\core\Factory;
 use wcmf\lib\util\StringUtil;
 
 /**
- * DefaultFactory loads class definitions and instantiates classes.
+ * DefaultFactory is used to create service instances. The concrete service
+ * implementations and building parameters are described in the given configuration.
+ * Dependencies are injected in the following ways:
+ *
+ * - _Constructor injection_: Each constructor parameter is resolved either from
+ *   the instance configuration or, if not specified, from an existing class that
+ *   is of the same type as defined in the type hinting.
+ * - _Setter injection_: Each parameter of the instance configuration, that is
+ *   not part of the constructor is injected through an appropriate setter
+ *   method, if existing.
+ *
+ * To ensure that an instance implements a certain interface, the interface
+ * name may be passed together with the instance name to the DefaultFactory::addInterfaces
+ * method. The interfaces required by framework classes are already defined
+ * internally (see DefaultFactory::$_requiredInterfaces).
+ *
+ * The following configuration shows the definition of the View instance:
+ *
+ * @code
+ * [View]
+ * __class = wcmf\lib\presentation\view\impl\SmartyView
+ * __shared = false
+ * compileCheck = true
+ * caching = false
+ * cacheLifetime = 3600
+ * cacheDir = app/cache/smarty/
+ * @endcode
+ *
+ * In this example views are instances of _SmartyView_. They are not shared,
+ * meaning that clients get a fresh instance each time they request a view.
+ * The parameters compileCheck, caching, ... are either defined in the constructor
+ * of _SmartyView_ or there is an appropriate setter method (e.g.
+ * _SmartyView::setCompileCheck_). Any other constructor parameter of _SmartyView_
+ * is tried to resolve from either another instance defined in the configuration
+ * or an existing class.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -187,6 +221,8 @@ class DefaultFactory implements Factory {
                       '\' in class \''.$className.'\' cannot be injected.');
             }
           }
+          // delete resolved parameters from configuration
+          unset($configuration[$paramName]);
         }
 
         // create the instance
@@ -208,7 +244,7 @@ class DefaultFactory implements Factory {
           $this->registerInstance($instanceKey, $obj);
         }
 
-        // set the instance properties
+        // set the instance properties from the remaining configuration
         foreach ($configuration as $key => $value) {
           // exclude properties starting with __ and constructor parameters
           if (strpos($key, '__') !== 0 && !isset($cParams[$key])) {

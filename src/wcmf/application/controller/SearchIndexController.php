@@ -48,6 +48,7 @@ class SearchIndexController extends BatchController {
    * @param $permissionManager
    * @param $localization
    * @param $message
+   * @param $configuration
    * @param $search
    */
   public function __construct(Session $session,

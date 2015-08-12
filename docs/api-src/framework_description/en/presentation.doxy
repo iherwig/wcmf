@@ -7,6 +7,28 @@
 Presentation refers to the part of the application that is visible to the user -
 the _user interface_ - and the handling of user interaction.
 
+## Services ## {#pres_services}
+
+The presentation layer usually depends on underlying services like persistency,
+event handling, caching - just to name a few. These services typically exist as
+one instance that is created on application startup and is used throughout the
+whole application lifetime afterwards.
+
+The preferred way to get access to a service instance in client code is to set
+the dependency explicitly or let it be injected, if you don't create the instance
+explicitly (see \ref conf_di). But there are also situations where this is not
+possible (e.g. a global function that is used by third party code). Since most
+of these services are registered with
+\link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink, it's
+\link wcmf::lib::core::ObjectFactory::getInstance `getInstance`\endlink method
+may be used as a [service locator](https://en.wikipedia.org/wiki/Service_locator_pattern).
+
+The following example shows how to get the persistence service at any code location:
+
+~~~~~~~~~~~~~{.php}
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+~~~~~~~~~~~~~
+
 ## Application ## {#pres_application}
 
 Web applications typically implement a _request-response pattern_, where a
@@ -528,7 +550,8 @@ wCMF integrates the logging frameworks [log4php](http://logging.apache.org/log4p
 and [Monolog](https://github.com/Seldaek/monolog). To abstract from these libraries
 wCMF defines the \link wcmf::lib::core::Logger `Logger`\endlink interface and
 implementations for each framework. The decision, which framework to use is made
-by instantiating the appropriate logger instance and passing it to the
+by instantiating the appropriate \link wcmf::lib::core::Logger `Logger`\endlink
+instance and passing it to the
 \link wcmf::lib::core::LogManager::configure `LogManager::configure`\endlink
 method as shown for _Monolog_ in the following example:
 
@@ -537,15 +560,17 @@ $logger = new MonologFileLogger('main', WCMF_BASE.'app/config/logging.ini');
 LogManager::configure($logger);
 ~~~~~~~~~~~~~
 
-After that \link wcmf::lib::core::Logger `Logger`\endlink instances may be retrieved
-by name using the following code:
+Afterwards \link wcmf::lib::core::Logger `Logger`\endlink instances can be retrieved
+using the following code:
 
 ~~~~~~~~~~~~~{.php}
 $logger = LogManager::getLogger(__CLASS__);
 ~~~~~~~~~~~~~
 
-It's a good practice to use the `__CLASS__` constant as logger name, since this
-allows to enable/disable loggers by class names in the configuration
+The parameter used in the
+\link wcmf::lib::core::LogManager::getLogger `LogManager::getLogger`\endlink method
+is the _logger name_. It's a good practice to use the `__CLASS__` constant as logger
+ name, since this allows to enable/disable loggers by class names in the configuration
 (see \ref conf_logging).
 
 The following example shows how to log an error message with a stack trace

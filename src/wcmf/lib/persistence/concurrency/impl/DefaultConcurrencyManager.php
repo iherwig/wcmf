@@ -42,6 +42,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
    * Constructor
    * @param $persistenceFacade
    * @param $lockHandler
+   * @param $session
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           LockHandler $lockHandler,

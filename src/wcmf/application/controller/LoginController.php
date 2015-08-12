@@ -62,6 +62,7 @@ class LoginController extends Controller {
    * @param $permissionManager
    * @param $localization
    * @param $message
+   * @param $configuration
    * @param $authenticationManager
    */
   public function __construct(Session $session,

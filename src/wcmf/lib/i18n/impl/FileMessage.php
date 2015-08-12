@@ -62,12 +62,9 @@ class FileMessage implements Message {
     // get the translations
     $lang = strlen($lang) == 0 ? $this->_language : $lang;
     $translations = $this->getTranslations($lang);
-    $localizedMessage = '';
-    if (isset($translations[$message])) {
+    $localizedMessage = $message;
+    if (isset($translations[$message]) && strlen($translations[$message]) > 0) {
       $localizedMessage = $translations[$message];
-    }
-    if (strlen($localizedMessage) == 0) {
-      $localizedMessage = $message;
     }
 
     // replace parameters

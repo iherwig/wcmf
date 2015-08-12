@@ -13,8 +13,11 @@ namespace wcmf\lib\core;
 use wcmf\lib\config\ConfigurationException;
 
 /**
- * ObjectFactory wraps a Factory instance to provide static access.
- * It delegates all work to the configured Factory instance.
+ * ObjectFactory implements the _service locator_ pattern by wrapping a
+ * Factory instance and providing static access to it.
+ *
+ * It delegates the work of actually instantiating services to the configured
+ * Factory instance.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

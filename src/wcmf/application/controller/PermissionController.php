@@ -120,6 +120,7 @@ class PermissionController extends Controller {
    * @param $permissionManager
    * @param $localization
    * @param $message
+   * @param $configuration
    * @param $principalFactory
    */
   public function __construct(Session $session,

@@ -94,6 +94,7 @@ class MultipleActionController extends Controller {
    * @param $permissionManager
    * @param $localization
    * @param $message
+   * @param $configuration
    * @param $actionMapper
    */
   public function __construct(Session $session,

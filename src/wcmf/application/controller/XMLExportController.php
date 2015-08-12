@@ -82,6 +82,7 @@ class XMLExportController extends BatchController {
    * @param $permissionManager
    * @param $localization
    * @param $message
+   * @param $configuration
    * @param $cache
    */
   public function __construct(Session $session,

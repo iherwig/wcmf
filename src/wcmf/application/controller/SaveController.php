@@ -60,6 +60,7 @@ class SaveController extends Controller {
    * @param $permissionManager
    * @param $localization
    * @param $message
+   * @param $configuration
    */
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,

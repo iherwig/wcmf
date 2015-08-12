@@ -15,7 +15,7 @@ namespace wcmf\lib\i18n;
 
  * @note The language of a message is determined in one of 3 ways (in this order):
  * -# use the value of the lang parameter passed to Message::getText()
- * -# use the value of passed into the constructor of the Message implementation
+ * -# use the value of language from the Message configuration section
  * -# use the value of the global variable $_SERVER['HTTP_ACCEPT_LANGUAGE']
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -28,6 +28,8 @@ interface Message {
    * restricts the positions of words in translations. E.g. 'She was born in %0% on %1%'
    * translates to the german sentence 'Sie wurde am %1% in %0% geboren' with the variables
    * flipped.
+   * @note Implementations must return the original message, if no translation is found,
+   * or the translation string is empty.
    * @param $message The message to translate (%0%, %1%, ... will be replaced by given parameters).
    * @param $parameters An array of values for parameter substitution in the message.
    * @param $lang The language (optional, default: '')
