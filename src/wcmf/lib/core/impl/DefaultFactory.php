@@ -220,9 +220,9 @@ class DefaultFactory implements Factory {
               throw new ConfigurationException('Constructor parameter \''.$paramName.
                       '\' in class \''.$className.'\' cannot be injected.');
             }
+            // delete resolved parameters from configuration
+            unset($configuration[$paramName]);
           }
-          // delete resolved parameters from configuration
-          unset($configuration[$paramName]);
         }
 
         // create the instance
