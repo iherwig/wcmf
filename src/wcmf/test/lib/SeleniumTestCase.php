@@ -10,7 +10,6 @@
  */
 namespace wcmf\test\lib;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
 /**
@@ -48,9 +47,9 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
     // database setup
     $params = TestUtil::createDatabase();
     $conn = new \PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($params['connection'], $params['dbName']);
-
     $this->databaseTester = new \PHPUnit_Extensions_Database_DefaultTester($conn);
     $this->databaseTester->setSetUpOperation(\PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT());
+    $this->databaseTester->setTearDownOperation(\PHPUnit_Extensions_Database_Operation_Factory::NONE());
     $this->databaseTester->setDataSet($this->getDataSet());
     $this->databaseTester->onSetUp();
 
@@ -62,8 +61,6 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
 
   public function tearDown() {
     if ($this->databaseTester) {
-      $this->databaseTester->setTearDownOperation(\PHPUnit_Extensions_Database_Operation_Factory::NONE());
-      $this->databaseTester->setDataSet($this->getDataSet());
       $this->databaseTester->onTearDown();
       $this->databaseTester = NULL;
     }
@@ -91,14 +88,6 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
   }
 
   /**
-   * Get the test data
-   * @return \PHPUnit_Extensions_Database_DataSet_YamlDataSet
-   */
-  protected function getDataSet() {
-    return new \PHPUnit_Extensions_Database_DataSet_YamlDataSet("fixtures/default.yml");
-  }
-
-  /**
    * Wait for a DOM element matching the given xpath
    * @param $xpath The xpath
    * @param $wait maximum (in seconds)
@@ -110,7 +99,7 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
         $x = $this->byXPath($xpath);
         return $x;
       }
-      catch (Exception $e) {
+      catch (\Exception $e) {
         sleep(1);
       }
     }

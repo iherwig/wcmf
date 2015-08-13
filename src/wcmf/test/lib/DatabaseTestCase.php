@@ -11,7 +11,6 @@
 namespace wcmf\test\lib;
 
 use wcmf\lib\core\LogManager;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
 /**
