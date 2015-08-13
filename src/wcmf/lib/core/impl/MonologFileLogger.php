@@ -25,14 +25,17 @@ use wcmf\lib\util\StringUtil;
  * Loggers may be configured by passing configuration file name to the first
  * created logger instance. The file must have INI file format. The following
  * sectiona are supported:
- * - _root_:
+ * - _Root_:
  *     - _level_: default log level
  *     - _target_: location of rotating log files relative to WCMF_BASE or stream resource e.g. php://stdout
- * - _loggers_: Keys are the logger names, values the levels (_DEBUG_, _WARN_, ...)
+ * - _Logger_: Keys are the logger names, values the levels (_DEBUG_, _WARN_, ...)
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class MonologFileLogger implements \wcmf\lib\core\Logger {
+
+  const ROOT_SECTION_NAME = 'Root';
+  const LOGGER_SECTION_NAME = 'Logger';
 
   private $_monologLogger = null;
 
@@ -160,8 +163,8 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
     $config = parse_ini_file($configFile, true);
 
     // default settings
-    if (isset($config['root'])) {
-      $rootConfig = $config['root'];
+    if (isset($config[self::ROOT_SECTION_NAME])) {
+      $rootConfig = $config[self::ROOT_SECTION_NAME];
       self::$_defaultLevel = isset($rootConfig['level']) ?
               constant('Monolog\Logger::'.strtoupper($rootConfig['level'])) :
               self::$_defaultLevel;
@@ -170,7 +173,8 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
     }
 
     // log levels
-    self::$_levels = isset($config['loggers']) ? $config['loggers'] : array();
+    self::$_levels = isset($config[self::LOGGER_SECTION_NAME]) ?
+            $config[self::LOGGER_SECTION_NAME] : array();
     foreach (self::$_levels as $key => $val) {
       self::$_levels[$key] = constant('Monolog\Logger::'.strtoupper($val));
     }

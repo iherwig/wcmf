@@ -31,22 +31,8 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
       self::$frameworkReady = true;
     }
     if ($this->conn === null) {
-      // get connection from first entity type
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $types = $persistenceFacade->getKnownTypes();
-      $mapper = $persistenceFacade->getMapper($types[0]);
-      $pdo = $mapper->getConnection()->getConnection();
-
-      // create sqlite db
-      $params = $mapper->getConnectionParams();
-      if ($params['dbType'] == 'sqlite') {
-        $numTables = $pdo->query('SELECT count(*) FROM sqlite_master WHERE type = "table"')->fetchColumn();
-        if ($numTables == 0) {
-          $schema = file_get_contents(WCMF_BASE.'install/tables_sqlite.sql');
-          $pdo->exec($schema);
-        }
-      }
-      $this->conn = $this->createDefaultDBConnection($pdo, $params['dbName']);
+      $params = TestUtil::createDatabase();
+      $this->conn = $this->createDefaultDBConnection($params['connection'], $params['dbName']);
     }
     return $this->conn;
   }

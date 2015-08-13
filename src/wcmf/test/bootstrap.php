@@ -8,7 +8,7 @@ use wcmf\lib\util\TestUtil;
 new ClassLoader(WCMF_BASE);
 
 setup();
-TestUtil::startServer(WCMF_BASE.'app/public');
+TestUtil::startServer(WCMF_BASE.'app/public', 'router.php');
 register_shutdown_function("cleanup");
 
 /**
@@ -17,16 +17,18 @@ register_shutdown_function("cleanup");
 function setup() {
   @unlink(WCMF_BASE.'app/test-db.sq3');
   $fileUtil = new FileUtil();
-  $fileUtil->emptyDir('log');
+  $fileUtil->mkdirRec(WCMF_BASE.'app/public');
   $fileUtil->emptyDir(WCMF_BASE.'app/cache');
   $fileUtil->emptyDir(WCMF_BASE.'app/log');
   $fileUtil->emptyDir(WCMF_BASE.'app/searchIndex');
   $fileUtil->copyRecDir('resources/app/', WCMF_BASE.'app/');
+  copy(WCMF_BASE.'app/public/soap-interface.php', 'soap-interface.php');
 }
 
 /**
  * Clean up test resources
  */
 function cleanup() {
+  @unlink('soap-interface.php');
 }
 ?>

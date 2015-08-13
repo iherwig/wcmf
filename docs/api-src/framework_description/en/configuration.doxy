@@ -270,7 +270,7 @@ To use the _log4php_ library, instantiate
 following way:
 
 ~~~~~~~~~~~~~{.php}
-$logger = new MonologFileLogger('main', WCMF_BASE.'app/config/logging.ini');
+$logger = new MonologFileLogger('main', WCMF_BASE.'app/config/log.ini');
 LogManager::configure($logger);
 ~~~~~~~~~~~~~
 
@@ -279,12 +279,12 @@ a simple wrapper class that allows logging to files or streams. The configuratio
 in the [INI file](http://en.wikipedia.org/wiki/INI_file) format using the following
 sections and keys:
 
-- `root` section defines properties valid for all loggers unless otherwise stated
+- `Root` section defines properties valid for all loggers unless otherwise stated
   - `level` The default log level
   - `target` The logging target. This could be either a
     - _directory_ (e.g. _app/log/_) for daily rotating log files or a
     - _stream_ (e.g. _php://output_) for logging to a stream
-- `loggers` section defines log levels for individual loggers
+- `Logger` section defines log levels for individual loggers
   - _logger name_ (e.g. <em>wcmf\\lib\\presentation\\Application</em>) is used as
     key and the log level (e.g. `DEBUG`) as value
 
@@ -296,11 +296,11 @@ log level for the
 \link wcmf::lib::presentation::Controller `Controller`\endlink class to `DEBUG`:
 
 ~~~~~~~~~~~~~{.ini}
-[root]
+[Root]
 level = ERROR
 target = app/log/
 
-[loggers]
+[Logger]
 wcmf\lib\presentation\Controller = DEBUG
 ~~~~~~~~~~~~~
 

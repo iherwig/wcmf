@@ -14,8 +14,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
 /**
- * SeleniumTestCase is a PHPUnit test case, that
- * serves as base class for test cases used for Selenium.
+ * SeleniumTestCase is the base class for test cases that run with Selenium.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -43,33 +42,12 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
   }
 
   protected function setUp() {
-
     // framework setup
     TestUtil::initFramework(WCMF_BASE.'app/config/');
 
-    // override connection settings in order to use testing db
-    // path is relative to WCMF_BASE
-    $config = ObjectFactory::getInstance('configuration');
-    $config->addConfiguration('../../../test/tests.ini');
-
     // database setup
-
-    // get connection from first entity type
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $types = $persistenceFacade->getKnownTypes();
-    $mapper = $persistenceFacade->getMapper($types[0]);
-    $pdo = $mapper->getConnection()->getConnection();
-
-    // create sqlite db
-    $params = $mapper->getConnectionParams();
-    if ($params['dbType'] == 'sqlite') {
-      $numTables = $pdo->query('SELECT count(*) FROM sqlite_master WHERE type = "table"')->fetchColumn();
-      if ($numTables == 0) {
-        $schema = file_get_contents('tables_sqlite.sql');
-        $pdo->exec($schema);
-      }
-    }
-    $conn = new \PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($pdo, $params['dbName']);
+    $params = TestUtil::createDatabase();
+    $conn = new \PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($params['connection'], $params['dbName']);
 
     $this->databaseTester = new \PHPUnit_Extensions_Database_DefaultTester($conn);
     $this->databaseTester->setSetUpOperation(\PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT());

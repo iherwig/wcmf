@@ -9,7 +9,14 @@ are located in the _src/wcmf/test_ directory.
 
 ## Running tests ## {#testing_run}
 
-To run all tests, execute the following command:
+Before running the tests the code generator is used to generate the environment:
+
+~~~~~~~~~~~~~
+cd src/wcmf/test/model
+ant
+~~~~~~~~~~~~~
+
+To run all tests, execute the following command in the _src/wcmf/test_ directory:
 
 ~~~~~~~~~~~~~
 phpunit --bootstrap bootstrap.php --configuration configuration.xml
@@ -33,4 +40,6 @@ For developing custom test cases, the following base classes may be used:
   database support for testing persistency related functionality.
 - \link wcmf::test::lib::ControllerTestCase `ControllerTestCase`\endlink
   adds a convenience method for running requests.
+- \link wcmf::test::lib::SeleniumTestCase `SeleniumTestCase`\endlink is used to
+  run tests with [Selenium](http://www.seleniumhq.org/).
 */

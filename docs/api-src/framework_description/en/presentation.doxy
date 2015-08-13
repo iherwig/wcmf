@@ -557,7 +557,7 @@ instance and passing it to the
 method as shown for _Monolog_ in the following example:
 
 ~~~~~~~~~~~~~{.php}
-$logger = new MonologFileLogger('main', WCMF_BASE.'app/config/logging.ini');
+$logger = new MonologFileLogger('main', WCMF_BASE.'app/config/log.ini');
 LogManager::configure($logger);
 ~~~~~~~~~~~~~
 

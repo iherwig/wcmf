@@ -26,7 +26,11 @@ use wcmf\lib\model\mapper\RDBMapper;
 class TestUtil {
 
   /**
-   * Set up the wcmf framework
+   * Set up the wcmf framework. The method makes the following assumptions
+   * about file locations:
+   * - main configuration in $configPath.'config.ini'
+   * - optional additional configuration in $configPath.'test.ini'
+   * - logging configuration in $configPath.'log.ini'
    * @param $configPath The path to the configuration directory
    */
   public static function initFramework($configPath) {
@@ -36,20 +40,44 @@ class TestUtil {
     }
 
     // setup logging
-    $logger = new MonologFileLogger('main', 'logging.ini');
+    $logger = new MonologFileLogger('main', $configPath.'log.ini');
     LogManager::configure($logger);
 
     // setup configuration
     $configuration = new InifileConfiguration($configPath);
     $configuration->addConfiguration('config.ini');
+    $configuration->addConfiguration('test.ini');
 
     // setup object factory
     ObjectFactory::configure(new DefaultFactory($configuration));
-    ObjectFactory::clear();
     ObjectFactory::registerInstance('configuration', $configuration);
 
     $cache = ObjectFactory::getInstance('cache');
     $cache->clearAll();
+  }
+
+  /**
+   * Create the test database, if sqlite is configured
+   * @return Associative array with connection parameters and key 'connection'
+   */
+  public static function createDatabase() {
+    // get connection from first entity type
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $types = $persistenceFacade->getKnownTypes();
+    $mapper = $persistenceFacade->getMapper($types[0]);
+    $pdo = $mapper->getConnection()->getConnection();
+
+    // create sqlite db
+    $params = $mapper->getConnectionParams();
+    if ($params['dbType'] == 'sqlite') {
+      $numTables = $pdo->query('SELECT count(*) FROM sqlite_master WHERE type = "table"')->fetchColumn();
+      if ($numTables == 0) {
+        $schema = file_get_contents(WCMF_BASE.'install/tables_sqlite.sql');
+        $pdo->exec($schema);
+      }
+    }
+    $params['connection'] = $pdo;
+    return $params;
   }
 
   /**
@@ -58,6 +86,9 @@ class TestUtil {
    * @param $router Router script filename (optional)
    */
   public static function startServer($documentRoot, $router='') {
+    if (!is_dir($documentRoot)) {
+      throw new \Exception('Document root '.$documentRoot.' does not exist');
+    }
     define('SERVER_HOST', 'localhost');
     define('SERVER_PORT', 8500);
     $cmd = sprintf('php -S %s:%d -t %s %s', SERVER_HOST, SERVER_PORT, $documentRoot, $router);
