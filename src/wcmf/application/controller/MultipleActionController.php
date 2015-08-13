@@ -164,7 +164,9 @@ class MultipleActionController extends Controller {
       $actionData = $data[$actionId];
       $context = isset($actionData['context']) ? $actionData['context'] : '';
       $action = isset($actionData['action']) ? $actionData['action'] : '';
-      $params = isset($actionData['params']) ? $actionData['params'] : array();
+      // since serializer may replace the params key by the actual
+      // node data, we use actionData as fallback
+      $params = isset($actionData['params']) ? $actionData['params'] : $actionData;
       $requestPart = ObjectFactory::getInstance('request');
       $requestPart->setContext($context);
       $requestPart->setAction($action);

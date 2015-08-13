@@ -41,7 +41,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7gMtsLQ8EeOQ5oJFa1i8cg" name="listeners" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OYK5QLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OYLgULQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OYMucLQ9EeOQ5oJFa1i8cg" value="{Search, EventListener}"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OYMucLQ9EeOQ5oJFa1i8cg" value="{Search}"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_SQkHILQ9EeOQ5oJFa1i8cg" name="Media">
