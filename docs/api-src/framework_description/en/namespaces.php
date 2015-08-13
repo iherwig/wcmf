@@ -95,4 +95,25 @@ namespace wcmf\lib\service\impl;
 
 /** Utility classes */
 namespace wcmf\lib\util;
+
+/** Test support classes */
+namespace wcmf\test\lib;
+/** &nbsp; */
+namespace wcmf\test\tests\controller;
+/** &nbsp; */
+namespace wcmf\test\tests\core;
+/** &nbsp; */
+namespace wcmf\test\tests\format;
+/** &nbsp; */
+namespace wcmf\test\tests\i18n;
+/** &nbsp; */
+namespace wcmf\test\tests\model;
+/** &nbsp; */
+namespace wcmf\test\tests\persistence;
+/** &nbsp; */
+namespace wcmf\test\tests\presentation;
+/** &nbsp; */
+namespace wcmf\test\tests\security;
+/** &nbsp; */
+namespace wcmf\test\tests\service;
 ?>

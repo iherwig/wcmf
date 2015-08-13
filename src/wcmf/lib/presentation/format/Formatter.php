@@ -15,8 +15,8 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * Formatter is is the single entry point for request/response formatting.
- * It chooses the configured formatter based on the format property of the message
+ * Formatter is the single entry point for request/response formatting.
+ * It chooses the configured formatter based on the format property of the request
  * by getting the value XXXFormat from the configuration section 'formats'.
  *
  * @author ingo herwig <ingo@wemove.com>

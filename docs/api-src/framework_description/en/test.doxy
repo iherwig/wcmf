@@ -4,7 +4,33 @@
 
 # Testing # {#testing}
 
-## Unit tests ## {#testing_unit}
+The tests shipping with wCMF are based on [PHPUnit](https://phpunit.de/). They
+are located in the _src/wcmf/test_ directory.
 
-<span class="label label-danger">TODO</span>
+## Running tests ## {#testing_run}
+
+To run all tests, execute the following command:
+
+~~~~~~~~~~~~~
+phpunit --bootstrap bootstrap.php --configuration configuration.xml
+~~~~~~~~~~~~~
+
+The tests use PHP's built-in web server where necessary and operate on a file
+based database ([SQLite](https://www.sqlite.org/)).
+
+## Writing tests ## {#testing_write}
+
+To simplify setting up the testing enviroment, wCMF provides the
+\link wcmf::lib::util::TestUtil `TestUtil`\endlink class. It has methods for
+starting the test server, initializing the framework, starting sessions and
+simulating requests.
+
+For developing custom test cases, the following base classes may be used:
+
+- \link wcmf::test::lib::BaseTestCase `BaseTestCase`\endlink is used as
+  base class for all test cases. It initializes the framework before each test.
+- \link wcmf::test::lib::DatabaseTestCase `DatabaseTestCase`\endlink adds
+  database support for testing persistency related functionality.
+- \link wcmf::test::lib::ControllerTestCase `ControllerTestCase`\endlink
+  adds a convenience method for running requests.
 */

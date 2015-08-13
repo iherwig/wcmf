@@ -15,7 +15,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
 /**
- * ControllerTestCase is the base class for all wCMF test cases.
+ * BaseTestCase is the base class for all wCMF test cases.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

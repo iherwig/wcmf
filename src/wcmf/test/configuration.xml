@@ -44,15 +44,15 @@
       <file>tests/persistence/ValidatorTest.php</file>
     </testsuite>
     <testsuite name="Presentation">
-      <file>tests/persistence/InternalLinkTest.php</file>
-      <file>tests/persistence/ValueListProviderTest.php</file>
+      <file>tests/presentation/InternalLinkTest.php</file>
+      <file>tests/presentation/ValueListProviderTest.php</file>
     </testsuite>
     <testsuite name="Security">
-      <file>tests/persistence/PermissionsTest.php</file>
-      <file>tests/persistence/UserTest.php</file>
+      <file>tests/security/PermissionsTest.php</file>
+      <file>tests/security/UserTest.php</file>
     </testsuite>
     <testsuite name="Service">
-      <file>tests/persistence/SoapTest.php</file>
+      <file>tests/service/SoapTest.php</file>
     </testsuite>
   </testsuites>
   <groups>
@@ -61,4 +61,7 @@
       <group>performance</group>
     </exclude>
   </groups>
+  <logging>
+    <log type="testdox-text" target="log/testdox.txt"/>
+  </logging>
 </phpunit>

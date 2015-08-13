@@ -60,6 +60,19 @@ $loginMessage = $message->getText($textId, $parameters);
 $view->setValue('loginMessage', $loginMessage);
 ~~~~~~~~~~~~~
 
+### Template text ### {#i18n_static_tpl}
+
+wCMF provides the `translate` plugin for embedding language dependent text into
+_Smarty_ templates. The plugin is automatically included and used in the following
+way:
+
+~~~~~~~~~~~~~{.php}
+{translate text="An error occured"}
+
+{* with variables *}
+{translate text="Logged in as %0% since %1%" r0=$login r1=$logindate}
+~~~~~~~~~~~~~
+
 ### Localization ### {#i18n_static_locale}
 
 Since \link wcmf::lib::i18n::Message `Message`\endlink defines the interface, it
@@ -111,19 +124,6 @@ The parameter `localeDir` defines the directory where
 translation files and the `language` parameter defines the application's default
 language.
 
-### Templates ### {#i18n_static_tpl}
-
-wCMF provides the `translate` plugin for embedding language dependent text into
-_Smarty_ templates. The plugin is included automatically and used in the following
-way:
-
-~~~~~~~~~~~~~{.php}
-{translate text="An error occured"}
-
-{* with variables *}
-{translate text="Logged in as %0% since %1%" r0=$login r1=$logindate}
-~~~~~~~~~~~~~
-
 ### Tools ### {#i18n_static_tools}
 
 The \ref app "default application" ships with a tool for finding translatable text
@@ -161,12 +161,24 @@ languages = {de, en}
 
 Model content is initially created in the application's __default model language__,
 which might differ from the _default user interface language_ (see \ref i18n_static).
-Localization of this content is done by using implementations of
-\link wcmf::lib::i18n::Localization `Localization`\endlink. There are several
-strategies for storing localized versions of the content, all having advantages
-and disadvantages regarding extensibility and performance.
+Localization of the model content is done by using implementations of
+\link wcmf::lib::i18n::Localization `Localization`\endlink. The interface defines
+methods for loading and saving localized model content. The following code
+demonstrates how to use it to get translated content:
 
-The idea behind the
+~~~~~~~~~~~~~{.php}
+$oid = new ObjectId('Book', 1);
+
+// retrieve a localized entity instance
+$localization = ObjectFactory::getInstance('localization');
+$bookDe = $localization->loadTranslatedObject($oid, 'de');
+~~~~~~~~~~~~~
+
+### Localization ### {#i18n_dynamic_locale}
+
+There are several strategies for storing localized versions of the content, all
+having advantages and disadvantages regarding extensibility and performance. The
+idea behind the
 \link wcmf::lib::i18n::impl::DefaultLocalization `DefaultLocalization`\endlink
 implementation is to keep the domain model clear of localization related attributes
 by storing translations in a separate entity type. Using one entity type for all
@@ -189,7 +201,25 @@ The __language entity type__ must have the following attributes:
 - `code` language code (e.g. _en_)
 - `name` language name (e.g. _English_)
 
-The localization configuration of the \ref app "default application" is the
+The following __example__ demonstrates the creation of localized content
+using the \link wcmf::lib::i18n::Localization `Localization`\endlink interface:
+
+~~~~~~~~~~~~~{.php}
+$oid = new ObjectId('Book', 1);
+
+// retrieve the original entity instance
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+$book = $persistenceFacade->load($oid);
+
+// localize the instance
+$book->setValue('title', 'Übersetzter Titel');
+
+// save the translation
+$localization = ObjectFactory::getInstance('localization');
+$localization->saveTranslation($book, 'de');
+~~~~~~~~~~~~~
+
+The localization __configuration__ of the \ref app "default application" is the
 following:
 
 ~~~~~~~~~~~~~{.ini}
@@ -204,7 +234,7 @@ de = Deutsch
 en = English
 ~~~~~~~~~~~~~
 
-This means that the _default model language_ is English and the
+In this example the _default model language_ is set to English and the
 _language entity type_ is ignored, because the available languages are defined
 in the configuration.
 */

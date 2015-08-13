@@ -19,7 +19,7 @@ use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\util\TestUtil;
 
 /**
- * PermissionsControllerTest.
+ * PermissionControllerTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

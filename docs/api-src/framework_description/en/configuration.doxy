@@ -159,7 +159,7 @@ the following steps:
 2. _Setter injection of the remaining parameters_:
    - The _mappers_ configuration parameter is not used in the constructor.
      The factory searches for a _setter method_ (_setMappers_) or a public member
-     variable (<em>$mappers</em>). Since the class defines a setter method, it us used
+     variable (<em>$mappers</em>). Since the class defines a setter method, it is used
      to inject the dependency. The `TypeMapping` section does not contain a
      `__class` key, which means that the _mappers_ property will be an associative
      array. In this example it maps class names (e.g. _app.src.model.wcmf.DBSequence_)

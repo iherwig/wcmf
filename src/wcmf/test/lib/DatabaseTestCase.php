@@ -15,8 +15,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
 /**
- * ControllerTestCase is a PHPUnit test case, that
- * serves as base class for test cases used for Controllers.
+ * DatabaseTestCase is the base class for test cases that need database support.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

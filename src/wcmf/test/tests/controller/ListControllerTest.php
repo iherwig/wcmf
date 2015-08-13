@@ -20,7 +20,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\util\TestUtil;
 
 /**
- * AsyncPagingControllerTest.
+ * ListControllerTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
