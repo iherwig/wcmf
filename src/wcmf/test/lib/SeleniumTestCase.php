@@ -62,7 +62,6 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
 
   public function tearDown() {
     if ($this->databaseTester) {
-      $dataSet = new \PHPUnit_Extensions_Database_DataSet_YamlDataSet("fixtures/default.yml");
       $this->databaseTester->setTearDownOperation(\PHPUnit_Extensions_Database_Operation_Factory::NONE());
       $this->databaseTester->setDataSet($this->getDataSet());
       $this->databaseTester->onTearDown();
