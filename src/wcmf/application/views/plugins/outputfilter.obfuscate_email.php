@@ -1,7 +1,7 @@
 <?php
  /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2014 wemove digital solutions GmbH
+ * Copyright (C) 2005-2015 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
