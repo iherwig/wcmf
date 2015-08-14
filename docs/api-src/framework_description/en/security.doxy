@@ -8,7 +8,8 @@ Two key aspects of securing an application are _authentication_ and _authorizati
 While __authentication__ is the process of verifying the identity of a user,
 __authorization__ means determining if the user is allowed to do what he or she
 is about to do. That implies that authentication is a precondition for
-authorization.
+authorization. Input __validation and filtering__ is another aspect, which is
+especially important in web applications.
 
 ## Users and Roles ## {#sec_users_roles}
 
@@ -332,4 +333,39 @@ as follows:
 
 - _Not authenticated_: Resource is _not accessible_
 - _Authenticated_: Resource is _accessible_
+
+## Input ## {#sec_input}
+
+Generally all external input sent to the application should be considered harmful.
+
+In PHP this input is stored in so called _Superglobals_, e.g. <em>$_GET</em>,
+<em>$_POST</em>, <em>$_FILES</em>. To avoid using these global variables directly
+in code, wCMF encapsulates them in the
+\link wcmf::lib::presentation::Request `Request`\endlink instance and makes
+them available through the
+\link wcmf::lib::presentation::Request::getValue `Request::getValue`\endlink
+method. Besides the variable name this method defines the following optional
+parameters:
+
+- `$default` default value if the value is not contained in the request
+- `$filter` [filter](http://php.net/manual/en/filter.filters.php) to be applied
+  to the value
+- `$options` filter parameters if necessary
+
+The `$filter` and `$options` values are passed to the
+[filter_var](http://php.net/manual/en/function.filter-var.php) function and the
+result is returned by the method.
+
+The following code demonstrates the usage:
+
+~~~~~~~~~~~~~{.php}
+// validate an email value
+$email = $request->getValue('email', '', FILTER_VALIDATE_EMAIL);
+
+// validate a date using a regular expression and
+// return the current date on failure
+$today = date('Y-m-d');
+$options = array("options" => array("regexp" => "/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/"));
+$date = $request->getValue('date', $today, FILTER_VALIDATE_REGEXP, $options);
+~~~~~~~~~~~~~
 */

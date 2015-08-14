@@ -136,7 +136,7 @@ interface ControllerMessage {
    * Get a value
    * @param $name The name of the variable
    * @param $default The default value if the value is not defined (optional, default: _null_)
-   * @param $filter PHP filter constant (FILTER_SANITIZE/FILTER_VALIDATE) to be applied on the value (optional, default: _null_)
+   * @param $filter PHP filter constant (FILTER_SANITIZE/FILTER_VALIDATE) to be applied to the value (optional, default: _null_)
    * @param $options Filter parameters (optional, default: _null_)
    * @return The (filtered) value or default, if it does not exist
    */
