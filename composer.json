@@ -15,9 +15,9 @@
             "type": "package",
             "package": {
                 "name": "olympos/chronos-generator",
-                "version": "0.9.9.6",
+                "version": "1.0.0",
                 "dist": {
-                    "url": "http://downloads.sourceforge.net/project/olympos/ChronosGenerator-0.9.9.6b-wCMF.zip",
+                    "url": "http://downloads.sourceforge.net/project/olympos/ChronosGenerator-wCMF-1.0.0.zip",
                     "type": "zip"
                 }
             }
@@ -25,7 +25,7 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "olympos/chronos-generator": "0.9.*",
+        "olympos/chronos-generator": "1.0.*",
         "monolog/monolog": "~1.16",
         "zf1/zend-db": "~1.12",
         "zf1/zend-search-lucene": "~1.12",
