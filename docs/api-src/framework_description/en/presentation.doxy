@@ -99,7 +99,9 @@ actions are performed:
 7. The response data is transformed into the requested response format (see
    \ref pres_format).
 8. Execution returns to step 3, if a valid action key is contained in the response
-   data and terminates, if not.
+   data and terminates, if no action key is found or the response is finalized
+   by calling the method
+   \link wcmf::lib::presentation::Response::setFinal `Response::setFinal`\endlink.
 
 ### Formats ### {#pres_format}
 
