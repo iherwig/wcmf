@@ -10,21 +10,15 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\config\Configuration;
-use wcmf\lib\core\Session;
-use wcmf\lib\i18n\Localization;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\PermissionManager;
 
 /**
  * SaveController is a controller that saves Node data.
@@ -54,23 +48,14 @@ class SaveController extends Controller {
   private $_fileUtil = null;
 
   /**
-   * Constructor
-   * @param $session
-   * @param $persistenceFacade
-   * @param $permissionManager
-   * @param $localization
-   * @param $message
-   * @param $configuration
+   * Get the FileUtil instance
+   * @return FileUtil
    */
-  public function __construct(Session $session,
-          PersistenceFacade $persistenceFacade,
-          PermissionManager $permissionManager,
-          Localization $localization,
-          Message $message,
-          Configuration $configuration) {
-    parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message, $configuration);
-    $this->_fileUtil = new FileUtil();
+  protected function getFileUtil() {
+    if ($this->_fileUtil == null) {
+      $this->_fileUtil = new FileUtil();
+    }
+    return $this->_fileUtil;
   }
 
   /**
@@ -326,6 +311,7 @@ class SaveController extends Controller {
     if ($data['name'] != '') {
       $response = $this->getResponse();
       $message = $this->getMessage();
+      $fileUtil = $this->getFileUtil();
 
       // upload request -> see if upload was succesfull
       if ($data['tmp_name'] == 'none') {
@@ -357,7 +343,7 @@ class SaveController extends Controller {
 
       // upload file (mimeTypes parameter is set to null, because the mime type is already checked by checkFile method)
       try {
-        return $this->_fileUtil->uploadFile($data, $uploadFilename, null, $override);
+        return $fileUtil->uploadFile($data, $uploadFilename, null, $override);
       } catch (\Exception $ex) {
         $response->addError(ApplicationError::fromException($ex));
         return null;
@@ -429,8 +415,9 @@ class SaveController extends Controller {
    */
   protected function getUploadDir(ObjectId $oid, $valueName) {
     $request = $this->getRequest();
+    $fileUtil = $this->getFileUtil();
     if ($request->hasValue('uploadDir')) {
-      $uploadDir = $this->_fileUtil->realpath($request->getValue('uploadDir'));
+      $uploadDir = $fileUtil->realpath($request->getValue('uploadDir'));
     }
     else {
       $config = $this->getConfiguration();
@@ -449,7 +436,7 @@ class SaveController extends Controller {
       }
     }
     // asure that the directory exists
-    $this->_fileUtil->mkdirRec($uploadDir);
+    $fileUtil->mkdirRec($uploadDir);
     return $uploadDir;
   }
 

@@ -23,6 +23,8 @@ use wcmf\lib\presentation\Response;
  */
 class Formatter {
 
+  private static $_headersSent = false;
+
   /**
    * Deserialize Request data into objects.
    * @param $request A reference to the Request instance
@@ -43,21 +45,41 @@ class Formatter {
    * @param $response A reference to the Response instance
    */
   public static function serialize(Response $response) {
-    // get the formatter that should be used for this response format
+    self::$_headersSent = headers_sent();
+    self::sendHeader('HTTP/1.1 '.$response->getStatus());
+
+    // if the response has a file, we send it and return
+    $file = $response->getFile();
+    if ($file) {
+      self::sendHeader("Content-Type: application/octet-stream");
+      self::sendHeader('Content-Disposition: attachment; filename="'.basename($file['filename']).'"');
+      self::sendHeader("Pragma: no-cache");
+      self::sendHeader("Expires: 0");
+      echo $file['content'];
+      return;
+    }
+
+    // default: delegate to response format
     $format = $response->getFormat();
     if ($format == null) {
       // the response format must be given!
       throw new ConfigurationException("No response format defined for ".$response->__toString());
     }
-
-    if (!headers_sent()) {
-      header('HTTP/1.1 '.$response->getStatus());
-      header("Content-Type: ".$format->getMimeType()."; charset=utf-8");
-      foreach ($response->getHeaders() as $name => $value) {
-        header($name.': '.$value);
-      }
+    self::sendHeader("Content-Type: ".$format->getMimeType()."; charset=utf-8");
+    foreach ($response->getHeaders() as $name => $value) {
+      self::sendHeader($name.': '.$value);
     }
     $format->serialize($response);
+  }
+
+  /**
+   * Send the given header
+   * @param $header
+   */
+  protected static function sendHeader($header) {
+    if (!self::$_headersSent) {
+      header($header);
+    }
   }
 }
 ?>

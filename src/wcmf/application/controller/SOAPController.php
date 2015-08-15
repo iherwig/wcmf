@@ -72,7 +72,13 @@ class SOAPController extends Controller {
       $HTTP_RAW_POST_DATA = implode("\r\n", file('php://input'));
     }
     $server->service($HTTP_RAW_POST_DATA);
-    exit;
+
+    // NOTE: the response is not used, because the SoapServer::service method
+    // returns the data to the client but we need to make sure that there is
+    // no further processing
+    $response = $this->getResponse();
+    $response->setFormatByName('null');
+    $response->setFinal();
   }
 
   /**

@@ -154,7 +154,7 @@ abstract class AbstractFormat implements Format {
   }
 
   protected function filterValue($value, AttributeDescription $attribute) {
-
+    // TODO: implement filtering by attribute type
   }
 }
 ?>

@@ -165,6 +165,17 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   }
 
   /**
+   * @see Request::setResponseFormatByName()
+   */
+  public function setResponseFormatByName($name) {
+    $formats = self::getFormats();
+    if (!isset($formats[$name])) {
+      throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition for: ".$name);
+    }
+    $this->setResponseFormat($formats[$name]);
+  }
+
+  /**
    * @see Request::getResponseFormat()
    */
   public function getResponseFormat() {

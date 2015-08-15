@@ -53,6 +53,7 @@ abstract class Controller {
   private $_session = null;
   private $_persistenceFacade = null;
   private $_permissionManager = null;
+  private $_actionMapper = null;
   private $_localization = null;
   private $_message = null;
   private $_configuration = null;
@@ -62,6 +63,7 @@ abstract class Controller {
    * @param $session
    * @param $persistenceFacade
    * @param $permissionManager
+   * @param $actionMapper
    * @param $localization
    * @param $message
    * @param $configuration
@@ -69,6 +71,7 @@ abstract class Controller {
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
           Localization $localization,
           Message $message,
           Configuration $configuration) {
@@ -76,6 +79,7 @@ abstract class Controller {
     $this->_session = $session;
     $this->_persistenceFacade = $persistenceFacade;
     $this->_permissionManager = $permissionManager;
+    $this->_actionMapper = $actionMapper;
     $this->_localization = $localization;
     $this->_message = $message;
     $this->_configuration = $configuration;
@@ -171,11 +175,9 @@ abstract class Controller {
     $subRequest->setAction($action);
     $subRequest->setHeaders($curRequest->getHeaders());
     $subRequest->setValues($curRequest->getValues());
-    $formats = ObjectFactory::getInstance('formats');
-    $nullFormat = $formats['null'];
-    $subRequest->setFormat($nullFormat);
-    $subRequest->setResponseFormat($nullFormat);
-    $response = ObjectFactory::getInstance('actionMapper')->processAction($subRequest);
+    $subRequest->setFormatByName('null');
+    $subRequest->setResponseFormatByName('null');
+    $response = $this->_actionMapper->processAction($subRequest);
     return $response;
   }
 
@@ -225,6 +227,14 @@ abstract class Controller {
    */
   protected function getPermissionManager() {
     return $this->_permissionManager;
+  }
+
+  /**
+   * Get the ActionMapper instance.
+   * @return ActionMapper
+   */
+  protected function getActionMapper() {
+    return $this->_actionMapper;
   }
 
   /**

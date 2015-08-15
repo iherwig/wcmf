@@ -128,12 +128,11 @@ class SoapServer extends \nusoap_server {
       self::$_logger->debug($params);
     }
     $authHeader = $this->requestHeader['Security']['UsernameToken'];
-    $formats = ObjectFactory::getInstance('formats');
 
     $request = ObjectFactory::getInstance('request');
     $request->setAction('actionSet');
-    $request->setFormat($formats['soap']);
-    $request->setResponseFormat($formats['null']);
+    $request->setFormatByName('soap');
+    $request->setResponseFormatByName('null');
     $request->setValues(array(
       'data' => array(
         'action1' => array(
@@ -165,7 +164,7 @@ class SoapServer extends \nusoap_server {
     $actionResponse->setSender($data['controller']);
     $actionResponse->setContext($data['context']);
     $actionResponse->setAction($data['action']);
-    $actionResponse->setFormat($formats['soap']);
+    $actionResponse->setFormatByName('soap');
     $actionResponse->setValues($data);
     Formatter::serialize($actionResponse);
     if (self::$_logger->isDebugEnabled()) {

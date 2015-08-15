@@ -34,12 +34,7 @@ use wcmf\lib\pdf\PDFPage;
  *
  *   // output the final page
  *   $downloadfile = 'wcmf.pdf';
- *   header("Content-disposition: attachment; filename=$downloadfile");
- *   header("Content-Type: application/force-download");
- *   header("Content-Transfer-Encoding: binary");
- *   header("Pragma: no-cache");
- *   header("Expires: 0");
- *   echo $template->output($downloadfile, 'S');
+ *   $response->setFile($downloadfile, $template->output($downloadfile, 'S'));
  * }
  * @endcode
  *

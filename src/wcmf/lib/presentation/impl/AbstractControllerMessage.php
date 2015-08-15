@@ -115,6 +115,17 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   }
 
   /**
+   * @see Message::setFormatByName()
+   */
+  public function setFormatByName($name) {
+    $formats = self::getFormats();
+    if (!isset($formats[$name])) {
+      throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition for: ".$name);
+    }
+    $this->setFormat($formats[$name]);
+  }
+
+  /**
    * @see Message::getFormat()
    */
   public function getFormat() {
@@ -317,7 +328,7 @@ abstract class AbstractControllerMessage implements ControllerMessage {
    * @return Format instance
    */
   protected static function getFormatFromMimeType($mimeType) {
-    $formats = ObjectFactory::getInstance('formats');
+    $formats = self::getFormats();
     $firstFormat = null;
     foreach ($formats as $name => $instance) {
       $firstFormat = $firstFormat == null ? $name : $firstFormat;
@@ -329,6 +340,14 @@ abstract class AbstractControllerMessage implements ControllerMessage {
       throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition for: ".$mimeType);
     }
     return $formats[$firstFormat];
+  }
+
+  /**
+   * Get all known Format instances
+   * @return Associative array with the names as keys and the Format instances as values
+   */
+  protected static function getFormats() {
+    return ObjectFactory::getInstance('formats');
   }
 }
 ?>

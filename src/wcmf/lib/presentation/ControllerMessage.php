@@ -66,10 +66,16 @@ interface ControllerMessage {
   public function setFormat(Format $format);
 
   /**
+   * Set the message format
+   * @param $name A key of the configuration section 'Formats'
+   */
+  public function setFormatByName($name);
+
+  /**
    * Get the message format. If no explicit format is set, the
    * format is derived from the Content-Type header value, if existing.
    * If no format can be derived, the first format in the configuration
-   * key 'Formats' will be used.
+   * section 'Formats' will be used.
    * @return Format instance
    */
   public function getFormat();

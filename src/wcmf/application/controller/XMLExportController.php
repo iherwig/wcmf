@@ -21,6 +21,8 @@ use wcmf\lib\model\Node;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\security\PermissionManager;
@@ -80,6 +82,7 @@ class XMLExportController extends BatchController {
    * @param $session
    * @param $persistenceFacade
    * @param $permissionManager
+   * @param $actionMapper
    * @param $localization
    * @param $message
    * @param $configuration
@@ -88,14 +91,25 @@ class XMLExportController extends BatchController {
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
           Localization $localization,
           Message $message,
           Configuration $configuration,
           Cache $cache) {
-    parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message, $configuration);
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
     $this->_cache = $cache;
-    $this->_fileUtil = new FileUtil();
+  }
+
+  /**
+   * Get the FileUtil instance
+   * @return FileUtil
+   */
+  protected function getFileUtil() {
+    if ($this->_fileUtil == null) {
+      $this->_fileUtil = new FileUtil();
+    }
+    return $this->_fileUtil;
   }
 
   /**
@@ -153,6 +167,7 @@ class XMLExportController extends BatchController {
    */
   protected function initExport($oids) {
     $session = $this->getSession();
+    $fileUtil = $this->getFileUtil();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
     $filename = $documentInfo['docFile'];
@@ -164,11 +179,11 @@ class XMLExportController extends BatchController {
 
     // start document
     $fileHandle = fopen($filename, "a");
-    $this->_fileUtil->fputsUnicode($fileHandle, '<?xml version="1.0" encoding="UTF-8"?>'.$documentInfo['docLinebreak']);
+    $fileUtil->fputsUnicode($fileHandle, '<?xml version="1.0" encoding="UTF-8"?>'.$documentInfo['docLinebreak']);
     if ($documentInfo['docType'] != "") {
-      $this->_fileUtil->fputsUnicode($fileHandle, '<!DOCTYPE '.$documentInfo['docType'].' SYSTEM "'.$documentInfo['dtd'].'">'.$documentInfo['docLinebreak']);
+      $fileUtil->fputsUnicode($fileHandle, '<!DOCTYPE '.$documentInfo['docType'].' SYSTEM "'.$documentInfo['dtd'].'">'.$documentInfo['docLinebreak']);
     }
-    $this->_fileUtil->fputsUnicode($fileHandle, '<'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
+    $fileUtil->fputsUnicode($fileHandle, '<'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
     fclose($fileHandle);
 
     // get root types from ini file
@@ -283,13 +298,14 @@ class XMLExportController extends BatchController {
    */
   protected function finishExport($oids) {
     $session = $this->getSession();
+    $fileUtil = $this->getFileUtil();
     // restore document state from session
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
     // end document
     $fileHandle = fopen($documentInfo['docFile'], "a");
     $this->endTags($fileHandle, 0, $documentInfo);
-    $this->_fileUtil->fputsUnicode($fileHandle, '</'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
+    $fileUtil->fputsUnicode($fileHandle, '</'.$documentInfo['docRootElement'].'>'.$documentInfo['docLinebreak']);
     fclose($fileHandle);
 
     // clear session variables
@@ -306,6 +322,7 @@ class XMLExportController extends BatchController {
    * @param $documentInfo A reference to an assoziative array (see DOCUMENT_INFO)
    */
   protected function endTags($fileHandle, $curIndent, &$documentInfo) {
+    $fileUtil = $this->getFileUtil();
     $lastIndent = $documentInfo['lastIndent'];
 
     // write last opened and not closed tags
@@ -313,7 +330,7 @@ class XMLExportController extends BatchController {
       for ($i=$lastIndent-$curIndent; $i>0; $i--) {
         $closeTag = array_shift($documentInfo['tagsToClose']);
         if ($closeTag) {
-          $this->_fileUtil->fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $closeTag["indent"]).'</'.$closeTag["name"].'>'.$documentInfo['docLinebreak']);
+          $fileUtil->fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $closeTag["indent"]).'</'.$closeTag["name"].'>'.$documentInfo['docLinebreak']);
         }
       }
     }
@@ -329,6 +346,7 @@ class XMLExportController extends BatchController {
    */
   protected function writeNode($fileHandle, ObjectId $oid, $depth, $documentInfo) {
     $persistenceFacade = $this->getPersistenceFacade();
+    $fileUtil = $this->getFileUtil();
 
     // load node and get element name
     $node = $persistenceFacade->load($oid);
@@ -347,20 +365,20 @@ class XMLExportController extends BatchController {
 
       // write object's content
       // open start tag
-      $this->_fileUtil->fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$elementName);
+      $fileUtil->fputsUnicode($fileHandle, str_repeat($documentInfo['docIndent'], $curIndent).'<'.$elementName);
       // write object attributes
       $attributes = $mapper->getAttributes();
       foreach ($attributes as $curAttribute) {
         $attributeName = $curAttribute->getName();
         $value = $node->getValue($attributeName);
         if ($value) {
-          $this->_fileUtil->fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
+          $fileUtil->fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
         }
       }
       // close start tag
-      $this->_fileUtil->fputsUnicode($fileHandle, '>');
+      $fileUtil->fputsUnicode($fileHandle, '>');
       if ($hasUnvisitedChildren) {
-        $this->_fileUtil->fputsUnicode($fileHandle, $documentInfo['docLinebreak']);
+        $fileUtil->fputsUnicode($fileHandle, $documentInfo['docLinebreak']);
       }
 
       // remember end tag if not closed
@@ -369,7 +387,7 @@ class XMLExportController extends BatchController {
         array_unshift($documentInfo['tagsToClose'], $closeTag);
       }
       else {
-        $this->_fileUtil->fputsUnicode($fileHandle, '</'.$elementName.'>'.$documentInfo['docLinebreak']);
+        $fileUtil->fputsUnicode($fileHandle, '</'.$elementName.'>'.$documentInfo['docLinebreak']);
       }
       // remember current indent
       $documentInfo['lastIndent'] = $curIndent;

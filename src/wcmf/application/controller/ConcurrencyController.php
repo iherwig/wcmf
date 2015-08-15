@@ -19,6 +19,7 @@ use wcmf\lib\persistence\concurrency\Lock;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\PermissionManager;
@@ -68,6 +69,7 @@ class ConcurrencyController extends Controller {
    * @param $session
    * @param $persistenceFacade
    * @param $permissionManager
+   * @param $actionMapper
    * @param $localization
    * @param $message
    * @param $configuration
@@ -76,12 +78,13 @@ class ConcurrencyController extends Controller {
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
           Localization $localization,
           Message $message,
           Configuration $configuration,
           ConcurrencyManager $concurrencyManager) {
-    parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message, $configuration);
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
     $this->_concurrencyManager = $concurrencyManager;
   }
 

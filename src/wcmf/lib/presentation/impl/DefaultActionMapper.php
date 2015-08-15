@@ -124,8 +124,6 @@ class DefaultActionMapper implements ActionMapper {
     $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::AFTER_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
 
-    Formatter::serialize($response);
-
     // check if an action key exists for the return action
     $nextActionKey = ActionKey::getBestMatch($actionKeyProvider, $controllerClass,
             $response->getContext(), $response->getAction());
@@ -133,31 +131,34 @@ class DefaultActionMapper implements ActionMapper {
       self::$_logger->debug("Next action key: ".$nextActionKey);
     }
 
-    if (strlen($nextActionKey) == 0) {
+    // terminate, if there is no next action key or the response is final
+    $terminate = strlen($nextActionKey) == 0 || $response->isFinal();
+    if ($terminate) {
       if ($isDebugEnabled) {
         self::$_logger->debug("Terminate");
       }
       // stop processing
+      Formatter::serialize($response);
       return $response;
     }
-    else {
-      if ($isDebugEnabled) {
-        self::$_logger->debug("Processing next action");
-      }
-      // store last response
-      $this->_lastResponses[] = $response;
 
-      // proceed based on the result
-      $nextRequest = ObjectFactory::getInstance('request');
-      $nextRequest->setSender($controllerClass);
-      $nextRequest->setContext($response->getContext());
-      $nextRequest->setAction($response->getAction());
-      $nextRequest->setFormat($response->getFormat());
-      $nextRequest->setValues($response->getValues());
-      $nextRequest->setErrors($response->getErrors());
-      $nextRequest->setResponseFormat($request->getResponseFormat());
-      $this->processAction($nextRequest);
+    // proceed with next action key
+    if ($isDebugEnabled) {
+      self::$_logger->debug("Processing next action");
     }
+    // store last response
+    $this->_lastResponses[] = $response;
+
+    // set the request based on the result
+    $nextRequest = ObjectFactory::getInstance('request');
+    $nextRequest->setSender($controllerClass);
+    $nextRequest->setContext($response->getContext());
+    $nextRequest->setAction($response->getAction());
+    $nextRequest->setFormat($response->getFormat());
+    $nextRequest->setValues($response->getValues());
+    $nextRequest->setErrors($response->getErrors());
+    $nextRequest->setResponseFormat($request->getResponseFormat());
+    $this->processAction($nextRequest);
   }
 
   /**

@@ -141,12 +141,8 @@ abstract class BatchController extends Controller {
     // check if a download was triggered in the last step
     if ($session->get(self::DOWNLOAD_STEP) == true) {
       $file = $this->getDownloadFile();
-      header("Content-Type: application/force-download");
-      header("Content-Type: application/octet-stream");
-      header("Content-Type: application/download");
-      header('Content-Disposition: attachment; filename="'.basename($file).'"');
-      echo file_get_contents($file);
-      exit;
+      $response->setFile($file);
+      return;
     }
 
     // continue processing

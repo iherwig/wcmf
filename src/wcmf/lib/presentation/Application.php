@@ -153,7 +153,7 @@ class Application {
       // suppress error message in browser
       if (!$this->_debug) {
         header('HTTP/1.1 500 Internal Server Error');
-        exit(0);
+        $buffer = '';
       }
     }
     return $buffer;

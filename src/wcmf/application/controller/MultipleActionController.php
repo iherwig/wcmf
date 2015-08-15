@@ -10,16 +10,9 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\config\Configuration;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
-use wcmf\lib\i18n\Localization;
-use wcmf\lib\i18n\Message;
-use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -85,30 +78,6 @@ use wcmf\lib\util\StringUtil;
  */
 class MultipleActionController extends Controller {
 
-  private $_actionMapper = null;
-
-  /**
-   * Constructor
-   * @param $session
-   * @param $persistenceFacade
-   * @param $permissionManager
-   * @param $localization
-   * @param $message
-   * @param $configuration
-   * @param $actionMapper
-   */
-  public function __construct(Session $session,
-          PersistenceFacade $persistenceFacade,
-          PermissionManager $permissionManager,
-          Localization $localization,
-          Message $message,
-          Configuration $configuration,
-          ActionMapper $actionMapper) {
-    parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message, $configuration);
-    $this->_actionMapper = $actionMapper;
-  }
-
   /**
    * @see Controller::validate()
    */
@@ -149,9 +118,6 @@ class MultipleActionController extends Controller {
     $numActions = sizeof($actions);
     $exceptions = array();
 
-    $formats = ObjectFactory::getInstance('formats');
-    $nullFormat = $formats['null'];
-
     for($i=0; $i<$numActions; $i++) {
       $actionId = $actions[$i];
       if ($logger->isDebugEnabled()) {
@@ -171,12 +137,12 @@ class MultipleActionController extends Controller {
       $requestPart->setContext($context);
       $requestPart->setAction($action);
       $requestPart->setValues($params);
-      $requestPart->setFormat($nullFormat);
-      $requestPart->setResponseFormat($nullFormat);
+      $requestPart->setFormatByName('null');
+      $requestPart->setResponseFormatByName('null');
 
       // execute the request
       try {
-        $responsePart = $this->_actionMapper->processAction($requestPart);
+        $responsePart = $this->getActionMapper()->processAction($requestPart);
       }
       catch (\Exception $ex) {
         $logger->error($ex->__toString());

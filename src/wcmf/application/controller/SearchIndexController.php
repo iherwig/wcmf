@@ -17,6 +17,7 @@ use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\search\IndexedSearch;
 use wcmf\lib\search\Search;
 use wcmf\lib\security\PermissionManager;
@@ -46,6 +47,7 @@ class SearchIndexController extends BatchController {
    * @param $session
    * @param $persistenceFacade
    * @param $permissionManager
+   * @param $actionMapper
    * @param $localization
    * @param $message
    * @param $configuration
@@ -54,12 +56,13 @@ class SearchIndexController extends BatchController {
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
           Localization $localization,
           Message $message,
           Configuration $configuration,
           Search $search) {
-    parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message, $configuration);
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
     $this->_search = $search;
   }
 

@@ -82,11 +82,8 @@ class HTTPClient implements RemotingClient {
       $response = $this->doLogin();
     }
 
-    $formats = ObjectFactory::getInstance('formats');
-    $jsonFormat = $formats['json'];
-
     // do the request
-    $request->setResponseFormat($jsonFormat);
+    $request->setResponseFormatByName('json');
     $this->_client->resetParameters();
     $this->_client->setParameterPost('controller', $request->getSender());
     $this->_client->setParameterPost('context', $request->getContext());
@@ -105,7 +102,7 @@ class HTTPClient implements RemotingClient {
     // deserialize the response
     $responseData = json_decode($httpResponse->getBody(), true);
     $response = new ControllerMessage('', '', '', $responseData);
-    $response->setFormat($jsonFormat);
+    $response->setFormatByName('json');
     Formatter::deserialize($response);
 
     // handle errors

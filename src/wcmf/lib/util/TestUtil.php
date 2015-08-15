@@ -106,7 +106,7 @@ class TestUtil {
       $resource = proc_open("nohup ".$cmd, $descriptorspec, $pipes);
     }
     if (!is_resource($resource)) {
-      exit("Failed to execute ".$cmd);
+      throw new \Exception("Failed to execute ".$cmd);
     }
 
     // kill the web server when the process ends
@@ -133,10 +133,8 @@ class TestUtil {
    */
   public static function simulateRequest($request) {
     // set formatter
-    $formats = ObjectFactory::getInstance('formats');
-    $nullFormat = $formats['null'];
-    $request->setFormat($nullFormat);
-    $request->setResponseFormat($nullFormat);
+    $request->setFormatByName('null');
+    $request->setResponseFormatByName('null');
 
     // reset the action mapper, because otherwise all requests would be cumulated
     $actionMapper = ObjectFactory::getInstance('actionMapper');

@@ -22,6 +22,8 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
 
   private $_cacheId = null;
   private $_status = self::STATUS_200;
+  private $_file = null;
+  private $_isFinal = false;
 
   /**
    * @see Response::setCacheId()
@@ -49,6 +51,41 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
    */
   public function getStatus() {
     return $this->_status;
+  }
+
+  /**
+   * @see Response::setFile()
+   */
+  public function setFile($filename, $content='') {
+    if (strlen($content) == 0 && file_exists($filename)) {
+      $content = file_get_contents($filename);
+    }
+    $this->_file = array(
+        'filename' => $filename,
+        'content' => $content
+    );
+    $this->setFinal();
+  }
+
+  /**
+   * @see Response::getFile()
+   */
+  public function getFile() {
+    return $this->_file;
+  }
+
+  /**
+   * @see Response::setFinal()
+   */
+  public function setFinal() {
+    $this->_isFinal = true;
+  }
+
+  /**
+   * @see Response::isFinal()
+   */
+  public function isFinal() {
+    return $this->_isFinal;
   }
 }
 ?>

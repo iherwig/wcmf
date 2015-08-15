@@ -89,10 +89,7 @@ class RPCClient implements RemotingClient {
     $jsonResponse = null;
     $returnValue = -1;
 
-    $formats = ObjectFactory::getInstance('formats');
-    $jsonFormat = $formats['json'];
-
-    $request->setResponseFormat($jsonFormat);
+    $request->setResponseFormatByName('json');
     $serializedRequest = base64_encode(serialize($request));
 
     $arguments = array(
@@ -117,7 +114,7 @@ class RPCClient implements RemotingClient {
     $responseData = json_decode($jsonResponse[0], true);
     $response = ObjectFactory::getInstance('response');
     $response->setValues($responseData);
-    $response->setFormat($jsonFormat);
+    $response->setFormatByName('json');
     Formatter::deserialize($response);
     if (self::$_logger->isDebugEnabled()) {
       self::$_logger->debug("Response:\n".$response->toString());

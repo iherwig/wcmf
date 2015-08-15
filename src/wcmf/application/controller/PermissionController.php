@@ -16,6 +16,7 @@ use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\PermissionManager;
@@ -118,6 +119,7 @@ class PermissionController extends Controller {
    * @param $session
    * @param $persistenceFacade
    * @param $permissionManager
+   * @param $actionMapper
    * @param $localization
    * @param $message
    * @param $configuration
@@ -126,12 +128,13 @@ class PermissionController extends Controller {
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
           Localization $localization,
           Message $message,
           Configuration $configuration,
           PrincipalFactory $principalFactory) {
-    parent::__construct($session, $persistenceFacade,
-            $permissionManager, $localization, $message, $configuration);
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
     $this->_principalFactory = $principalFactory;
   }
 
@@ -176,7 +179,6 @@ class PermissionController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-
     $request = $this->getRequest();
     $response = $this->getResponse();
     $permissionManager = $this->getPermissionManager();

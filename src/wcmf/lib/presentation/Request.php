@@ -42,6 +42,12 @@ interface Request extends ControllerMessage {
   public function setResponseFormat(Format $format);
 
   /**
+   * Set the desired response format
+   * @param $name A key of the configuration section 'Formats'
+   */
+  public function setResponseFormatByName($name);
+
+  /**
    * Get the message response format. If no explicit format is set, the
    * format is derived from the Content-Type header value, if existing.
    * If no format can be derived, the first format in the configuration
