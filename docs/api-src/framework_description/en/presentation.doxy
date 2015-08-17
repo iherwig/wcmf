@@ -109,7 +109,7 @@ wCMF is designed to be able to consume various request formats and produce
 several response formats. While some clients communicate using
 [JSON](http://en.wikipedia.org/wiki/JSON) format, others might prefer to encode
 data in [XML](http://en.wikipedia.org/wiki/XML).
-The \link wcmf::lib::presentation::format::Formatter `Formatter`\endlink class
+\link wcmf::lib::presentation::format::Formatter `Formatter`\endlink
 is used to determine the required format and delegate the actual formatting to
 the correct \link wcmf::lib::presentation::format::Format `Format`\endlink
 implementation. wCMF currently provides the following __implementations__:
