@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\presentation;
 
-use wcmf\lib\presentation\format\Format;
-
 /**
  * Request holds the request values that are used as input to
  * Controller instances. It is typically instantiated and filled by the
@@ -37,22 +35,16 @@ interface Request extends ControllerMessage {
 
   /**
    * Set the desired response format
-   * @param $format Format instance
+   * @param $format A key of the configuration section 'Formats'
    */
-  public function setResponseFormat(Format $format);
-
-  /**
-   * Set the desired response format
-   * @param $name A key of the configuration section 'Formats'
-   */
-  public function setResponseFormatByName($name);
+  public function setResponseFormat($format);
 
   /**
    * Get the message response format. If no explicit format is set, the
    * format is derived from the Content-Type header value, if existing.
    * If no format can be derived, the first format in the configuration
    * key 'Formats' will be used.
-   * @return Format instance
+   * @return String
    */
   public function getResponseFormat();
 }

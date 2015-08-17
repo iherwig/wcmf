@@ -175,8 +175,8 @@ abstract class Controller {
     $subRequest->setAction($action);
     $subRequest->setHeaders($curRequest->getHeaders());
     $subRequest->setValues($curRequest->getValues());
-    $subRequest->setFormatByName('null');
-    $subRequest->setResponseFormatByName('null');
+    $subRequest->setFormat('null');
+    $subRequest->setResponseFormat('null');
     $response = $this->_actionMapper->processAction($subRequest);
     return $response;
   }

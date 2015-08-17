@@ -12,7 +12,7 @@ namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\format\Format;
+use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\impl\AbstractControllerMessage;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\util\StringUtil;
@@ -38,8 +38,10 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
   /**
    * Constructor
+   * @param $formatter
    */
-  public function __construct() {
+  public function __construct(Formatter $formatter) {
+    parent::__construct($formatter);
     if (self::$_logger == null) {
       self::$_logger = LogManager::getLogger(__CLASS__);
     }
@@ -160,19 +162,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * @see Request::setResponseFormat()
    */
-  public function setResponseFormat(Format $format) {
+  public function setResponseFormat($format) {
     $this->_responseFormat = $format;
-  }
-
-  /**
-   * @see Request::setResponseFormatByName()
-   */
-  public function setResponseFormatByName($name) {
-    $formats = self::getFormats();
-    if (!isset($formats[$name])) {
-      throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition for: ".$name);
-    }
-    $this->setResponseFormat($formats[$name]);
   }
 
   /**
@@ -180,7 +171,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   public function getResponseFormat() {
     if ($this->_responseFormat == null) {
-      $this->_responseFormat = self::getFormatFromMimeType($this->getHeader('Accept'));
+      $this->_responseFormat = $this->getFormatter()->getFormatFromMimeType($this->getHeader('Accept'));
     }
     return $this->_responseFormat;
   }
@@ -191,7 +182,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   public function __toString() {
     $str = 'method='.$this->_method.', ';
-    $str .= 'responseformat='.get_class($this->_responseFormat).', ';
+    $str .= 'responseformat='.$this->_responseFormat.', ';
     $str .= parent::__toString();
     return $str;
   }

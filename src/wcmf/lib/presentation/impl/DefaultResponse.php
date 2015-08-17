@@ -10,8 +10,9 @@
  */
 namespace wcmf\lib\presentation\impl;
 
-use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\impl\AbstractControllerMessage;
+use wcmf\lib\presentation\Response;
 
 /**
  * Default Response implementation.
@@ -24,6 +25,14 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   private $_status = self::STATUS_200;
   private $_file = null;
   private $_isFinal = false;
+
+  /**
+   * Constructor
+   * @param $formatter
+   */
+  public function __construct(Formatter $formatter) {
+    parent::__construct($formatter);
+  }
 
   /**
    * @see Response::setCacheId()

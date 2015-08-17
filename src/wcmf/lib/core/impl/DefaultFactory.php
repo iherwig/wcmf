@@ -77,6 +77,7 @@ class DefaultFactory implements Factory {
       'response' =>              'wcmf\lib\presentation\Response',
       'listStrategies' =>        'wcmf\lib\presentation\control\lists\ListStrategy',
       'formats' =>               'wcmf\lib\presentation\format\Format',
+      'formatter' =>             'wcmf\lib\presentation\format\Formatter',
       'view' =>                  'wcmf\lib\presentation\view\View',
       'authenticationManager' => 'wcmf\lib\security\AuthenticationManager',
       'permissionManager' =>     'wcmf\lib\security\PermissionManager',

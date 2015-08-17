@@ -137,8 +137,8 @@ class MultipleActionController extends Controller {
       $requestPart->setContext($context);
       $requestPart->setAction($action);
       $requestPart->setValues($params);
-      $requestPart->setFormatByName('null');
-      $requestPart->setResponseFormatByName('null');
+      $requestPart->setFormat('null');
+      $requestPart->setResponseFormat('null');
 
       // execute the request
       try {

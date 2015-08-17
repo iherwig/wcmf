@@ -10,11 +10,9 @@
  */
 namespace wcmf\lib\presentation\impl;
 
-use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
-use wcmf\lib\presentation\format\Format;
 use wcmf\lib\presentation\ControllerMessage;
+use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -41,9 +39,14 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   private $_action = null;
 
   /**
-   * The format of the message (used for de-, serialization).
+   * The format of the message.
    */
   private $_format = null;
+
+  /**
+   * The formatter used for de-, serialization into the format.
+   */
+  private $_formatter = null;
 
   /**
    * The message headers
@@ -66,91 +69,88 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   private $_errors = array();
 
   /**
-   * @see Message::setSender()
+   * Constructor
+   * @param $formatter
+   */
+  public function __construct(Formatter $formatter) {
+    $this->_formatter = $formatter;
+  }
+
+  /**
+   * @see ControllerMessage::setSender()
    */
   public function setSender($sender) {
     $this->_sender = $sender;
   }
 
   /**
-   * @see Message::getSender()
+   * @see ControllerMessage::getSender()
    */
   public function getSender() {
     return $this->_sender;
   }
 
   /**
-   * @see Message::setContext()
+   * @see ControllerMessage::setContext()
    */
   public function setContext($context) {
     $this->_context = $context;
   }
 
   /**
-   * @see Message::getContext()
+   * @see ControllerMessage::getContext()
    */
   public function getContext() {
     return $this->_context;
   }
 
   /**
-   * @see Message::setAction()
+   * @see ControllerMessage::setAction()
    */
   public function setAction($action) {
     $this->_action = $action;
   }
 
   /**
-   * @see Message::getAction()
+   * @see ControllerMessage::getAction()
    */
   public function getAction() {
     return $this->_action;
   }
 
   /**
-   * @see Message::setFormat()
+   * @see ControllerMessage::setFormat()
    */
-  public function setFormat(Format $format) {
+  public function setFormat($format) {
     $this->_format = $format;
   }
 
   /**
-   * @see Message::setFormatByName()
-   */
-  public function setFormatByName($name) {
-    $formats = self::getFormats();
-    if (!isset($formats[$name])) {
-      throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition for: ".$name);
-    }
-    $this->setFormat($formats[$name]);
-  }
-
-  /**
-   * @see Message::getFormat()
+   * @see ControllerMessage::getFormat()
    */
   public function getFormat() {
     if ($this->_format == null) {
-      $this->_format = self::getFormatFromMimeType($this->getHeader('Content-Type'));
+      $this->_format = $this->_formatter->getFormatFromMimeType($this->getHeader('Content-Type'));
     }
     return $this->_format;
   }
 
   /**
-   * @see Message::setHeader()
+   * @see ControllerMessage::setHeader()
    */
   public function setHeader($name, $value) {
     $this->_headers[$name] = $value;
   }
 
   /**
-   * @see Message::setHeaders()
+   * @see ControllerMessage::setHeaders()
    */
   public function setHeaders(array $headers) {
     $this->_headers = $headers;
   }
 
   /**
-   * @see Message::getHeader()
+   * @see ControllerMessage::getHeader()
    */
   public function getHeader($name, $default=null) {
     if ($this->hasHeader($name)) {
@@ -162,49 +162,49 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   }
 
   /**
-   * @see Message::getHeaders()
+   * @see ControllerMessage::getHeaders()
    */
   public function getHeaders() {
     return $this->_headers;
   }
 
   /**
-   * @see Message::clearHeader()
+   * @see ControllerMessage::clearHeader()
    */
   public function clearHeader($name) {
     unset($this->_headers[$name]);
   }
 
   /**
-   * @see Message::clearHeaders()
+   * @see ControllerMessage::clearHeaders()
    */
   public function clearHeaders() {
     $this->_headers = array();
   }
 
   /**
-   * @see Message::hasHeader()
+   * @see ControllerMessage::hasHeader()
    */
   public function hasHeader($name) {
     return array_key_exists($name, $this->_headers);
   }
 
   /**
-   * @see Message::setValue()
+   * @see ControllerMessage::setValue()
    */
   public function setValue($name, $value) {
     $this->_values[$name] = $value;
   }
 
   /**
-   * @see Message::setValues()
+   * @see ControllerMessage::setValues()
    */
   public function setValues(array $values) {
     $this->_values = $values;
   }
 
   /**
-   * @see Message::getValue()
+   * @see ControllerMessage::getValue()
    */
   public function getValue($name, $default=null, $filter=null, $options=null) {
     if ($this->hasValue($name)) {
@@ -217,7 +217,7 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   }
 
   /**
-   * @see Message::getBooleanValue()
+   * @see ControllerMessage::getBooleanValue()
    */
   public function getBooleanValue($name, $default=false) {
     if ($this->hasValue($name)) {
@@ -229,42 +229,42 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   }
 
   /**
-   * @see Message::getValues()
+   * @see ControllerMessage::getValues()
    */
   public function getValues() {
     return $this->_values;
   }
 
   /**
-   * @see Message::clearValue()
+   * @see ControllerMessage::clearValue()
    */
   public function clearValue($name) {
     unset($this->_values[$name]);
   }
 
   /**
-   * @see Message::clearValues()
+   * @see ControllerMessage::clearValues()
    */
   public function clearValues() {
     $this->_values = array();
   }
 
   /**
-   * @see Message::hasValue()
+   * @see ControllerMessage::hasValue()
    */
   public function hasValue($name) {
     return array_key_exists($name, $this->_values);
   }
 
   /**
-   * @see Message::setProperty()
+   * @see ControllerMessage::setProperty()
    */
   public function setProperty($name, $value) {
     $this->_properties[$name] = $value;
   }
 
   /**
-   * @see Message::getProperty()
+   * @see ControllerMessage::getProperty()
    */
   public function getProperty($name) {
     if (isset($this->_properties[$name])) {
@@ -274,38 +274,46 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   }
 
   /**
-   * @see Message::addError()
+   * @see ControllerMessage::addError()
    */
   public function addError(ApplicationError $error) {
     $this->_errors[] = $error;
   }
 
   /**
-   * @see Message::setErrors()
+   * @see ControllerMessage::setErrors()
    */
   public function setErrors(array $errors) {
     $this->_errors = $errors;
   }
 
   /**
-   * @see Message::getErrors()
+   * @see ControllerMessage::getErrors()
    */
   public function getErrors() {
     return $this->_errors;
   }
 
  /**
-   * @see Message::clearErrors()
+   * @see ControllerMessage::clearErrors()
    */
   public function clearErrors() {
     $this->_errors = array();
   }
 
   /**
-   * @see Message::hasErrors()
+   * @see ControllerMessage::hasErrors()
    */
   public function hasErrors() {
     return sizeof($this->_errors) > 0;
+  }
+
+  /**
+   * Get the Formatter instance
+   * @return Formatter
+   */
+  protected function getFormatter() {
+    return $this->_formatter;
   }
 
   /**
@@ -316,38 +324,10 @@ abstract class AbstractControllerMessage implements ControllerMessage {
     $str = 'sender='.$this->_sender.', ';
     $str .= 'context='.$this->_context.', ';
     $str .= 'action='.$this->_action.', ';
-    $str .= 'format='.get_class($this->_format).', ';
+    $str .= 'format='.$this->_format.', ';
     $str .= 'values='.StringUtil::getDump($this->_values);
     $str .= 'errors='.StringUtil::getDump($this->_errors);
     return $str;
-  }
-
-  /**
-   * Get the format instance for the given mime type.
-   * @param $mimeType The mime type
-   * @return Format instance
-   */
-  protected static function getFormatFromMimeType($mimeType) {
-    $formats = self::getFormats();
-    $firstFormat = null;
-    foreach ($formats as $name => $instance) {
-      $firstFormat = $firstFormat == null ? $name : $firstFormat;
-      if (strpos($mimeType, $instance->getMimeType()) !== false) {
-        return $instance;
-      }
-    }
-    if (!isset($formats[$firstFormat])) {
-      throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition for: ".$mimeType);
-    }
-    return $formats[$firstFormat];
-  }
-
-  /**
-   * Get all known Format instances
-   * @return Associative array with the names as keys and the Format instances as values
-   */
-  protected static function getFormats() {
-    return ObjectFactory::getInstance('formats');
   }
 }
 ?>

@@ -15,7 +15,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
 use wcmf\lib\presentation\ApplicationException;
-use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\util\URIUtil;
 
 /**
@@ -131,8 +130,8 @@ class SoapServer extends \nusoap_server {
 
     $request = ObjectFactory::getInstance('request');
     $request->setAction('actionSet');
-    $request->setFormatByName('soap');
-    $request->setResponseFormatByName('null');
+    $request->setFormat('soap');
+    $request->setResponseFormat('null');
     $request->setValues(array(
       'data' => array(
         'action1' => array(
@@ -164,9 +163,10 @@ class SoapServer extends \nusoap_server {
     $actionResponse->setSender($data['controller']);
     $actionResponse->setContext($data['context']);
     $actionResponse->setAction($data['action']);
-    $actionResponse->setFormatByName('soap');
+    $actionResponse->setFormat('soap');
     $actionResponse->setValues($data);
-    Formatter::serialize($actionResponse);
+    $formatter = ObjectFactory::getInstance('formatter');
+    $formatter->serialize($actionResponse);
     if (self::$_logger->isDebugEnabled()) {
       self::$_logger->debug($actionResponse->__toString());
     }

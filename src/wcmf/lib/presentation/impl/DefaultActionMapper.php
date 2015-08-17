@@ -11,15 +11,19 @@
 namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\config\ActionKey;
+use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
+use wcmf\lib\core\EventManager;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\core\Session;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationEvent;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 
 /**
@@ -29,17 +33,37 @@ use wcmf\lib\security\principal\impl\AnonymousUser;
  */
 class DefaultActionMapper implements ActionMapper {
 
-  private $_lastResponses = array();
-
   private static $_logger = null;
+
+  private $_lastResponses = array();
+  private $_session = null;
+  private $_permissionManager = null;
+  private $_eventManager = null;
+  private $_formatter = null;
+  private $_configuration = null;
+
 
   /**
    * Constructor
+   * @param $session
+   * @param $permissionManager
+   * @param $eventManager
+   * @param $formatter
+   * @param $configuration
    */
-  public function __construct() {
+  public function __construct(Session $session,
+          PermissionManager $permissionManager,
+          EventManager $eventManager,
+          Formatter $formatter,
+          Configuration $configuration) {
     if (self::$_logger == null) {
       self::$_logger = LogManager::getLogger(__CLASS__);
     }
+    $this->_session = $session;
+    $this->_permissionManager = $permissionManager;
+    $this->_eventManager = $eventManager;
+    $this->_formatter = $formatter;
+    $this->_configuration = $configuration;
   }
 
   /**
@@ -47,12 +71,10 @@ class DefaultActionMapper implements ActionMapper {
    */
   public function processAction(Request $request) {
     $isDebugEnabled = self::$_logger->isDebugEnabled();
-    $config = ObjectFactory::getInstance('configuration');
 
-    $eventManager = ObjectFactory::getInstance('eventManager');
-    $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
+    $this->_eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_ROUTE_ACTION, $request));
-    $actionKeyProvider = new ConfigActionKeyProvider($config, 'actionmapping');
+    $actionKeyProvider = new ConfigActionKeyProvider($this->_configuration, 'actionmapping');
 
     $referrer = $request->getSender();
     $context = $request->getContext();
@@ -62,12 +84,9 @@ class DefaultActionMapper implements ActionMapper {
     $response->setContext($context);
     $response->setFormat($request->getResponseFormat());
 
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-
     // check authorization for controller/context/action triple
-    if (!$permissionManager->authorize($referrer, $context, $action)) {
-      $session = ObjectFactory::getInstance('session');
-      $authUser = $session->getAuthUser();
+    if (!$this->_permissionManager->authorize($referrer, $context, $action)) {
+      $authUser = $this->_session->getAuthUser();
       if ($authUser instanceof AnonymousUser) {
         self::$_logger->error("Session invalid. The request was: ".$request->__toString());
         throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
@@ -94,7 +113,7 @@ class DefaultActionMapper implements ActionMapper {
     }
     else {
       // get next controller
-      $controllerClass = $config->getValue($actionKey, 'actionmapping');
+      $controllerClass = $this->_configuration->getValue($actionKey, 'actionmapping');
     }
     if (strlen($controllerClass) == 0) {
       throw new ApplicationException($request, $response, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
@@ -107,21 +126,21 @@ class DefaultActionMapper implements ActionMapper {
     if ($isDebugEnabled) {
       self::$_logger->debug("Request: ".$request->__toString());
     }
-    Formatter::deserialize($request);
+    $this->_formatter->deserialize($request);
 
     // initialize controller
     if ($isDebugEnabled) {
       self::$_logger->debug("Execute ".$controllerClass." with request: ".$request->__toString());
     }
-    $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
+    $this->_eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_INITIALIZE_CONTROLLER, $request, $response, $controllerObj));
     $controllerObj->initialize($request, $response);
 
     // execute controller
-    $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
+    $this->_eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
     $controllerObj->execute();
-    $eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
+    $this->_eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::AFTER_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
 
     // check if an action key exists for the return action
@@ -138,7 +157,7 @@ class DefaultActionMapper implements ActionMapper {
         self::$_logger->debug("Terminate");
       }
       // stop processing
-      Formatter::serialize($response);
+      $this->_formatter->serialize($response);
       return $response;
     }
 

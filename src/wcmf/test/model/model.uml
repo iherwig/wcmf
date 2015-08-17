@@ -425,6 +425,18 @@
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_8kYjALRGEeOQ5oJFa1i8cg" value="wcmf\lib\presentation\format\impl\NullFormat"/>
                 </ownedAttribute>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_u6fNwETJEeWiTYfex376ig" name="Formatter">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_u6fNwUTJEeWiTYfex376ig" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_u6fNwkTJEeWiTYfex376ig" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_u6fNw0TJEeWiTYfex376ig" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_u6fNxETJEeWiTYfex376ig" value="wcmf\lib\presentation\format\impl\DefaultFormatter"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_qNn5METNEeWiTYfex376ig" name="formats" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qNn5MUTNEeWiTYfex376ig" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_qNn5MkTNEeWiTYfex376ig" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_qNn5M0TNEeWiTYfex376ig" value="$formats"/>
+                </ownedAttribute>
+              </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_23RmMO46EeSt-PWkeJaU5w" name="Request">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_23RmMe46EeSt-PWkeJaU5w" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_23RmMu46EeSt-PWkeJaU5w" value="1"/>
@@ -1918,4 +1930,5 @@
   <Chronos:ChiSystem xmi:id="_slxBQEHYEeWnT_5Q0apEXg" plattform="wcmf" config="test.ini" base_Class="_sh508EHYEeWnT_5Q0apEXg"/>
   <Chronos:ChiSystem xmi:id="_Lrj0kEHZEeWnT_5Q0apEXg" plattform="wcmf" config="log.ini" base_Class="_LrimcEHZEeWnT_5Q0apEXg"/>
   <Chronos:ChiSystem xmi:id="_fDy0kEHZEeWnT_5Q0apEXg" plattform="wcmf" config="log.ini" base_Class="_fDyNgEHZEeWnT_5Q0apEXg"/>
+  <Chronos:ChiSystem xmi:id="_u_rPwETJEeWiTYfex376ig" plattform="wcmf" config="presentation.ini" base_Class="_u6fNwETJEeWiTYfex376ig"/>
 </xmi:XMI>

@@ -11,7 +11,6 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\presentation\ApplicationError;
-use wcmf\lib\presentation\format\Format;
 
 /**
  * Messages are sent between Controllers and are used to transfer data between
@@ -61,22 +60,16 @@ interface ControllerMessage {
 
   /**
    * Set the message format
-   * @param $format Format instance
+   * @param $format A key of the configuration section 'Formats'
    */
-  public function setFormat(Format $format);
-
-  /**
-   * Set the message format
-   * @param $name A key of the configuration section 'Formats'
-   */
-  public function setFormatByName($name);
+  public function setFormat($format);
 
   /**
    * Get the message format. If no explicit format is set, the
    * format is derived from the Content-Type header value, if existing.
    * If no format can be derived, the first format in the configuration
    * section 'Formats' will be used.
-   * @return Format instance
+   * @return String
    */
   public function getFormat();
 

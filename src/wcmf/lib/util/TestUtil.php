@@ -132,9 +132,9 @@ class TestUtil {
    * @return The Response instance (result of the last ActionMapper::processAction() call)
    */
   public static function simulateRequest($request) {
-    // set formatter
-    $request->setFormatByName('null');
-    $request->setResponseFormatByName('null');
+    // set format
+    $request->setFormat('null');
+    $request->setResponseFormat('null');
 
     // reset the action mapper, because otherwise all requests would be cumulated
     $actionMapper = ObjectFactory::getInstance('actionMapper');

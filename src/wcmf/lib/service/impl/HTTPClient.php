@@ -14,7 +14,6 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ControllerMessage;
-use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\service\RemotingClient;
 
@@ -83,7 +82,7 @@ class HTTPClient implements RemotingClient {
     }
 
     // do the request
-    $request->setResponseFormatByName('json');
+    $request->setResponseFormat('json');
     $this->_client->resetParameters();
     $this->_client->setParameterPost('controller', $request->getSender());
     $this->_client->setParameterPost('context', $request->getContext());
@@ -102,8 +101,9 @@ class HTTPClient implements RemotingClient {
     // deserialize the response
     $responseData = json_decode($httpResponse->getBody(), true);
     $response = new ControllerMessage('', '', '', $responseData);
-    $response->setFormatByName('json');
-    Formatter::deserialize($response);
+    $response->setFormat('json');
+    $formatter = ObjectFactory::getInstance('formatter');
+    $formatter->deserialize($response);
 
     // handle errors
     if (!$response->getValue('success'))

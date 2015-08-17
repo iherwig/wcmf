@@ -12,7 +12,6 @@ namespace wcmf\lib\service\impl;
 
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\service\RemotingClient;
 
@@ -89,7 +88,7 @@ class RPCClient implements RemotingClient {
     $jsonResponse = null;
     $returnValue = -1;
 
-    $request->setResponseFormatByName('json');
+    $request->setResponseFormat('json');
     $serializedRequest = base64_encode(serialize($request));
 
     $arguments = array(
@@ -114,8 +113,9 @@ class RPCClient implements RemotingClient {
     $responseData = json_decode($jsonResponse[0], true);
     $response = ObjectFactory::getInstance('response');
     $response->setValues($responseData);
-    $response->setFormatByName('json');
-    Formatter::deserialize($response);
+    $response->setFormat('json');
+    $formatter = ObjectFactory::getInstance('formatter');
+    $formatter->deserialize($response);
     if (self::$_logger->isDebugEnabled()) {
       self::$_logger->debug("Response:\n".$response->toString());
     }

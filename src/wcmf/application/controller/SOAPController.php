@@ -77,7 +77,7 @@ class SOAPController extends Controller {
     // returns the data to the client but we need to make sure that there is
     // no further processing
     $response = $this->getResponse();
-    $response->setFormatByName('null');
+    $response->setFormat('null');
     $response->setFinal();
   }
 
