@@ -107,13 +107,23 @@ abstract class AbstractQuery {
 
     // remove objects for which the user is not authorized
     $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $tx = $persistenceFacade->getTransaction();
 
+    // remove objects for which the user is not authorized
     $result = array();
     for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
       $object = $objects[$i];
       if ($permissionManager->authorize($object->getOID(), '', PersistenceAction::READ)) {
+        // call lifecycle callback
+        $object->afterLoad();
         $result[] = $object;
       }
+      else {
+        $tx->detach($object->getOID());
+      }
+      // TODO remove attribute values for which the user is not authorized
+      // should use some pre-check if restrictions on the entity type exist
     }
 
     // transform the result

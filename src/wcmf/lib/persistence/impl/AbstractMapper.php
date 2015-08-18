@@ -279,6 +279,8 @@ abstract class AbstractMapper implements PersistenceMapper {
     for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
       $object = $objects[$i];
       if ($this->checkAuthorization($object->getOID(), PersistenceAction::READ)) {
+        // call lifecycle callback
+        $object->afterLoad();
         $result[] = $object;
       }
       else {
