@@ -5,11 +5,14 @@
 <div class="jumbotron">
   <h1>wCMF</h1>
   <h2>A MDSD framework for building<br><kbd>reliable</kbd> <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications with PHP</h2>
+  <a href="gettingstarted.html" class="btn btn-success btn-lg">Getting started</a>
 </div>
 
 <h2>Model-Driven Software Development</h2>
-wCMF features a Model-Driven Software Development (<em>MDSD</em>) approach that puts your focus on the application domain and
-increases productivity significantly. Creating a wCMF-based application basically involves three steps:
+wCMF features a pragmatic Model-Driven Software Development (<em>MDSD</em>) approach that puts your focus on the application domain
+and increases productivity by taking over repetitive work. Creating a wCMF-based application basically involves three steps:
+
+<br><br>
 
 <div class="row">
   <div class="col-md-4"><h3><i class="fa fa-sitemap fa-2x pull-left"></i> Model</h3>
@@ -33,25 +36,39 @@ increases productivity significantly. Creating a wCMF-based application basicall
   </div>
 </div>
 
-<h2>Features</h2>
-\endhtmlonly
+<div class="row">
+  <h2>Features</h2>
+  <div class="col-md-6">
+    <ul>
+      <li>Full featured object persistence layer:
+        <ul>
+          <li>Flexible mapper architecture with adapter to RDBMS</li>
+          <li>Optimistic and pessimistic object locking</li>
+          <li>Searching using template based object query and criteria api</li>
+          <li>Query caching and eager relation loading</li>
+          <li>Transaction support</li>
+        </ul>
+      </li>
+      <li>Role based permission management (for actions, types, instances, instance properties)</li>
+      <li>Event system</li>
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <ul>
+      <li>Dependency injection support</li>
+      <li>Configuration of the application flow through config files</li>
+      <li><a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a> integration</li>
+      <li><a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene</a> search engine integration</li>
+      <li>I18n support</li>
+      <li>Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>)</li>
+      <li>SOAP and REST interface supporting CRUD operations on all objects</li>
+      <li>Code generator for model-driven software development</li>
+      <li>Modern <a href="https://dojotoolkit.org/">Dojo</a> based <a href="https://github.com/iherwig/wcmf-default-app">default application</a> for content management</li>
+    </ul>
+  </div>
+</div>
 
-- Full featured object persistence layer:
-  - Flexible mapper architecture with adapter to RDBMS
-  - Optimistic and pessimistic object locking
-  - Searching using template based object query and criteria api
-  - Query caching and eager relation loading
-  - Transaction support
-- Presentation layer based on the <a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a>
-- Configuration of the application flow through config files
-- Dependency injection support
-- Basic event processing
-- Role based permission management (for actions, types, instances, instance properties)
-- <a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene</a> search engine integration
-- I18n support
-- Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>)
-- SOAP and REST interface supporting CRUD operations on all objects
-- Code generator for model-driven software development
-- Available under an open source license (MIT)
-- Modern [Dojo](https://dojotoolkit.org/) based [default application](https://github.com/iherwig/wcmf-default-app) for content management
+<h3>License</h3>
+<p> wCMF is available under an open source license (<a href="https://github.com/iherwig/wcmf/blob/master/LICENSE">MIT License</a>).</p>
+\endhtmlonly
 */

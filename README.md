@@ -19,15 +19,18 @@ Features
   - Searching using template based object query and criteria api
   - Query caching and eager relation loading
   - Transaction support
-- Presentation layer based on the <a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a>
-- Configuration of the application flow through config files
-- Dependency injection support
-- Basic event processing
 - Role based permission management (for actions, types, instances, instance properties)
+- Event system
+- Dependency injection support
+- Configuration of the application flow through config files
+- <a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a> integration
 - <a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene</a> search engine integration
 - I18n support
 - Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>)
 - SOAP and REST interface supporting CRUD operations on all objects
 - Code generator for model-driven software development
-- Available under an open source license (MIT)
 - Modern [Dojo](https://dojotoolkit.org/) based [default application](https://github.com/iherwig/wcmf-default-app) for content management
+
+Features
+--------
+wCMF is available under an open source license (<a href="https://github.com/iherwig/wcmf/blob/master/LICENSE">MIT License</a>).

@@ -53,13 +53,11 @@ $(function() {
       type: "text/css"
     }));
     body.css("padding", 10);
-    sSelectWin.parent().css({
-      "position": "fixed",
-      "z-index": 10000
-    });
     sResultWin.css({
       "top": "auto",
-      "left": "auto"
+      "left": "auto",
+      "position": "fixed",
+      "z-index": 20000
     })
   });
 });
