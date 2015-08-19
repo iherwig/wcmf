@@ -31,6 +31,6 @@ Features
 - Code generator for model-driven software development
 - Modern [Dojo](https://dojotoolkit.org/) based [default application](https://github.com/iherwig/wcmf-default-app) for content management
 
-Features
+License
 --------
 wCMF is available under an open source license (<a href="https://github.com/iherwig/wcmf/blob/master/LICENSE">MIT License</a>).
