@@ -22,13 +22,13 @@ Features
 - Role based permission management (for actions, types, instances, instance properties)
 - Event system
 - Dependency injection support
-- Configuration of the application flow through config files
+- Definition of the application flow through configuration files
 - <a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a> integration
-- <a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene</a> search engine integration
+- <a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene Search Engine</a> integration
 - I18n support
-- Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>)
+- Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>, <a href="https://logging.apache.org/log4php/" target="_blank">log4php</a>)
 - SOAP and REST interface supporting CRUD operations on all objects
-- Code generator for model-driven software development
+- <a href="http://wiki.eclipse.org/MDT-UML2">Eclipse MDT/UML2</a> compatible code generator
 - Modern [Dojo](https://dojotoolkit.org/) based [default application](https://github.com/iherwig/wcmf-default-app) for content management
 
 License

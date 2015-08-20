@@ -19,14 +19,15 @@ and improves code quality and maintainability dramatically.
 ## Modeling ## {#model_create}
 
 Technically the model is an [UML](http://en.wikipedia.org/wiki/Unified_Modeling_Language)
-model that uses the _Chronos_ [profile](http://en.wikipedia.org/wiki/Profile_%28UML%29) from the
-[Olympos](http://sourceforge.net/projects/olympos/) project. It is stored in
-an XML file (e.g. `model.uml`). This file can be directly edited using
-[Eclipse Papyrus](http://www.eclipse.org/papyrus/) or any other compatible UML
-modeling tool. Alternatively  you can use the
-[Chronos Web Modeler](http://sourceforge.net/projects/olympos/) that allows
-browser based collaborative modeling. wCMF uses a minimized version of the code
-generator from the Olympos project with wCMF specific templates.
+model that uses the _Chronos_ [profile](http://en.wikipedia.org/wiki/Profile_%28UML%29)
+from the [Olympos](http://sourceforge.net/projects/olympos/) project. It is stored
+in an [Eclipse MDT/UML2](http://wiki.eclipse.org/MDT-UML2) compatible XML file
+(e.g. `model.uml`). This file can be directly edited using
+[Eclipse Papyrus](http://www.eclipse.org/papyrus/) or any other [compatible UML
+modeling tool](http://wiki.eclipse.org/MDT-UML2-Tool-Compatibility). Alternatively
+you can use the [Chronos Web Modeler](http://sourceforge.net/projects/olympos/)
+that allows browser based collaborative modeling. wCMF uses a minimized version
+of the code generator from the Olympos project with wCMF specific templates.
 
 The following diagram shows the workflow of the generator.
 

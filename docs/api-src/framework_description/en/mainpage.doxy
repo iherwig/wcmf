@@ -56,13 +56,13 @@ and increases productivity by taking over repetitive work. Creating a wCMF-based
   <div class="col-md-6">
     <ul>
       <li>Dependency injection support</li>
-      <li>Configuration of the application flow through config files</li>
+      <li>Definition of the application flow through configuration files</li>
       <li><a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a> integration</li>
-      <li><a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene</a> search engine integration</li>
+      <li><a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene Search Engine</a> integration</li>
       <li>I18n support</li>
-      <li>Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>)</li>
+      <li>Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>, <a href="https://logging.apache.org/log4php/" target="_blank">log4php</a>)</li>
       <li>SOAP and REST interface supporting CRUD operations on all objects</li>
-      <li>Code generator for model-driven software development</li>
+      <li><a href="http://wiki.eclipse.org/MDT-UML2">Eclipse MDT/UML2</a> compatible code generator</li>
       <li>Modern <a href="https://dojotoolkit.org/">Dojo</a> based <a href="https://github.com/iherwig/wcmf-default-app">default application</a> for content management</li>
     </ul>
   </div>
