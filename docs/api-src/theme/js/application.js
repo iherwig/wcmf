@@ -37,6 +37,7 @@ $(function() {
   sBox.append(sResultWin);
   sSelectWin.hide();
   sResultWin.addClass('dropdown-menu');
+  iframe.removeAttr('frameborder');
   iframe.on( "load", function() {
     iframe.addClass('embed-responsive-item');
     var head = iframe.contents().find('head');

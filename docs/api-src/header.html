@@ -1,95 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <!--BEGIN PROJECT_NAME--><title>$projectname $projectnumber: $title</title><!--END PROJECT_NAME-->
-    <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
+<head>
+  <meta charset="utf-8">
+  <!--BEGIN PROJECT_NAME--><title>$projectname $projectnumber: $title</title><!--END PROJECT_NAME-->
+  <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A PHP framework for building reliable maintainable and extendable web applications">
-    <meta name="keywords" content="PHP, web application framework, model driven development">
-    <meta name="author" content="wemove digital solutions">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A PHP framework for building reliable maintainable and extendable web applications">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
 
-    <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
+  <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
 
-    <link href="theme/css/doxstyles.css" rel="stylesheet">
+  <link href="theme/css/doxstyles.css" rel="stylesheet">
 
-    <script src="jquery.js"></script>
+  <script src="jquery.js"></script>
 
-    <script src="theme/bootstrap3/js/bootstrap.min.js"></script>
-    <link href="theme/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="theme/bootstrap3/css/font-awesome.min.css" rel="stylesheet">
+  <script src="theme/bootstrap3/js/bootstrap.min.js"></script>
+  <link href="theme/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/bootstrap3/css/font-awesome.min.css" rel="stylesheet">
 
-    <script src="theme/js/tocify/jquery.tocify.min.js"></script>
-    <link href="theme/js/tocify/jquery.tocify.css" rel="stylesheet">
+  <script src="theme/js/tocify/jquery.tocify.min.js"></script>
+  <link href="theme/js/tocify/jquery.tocify.css" rel="stylesheet">
 
-    <script src="theme/js/doxy-boot.js"></script>
-    <script src="theme/js/application.js"></script>
-    <script src="dynsections.js"></script>
+  <script src="theme/js/doxy-boot.js"></script>
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
 
-    <link href="theme/css/syntax.css" rel="stylesheet">
-    <link href="theme/css/style.css" rel="stylesheet">
+  <link href="theme/css/syntax.css" rel="stylesheet">
+  <link href="theme/css/style.css" rel="stylesheet">
 
-    <script src="search/search.js"></script>
-    <script src="search/searchdata.js"></script>
+  <script src="search/search.js"></script>
+  <script src="search/searchdata.js"></script>
 
-  </head>
-  <body style="min-height: 200px; padding-top: 50px;">
-    <header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-offset-1 col-sm-offset-0 col-md-10">
-            <div class="navbar-header">
-              <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".menu-navbar-collapse">
-                <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="index.html">$projectname $projectnumber</a>
-            </div>
+</head>
+<body style="min-height: 200px; padding-top: 50px;">
+<header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-1 col-sm-offset-0 col-md-10">
+        <div class="navbar-header">
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".menu-navbar-collapse">
+            <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">$projectname $projectnumber</a>
+        </div>
 
-            <div class="collapse navbar-collapse menu-navbar-collapse" role="navigation">
-              <ul class="nav navbar-nav">
-                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-hand-o-right"></i> Guides <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="gettingstarted.html">Getting started</a></li>
-                    <li><a href="architecture.html">Architecture</a></li>
-                    <li><a href="model.html">Model</a></li>
-                    <li><a href="persistence.html">Persistence</a></li>
-                    <li><a href="presentation.html">Presentation</a></li>
-                    <li><a href="configuration.html">Configuration</a></li>
-                    <li><a href="security.html">Security</a></li>
-                    <li><a href="i18n_l10n.html">I18n & l10n</a></li>
-                    <li><a href="tests.html">Tests</a></li>
-                  </ul>
-                </li>
-                <li class="dropdown"><a href="annotated.html"><i class="fa fa-file-text-o"></i> API</a></li>
-                <li><a href="https://github.com/iherwig/wcmf" target="_blank"><i class="fa fa-github"></i> Code</a></li>
-                <li><a href="support.html"><i class="fa fa-support"></i> Support</a></li>
+        <div class="collapse navbar-collapse menu-navbar-collapse" role="navigation">
+          <ul class="nav navbar-nav">
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-hand-o-right"></i> Guides <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="gettingstarted.html">Getting started</a></li>
+                <li><a href="architecture.html">Architecture</a></li>
+                <li><a href="model.html">Model</a></li>
+                <li><a href="persistence.html">Persistence</a></li>
+                <li><a href="presentation.html">Presentation</a></li>
+                <li><a href="configuration.html">Configuration</a></li>
+                <li><a href="security.html">Security</a></li>
+                <li><a href="i18n_l10n.html">I18n & l10n</a></li>
+                <li><a href="tests.html">Tests</a></li>
               </ul>
-              <ul class="nav navbar-nav pull-right">
-                <li>
-                  <div id="MSearchBox">
-                    <input id="MSearchField" type="text" class="form-control" placeholder="Search API" name="query" onkeyup="searchBox.OnSearchFieldChange(event)">
-                  </div>
-                  <div id="MSearchSelect"></div>
-                  <div id="MSearchClose"></div>
-                </li>
-              </ul>
-            </div>
-          </div>
+            </li>
+            <li class="dropdown"><a href="annotated.html"><i class="fa fa-file-text-o"></i> API</a></li>
+            <li><a href="https://github.com/iherwig/wcmf" target="_blank"><i class="fa fa-github"></i> Code</a></li>
+            <li><a href="support.html"><i class="fa fa-support"></i> Support</a></li>
+          </ul>
+          <ul class="nav navbar-nav pull-right">
+            <li>
+              <div id="MSearchBox">
+                <input id="MSearchField" type="text" class="form-control" placeholder="Search API" name="query" onkeyup="searchBox.OnSearchFieldChange(event)">
+              </div>
+              <div id="MSearchSelect"></div>
+              <div id="MSearchClose"></div>
+            </li>
+          </ul>
         </div>
       </div>
-    </header>
+    </div>
+  </div>
+</header>
 
-    <a class="anchor" id="top"></a>
+<a class="anchor" id="top"></a>
 
-    <div class="content" id="content">
-
-      <div class="container">
-        <div class="row" style="margin-top: 20px;">
-          <div class="col-md-offset-1 col-sm-offset-0 col-md-10 panel panel-default">
-            <div>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row" style="margin-top: 20px;">
+      <div class="col-md-offset-1 col-sm-offset-0 col-md-10 panel panel-default">
+       <div>
+<!-- end header part -->
