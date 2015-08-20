@@ -60,7 +60,7 @@ and mapped to the url `http://localhost/wcmf-default-app`.
 #### GitHub #### {#app_install_github}
 
 The application's source code may be cloned from
-[GitHub](https://github.com/iherwig/wcmf-default-app) using the following command
+[GitHub](https://github.com/iherwig/wcmf-default-app) using the following command:
 
 ~~~~~~~~~~~~~
 $ git clone https://github.com/iherwig/wcmf-default-app
