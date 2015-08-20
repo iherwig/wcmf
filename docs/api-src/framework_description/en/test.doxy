@@ -12,14 +12,13 @@ are located in the _src/wcmf/test_ directory.
 Before running the tests the code generator is used to generate the environment:
 
 ~~~~~~~~~~~~~
-cd src/wcmf/test/model
-ant
+$ cd src/wcmf/test/model & ant
 ~~~~~~~~~~~~~
 
 To run all tests, execute the following command in the _src/wcmf/test_ directory:
 
 ~~~~~~~~~~~~~
-phpunit --bootstrap bootstrap.php --configuration configuration.xml
+$ phpunit --bootstrap bootstrap.php --configuration configuration.xml
 ~~~~~~~~~~~~~
 
 The tests use PHP's built-in web server where necessary and operate on a file

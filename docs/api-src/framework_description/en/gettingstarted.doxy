@@ -44,20 +44,29 @@ To run the wCMF default application you will need the following:
 - Web server (e.g. Apache)
 - PHP
 - MySQL
-- UML Modeling tool (e.g. [Eclipse Papyrus](http://www.eclipse.org/papyrus/) or
-  [Chronos Web Modeler](http://sourceforge.net/projects/olympos/))
+- [Composer](https://getcomposer.org/)
 - [Apache Ant](http://ant.apache.org/) for code generation and deployment
+
+To modify the demo model you additionally need:
+
+- UML Modeling tool (e.g. [Eclipse Papyrus](http://www.eclipse.org/papyrus/) or
+  [Chronos Web Modeler](http://sourceforge.net/projects/olympos/)),
 
 ### Installation ### {#app_install}
 
-The application's source code may be forked or downloaded from
-[GitHub](https://github.com/iherwig/wcmf-default-app). After download,
-execute the following steps to get a running application:
+We assume that the application's root directory is accessible to your web server
+and mapped to the url `http://localhost/wcmf-default-app`.
 
-#### Unpack the code #### {#app_install_zip}
+#### GitHub #### {#app_install_github}
 
-Put the code into a directory accessible to your web server. You should see the
-following directories:
+The application's source code may be cloned from
+[GitHub](https://github.com/iherwig/wcmf-default-app) using the following command
+
+~~~~~~~~~~~~~
+$ git clone https://github.com/iherwig/wcmf-default-app
+~~~~~~~~~~~~~
+
+After that you should see the following directories:
 
 - _app_
   - _config_
@@ -70,16 +79,20 @@ following directories:
 - _test_
 - _tools_
 
-We assume that the application's root directory is accessible via the url
-`http://localhost/wcmf-default-app`.
-
-#### Run Composer #### {#app_install_composer}
-
 The application uses Composer to manage external dependencies.
 Execute the following command in the root directory of the application to fetch them:
 
 ~~~~~~~~~~~~~
-composer install
+$ composer install
+~~~~~~~~~~~~~
+
+#### Composer #### {#app_install_composer}
+
+Alternatively you can also use Composer to install the source code together with
+all dependencies:
+
+~~~~~~~~~~~~~
+$ composer create-project wcmf/wcmf-default-app wcmf-default-app --stability dev
 ~~~~~~~~~~~~~
 
 ### Model the domain ### {#app_model}
@@ -96,7 +109,7 @@ model. Execute the following command in the _build_ directory of the application
 order to run the generator:
 
 ~~~~~~~~~~~~~
-ant generate
+$ ant generate
 ~~~~~~~~~~~~~
 
 ### Setup the database connection ### {#app_db}

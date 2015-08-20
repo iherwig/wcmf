@@ -170,7 +170,7 @@ explicitly granting the permission on the object in question.
 
 The following code shows some permission examples:
 
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~{.ini}
 // tester role is not allowed to update any authors except for the specified one
 // tester role is not allowed to update any authors stage attribute
 app.src.model.Author??update = -tester
