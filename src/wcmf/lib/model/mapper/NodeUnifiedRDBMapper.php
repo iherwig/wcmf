@@ -162,6 +162,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       if (sizeof($orderedNodes) > 1) {
         $relatives = array();
         $sortkeyValues = array();
+        $orderDirection = null;
         foreach ($orderedNodes as $curNode) {
           // find the role of the node
           $curRelationDesc = $object->getNodeRelation($curNode);
@@ -171,6 +172,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
             $sortkeyDef = $otherMapper->getSortkey($curRelationDesc->getThisRole());
             if ($sortkeyDef != null) {
               $sortkeyName = $sortkeyDef['sortFieldName'];
+              // take the order direction from the first node
+              // (different order directions do not make sense)
+              $orderDirection = $orderDirection == null ? $sortkeyDef['sortDirection'] : $orderDirection;
               // in a many to many relation, we have to modify the order of the relation objects
               if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
                   $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
@@ -185,7 +189,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           }
         }
         // sort the values
-        sort($sortkeyValues);
+        $sortFuntion = $orderDirection == 'DESC' ? 'rsort' : 'sort';
+        $sortFuntion($sortkeyValues);
         // set the values on the objects
         for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
           $curRelative = $relatives[$i];

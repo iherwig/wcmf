@@ -112,30 +112,16 @@ class SortController extends Controller {
 
       // check association for insert operation
       $mapper = $persistenceFacade->getMapper($containerOid->getType());
-      $relationDesc = null;
-      // try role
-      if ($request->hasValue('role')) {
-        $relationDesc = $mapper->getRelation($request->getValue('role'));
-        if ($relationDesc == null) {
-          $response->addError(ApplicationError::get('ROLE_INVALID'));
-          return false;
-        }
-      }
-      // try type
-      else {
-        $relationDesc = $mapper->getRelation($insertOid->getType());
-        if ($relationDesc == null) {
-          $response->addError(ApplicationError::get('ASSOCIATION_INVALID'));
-          return false;
-        }
+      $relationDesc = $mapper->getRelation($request->getValue('role'));
+      if (!$relationDesc) {
+        $response->addError(ApplicationError::get('ROLE_INVALID'));
+        return false;
       }
       // check if object supports order
-      if ($relationDesc) {
-        $otherMapper = $relationDesc->getOtherMapper();
-        if (!$otherMapper->isSortable($relationDesc->getThisRole())) {
-          $response->addError(ApplicationError::get('ORDER_NOT_SUPPORTED'));
-          return false;
-        }
+      $otherMapper = $relationDesc->getOtherMapper();
+      if (!$otherMapper->isSortable($relationDesc->getThisRole())) {
+        $response->addError(ApplicationError::get('ORDER_NOT_SUPPORTED'));
+        return false;
       }
     }
     return true;
@@ -231,7 +217,7 @@ class SortController extends Controller {
   }
 
   /**
-   * Execute the moveBefore action
+   * Execute the insertBefore action
    */
   protected function doInsertBefore() {
     $request = $this->getRequest();
@@ -243,7 +229,8 @@ class SortController extends Controller {
     $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
     $containerOid = ObjectId::parse($request->getValue('containerOid'));
     $insertObject = $persistenceFacade->load($insertOid);
-    $containerObject = $persistenceFacade->load($containerOid, 1);
+    $containerObject = $persistenceFacade->load($containerOid, BuildDepth::SINGLE);
+    $containerObject->loadChildren($request->getValue('role'));
 
     $referenceObject = null;
     if ($isOrderBottom) {
