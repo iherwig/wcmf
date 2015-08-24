@@ -229,20 +229,8 @@ class SortController extends Controller {
     $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
     $containerOid = ObjectId::parse($request->getValue('containerOid'));
     $insertObject = $persistenceFacade->load($insertOid);
-    $containerObject = $persistenceFacade->load($containerOid, BuildDepth::SINGLE);
-    $containerObject->loadChildren($request->getValue('role'));
-
-    $referenceObject = null;
-    if ($isOrderBottom) {
-      $referenceObject = new NullNode();
-    }
-    else {
-      $referenceObjects = $containerObject->getChildrenEx($referenceOid);
-      if (sizeof($referenceObjects) == 1) {
-        $referenceObject = $referenceObjects[0];
-      }
-    }
-
+    $referenceObject = $isOrderBottom ? new NullNode() : $persistenceFacade->load($referenceOid);
+    $containerObject = $persistenceFacade->load($containerOid, 1);
     // check object existence
     $objectMap = array('insertOid' => $insertObject,
         'referenceOid' => $referenceObject,

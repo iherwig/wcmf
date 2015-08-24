@@ -31,16 +31,17 @@ use wcmf\lib\util\StringUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class DefaultPersistentObject implements PersistentObject {
+class DefaultPersistentObject implements PersistentObject, \Serializable {
 
   private $_oid = null;                // object identifier
   private $_type = '';                 // the object type
   private $_data = array();            // associative array holding the data
-  private $_valueProperties = array(); // associative array holding the value properties
   private $_properties = array();      // associative array holding the object properties
+  private $_valueProperties = array(); // associative array holding the value properties
   private $_state = self::STATE_CLEAN; // the state of the PersistentObject
   private $_changedAttributes = array(); // used to track changes, see setValue method
   private $_originalData = array();    // data provided to the initialize method
+  private $_mapper = null;             // mapper instance
 
   private static $_nullMapper = null;
 
@@ -56,23 +57,19 @@ class DefaultPersistentObject implements PersistentObject {
    */
   public function __construct(ObjectId $oid=null) {
     // set oid and state (avoid calling listeners)
-    if ($oid == null) {
+    if ($oid == null || !ObjectId::isValid($oid)) {
       $oid = ObjectId::NULL_OID();
     }
-    if (ObjectId::isValid($oid)) {
-      $this->_type = $oid->getType();
-      $this->_oid = $oid;
-      if ($oid->containsDummyIds()) {
-        $this->_state = self::STATE_NEW;
-      }
-      else {
-        $this->_state = self::STATE_CLEAN;
-      }
-      // set the mapper
-      $this->initializeMapper();
-      // set primary keys
-      $this->setOIDInternal($oid, false);
+    $this->_type = $oid->getType();
+    $this->_oid = $oid;
+    if ($oid->containsDummyIds()) {
+      $this->_state = self::STATE_NEW;
     }
+    else {
+      $this->_state = self::STATE_CLEAN;
+    }
+    // set primary keys
+    $this->setOIDInternal($oid, false);
   }
 
   /**
@@ -86,6 +83,24 @@ class DefaultPersistentObject implements PersistentObject {
   }
 
   /**
+   * Initialize the PersistenceMapper instance
+   */
+  private function initializeMapper() {
+    // set the mapper
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    if ($persistenceFacade->isKnownType($this->_type)) {
+      $this->_mapper = $persistenceFacade->getMapper($this->_type);
+    }
+    else {
+      // initialize null mapper if not done already
+      if (self::$_nullMapper == null) {
+        self::$_nullMapper = new NullMapper();
+      }
+      $this->_mapper = self::$_nullMapper;
+    }
+  }
+
+  /**
    * @see PersistentObject::getType()
    */
   public function getType() {
@@ -96,16 +111,10 @@ class DefaultPersistentObject implements PersistentObject {
    * @see PersistentObject::getMapper()
    */
   public function getMapper() {
-    // don't store mapper as member variable to avoid serialization problems
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    if ($persistenceFacade->isKnownType($this->_type)) {
-      return $persistenceFacade->getMapper($this->_type);
+    if ($this->_mapper == null) {
+      $this->initializeMapper();
     }
-    // use null mapper
-    if (self::$_nullMapper == null) {
-      self::$_nullMapper = new NullMapper();
-    }
-    return self::$_nullMapper;
+    return $this->_mapper;
   }
 
   /**
@@ -120,13 +129,6 @@ class DefaultPersistentObject implements PersistentObject {
    */
   public function setOID(ObjectId $oid) {
     $this->setOIDInternal($oid, true);
-  }
-
-  /**
-   * Set the mapper instance
-   */
-  protected function initializeMapper() {
-    // set mapper
   }
 
   /**
@@ -208,6 +210,7 @@ class DefaultPersistentObject implements PersistentObject {
     $copy->_type = $this->_type;
     $copy->_data = $this->_data;
     $copy->_properties = $this->_properties;
+    $copy->_valueProperties = $this->_valueProperties;
     $copy->_state = $this->_state;
 
     return $copy;
@@ -617,5 +620,18 @@ class DefaultPersistentObject implements PersistentObject {
   public function __toString() {
     return self::getDisplayValue();
   }
+
+  public function serialize() {
+    $this->_mapper = null;
+    return serialize(get_object_vars($this));
+  }
+
+  public function unserialize($serialized) {
+    $values = unserialize($serialized);
+    foreach ($values as $key => $value) {
+      $this->$key = $value;
+    }
+  }
+
 }
 ?>
