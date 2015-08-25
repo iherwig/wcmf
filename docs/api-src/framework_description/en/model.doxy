@@ -375,7 +375,7 @@ _Xtent/Xpand_ language.
 
 If you are using [Composer](https://getcomposer.org/), the generator will be installed
 as a dependency in the directory _vendor/olympos/chronos-generator_. It may also
-be downloaded from [SourceForge](http://sourceforge.net/projects/olympos/files/).
+be downloaded from [SourceForge](https://sourceforge.net/projects/olympos/files/ChronosGenerator-wCMF/).
 
 ### Configuration ### {#generator_config}
 
