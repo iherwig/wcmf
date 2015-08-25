@@ -38,6 +38,7 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
   const LOGGER_SECTION_NAME = 'Logger';
 
   private $_monologLogger = null;
+  private $_level = Logger::ERROR;
 
   private static $_defaultLevel = Logger::ERROR;
   private static $_logTarget = '';
@@ -58,6 +59,7 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
       }
     }
     $level = isset(self::$_levels[$name]) ? self::$_levels[$name] : self::$_defaultLevel;
+    $this->_level = $level;
 
     $output = "[%datetime%] %level_name%: %channel%:%extra.line%: %message%\n";
     $formatter = new LineFormatter($output, null, true);
@@ -114,35 +116,35 @@ class MonologFileLogger implements \wcmf\lib\core\Logger {
    * @see Logger::isDebugEnabled()
    */
   public function isDebugEnabled() {
-    return self::$_defaultLevel <= Logger::DEBUG;
+    return $this->_level <= Logger::DEBUG;
   }
 
   /**
    * @see Logger::isInfoEnabled()
    */
   public function isInfoEnabled() {
-    return self::$_defaultLevel <= Logger::INFO;
+    return $this->_level <= Logger::INFO;
   }
 
   /**
    * @see Logger::isWarnEnabled()
    */
   public function isWarnEnabled() {
-    return self::$_defaultLevel <= Logger::WARNING;
+    return $this->_level <= Logger::WARNING;
   }
 
   /**
    * @see Logger::isErrorEnabled()
    */
   public function isErrorEnabled() {
-    return self::$_defaultLevel <= Logger::ERROR;
+    return $this->_level <= Logger::ERROR;
   }
 
   /**
    * @see Logger::isFatalEnabled()
    */
   public function isFatalEnabled() {
-    return self::$_defaultLevel <= Logger::CRITICAL;
+    return $this->_level <= Logger::CRITICAL;
   }
 
   /**
