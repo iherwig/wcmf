@@ -156,7 +156,7 @@ class Application {
         $buffer = '';
       }
     }
-    return $buffer;
+    return trim($buffer);
   }
 }
 ?>
