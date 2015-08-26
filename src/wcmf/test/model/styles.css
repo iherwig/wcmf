@@ -1,0 +1,44 @@
+Association > Label:sourceMultiplicity {
+    visible: true;
+}
+ 
+Association > Label:targetMultiplicity {
+    visible: true;
+}
+ 
+Association > Label:sourceRole {
+    maskLabel: name;
+}
+ 
+Association > Label:targetRole {
+    maskLabel: name;
+}
+ 
+Association > Label:name {
+    visible: true;
+}
+
+Property[appliedStereotypes~="ChiValue"] {
+    maskLabel: name type;
+}
+
+Class[appliedStereotypes~="ChiSystem"] Property {
+    maskLabel: name defaultValue;
+}
+
+Class[appliedStereotypes~="ChiSystem"] > Compartment {
+    visible: false;
+}
+
+Class[appliedStereotypes~="ChiSystem"] > Compartment[kind="attributes"] {
+    visible: true;
+}
+
+Class[appliedStereotypes~="ChiView"] {
+    fillColor: #2890A9;
+}
+
+Class[appliedStereotypes~="ChiView"] > Compartment {
+    visible: false;
+}
+
