@@ -1650,6 +1650,14 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_8EAOYrU5EeORdpT3S9OOtw"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8EAOY7U5EeORdpT3S9OOtw" value="*"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_PtjNkE0BEeWgTqa5Y3-hfQ" name="ReferencingNMBookBook" type="_Cmrd8E0BEeWgTqa5Y3-hfQ" aggregation="composite" association="_Ptcf4E0BEeWgTqa5Y3-hfQ">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Uqqn0E0BEeWgTqa5Y3-hfQ"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UqtEEE0BEeWgTqa5Y3-hfQ" value="*"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_l2tdEE0BEeWgTqa5Y3-hfQ" name="ReferencedNMBookBook" type="_Cmrd8E0BEeWgTqa5Y3-hfQ" aggregation="composite" association="_l2rA0E0BEeWgTqa5Y3-hfQ">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nec28E0BEeWgTqa5Y3-hfQ"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_neesIE0BEeWgTqa5Y3-hfQ" value="*"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_BMnDwLU2EeORdpT3S9OOtw" name="Chapter">
                 <ownedComment xmi:type="uml:Comment" xmi:id="_eiefoLU4EeORdpT3S9OOtw" annotatedElement="_BMnDwLU2EeORdpT3S9OOtw">
@@ -1715,6 +1723,21 @@
               <packagedElement xmi:type="uml:Association" xmi:id="_8EAOYLU5EeORdpT3S9OOtw" name="" memberEnd="_8EAOYbU5EeORdpT3S9OOtw _8D_AQLU5EeORdpT3S9OOtw"/>
               <packagedElement xmi:type="uml:Association" xmi:id="_H7bIULU6EeORdpT3S9OOtw" name="" memberEnd="_H7bIUbU6EeORdpT3S9OOtw _H7ahQLU6EeORdpT3S9OOtw"/>
               <packagedElement xmi:type="uml:Association" xmi:id="_R5i-ULU6EeORdpT3S9OOtw" name="" memberEnd="_R5i-UbU6EeORdpT3S9OOtw _R5iXQLU6EeORdpT3S9OOtw"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_Cmrd8E0BEeWgTqa5Y3-hfQ" name="NMBookBook">
+                <generalization xmi:type="uml:Generalization" xmi:id="_Cmrd8U0BEeWgTqa5Y3-hfQ" general="_6z2NkLQGEeOIMOFxCilDfw"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_PtgxUE0BEeWgTqa5Y3-hfQ" name="ReferencingBook" type="_BJe3QLU2EeORdpT3S9OOtw" association="_Ptcf4E0BEeWgTqa5Y3-hfQ"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_l2sO8E0BEeWgTqa5Y3-hfQ" name="ReferencedBook" type="_BJe3QLU2EeORdpT3S9OOtw" association="_l2rA0E0BEeWgTqa5Y3-hfQ"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_Ptcf4E0BEeWgTqa5Y3-hfQ" memberEnd="_PtgxUE0BEeWgTqa5Y3-hfQ _PtjNkE0BEeWgTqa5Y3-hfQ">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_PtfjME0BEeWgTqa5Y3-hfQ" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_PtgKQE0BEeWgTqa5Y3-hfQ" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_l2rA0E0BEeWgTqa5Y3-hfQ" memberEnd="_l2sO8E0BEeWgTqa5Y3-hfQ _l2tdEE0BEeWgTqa5Y3-hfQ">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_l2rn4E0BEeWgTqa5Y3-hfQ" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_l2rn4U0BEeWgTqa5Y3-hfQ" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+              </packagedElement>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_B7Q5IPu5EeOmMdys2glKCA" name="controller">
               <packagedElement xmi:type="uml:Class" xmi:id="_FrS1MPu5EeOmMdys2glKCA" name="RootController">
@@ -1896,6 +1919,7 @@
   <Chronos:ChiManyToMany xmi:id="_7oE80LU4EeORdpT3S9OOtw" base_Class="_BTThoLU2EeORdpT3S9OOtw" orderby="sortkey"/>
   <Chronos:ChiAssociation xmi:id="_g5KtYLU8EeORdpT3S9OOtw" fk_name="fk_titlechapter_id" base_Association="_H7bIULU6EeORdpT3S9OOtw"/>
   <Chronos:ChiAssociation xmi:id="_jC-SgLU8EeORdpT3S9OOtw" fk_name="fk_chapter_id" base_Association="_R5i-ULU6EeORdpT3S9OOtw"/>
+  <Chronos:ChiValue xmi:id="_nmvoYPT-EeSdk57oe2HXMQ" app_data_type="DATATYPE_ATTRIBUTE|TRANSLATABLE" db_data_type="TEXT" is_editable="true" input_type="ckeditor:{&quot;toolbarSet&quot;:&quot;wcmf&quot;}" base_Property="_njBmAPT-EeSdk57oe2HXMQ"/>
   <Chronos:ChiSystem xmi:id="_TRUJ8NuDEeOY091wVmwqBA" plattform="wcmf" config="persistence.ini" base_Class="_TRTi4NuDEeOY091wVmwqBA"/>
   <Chronos:ChiController xmi:id="_K5yTUPu5EeOmMdys2glKCA" base_Class="_FrS1MPu5EeOmMdys2glKCA"/>
   <Chronos:ChiView xmi:id="_Pa9YcPu5EeOmMdys2glKCA" base_Class="_MLKboPu5EeOmMdys2glKCA"/>
@@ -1924,11 +1948,12 @@
   <Chronos:ChiSystem xmi:id="_UsmaoFUxEeS4i-N-Z4Tllg" plattform="wcmf" base_Class="_Un6u8FUxEeS4i-N-Z4Tllg"/>
   <Chronos:ChiSystem xmi:id="_28CKYO46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_23RmMO46EeSt-PWkeJaU5w"/>
   <Chronos:ChiSystem xmi:id="_3J3yFe46EeSt-PWkeJaU5w" plattform="wcmf" config="presentation.ini" base_Class="_3J3yEO46EeSt-PWkeJaU5w"/>
-  <Chronos:ChiValue xmi:id="_nmvoYPT-EeSdk57oe2HXMQ" app_data_type="DATATYPE_ATTRIBUTE|TRANSLATABLE" db_data_type="TEXT" is_editable="true" input_type="ckeditor:{&quot;toolbarSet&quot;:&quot;wcmf&quot;}" base_Property="_njBmAPT-EeSdk57oe2HXMQ"/>
   <Chronos:ChiSystem xmi:id="_2_GakCtFEeWoF5Z7Jotdrw" plattform="wcmf" base_Class="_QM0nECshEeWUuIR_KoweBQ"/>
   <Chronos:ChiSystem xmi:id="_6E03oDbFEeW4SLkzJtsk6g" plattform="wcmf" base_Class="_6Ex0UDbFEeW4SLkzJtsk6g"/>
   <Chronos:ChiSystem xmi:id="_slxBQEHYEeWnT_5Q0apEXg" plattform="wcmf" config="test.ini" base_Class="_sh508EHYEeWnT_5Q0apEXg"/>
   <Chronos:ChiSystem xmi:id="_Lrj0kEHZEeWnT_5Q0apEXg" plattform="wcmf" config="log.ini" base_Class="_LrimcEHZEeWnT_5Q0apEXg"/>
   <Chronos:ChiSystem xmi:id="_fDy0kEHZEeWnT_5Q0apEXg" plattform="wcmf" config="log.ini" base_Class="_fDyNgEHZEeWnT_5Q0apEXg"/>
   <Chronos:ChiSystem xmi:id="_u_rPwETJEeWiTYfex376ig" plattform="wcmf" config="presentation.ini" base_Class="_u6fNwETJEeWiTYfex376ig"/>
+  <Chronos:ChiManyToMany xmi:id="_CscuwE0BEeWgTqa5Y3-hfQ" base_Class="_Cmrd8E0BEeWgTqa5Y3-hfQ" orderby="sortkey"/>
+  <Chronos:ChiAssociation xmi:id="_l6wycE0IEeWgTqa5Y3-hfQ" fk_name="fk_chapter_id" base_Association="_rf_CcLU5EeORdpT3S9OOtw"/>
 </xmi:XMI>
