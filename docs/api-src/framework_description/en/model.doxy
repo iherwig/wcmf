@@ -168,7 +168,7 @@ regarding the operations allowed on child instances:
 | Aggregation      | No              | Yes             | Yes
 | Association      | No              | No              | Yes
 
-##### Multiplicity ##### {#model_multiplicity}
+##### Multiplicity #####
 
 The multiplicity at the association ends limits the amount of instances that
 are allowed at that relation end. In a typical parent-child relation the parent
@@ -188,7 +188,7 @@ stereotype. The following diagram shows how to model a many-to-many relation:
 Using compositions ensures that many-to-many instances are deleted correctly,
 when the parent instances are deleted.
 
-##### Navigability ##### {#model_navigability}
+##### Navigability #####
 
 Another aspect of associations is the use of __arrow ends__ that define the
 navigability. If an arrow end is omitted on one end, instances at that end
@@ -196,18 +196,35 @@ are not accessible from the other end. Regarding the database schema all three
 association types will result in the creation of a foreign key column in the
 child table that points to the parent table.
 
-##### Multiple associations ##### {#model_multiple_associations}
+##### Role names #####
 
-Sometimes multiple associations have to be defined between two domain classes.
+Each end of an association can have a _role name_ assigned. It describes how the
+element at that end participates in the relation. Generally the role name
+defaults to the element's name, but there are two cases where it is necessary to
+assign a dedicated name:
+
+- _Multiple associations_
+- _Self associations_
+
+Sometimes __multiple associations__ have to be defined between two domain classes.
 For example if there are `Person` and `Task` domain classes and tasks should be
 associated with persons. If each task should have an owner and a creator, there
-will be two aggregations between the two domain classes. In order to allow wCMF
-to know which role a person has in relation to a given task, __role names__ have
-to be assigned to the association ends.
+will be two aggregations between the two domain classes. To allow wCMF to know
+which role a person has in relation to a given task, role names have to be
+assigned to the association ends.
 
 The following diagram illustrates the given example:
 
 \image html multiple-associations.png "Role names in multiple associations"
+
+To build a hierarchy where one item contains items of the same type, an
+association from the domain class to itself is required. An example would be a file
+system with nested directories. In this case, role names are required at each end
+of this __self association__.
+
+The following diagram illustrates the given example:
+
+\image html self-associations.png "Role names in self associations"
 
 #### Inheritance #### {#model_inheritance}
 
