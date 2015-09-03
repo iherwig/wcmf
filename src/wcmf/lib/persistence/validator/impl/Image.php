@@ -11,6 +11,7 @@
 namespace wcmf\lib\persistence\validator\impl;
 
 use wcmf\lib\i18n\Message;
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\validator\ValidateType;
 use wcmf\lib\util\GraphicsUtil;
 
@@ -46,8 +47,12 @@ class Image implements ValidateType {
       return true;
     }
 
-    $graphicsUtil = new GraphicsUtil();
+    // translate path
+    $fileUtil = new FileUtil();
+    $absValue = WCMF_BASE.$value;
+    $value = $fileUtil->realpath(dirname($absValue)).'/'.basename($absValue);
 
+    $graphicsUtil = new GraphicsUtil();
     if (!$graphicsUtil->isImage($value)) {
       return false;
     }
