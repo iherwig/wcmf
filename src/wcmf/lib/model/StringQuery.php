@@ -135,12 +135,16 @@ class StringQuery extends ObjectQuery {
       }
 
       // get relation conditions
+      // NOTE: temporarily created objects must be detached from the transaction
+      $tx = $persistenceFacade->getTransaction();
       $rootNode = $persistenceFacade->create($queryType);
+      $tx->detach($rootNode->getOID());
       foreach ($otherRoles as $typeOrRole => $pathDescription) {
         $relationDescriptions = $pathDescription->getPath();
         $parent = $rootNode;
         foreach ($relationDescriptions as $relationDescription) {
           $node = $persistenceFacade->create($relationDescription->getOtherType());
+          $tx->detach($node->getOID());
           $parent->addNode($node, $relationDescription->getOtherRole());
           $parent = $node;
         }
