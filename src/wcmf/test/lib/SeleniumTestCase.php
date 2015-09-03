@@ -91,7 +91,7 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
    * Wait for a DOM element matching the given xpath
    * @param $xpath The xpath
    * @param $wait maximum (in seconds)
-   * @retrn element|false false on time-out
+   * @return element|false false on time-out
    */
   protected function waitForXpath($xpath, $wait=30) {
     for ($i=0; $i <= $wait; $i++) {
