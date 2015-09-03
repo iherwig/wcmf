@@ -316,7 +316,7 @@ class DefaultLocalization implements Localization {
    */
   private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults) {
     $mapper = $object->getMapper();
-    $isTranslatable = $mapper != null ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
+    $isTranslatable = $mapper != null && $mapper->hasAttribute($valueName) ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
     if ($isTranslatable) {
       // empty the value, if the default language values should not be used
       if (!$useDefaults) {
@@ -346,7 +346,7 @@ class DefaultLocalization implements Localization {
    */
   private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang) {
     $mapper = $object->getMapper();
-    $isTranslatable = $mapper != null ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
+    $isTranslatable = $mapper != null && $mapper->hasAttribute($valueName) ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
     if ($isTranslatable) {
       $value = $object->getValue($valueName);
       $translation = null;
