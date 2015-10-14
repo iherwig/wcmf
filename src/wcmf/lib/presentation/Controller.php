@@ -11,6 +11,7 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\config\Configuration;
+use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
@@ -44,7 +45,7 @@ use wcmf\lib\security\PermissionManager;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class Controller {
+class Controller {
 
   private $_request = null;
   private $_response = null;
@@ -118,13 +119,15 @@ abstract class Controller {
 
   /**
    * Execute the Controller resulting in its action processed. The actual
-   * processing is done in Controller::doExecute(), which is implemented
+   * processing is delegated to the given method, which must be implemented
    * by concrete Controller subclasses.
+   * @param $method The name of the method to execute (optional, defaults to 'doExecute' if not given)
    */
-  public function execute() {
+  public function execute($method=null) {
+    $method = $method == null ? 'doExecute' : $method;
     $isDebugEnabled = $this->_logger->isDebugEnabled();
     if ($isDebugEnabled) {
-      $this->_logger->debug('Executing: '.get_class($this));
+      $this->_logger->debug('Executing: '.get_class($this).'::'.$method);
       $this->_logger->debug('Request: '.$this->_request);
     }
 
@@ -136,7 +139,12 @@ abstract class Controller {
 
     // execute controller logic
     if (!$validationFailed) {
-      $this->doExecute();
+      if (method_exists($this, $method)) {
+        call_user_func(array($this, $method));
+      }
+      else {
+        throw new IllegalArgumentException("The method '".$method."' is not defined in class ".get_class($this));
+      }
     }
 
     // prepare the response
@@ -151,12 +159,6 @@ abstract class Controller {
       $this->_logger->error($errors[$i]->__toString());
     }
   }
-
-  /**
-   * Process the request.
-   * Subclasses process their action and assign the Model to the response.
-   */
-  protected abstract function doExecute();
 
   /**
    * Delegate the current request to another action. The context is the same as

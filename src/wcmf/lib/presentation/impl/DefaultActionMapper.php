@@ -113,10 +113,19 @@ class DefaultActionMapper implements ActionMapper {
     }
     else {
       // get next controller
-      $controllerClass = $this->_configuration->getValue($actionKey, 'actionmapping');
+      $controllerDef = $this->_configuration->getValue($actionKey, 'actionmapping');
     }
-    if (strlen($controllerClass) == 0) {
+    if (strlen($controllerDef) == 0) {
       throw new ApplicationException($request, $response, "No controller found for best action key ".$actionKey.". Request was $referrer?$context?$action");
+    }
+
+    // check if the controller definition contains a method besides the class name
+    $controllerMethod = null;
+    if (strpos($controllerDef, '::') !== false) {
+      list($controllerClass, $controllerMethod) = explode('::', $controllerDef);
+    }
+    else {
+      $controllerClass = $controllerDef;
     }
 
     // instantiate controller
@@ -139,7 +148,7 @@ class DefaultActionMapper implements ActionMapper {
     // execute controller
     $this->_eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::BEFORE_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
-    $controllerObj->execute();
+    $controllerObj->execute($controllerMethod);
     $this->_eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::AFTER_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
 

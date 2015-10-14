@@ -195,6 +195,26 @@ wcmf\application\controller\SearchIndexController??continue =
   only matches, if the last controller was
   \link wcmf::application::controller::SearchIndexController `SearchIndexController`\endlink.
 
+##### Controller methods #####
+
+The previous example maps the action keys to a controller class without specifying
+a method to be called. In these cases, the framework calls the default method
+`doExecute`, which must then be defined in the controller class (see \ref pres_controllers).
+
+Alternatively a specific __controller method__ to be called may be defined in the
+action mapping, like illustrated in the following example:
+
+~~~~~~~~~~~~~{.ini}
+[ActionMapping]
+??indexAll = wcmf\application\controller\SearchIndexController::doBegin
+wcmf\application\controller\SearchIndexController??continue =
+                            wcmf\application\controller\SearchIndexController::doContinue
+~~~~~~~~~~~~~
+
+In this case \link wcmf::application::controller::SearchIndexController `SearchIndexController`\endlink
+would have to define the methods `doBegin` and `doContinue` which are called
+for the appropriate action keys.
+
 #### External routing #### {#pres_routingext}
 
 The mapping of the current __request uri__ to an __action key__ is called external
@@ -222,6 +242,22 @@ illustrates the concept:
 - The _id_ variable in the third entry must be an integer because of the regular
   expression constraint `[0-9]+`.
 
+##### HTTP methods #####
+
+To restrict a path to one or more __HTTP methods__, they may be added in front of
+the route definition. In the following example the _cms_ action is only available
+for the _GET_ method, while the other actions accept _GET_, _POST_, _PUT_ and
+_DELETE_ requests:
+
+~~~~~~~~~~~~~{.ini}
+[Routes]
+GET/ = action=cms
+GET,POST,PUT,DELETE/rest/{language}/{className} = action=restAction&collection=1
+GET,POST,PUT,DELETE/rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
+~~~~~~~~~~~~~
+
+If no method is added to a route, all methods are accepted.
+
 ## Controllers ## {#pres_controllers}
 
 Controllers take the user input from the request and modify the model according
@@ -244,9 +280,10 @@ methods defined in this class, which are called by
   is called afterwards to check the validity of the request parameters. The default
   implementation returns _true_ and subclasses are assumed to override this method
   if necessary to do task specific validations.
-3. \link wcmf::lib::presentation::Controller::doExecute `Controller::doExecute`\endlink
-  is called finally. Subclasses must implement this method to define the actual
-  behavior of the controller.
+3. \link wcmf::lib::presentation::Controller::execute `Controller::execute`\endlink
+  is called finally. This method accepts a parameter, that defines the actual
+  method to be called on the subclass. If the parameter is omitted it defaults
+  to `doExecute` which must then be defined in the subclass.
 
 ### Error handling ### {#pres_errors}
 

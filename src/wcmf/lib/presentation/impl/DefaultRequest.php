@@ -13,6 +13,8 @@ namespace wcmf\lib\presentation\impl;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\format\Formatter;
+use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\impl\AbstractControllerMessage;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\util\StringUtil;
@@ -66,9 +68,9 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    *
    * Examples for route definitions are:
    * @code
-   * / = action=cms
-   * /rest/{language}/{className} = action=restAction&collection=1
-   * /rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
+   * GET/ = action=cms
+   * GET,POST,PUT,DELETE/rest/{language}/{className} = action=restAction&collection=1
+   * GET,POST,PUT,DELETE/rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
    * @endcode
    */
   public function initialize($controller=null, $context=null, $action=null) {
@@ -83,13 +85,21 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
     $baseRequestValues = array();
     $defaultValuePattern = '([^/]+)';
+    $method = $this->getMethod();
     if ($config->hasSection('routes')) {
       $routes = $config->getSection('routes');
-      foreach ($routes as $pattern => $requestDef) {
+      foreach ($routes as $route => $requestDef) {
+        // extract allowed http methods
+        $allowedMethods = null;
+        if (strpos($route, '/') !== 0) {
+          list($methodStr, $route) = explode('/', $route, 2);
+          $allowedMethods = preg_split('/\s*,\s*/', trim($methodStr));
+          $route = '/'.trim($route);
+        }
 
         // prepare route match pattern and extract parameters
         $params = array();
-        $pattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match) use($defaultValuePattern, &$params) {
+        $route = preg_replace_callback('/\{([^\}]+)\}/', function ($match) use($defaultValuePattern, &$params) {
           // a variabel may be either defined by {name} or by {name|pattern} where
           // name is the variable's name and pattern is an optional regex pattern, the
           // values should match
@@ -98,15 +108,15 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           $params[] = $paramParts[0];
           // return the value match pattern (defaults to defaultValuePattern)
           return sizeof($paramParts) > 1 ? '('.$paramParts[1].')' : $defaultValuePattern;
-        }, $pattern);
-        $pattern = '/^'.str_replace('/', '\/', $pattern).'\/?$/';
+        }, $route);
+        $route = '/^'.str_replace('/', '\/', $route).'\/?$/';
 
         // try to match the currrent request path
         if (self::$_logger->isDebugEnabled()) {
-          self::$_logger->debug("Check path: ".$pattern);
+          self::$_logger->debug("Check path: ".$route);
         }
         $matches = array();
-        if (preg_match($pattern, $requestPath, $matches)) {
+        if (preg_match($route, $requestPath, $matches)) {
           if (self::$_logger->isDebugEnabled()) {
             self::$_logger->debug("Match");
           }
@@ -119,6 +129,12 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           break;
         }
       }
+    }
+
+    // check if method is allowed
+    if ($allowedMethods != null && !in_array($method, $allowedMethods)) {
+      throw new ApplicationException($this, null,
+              ApplicationError::getGeneral('The request method does not match the allowed methods'));
     }
 
     // get additional request data from parameters
