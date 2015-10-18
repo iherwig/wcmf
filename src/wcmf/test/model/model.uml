@@ -914,6 +914,7 @@
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_gLuoYLRnEeOfbtYsPp7Oyg" name="FailureController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_eMsH0LRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_j0i58HIBEeWqqJ8U6ttukA" name="failure" type="_dGbcIHIBEeWqqJ8U6ttukA" association="_j0gdsHIBEeWqqJ8U6ttukA"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_gO4DALRnEeOfbtYsPp7Oyg" name="ListController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_HIBSULRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
@@ -1111,7 +1112,7 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_wcTaQbRvEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_wcTaQrRvEeOfbtYsPp7Oyg" value="1"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_3mg2YPu5EeOmMdys2glKCA" name="homeController" type="_FrS1MPu5EeOmMdys2glKCA" association="_3mhdcPu5EeOmMdys2glKCA">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_3mg2YPu5EeOmMdys2glKCA" name="renderPage" type="_FrS1MPu5EeOmMdys2glKCA" association="_3mhdcPu5EeOmMdys2glKCA">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3mg2Yfu5EeOmMdys2glKCA" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_3mg2Yvu5EeOmMdys2glKCA" value="1"/>
                 </ownedAttribute>
@@ -1145,7 +1146,7 @@
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_3mhdcPu5EeOmMdys2glKCA" name="cms" memberEnd="_3mhdcfu5EeOmMdys2glKCA _3mg2YPu5EeOmMdys2glKCA">
-                <ownedEnd xmi:type="uml:Property" xmi:id="_3mhdcfu5EeOmMdys2glKCA" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_3mhdcPu5EeOmMdys2glKCA">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_3mhdcfu5EeOmMdys2glKCA" type="_3TWiULQGEeOIMOFxCilDfw" association="_3mhdcPu5EeOmMdys2glKCA">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3mhdcvu5EeOmMdys2glKCA" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_3mhdc_u5EeOmMdys2glKCA" value="1"/>
                 </ownedEnd>
@@ -1746,6 +1747,11 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lK8S8fu5EeOmMdys2glKCA" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_lK8S8vu5EeOmMdys2glKCA" value="1"/>
                 </ownedAttribute>
+                <ownedOperation xmi:type="uml:Operation" xmi:id="_taQWEHUZEeW1fYhayTwSlA" name="renderPage" visibility="protected">
+                  <ownedComment xmi:type="uml:Comment" xmi:id="_7PHeAHUiEeW1fYhayTwSlA" annotatedElement="_taQWEHUZEeW1fYhayTwSlA">
+                    <body>Render the CMS page.</body>
+                  </ownedComment>
+                </ownedOperation>
               </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_lK86APu5EeOmMdys2glKCA" name="" memberEnd="_lK86Afu5EeOmMdys2glKCA _lK8S8Pu5EeOmMdys2glKCA">
                 <ownedEnd xmi:type="uml:Property" xmi:id="_lK86Afu5EeOmMdys2glKCA" name="homeController" type="_FrS1MPu5EeOmMdys2glKCA" association="_lK86APu5EeOmMdys2glKCA">
@@ -1753,9 +1759,16 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_lK86A_u5EeOmMdys2glKCA" value="1"/>
                 </ownedEnd>
               </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_j0gdsHIBEeWqqJ8U6ttukA" memberEnd="_j0i58HIBEeWqqJ8U6ttukA _j0jhAHIBEeWqqJ8U6ttukA">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_j0iS4HIBEeWqqJ8U6ttukA" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_j0iS4XIBEeWqqJ8U6ttukA" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_j0jhAHIBEeWqqJ8U6ttukA" name="failurecontroller" type="_gLuoYLRnEeOfbtYsPp7Oyg" association="_j0gdsHIBEeWqqJ8U6ttukA"/>
+              </packagedElement>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_EcxzoPu5EeOmMdys2glKCA" name="views">
               <packagedElement xmi:type="uml:Class" xmi:id="_MLKboPu5EeOmMdys2glKCA" name="cms"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_dGbcIHIBEeWqqJ8U6ttukA" name="failure"/>
             </packagedElement>
           </packagedElement>
         </packagedElement>
@@ -1768,8 +1781,15 @@
       <appliedProfile xmi:type="uml:Profile" href="chronos.profile.uml#873fb1a3-cfa7-11de-9e87-d74203c08737"/>
     </profileApplication>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_Yw5T8ARHEeSxY9ess8EBIw">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_XoY7kHIAEeWqqJ8U6ttukA" source="PapyrusVersion">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_XoY7kXIAEeWqqJ8U6ttukA" key="Version" value="0.1.1"/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_XoY7knIAEeWqqJ8U6ttukA" key="Comment" value=""/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_XoY7k3IAEeWqqJ8U6ttukA" key="Copyright" value=""/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_XoY7lHIAEeWqqJ8U6ttukA" key="Date" value="2015-01-21"/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_XoY7lXIAEeWqqJ8U6ttukA" key="Author" value=""/>
+      </eAnnotations>
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_YylWAARHEeSxY9ess8EBIw" source="http://www.eclipse.org/uml2/2.0.0/UML">
-        <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_sYse0YZLEeKyw49uR6nx3g"/>
+        <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
       </eAnnotations>
       <appliedProfile xmi:type="uml:Profile" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#ActionLanguage"/>
     </profileApplication>
@@ -1956,4 +1976,6 @@
   <Chronos:ChiSystem xmi:id="_u_rPwETJEeWiTYfex376ig" plattform="wcmf" config="presentation.ini" base_Class="_u6fNwETJEeWiTYfex376ig"/>
   <Chronos:ChiManyToMany xmi:id="_CscuwE0BEeWgTqa5Y3-hfQ" base_Class="_Cmrd8E0BEeWgTqa5Y3-hfQ" orderby="sortkey"/>
   <Chronos:ChiAssociation xmi:id="_l6wycE0IEeWgTqa5Y3-hfQ" fk_name="fk_chapter_id" base_Association="_rf_CcLU5EeORdpT3S9OOtw"/>
+  <Chronos:ChiView xmi:id="_dGdRUHIBEeWqqJ8U6ttukA" base_Class="_dGbcIHIBEeWqqJ8U6ttukA"/>
+  <Chronos:ChiActionKey xmi:id="_3W8ikHIBEeWqqJ8U6ttukA" base_Association="_j0gdsHIBEeWqqJ8U6ttukA"/>
 </xmi:XMI>
