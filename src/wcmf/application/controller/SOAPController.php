@@ -59,7 +59,7 @@ class SOAPController extends Controller {
     $server = new SoapServer();
 
     // register search method
-    $server->register('wcmf\application\controller\SOAPController.search',
+    $server->register('search',
       array('query' => 'xsd:string'), array('return' => 'tns:SearchResultList'),
       $server::TNS, $server->wsdl->endpoint.'#search', 'document', 'literal'
     );
@@ -68,10 +68,7 @@ class SOAPController extends Controller {
     require("soap-interface.php");
 
     // invoke the service
-    if (!isset($HTTP_RAW_POST_DATA)) {
-      $HTTP_RAW_POST_DATA = implode("\r\n", file('php://input'));
-    }
-    $server->service($HTTP_RAW_POST_DATA);
+    $server->service(file_get_contents("php://input"));
 
     // NOTE: the response is not used, because the SoapServer::service method
     // returns the data to the client but we need to make sure that there is

@@ -152,23 +152,31 @@ class SoapServer extends \nusoap_server {
     ));
 
     // run the application
-    $response = $this->_application->run($request);
-    if ($response->hasErrors()) {
-      $errors = $response->getErrors();
-      throw new ApplicationException($request, $response, $errors[0]);
-    }
-    $responseData = $response->getValue('data');
-    $data = $responseData['action2'];
     $actionResponse = ObjectFactory::getInstance('response');
-    $actionResponse->setSender($data['controller']);
-    $actionResponse->setContext($data['context']);
-    $actionResponse->setAction($data['action']);
-    $actionResponse->setFormat('soap');
-    $actionResponse->setValues($data);
-    $formatter = ObjectFactory::getInstance('formatter');
-    $formatter->serialize($actionResponse);
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug($actionResponse->__toString());
+    $actionResponse->setFinal();
+    try {
+      $response = $this->_application->run($request);
+      if ($response->hasErrors()) {
+        $errors = $response->getErrors();
+        $this->handleException(new ApplicationException($request, $response, $errors[0]));
+      }
+      else {
+        $responseData = $response->getValue('data');
+        $data = $responseData['action2'];
+        $actionResponse->setSender($data['controller']);
+        $actionResponse->setContext($data['context']);
+        $actionResponse->setAction($data['action']);
+        $actionResponse->setFormat('soap');
+        $actionResponse->setValues($data);
+        $formatter = ObjectFactory::getInstance('formatter');
+        $formatter->serialize($actionResponse);
+        if (self::$_logger->isDebugEnabled()) {
+          self::$_logger->debug($actionResponse->__toString());
+        }
+      }
+    }
+    catch (\Exception $ex) {
+      $this->handleException($ex);
     }
     return $actionResponse;
   }
@@ -180,7 +188,6 @@ class SoapServer extends \nusoap_server {
   private function handleException($ex) {
     self::$_logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
     $this->fault('SOAP-ENV:SERVER', $ex->getMessage(), '', '');
-    $this->send_response();
   }
 }
 ?>

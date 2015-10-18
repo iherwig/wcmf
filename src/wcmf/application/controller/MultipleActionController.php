@@ -145,7 +145,6 @@ class MultipleActionController extends Controller {
         $responsePart = $this->getActionMapper()->processAction($requestPart);
       }
       catch (\Exception $ex) {
-        $logger->error($ex->__toString());
         $exceptions[] = $ex;
       }
 
@@ -155,12 +154,9 @@ class MultipleActionController extends Controller {
     if ($logger->isDebugEnabled()) {
       $logger->debug($results);
     }
-    // add error from first exception to mark the action set execution as failed
-    if (sizeof($exceptions) > 0) {
-      $ex = $exceptions[0];
-      $response->setValue('success', false);
-      $response->setValue('errorCode', $ex->getCode());
-      $response->setValue('errorMessage', $ex->getMessage());
+    // add errors from exceptions
+    foreach ($exceptions as $ex) {
+      $response->addError(ApplicationError::fromException($ex));
     }
     $response->setValue('data', $results);
     $response->setAction('ok');
