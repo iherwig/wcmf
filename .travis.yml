@@ -1,4 +1,8 @@
 sudo: false
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
 
 language: php
 
@@ -8,7 +12,9 @@ php:
   - 5.6
 
 env:
-  - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
+  global:
+    - JAVA_HOME=/usr/lib/jvm/java-8-oracle
+    - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
 
 before_script:
   - composer self-update
