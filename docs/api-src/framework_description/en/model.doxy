@@ -300,11 +300,18 @@ should return to after executing _SaveController_.
 
 \image html flow.png "Example application flow"
 
-\note To simplify modeling the following default rule applies:
-If a controller has no view attached (meaning that execution of the following
-controller needs no user decision) and no _ChiActionKey_ association starts from
-that controller, the application automatically chooses the preceding controller
-to execute next. For that reason the _ok_ actions may be omitted in the diagram.
+#### Controller methods #### {#model_controller_methods}
+
+By default the framework calls the method _doExecute_ on the current controller
+instance for any _context_ and _action_ value. For this reason an empty implementation
+of this method will be added by the generator.
+
+To distinguish different actions or contexts it is also possible to model several
+operations inside the controller class. To connect an action key to a controller
+method, the action key's end that points to the controller must be named like
+the method. The following diagram illustrates the concept:
+
+\image html controller-methods.png "Controller methods"
 
 ### Configuration ### {#model_config}
 
