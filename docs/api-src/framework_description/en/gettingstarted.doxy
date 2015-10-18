@@ -92,7 +92,7 @@ Alternatively you can also use Composer to install the source code together with
 all dependencies:
 
 ~~~~~~~~~~~~~
-$ composer create-project wcmf/wcmf-default-app wcmf-default-app --stability dev
+$ composer create-project wcmf/wcmf-default-app wcmf-default-app
 ~~~~~~~~~~~~~
 
 ### Model the domain ### {#app_model}
