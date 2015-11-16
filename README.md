@@ -7,8 +7,8 @@ PHP web application, e.g. CRM, CMS from an UML model.
 
 [![Build Status](https://img.shields.io/travis/iherwig/wcmf.svg?style=flat-square)](https://travis-ci.org/iherwig/wcmf)
 [![Codacy Badge](https://img.shields.io/codacy/83131d82c278482a826b070f9736840e.svg?style=flat-square)](https://www.codacy.com/app/iherwig/wcmf)
-[![Packagist License](https://img.shields.io/l/wcmf/wcmf.svg?style=flat-square)]()
-[![Packagist Version](https://img.shields.io/v/wcmf/wcmf.svg?style=flat-square)]()
+[![Packagist License](https://img.shields.io/packagist/l/wcmf/wcmf.svg?style=flat-square)]()
+[![Packagist Version](https://img.shields.io/packagist/v/wcmf/wcmf.svg?style=flat-square)]()
 [![Packagist Downloads](https://img.shields.io/packagist/dm/wcmf/wcmf.svg?style=flat-square)](https://packagist.org/packages/wcmf/wcmf)
 
 Features
