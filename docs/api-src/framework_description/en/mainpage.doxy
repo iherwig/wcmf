@@ -9,10 +9,15 @@
 </div>
 
 <h2>Model-Driven Software Development</h2>
-wCMF features a pragmatic Model-Driven Software Development (<em>MDSD</em>) approach that puts your focus on the application domain
-and increases productivity by taking over repetitive work. Creating a wCMF-based application basically involves three steps:
+wCMF features a pragmatic Model-Driven Software Development (<em>MDSD</em>) approach that has the following advantages:<br><br>
+<ul>
+  <li><strong>Single Source of Truth</strong> All important aspects of the application are defined in one place - the <em>model</em>.</li>
+  <li><strong>Consistency</strong> The code generator takes care that model changes are applied consistently in all relevant places, e.g. if an entity attribute 
+    is changed, added or deleted, all persistence and domain classes are changed appropriately. This results in less errors and better code quality.</li>
+  <li><strong>Increased productivity</strong> By spending less time on repetitive tasks, developers can concentrate more on the application domain.</li>
+</ul>
 
-<br><br>
+<br>Creating a wCMF-based application basically involves three steps:<br><br>
 
 <div class="row">
   <div class="col-md-4"><h3><i class="fa fa-sitemap fa-2x pull-left"></i> Model</h3>
