@@ -349,12 +349,12 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_wEX0gLRFEeOQ5oJFa1i8cg" name="compileCheck" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_5z_UcLRFEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_5z_7gLRFEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_50BJoLRFEeOQ5oJFa1i8cg" value="true"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_50BJoLRFEeOQ5oJFa1i8cg" value="1"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_wHCuALRFEeOQ5oJFa1i8cg" name="caching" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_7JUvsLRFEeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7JUvsbRFEeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_7JV90LRFEeOQ5oJFa1i8cg" value="false"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_7JV90LRFEeOQ5oJFa1i8cg" value="0"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_wJ8RALRFEeOQ5oJFa1i8cg" name="cacheLifetime" visibility="public" type="_dbezULQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_8oUdQLRFEeOQ5oJFa1i8cg" value="1"/>
