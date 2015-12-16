@@ -34,7 +34,7 @@
         "fergusean/nusoap": "~0.9"
     },
     "require-dev": {
-        "phpunit/phpunit": "5.0.*",
+        "phpunit/phpunit": "4.*",
         "phpunit/dbunit": ">=1.2"
     },    
     "suggest": {
