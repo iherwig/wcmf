@@ -33,6 +33,10 @@
         "ircmaxell/password-compat": "~1.0",
         "fergusean/nusoap": "~0.9"
     },
+    "require-dev": {
+        "phpunit/phpunit": "5.0.*",
+        "phpunit/dbunit": ">=1.2"
+    },    
     "suggest": {
         "smarty/smarty": "Use this package to render Smarty views via SmartyView",
         "helios-ag/fm-elfinder-php-connector": "Use this package to integrate ElFinder with MediaController",
