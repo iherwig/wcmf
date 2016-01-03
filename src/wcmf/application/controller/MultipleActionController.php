@@ -139,10 +139,11 @@ class MultipleActionController extends Controller {
       $requestPart->setValues($params);
       $requestPart->setFormat('null');
       $requestPart->setResponseFormat('null');
+      $responsePart = ObjectFactory::getInstance('response');
 
       // execute the request
       try {
-        $responsePart = $this->getActionMapper()->processAction($requestPart);
+        $this->getActionMapper()->processAction($requestPart, $responsePart);
       }
       catch (\Exception $ex) {
         $exceptions[] = $ex;

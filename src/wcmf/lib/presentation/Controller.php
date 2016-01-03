@@ -28,7 +28,8 @@ use wcmf\lib\security\PermissionManager;
  * Error Handling:
  * - throw an Exception or use response action _failure_ to signal fatal errors
  *    (calls wcmf::application::controller::FailureController)
- * - add an ApplicationError to the response to signal non fatal errors
+ * - add an ApplicationError to the response to signal non fatal errors (e.g.
+ *    validation errors)
  *
  * The following default request/response parameters are defined:
  *
@@ -109,8 +110,10 @@ class Controller {
   }
 
   /**
-   * Check if the data given by initialize() meet the requirements of the Controller.
+   * Check if the request is valid.
    * Subclasses will override this method to validate against their special requirements.
+   * Besides returning false, validation errors should be indicated by using the
+   * Response::addError method.
    * @return Boolean whether the data are ok or not.
    */
   protected function validate() {
@@ -179,8 +182,9 @@ class Controller {
     $subRequest->setValues($curRequest->getValues());
     $subRequest->setFormat('null');
     $subRequest->setResponseFormat('null');
-    $response = $this->_actionMapper->processAction($subRequest);
-    return $response;
+    $subResponse = ObjectFactory::getInstance('response');
+    $this->_actionMapper->processAction($subRequest, $subResponse);
+    return $subResponse;
   }
 
   /**
@@ -268,17 +272,14 @@ class Controller {
    * This method may be used by derived controller classes for convenient response setup.
    */
   protected function assignResponseDefaults() {
-    // return the first error
+    // return the last error
     $errors = $this->_response->getErrors();
     if (sizeof($errors) > 0) {
-      $error = $errors[0];
+      $error = array_pop($errors);
       $this->_response->setValue('errorCode', $error->getCode());
       $this->_response->setValue('errorMessage', $error->getMessage());
       $this->_response->setValue('errorData', $error->getData());
-      $this->_response->setStatus(Response::STATUS_400);
-    }
-    // set the success flag
-    if (sizeof($errors) > 0) {
+      $this->_response->setStatus($error->getStatusCode());
       $this->_response->setValue('success', false);
     }
     else {

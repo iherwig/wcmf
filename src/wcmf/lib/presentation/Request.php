@@ -11,9 +11,7 @@
 namespace wcmf\lib\presentation;
 
 /**
- * Request holds the request values that are used as input to
- * Controller instances. It is typically instantiated and filled by the
- * ActionMapper.
+ * Request holds the request values that are used as input to Controller instances.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -21,15 +19,17 @@ interface Request extends ControllerMessage {
 
   /**
    * Initialize the request instance from the HTTP request.
+   * @param $response The response instance belonging to the request
    * @param $controller The controller to call if none is given in request parameters (optional)
    * @param $context The context to set if none is given in request parameters (optional)
    * @param $action The action to perform if none is given in request parameters (optional)
    */
-  public function initialize($controller=null, $context=null, $action=null);
+  public function initialize(Response $response, $controller=null,
+          $context=null, $action=null);
 
   /**
    * Get the HTTP method of the request
-   * @return String
+   * @return String (uppercase)
    */
   public function getMethod();
 

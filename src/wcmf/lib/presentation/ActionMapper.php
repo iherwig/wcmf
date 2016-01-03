@@ -25,14 +25,9 @@ interface ActionMapper {
    * as determined by the request's action key and delegates the request to it.
    * @note This method is static so that it can be used without an instance. (This is necessary to call it in onError() which
    * cannot be a class method because php's set_error_handler() does not allow this).
-   * @param $request A reference to a Request instance
-   * @return Response instance
+   * @param $request The Request instance
+   * @param $response The Response instance
    */
-  public function processAction(Request $request);
-
-  /**
-   * Reset the state of ActionMapper to initial. Especially clears the processed controller queue.
-   */
-  public function reset();
+  public function processAction(Request $request, Response $response);
 }
 ?>

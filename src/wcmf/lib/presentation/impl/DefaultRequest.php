@@ -17,7 +17,19 @@ use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\impl\AbstractControllerMessage;
 use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 use wcmf\lib\util\StringUtil;
+
+/**
+ * Predefined errors
+ */
+$message = ObjectFactory::getInstance('message');
+define('ROUTE_NOT_FOUND', serialize(array('ROUTE_NOT_FOUND', ApplicationError::LEVEL_ERROR, 404,
+  $message->getText('No route matching the request path can be found.')
+)));
+define('METHOD_NOT_ALLOWED', serialize(array('METHOD_NOT_ALLOWED', ApplicationError::LEVEL_ERROR, 405,
+  $message->getText('The HTTP method is not allowed on the requested path.')
+)));
 
 /**
  * Default Request implementation.
@@ -55,7 +67,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if (isset($_SERVER['QUERY_STRING'])) {
       self::fix($_GET, $_SERVER['QUERY_STRING']);
     }
-    $this->_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '';
+    $this->_method = isset($_SERVER['REQUEST_METHOD']) ?
+            strtoupper($_SERVER['REQUEST_METHOD']) : '';
   }
 
   /**
@@ -73,7 +86,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * GET,POST,PUT,DELETE/rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
    * @endcode
    */
-  public function initialize($controller=null, $context=null, $action=null) {
+  public function initialize(Response $response, $controller=null,
+          $context=null, $action=null) {
     // get base request data from request path
     $basePath = preg_replace('/\/?[^\/]*$/', '', $_SERVER['SCRIPT_NAME']);
     $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
@@ -83,9 +97,11 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     }
     $config = ObjectFactory::getInstance('configuration');
 
-    $baseRequestValues = array();
+    $baseRequestData = array();
     $defaultValuePattern = '([^/]+)';
     $method = $this->getMethod();
+    $routeFound = false;
+    $methodAllowed = false;
     if ($config->hasSection('routes')) {
       $routes = $config->getSection('routes');
       foreach ($routes as $route => $requestDef) {
@@ -111,7 +127,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         }, $route);
         $route = '/^'.str_replace('/', '\/', $route).'\/?$/';
 
-        // try to match the currrent request path
+        // try to match the current request path
         if (self::$_logger->isDebugEnabled()) {
           self::$_logger->debug("Check path: ".$route);
         }
@@ -121,51 +137,80 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
             self::$_logger->debug("Match");
           }
           // set parameters from request definition
-          parse_str($requestDef, $baseRequestValues);
+          parse_str($requestDef, $baseRequestData);
           // set parameters from request path
           for ($i=0, $count=sizeof($params); $i<$count; $i++) {
-            $baseRequestValues[$params[$i]] = isset($matches[$i+1]) ? $matches[$i+1] : null;
+            $baseRequestData[$params[$i]] = isset($matches[$i+1]) ? $matches[$i+1] : null;
           }
-          break;
+          $routeFound = true;
+
+          // check if method is allowed
+          if ($allowedMethods == null || in_array($method, $allowedMethods)) {
+            $methodAllowed = true;
+            break;
+          }
         }
       }
     }
 
-    // check if method is allowed
-    if ($allowedMethods != null && !in_array($method, $allowedMethods)) {
-      throw new ApplicationException($this, null,
-              ApplicationError::getGeneral('The request method does not match the allowed methods'));
+    if (!$routeFound) {
+      throw new ApplicationException($this, $response,
+              ApplicationError::get('ROUTE_NOT_FOUND', array('route' => $requestPath)));
     }
 
-    // get additional request data from parameters
-    $requestValues = array_merge($_GET, $_POST, $_FILES);
-    $rawPostBody = file_get_contents('php://input');
-    // add the raw post data if they are json encoded
-    $json = json_decode($rawPostBody, true);
-    if (is_array($json)) {
-      foreach ($json as $key => $value) {
-        $requestValues[$key] = $value;
-      }
+    // check if method is allowed
+    if (!$methodAllowed) {
+      throw new ApplicationException($this, $response,
+              ApplicationError::get('METHOD_NOT_ALLOWED', array(
+                  'method' => $method, 'route' => $requestPath)));
+    }
+
+    // get request data
+    $requestData = array();
+    switch ($method) {
+      case 'GET':
+        $requestData = $_GET;
+        break;
+      case 'POST':
+        $requestData = array_merge($_POST, $_FILES);
+        break;
+      case 'PUT':
+        $requestData = file_get_contents("php://input");
+        break;
+    }
+
+    // decode json
+    switch ($this->getFormat()) {
+      case 'json':
+        $jsonData = json_decode($requestData, true);
+        $requestData = $jsonData;
+      case 'html':
+        // decode data passed as query string
+        if (!is_array($requestData)) {
+          $htmlData = array();
+          parse_str($requestData, $htmlData);
+          $requestData = $htmlData;
+        }
     }
 
     // get controller/context/action triple
-    $controller = isset($requestValues['controller']) ?
-            filter_var($requestValues['controller'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
-            (isset($baseRequestValues['controller']) ? $baseRequestValues['controller'] : $controller);
+    $controller = isset($requestData['controller']) ?
+            filter_var($requestData['controller'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($baseRequestData['controller']) ? $baseRequestData['controller'] : $controller);
 
-    $context = isset($requestValues['context']) ?
-            filter_var($requestValues['context'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
-            (isset($baseRequestValues['context']) ? $baseRequestValues['context'] : $context);
+    $context = isset($requestData['context']) ?
+            filter_var($requestData['context'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($baseRequestData['context']) ? $baseRequestData['context'] : $context);
 
-    $action = isset($requestValues['action']) ?
-            filter_var($requestValues['action'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
-            (isset($baseRequestValues['action']) ? $baseRequestValues['action'] : $action);
+    $action = isset($requestData['action']) ?
+            filter_var($requestData['action'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($baseRequestData['action']) ? $baseRequestData['action'] : $action);
 
     // setup request
     $this->setSender($controller);
     $this->setContext($context);
     $this->setAction($action);
-    $this->setValues(array_merge($baseRequestValues, $requestValues));
+    $this->setValues(array_merge($baseRequestData, $requestData));
   }
 
   /**

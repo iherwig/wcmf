@@ -34,6 +34,9 @@ class ApplicationException extends \Exception {
   public function __construct(Request $request, Response $response,
     ApplicationError $error) {
 
+    // set status code on response
+    $response->setStatus($error->getStatusCode());
+
     $this->_request = $request;
     $this->_response = $response;
     $this->_error = $error;

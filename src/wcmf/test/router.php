@@ -32,7 +32,7 @@ else {
   }
   catch (Exception $ex) {
     try {
-      $application->handleException($ex, isset($request) ? $request : null);
+      $application->handleException($ex);
     }
     catch (Exception $unhandledEx) {
       echo("An unhandled exception occured. Please see log file for details.");

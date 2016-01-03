@@ -22,7 +22,7 @@ use wcmf\lib\presentation\Response;
 class DefaultResponse extends AbstractControllerMessage implements Response {
 
   private $_cacheId = null;
-  private $_status = self::STATUS_200;
+  private $_status = 200;
   private $_file = null;
   private $_isFinal = false;
 

@@ -19,14 +19,6 @@ namespace wcmf\lib\presentation;
  */
 interface Response extends ControllerMessage {
 
-  const STATUS_200 = '200 OK';
-  const STATUS_201 = '201 Created';
-  const STATUS_202 = '202 Accepted';
-  const STATUS_204 = '204 No Content';
-
-  const STATUS_400 = '400 Bad Request';
-  const STATUS_404 = '404 Not Found';
-
   /**
    * Set a string value that uniquely identifies the request data
    * that cause the current response. This value maybe used to compare
@@ -50,7 +42,7 @@ interface Response extends ControllerMessage {
 
   /**
    * Get the response HTTP status code
-   * @return String
+   * @return Integer
    */
   public function getStatus();
 

@@ -23,7 +23,8 @@ use wcmf\lib\presentation\Request;
 class Application {
 
   private $_startTime = null;
-  private $_initialRequest = null;
+  private $_request = null;
+  private $_response = null;
 
   private $_debug = true;
 
@@ -50,9 +51,9 @@ class Application {
       $timeDiff = microtime(true)-$this->_startTime;
       $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
       $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
-      if ($this->_initialRequest != null) {
-        $msg .= " Request[".$this->_initialRequest->getSender()."?".
-                $this->_initialRequest->getContext()."?".$this->_initialRequest->getAction()."]";
+      if ($this->_request != null) {
+        $msg .= " Request[".$this->_request->getSender()."?".
+                $this->_request->getContext()."?".$this->_request->getAction()."]";
       }
       self::$_logger->debug($msg);
     }
@@ -70,9 +71,12 @@ class Application {
   public function initialize($defaultController='', $defaultContext='', $defaultAction='login') {
     $config = ObjectFactory::getInstance('configuration');
 
-    // create the Request instance
-    $this->_initialRequest = ObjectFactory::getInstance('request');
-    $this->_initialRequest->initialize($defaultController, $defaultContext, $defaultAction);
+    // create the Request and Response instances
+    $this->_request = ObjectFactory::getInstance('request');
+    $this->_response = ObjectFactory::getInstance('response');
+
+    $this->_request->initialize($this->_response,
+            $defaultController, $defaultContext, $defaultAction);
 
     // initialize session
     $session = ObjectFactory::getInstance('session');
@@ -96,7 +100,7 @@ class Application {
     date_default_timezone_set($config->getValue('timezone', 'application'));
 
     // return the request
-    return $this->_initialRequest;
+    return $this->_request;
   }
 
   /**
@@ -106,34 +110,35 @@ class Application {
    */
   public function run(Request $request) {
     // process the requested action
-    $response = ObjectFactory::getInstance('actionMapper')->processAction($request);
-    return $response;
+    ObjectFactory::getInstance('actionMapper')->processAction($request, $this->_response);
+    return $this->_response;
   }
 
   /**
    * Default exception handling method. Rolls back the transaction and
    * executes 'failure' action.
    * @param $exception The Exception instance
-   * @param $request The Request instance
    */
-  public function handleException(\Exception $exception, Request $request=null) {
+  public function handleException(\Exception $exception) {
     self::$_logger->error($exception->getMessage()."\n".$exception->getTraceAsString());
 
-    // rollback current transaction
-    if (ObjectFactory::getInstance('configuration') != null) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $persistenceFacade->getTransaction()->rollback();
+    try {
+      if (ObjectFactory::getInstance('configuration') != null) {
+        // rollback current transaction
+        $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+        $persistenceFacade->getTransaction()->rollback();
 
-      // redirect to failure action
-      if ($request == null) {
-        $request = $this->_initialRequest;
+        // redirect to failure action
+        $this->_request->addError(ApplicationError::fromException($exception));
+        $this->_request->setAction('failure');
+        ObjectFactory::getInstance('actionMapper')->processAction($this->_request, $this->_response);
       }
-      $request->addError(ApplicationError::fromException($exception));
-      $request->setAction('failure');
-      ObjectFactory::getInstance('actionMapper')->processAction($request);
+      else {
+        throw $exception;
+      }
     }
-    else {
-      throw $exception;
+    catch (Exception $ex) {
+      self::$_logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
     }
   }
 
