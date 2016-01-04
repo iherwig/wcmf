@@ -130,7 +130,7 @@ class DefaultFormatter implements Formatter {
       case 100:
         $text = 'Continue';
         break;
-      case 101: 
+      case 101:
         $text = 'Switching Protocols';
         break;
       case 200:

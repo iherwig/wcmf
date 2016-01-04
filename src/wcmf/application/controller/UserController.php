@@ -85,7 +85,7 @@ class UserController extends Controller {
    * @param $newPassword The new password for the user
    * @param $newPasswordRepeated The new password of the user again
    */
-  public function changePassword(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
+  protected function changePassword(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
     $message = $this->getMessage();
     // check old password
     if (!$user->verifyPassword($oldPassword, $user->getPassword())) {

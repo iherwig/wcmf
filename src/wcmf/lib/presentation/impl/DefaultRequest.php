@@ -115,7 +115,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
         // extract parameters from route definition and prepare as regex pattern
         $params = array();
-        $routePattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match) 
+        $routePattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match)
                 use($defaultValuePattern, &$params) {
           // a variabel may be either defined by {name} or by {name|pattern} where
           // name is the variable's name and pattern is an optional regex pattern, the
@@ -126,10 +126,10 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           // return the value match pattern (defaults to defaultValuePattern)
           return sizeof($paramParts) > 1 ? '('.$paramParts[1].')' : $defaultValuePattern;
         }, $route);
-        
+
         // replace wildcard character and slashes
         $routePattern = str_replace(array('*', '/'), array('.*', '\/'), $routePattern);
-        
+
         // try to match the current request path
         if (self::$_logger->isDebugEnabled()) {
           self::$_logger->debug("Check path: ".$route." -> ".$routePattern);
