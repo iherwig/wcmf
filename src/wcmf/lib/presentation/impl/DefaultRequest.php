@@ -113,9 +113,10 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           $route = '/'.trim($route);
         }
 
-        // prepare route match pattern and extract parameters
+        // extract parameters from route definition and prepare as regex pattern
         $params = array();
-        $route = preg_replace_callback('/\{([^\}]+)\}/', function ($match) use($defaultValuePattern, &$params) {
+        $routePattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match) 
+                use($defaultValuePattern, &$params) {
           // a variabel may be either defined by {name} or by {name|pattern} where
           // name is the variable's name and pattern is an optional regex pattern, the
           // values should match
@@ -125,14 +126,16 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           // return the value match pattern (defaults to defaultValuePattern)
           return sizeof($paramParts) > 1 ? '('.$paramParts[1].')' : $defaultValuePattern;
         }, $route);
-        $route = '/^'.str_replace('/', '\/', $route).'\/?$/';
-
+        
+        // replace wildcard character and slashes
+        $routePattern = str_replace(array('*', '/'), array('.*', '\/'), $routePattern);
+        
         // try to match the current request path
         if (self::$_logger->isDebugEnabled()) {
-          self::$_logger->debug("Check path: ".$route);
+          self::$_logger->debug("Check path: ".$route." -> ".$routePattern);
         }
         $matches = array();
-        if (preg_match($route, $requestPath, $matches)) {
+        if (preg_match('/^'.$routePattern.'\/?$/', $requestPath, $matches)) {
           if (self::$_logger->isDebugEnabled()) {
             self::$_logger->debug("Match");
           }

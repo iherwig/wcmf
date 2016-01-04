@@ -223,24 +223,29 @@ routing. The default mapping logic is implemented in the
 method. The method matches the _path part_ of the request uri against the entries
 of the `Routes` configuration section to find an appropriate action key.
 Variables declared in path segments will be automatically passed as request parameters.
+_*_ is used as wildcard character.
 
 The following example configuration taken from the \ref app "default application"
 illustrates the concept:
 
 ~~~~~~~~~~~~~{.ini}
 [Routes]
-/ = action=cms
+POST/session = action=login
+DELETE/session = action=logout
 /rest/{language}/{className} = action=restAction&collection=1
 /rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
+GET/* = action=cms
 ~~~~~~~~~~~~~
 
-- The first entry is matched by the root path, which is then mapped to the _cms_
-  action - corresponding to the action key <em>??cms</em>.
-- The second entry defines the _language_ and _className_ variables (surrounded
+- The first two entries define the login and logout routes using the appropriate
+  HTTP methods.
+- The third entry defines the _language_ and _className_ variables (surrounded
   by curly braces) and would be matched by the request uris <em>/rest/de/Author</em>
   or <em>/rest/en/Book</em>. The executed action would be _restAction_.
-- The _id_ variable in the third entry must be an integer because of the regular
+- The _id_ variable in the next entry must be an integer because of the regular
   expression constraint `[0-9]+`.
+- The last entry is matched by any GET request to a path that was not matched before.
+  It is mapped to the _cms_ action - corresponding to the action key <em>??cms</em>.
 
 ##### HTTP methods #####
 
