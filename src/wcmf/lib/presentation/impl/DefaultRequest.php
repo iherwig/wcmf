@@ -120,7 +120,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           // a variabel may be either defined by {name} or by {name|pattern} where
           // name is the variable's name and pattern is an optional regex pattern, the
           // values should match
-          $paramParts = explode('|', $match[1]);
+          $paramParts = explode('|', $match[1], 2);
           // add the variable name to the parameter list
           $params[] = $paramParts[0];
           // return the value match pattern (defaults to defaultValuePattern)
@@ -175,8 +175,6 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         $requestData = $_GET;
         break;
       case 'POST':
-        $requestData = array_merge($_POST, $_FILES);
-        break;
       case 'PUT':
         $requestData = file_get_contents("php://input");
         break;
