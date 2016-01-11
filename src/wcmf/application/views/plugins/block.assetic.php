@@ -21,6 +21,7 @@ use Assetic\Asset\FileAsset;
 use Assetic\Asset\StringAsset;
 use Assetic\AssetWriter;
 use Assetic\Cache\FilesystemCache;
+use Assetic\Filter\CssRewriteFilter;
 use Minifier\MinFilter;
 
 if (!class_exists('Assetic\Asset\AssetCollection')) {
@@ -63,7 +64,7 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
       else {
         $result = '';
 
-        // parse urls and group resource by extension and minified state
+        // parse urls and group resources by extension and minified state
         $resources = array();
         $urls = StringUtil::getUrls($content);
         foreach ($urls as $url) {
@@ -73,41 +74,57 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
           if (!isset($resources[$extension])) {
             $resources[$extension] = array('min' => array(), 'src' => array());
           }
-          $resources[$extension][$min ? 'min' : 'src'][] = new FileAsset($url);
+          $resources[$extension][$min ? 'min' : 'src'][] = $url;
         }
 
         // setup assetic
         $config = ObjectFactory::getInstance('configuration');
-        $cacheDir = WCMF_BASE.$config->getValue('cacheDir', 'View').'cache';
+        $basePath = dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/';
+        $cacheRootAbs = WCMF_BASE.$config->getValue('cacheDir', 'View').'cache';
+        $cacheRootRel = URIUtil::makeRelative($cacheRootAbs, $basePath);
 
         // process resources
         foreach ($resources as $type => $files) {
-          $filesystem = new FilesystemCache($cacheDir);
-          $writer = new AssetWriter($cacheDir);
-          $hasSrcFiles = sizeof($files['src']) > 0;
-          $hasMinFiles = sizeof($files['min']) > 0;
+          $filesystem = new FilesystemCache($cacheRootAbs);
+          $writer = new AssetWriter($cacheRootAbs);
 
-          $minAssets = $hasMinFiles ? $files['min'] : array();
-          if ($hasSrcFiles) {
-            $srcCollection = new AssetCollection($files['src'], array(new MinFilter($type)));
-            $minAssets[] = new StringAsset($srcCollection->dump());
+          $cacheFile = (isset($params['name']) ? $params['name'] : uniqid()).'.min.'.$type;
+          $cachePathRel = $cacheRootRel.'/'.$cacheFile;
+
+          // create filters
+          $filters = array();
+          if ($type == 'css') {
+            $filters[] = new CssRewriteFilter();
           }
-          $minCollection = new AssetCollection($minAssets);
-          $filename = (isset($params['name']) ? $params['name'] : uniqid()).'.min.'.$type;
+          $minFilters = array_merge($filters, array(new MinFilter($type)));
 
+          // create string assets from files (sourcePath and targetPath must be
+          // set correctly in order to make CssRewriteFilter work)
+          $minAssets = array();
+          foreach ($files['min'] as $file) {
+             $asset = new FileAsset($file, $filters, '', $file);
+             $asset->setTargetPath($cachePathRel);
+             $minAssets[] = new StringAsset($asset->dump());
+          }
+          foreach ($files['src'] as $file) {
+             $asset = new FileAsset($file, $minFilters, '', $file);
+             $asset->setTargetPath($cachePathRel);
+             $minAssets[] = new StringAsset($asset->dump());
+          }
+
+          // write collected assets into cached file
+          $minCollection = new AssetCollection($minAssets);
           $cache = new AssetCache($minCollection, $filesystem);
-          $cache->setTargetPath($filename);
+          $cache->setTargetPath($cacheFile);
           $writer->writeAsset($cache);
 
-          $url = URIUtil::makeRelative($cacheDir.'/'.$filename,
-                  dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/');
-
+          // create html tag
           switch ($type) {
             case 'js':
-              $tag = '<script src="'.$url.'"></script>';
+              $tag = '<script src="'.$cachePathRel.'"></script>';
               break;
             case 'css':
-              $tag = '<link rel="stylesheet" href="'.$url.'">';
+              $tag = '<link rel="stylesheet" href="'.$cachePathRel.'">';
               break;
           }
           $result .= $tag;

@@ -258,8 +258,9 @@ The following __stereotypes__ are used to model user interaction.
 | _ChiView_ | Class | View assigned to a _ChiController_ | _login_
 | _ChiActionKey_ | Association | Associates two _ChiController_ instances (to define a control flow) or a _ChiView_ with a _ChiController_ (to define a view attachment), must be _one directional_ | |
 
-\note Multiple action keys may be defined between controllers or controllers and
-views each one used in a different context or for a different action.
+\note _ChiActionKey_ realizes the concept of _action keys_ (see \ref arch_actionkey).
+Multiple action keys may be defined between controllers or controllers and views
+each one used in a different context and/or for a different action.
 
 #### ChiController #### {#model_chicontroller}
 
@@ -299,6 +300,11 @@ when editing articles. By this the application always knows to which controller 
 should return to after executing _SaveController_.
 
 \image html flow.png "Example application flow"
+
+\note If the _controller_ value of the action key should be empty, meaning that the
+action can be triggered from _any_ controller, the source of the _ChiActionKey_
+association must be the \link wcmf::lib::presentation::Controller `Controller`\endlink
+base class.
 
 #### Controller methods #### {#model_controller_methods}
 
