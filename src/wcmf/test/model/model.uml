@@ -145,8 +145,29 @@
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_S4bEsARHEeSxY9ess8EBIw" name="Routes">
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEsQRHEeSxY9ess8EBIw" name="/" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEsgRHEeSxY9ess8EBIw" value="action=cms"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_zPVdkLLnEeWcwaDPJFy4ig" name="POST/session" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_zPVdkbLnEeWcwaDPJFy4ig" value="action=login"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_4gVdILLnEeWcwaDPJFy4ig" name="DELETE/session" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_4gVdIbLnEeWcwaDPJFy4ig" value="action=logout"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_mUohsLLnEeWcwaDPJFy4ig" name="PUT/settings/password" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_mUohsbLnEeWcwaDPJFy4ig" value="action=changePassword"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_q2x3MLLnEeWcwaDPJFy4ig" name="GET/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_q2x3MbLnEeWcwaDPJFy4ig" value="action=checkPermissions"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_u_buoLLnEeWcwaDPJFy4ig" name="GET/messages/{language}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_u_buobLnEeWcwaDPJFy4ig" value="action=messages"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_Xq6bwL4KEeW0Nbxk-xruig" name="POST/log" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_Xq6bwb4KEeW0Nbxk-xruig" value="action=log"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_FwhIsLMHEeWcwaDPJFy4ig" name="POST/lock/{type|optimistic|pessimistic}/{oid}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_FwhIsbMHEeWcwaDPJFy4ig" value="action=lock"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_MknSsLMHEeWcwaDPJFy4ig" name="DELETE/lock/{type|optimistic|pessimistic}/{oid}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_MknSsbMHEeWcwaDPJFy4ig" value="action=unlock"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEswRHEeSxY9ess8EBIw" name="/rest/{language}/{className}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEtARHEeSxY9ess8EBIw" value="action=restAction&amp;collection=1"/>
@@ -165,6 +186,9 @@
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEvQRHEeSxY9ess8EBIw" name="/list/{language}/{listDef}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEvgRHEeSxY9ess8EBIw" value="action=listValues"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_gAIdwLLnEeWcwaDPJFy4ig" name="GET/*" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_gAIdwbLnEeWcwaDPJFy4ig" value="action=cms"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_Un6u8FUxEeS4i-N-Z4Tllg" name="Cache">
