@@ -161,6 +161,7 @@ class SortController extends Controller {
     $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
     $insertObject = $persistenceFacade->load($insertOid);
     $referenceObject = $isOrderBottom ? new NullNode() : $persistenceFacade->load($referenceOid);
+
     // check object existence
     $objectMap = array('insertOid' => $insertObject,
         'referenceOid' => $referenceObject);
@@ -231,18 +232,20 @@ class SortController extends Controller {
     $insertObject = $persistenceFacade->load($insertOid);
     $referenceObject = $isOrderBottom ? new NullNode() : $persistenceFacade->load($referenceOid);
     $containerObject = $persistenceFacade->load($containerOid, 1);
+
     // check object existence
     $objectMap = array('insertOid' => $insertObject,
         'referenceOid' => $referenceObject,
         'containerOid' => $containerObject);
     if ($this->checkObjects($objectMap)) {
+      $role = $request->getValue('role');
       // add the new node to the container, if it is not yet
       $nodeExists = sizeof($containerObject->getChildrenEx($insertOid)) == 1;
       if (!$nodeExists) {
-        $containerObject->addNode($insertObject, $request->getValue('role'));
+        $containerObject->addNode($insertObject, $role);
       }
       // reorder the children list
-      $children = $containerObject->getChildren();
+      $children = $containerObject->getChildrenEx(null, $role);
       $newChildren = array();
       foreach ($children as $curChild) {
         $oid = $curChild->getOID();
