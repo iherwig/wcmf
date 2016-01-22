@@ -156,7 +156,7 @@ class ApplicationError {
    * @return ApplicationError
    */
   public static function getGeneral($message, $statusCode=self::DEFAULT_ERROR_STATUS) {
-    $error = new ApplicationError('GENERAL_ERROR', LEVEL_ERROR, $statusCode, $message);
+    $error = new ApplicationError('GENERAL_ERROR', ApplicationError::LEVEL_ERROR, $statusCode, $message);
     return $error;
   }
 
