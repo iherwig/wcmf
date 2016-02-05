@@ -15,13 +15,10 @@ use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
 
-use FM\ElFinderPHP\ElFinder;
-use FM\ElFinderPHP\Connector\ElFinderConnector;
-
-if (!class_exists('FM\ElFinderPHP\ElFinder')) {
+if (!class_exists('\elFinder')) {
     throw new \wcmf\lib\config\ConfigurationException(
             'wcmf\application\controller\MediaController requires '.
-            'ElFinder. If you are using composer, add helios-ag/fm-elfinder-php-connector '.
+            'elFinder. If you are using composer, add nao-pon/elfinder-nightly '.
             'as dependency to your project');
 }
 
@@ -127,7 +124,7 @@ class MediaController extends Controller {
       );
 
       // run elFinder
-      $connector = new ElFinderConnector(new ElFinder($opts));
+      $connector = new \elFinderConnector(new \elFinder($opts));
       $queryParams = $request->getValues();
       $connector->run($queryParams);
 
