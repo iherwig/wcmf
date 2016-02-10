@@ -295,7 +295,7 @@ method may be used. It allows to set the conditions that loaded objects should m
 ~~~~~~~~~~~~~{.php}
 $criteria = array(
   new Criteria("Article", "title", "LIKE", "A%"),
-  new Criteria("Article", "year", ">=", "2014")))
+  new Criteria("Article", "year", ">=", "2014")
 )
 
 // load all Article instances with titles starting with A and release date 2014 or later
