@@ -112,7 +112,8 @@ class DefaultFactory implements Factory {
     $instance = null;
 
     // dynamic configuration must be included in internal instance key
-    $instanceKey = sizeof($dynamicConfiguration) == 0 ? $name : $name.json_encode($dynamicConfiguration);
+    $instanceKey = sizeof($dynamicConfiguration) == 0 ? strtolower($name) :
+      strtolower($name.json_encode($dynamicConfiguration));
 
     // check if the instance is registered already
     if (!isset($this->_instances[$instanceKey])) {
@@ -144,7 +145,8 @@ class DefaultFactory implements Factory {
    * @see Factory::registerInstance()
    */
   public function registerInstance($name, $instance) {
-    $this->_instances[$name] = $instance;
+    $instanceKey = strtolower($name);
+    $this->_instances[$instanceKey] = $instance;
   }
 
   /**
@@ -200,9 +202,10 @@ class DefaultFactory implements Factory {
           $refParameters = $refConstructor->getParameters();
           foreach ($refParameters as $param) {
             $paramName = $param->name;
-            if (isset($this->_instances[$paramName])) {
+            $paramInstanceKey = strtolower($paramName);
+            if (isset($this->_instances[$paramInstanceKey])) {
               // parameter is already registered
-              $cParams[$paramName] = $this->_instances[$paramName];
+              $cParams[$paramName] = $this->_instances[$paramInstanceKey];
             }
             elseif (isset($configuration[$paramName])) {
               // parameter is explicitly defined in instance configuration

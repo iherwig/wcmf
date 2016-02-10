@@ -93,6 +93,15 @@ class LuceneSearch implements IndexedSearch {
   }
 
   /**
+   * Get if the search index should update itself, when
+   * persistent objects are created/updated/deleted.
+   * @return Boolean
+   */
+  public function getLiveUpdate() {
+    return $this->_liveUpdate;
+  }
+
+  /**
    * @see Search::check()
    */
   public function check($word) {

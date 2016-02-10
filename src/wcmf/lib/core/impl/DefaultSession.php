@@ -14,6 +14,16 @@ use wcmf\lib\core\Session;
 use wcmf\lib\security\principal\User;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 
+// session configuration
+ini_set('session.cookie_lifetime', 0);
+ini_set('session.use_cookies', 'On');
+ini_set('session.use_only_cookies', 'On');
+ini_set('session.use_strict_mode', 'On');
+ini_set('session.cookie_httponly', 'On');
+ini_set('session.use_trans_sid', 'Off');
+ini_set('session.cache_limiter', 'nocache');
+ini_set('session.hash_function', 'sha256');
+
 /**
  * Default session implementation.
  *
@@ -30,18 +40,19 @@ class DefaultSession implements Session {
    * Constructor
    */
   public function __construct() {
-    // regenerate session id if cookie is lost
+    $this->_anonymousUser = new AnonymousUser();
+    $this->_authUserVarName = 'auth_user_'.md5(__FILE__);
+
     $sessionName = 'wcmf'.md5(__FILE__);
     session_name($sessionName);
     // NOTE: prevent "headers already sent" errors in phpunit tests
     if (!headers_sent()) {
-      if (!isset($_COOKIE[$sessionName]) || strlen($_COOKIE[$sessionName]) == 0) {
+      session_start();
+      // regenerate session for authenticated sessions
+      if (isset($_SESSION[$this->_authUserVarName])) {
         session_regenerate_id();
       }
-      session_start();
     }
-    $this->_authUserVarName = 'auth_user_'.md5(__FILE__);
-    $this->_anonymousUser = new AnonymousUser();
   }
 
   public function __destruct() {

@@ -55,6 +55,7 @@ class Application {
         $msg .= " Request[".$this->_request->getSender()."?".
                 $this->_request->getContext()."?".$this->_request->getAction()."]";
       }
+      $msg .= " URI[".$_SERVER['REQUEST_URI']."]";
       self::$_logger->debug($msg);
     }
     ob_end_flush();
