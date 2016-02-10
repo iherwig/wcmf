@@ -49,11 +49,12 @@ class Application {
     if (self::$_logger->isDebugEnabled()) {
       $timeDiff = microtime(true)-$this->_startTime;
       $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
-      $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
+      $msg = ": Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
       if ($this->_initialRequest != null) {
         $msg .= " Request[".$this->_initialRequest->getSender()."?".
                 $this->_initialRequest->getContext()."?".$this->_initialRequest->getAction()."]";
       }
+      $msg .= " URI[".$_SERVER['REQUEST_URI']."]";
       self::$_logger->debug($msg);
     }
     ob_end_flush();

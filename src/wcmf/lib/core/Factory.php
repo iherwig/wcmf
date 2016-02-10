@@ -20,6 +20,7 @@ interface Factory {
 
   /**
    * Get an instance from the configuration.
+   * @note Instance names are treated case insensitive
    * @param $name The name of the instance (section, where the instance is defined)
    * @param $dynamicConfiguration Associative array with key value pairs for
    * dynamic instance properties (optional)
@@ -38,6 +39,7 @@ interface Factory {
 
   /**
    * Register a shared instance with a given name.
+   * @note Instance names are treated case insensitive
    * @param $name The name of the instance.
    * @param $instance The instance
    */
