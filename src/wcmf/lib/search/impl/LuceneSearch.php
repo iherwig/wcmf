@@ -56,7 +56,7 @@ class LuceneSearch implements IndexedSearch {
    * Destructor
    */
   public function __destruct() {
-    $this->commitIndex();
+    $this->commitIndex(false);
     ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
       array($this, 'stateChanged'));
   }
