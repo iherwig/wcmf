@@ -8,7 +8,7 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\lib\presentation;
+namespace wcmf\lib\presentation\link;
 
 use wcmf\lib\persistence\ObjectId;
 
