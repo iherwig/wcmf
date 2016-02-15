@@ -109,9 +109,9 @@ class SearchController extends ListController {
     for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
       $curNode = &$nodes[$i];
       $hit = $this->_hits[$curNode->getOID()->__toString()];
-      $curNode->setValue('displayValue', $curNode->getDisplayValue());
-      $curNode->setValue('summary', "... ".$hit['summary']." ...");
-      $curNode->setValue('type', $persistenceFacade->getSimpleType($curNode->getType()));
+      $curNode->setValue('_displayValue', $curNode->getDisplayValue(), true);
+      $curNode->setValue('_summary', "... ".$hit['summary']." ...", true);
+      $curNode->setValue('_type', $persistenceFacade->getSimpleType($curNode->getType()), true);
     }
   }
 }
