@@ -12,7 +12,7 @@ namespace wcmf\test\tests\presentation;
 
 use wcmf\test\lib\BaseTestCase;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\presentation\InternalLink;
+use wcmf\lib\presentation\link\InternalLink;
 
 /**
  * InternalLinkTest.

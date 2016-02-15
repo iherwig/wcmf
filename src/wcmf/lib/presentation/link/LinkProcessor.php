@@ -95,6 +95,7 @@ class LinkProcessor {
             $invalidURLs[] = array();
           }
           $invalidURLs[$oidStr][] = $url;
+          $value = self::replaceUrl($value, $url, '#', $type);
         }
       }
       if ($oldValue != $value) {
