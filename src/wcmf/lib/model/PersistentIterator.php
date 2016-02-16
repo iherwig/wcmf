@@ -15,15 +15,15 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 
 /**
- * PersistentIterator is used to iterate over a tree/list built of oids
+ * PersistentIterator is used to iterate over a tree/list built of persistent objects
  * using a Depth-First-Algorithm. To persist its state use the PersistentIterator::save() method,
  * to restore its state use the static PersistentIterator::load() method, which returns the loaded instance.
- * States are identified by an unique id, which is provided after saving.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class PersistentIterator implements \Iterator {
 
+  private $_id = null;
   private $_persistenceFacade = null;
   private $_session = null;
 
@@ -37,16 +37,18 @@ class PersistentIterator implements \Iterator {
 
   /**
    * Constructor.
+   * @param $id The unique iterator id used to store iterator's the state in the session
    * @param $persistenceFacade
    * @param $session
-   * @param $oid The oid to start from.
+   * @param $oid The object id to start from.
    * @param $aggregationKinds Array of aggregation kind values of relations to follow
    *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
-  public function __construct(PersistenceFacade $persistenceFacade,
+  public function __construct($id, PersistenceFacade $persistenceFacade,
           Session $session,
           ObjectId $oid,
           $aggregationKinds=array()) {
+    $this->_id = $id;
     $this->_persistenceFacade = $persistenceFacade;
     $this->_session = $session;
 
@@ -57,35 +59,42 @@ class PersistentIterator implements \Iterator {
     $this->_startOid = $oid;
     $this->_currentDepth = 0;
     $this->_aggregationKinds = $aggregationKinds;
+    $this->_session->remove($this->_id);
   }
 
   /**
    * Save the iterator state to the session
-   * @return A unique id to provide for load, see PersistentIterator::load()
    */
   public function save() {
-    $uid = md5(uniqid(""));
     $state = array('end' => $this->_end, 'oidList' => $this->_oidList, 'processedOidList' => $this->_processedOidList,
       'currentOID' => $this->_currentOid, 'currentDepth' => $this->_currentDepth, 'aggregationKinds' => $this->_aggregationKinds);
-    $this->_session->set('PersistentIterator.'.$uid, $state);
-    return $uid;
+    $this->_session->set($this->_id, $state);
+  }
+
+  /**
+   * Reset the iterator with the given id
+   * @param $id The iterator id
+   * @param $session
+   */
+  public static function reset($id, Session $session) {
+    $session->remove($id);
   }
 
   /**
    * Load an iterator state from the session
+   * @param $id  The unique iterator id used to store iterator's the state in the session
    * @param $persistenceFacade
    * @param $session
-   * @param $uid The unique id returned from the save method, see PersistentIterator::save()
    * @return PersistentIterator instance holding the saved state or null if unique id is not found
    */
-  public static function load($persistenceFacade, $session, $uid) {
+  public static function load($id, $persistenceFacade, $session) {
     // get state from session
-    $state = $session->get('PersistentIterator.'.$uid);
+    $state = $session->get($id);
     if ($state == null) {
       return null;
     }
     // create instance
-    $instance = new PersistentIterator($persistenceFacade, $session,
+    $instance = new PersistentIterator($id, $persistenceFacade, $session,
             $state['currentOID']);
     $instance->_end = $state['end'];
     $instance->_oidList = $state['oidList'];
@@ -180,9 +189,9 @@ class PersistentIterator implements \Iterator {
   }
 
   /**
-   * Add oids to the processing queue.
-   * @param $oidList An array of oids.
-   * @param $depth The depth of the oids in the tree.
+   * Add object ids to the processing queue.
+   * @param $oidList An array of object ids.
+   * @param $depth The depth of the object ids in the tree.
    */
   protected function addToQueue($oidList, $depth) {
     for ($i=sizeOf($oidList)-1; $i>=0; $i--) {

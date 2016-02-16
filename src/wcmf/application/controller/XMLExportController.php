@@ -136,6 +136,9 @@ class XMLExportController extends BatchController {
 
       // store document info in session
       $session->set($this->DOCUMENT_INFO, $documentInfo);
+
+      // reset iterator
+      PersistentIterator::reset($this->ITERATOR_ID, $session);
     }
   }
 
@@ -161,8 +164,8 @@ class XMLExportController extends BatchController {
   }
 
   /**
-   * Initialize the XML export (oids parameter will be ignored)
-   * @param $oids The oids to process
+   * Initialize the XML export (object ids parameter will be ignored)
+   * @param $oids The object ids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function initExport($oids) {
@@ -212,8 +215,8 @@ class XMLExportController extends BatchController {
   }
 
   /**
-   * Serialize all Nodes with given oids to XML
-   * @param $oids The oids to process
+   * Serialize all Nodes with given object ids to XML
+   * @param $oids The object ids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function exportNodes($oids) {
@@ -232,14 +235,10 @@ class XMLExportController extends BatchController {
     $documentInfo = $session->get($this->DOCUMENT_INFO);
 
     // check for iterator in session
-    $iterator = null;
-    $iteratorID = $session->get($this->ITERATOR_ID);
-    if ($iteratorID != null) {
-      $iterator = PersistentIterator::load($persistenceFacade, $session, $iteratorID);
-    }
+    $iterator = PersistentIterator::load($this->ITERATOR_ID, $persistenceFacade, $session);
     // no iterator but oid given, start with new root oid
     if ($iterator == null && sizeof($oids) > 0 && $oids[0] != null) {
-      $iterator = new PersistentIterator($persistenceFacade, $session, $oids[0]);
+      $iterator = new PersistentIterator($this->ITERATOR_ID, $persistenceFacade, $session, $oids[0]);
     }
     // no iterator, no oid, finish
     if ($iterator == null) {
@@ -265,22 +264,19 @@ class XMLExportController extends BatchController {
     // decide what to do next
     $rootOIDs = $this->_cache->get(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS);
     if (!$iterator->valid() && sizeof($rootOIDs) > 0) {
-      // if the current iterator is finished, set iterator null and proceed with the next root oid
+      // if the current iterator is finished, reset the iterator and proceed with the next root oid
       $nextOID = array_shift($rootOIDs);
-      $iterator = null;
       // store remaining root oids in session
       $this->_cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
-      // unset iterator id to start with new root oid
-      $tmp = null;
-      $session->set($this->ITERATOR_ID, $tmp);
+      // delete iterator to start with new root oid
+      PersistentIterator::reset($this->ITERATOR_ID, $session);
 
       $name = $message->getText('Exporting tree: start with %0%', array($nextOID));
       $this->addWorkPackage($name, 1, array($nextOID), 'exportNodes');
     }
     elseif ($iterator->valid()) {
       // proceed with current iterator
-      $iteratorID = $iterator->save();
-      $session->set($this->ITERATOR_ID, $iteratorID);
+      $iterator->save();
 
       $name = $message->getText('Exporting tree: continue with %0%', array($iterator->current()));
       $this->addWorkPackage($name, 1, array(null), 'exportNodes');
@@ -292,8 +288,8 @@ class XMLExportController extends BatchController {
   }
 
   /**
-   * Finish the XML export (oids parameter will be ignored)
-   * @param $oids The oids to process
+   * Finish the XML export (object ids parameter will be ignored)
+   * @param $oids The object ids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function finishExport($oids) {
@@ -311,7 +307,6 @@ class XMLExportController extends BatchController {
     // clear session variables
     $tmp = null;
     $this->_cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $tmp);
-    $session->set($this->ITERATOR_ID, $tmp);
     $session->set($this->DOCUMENT_INFO, $tmp);
   }
 
@@ -339,7 +334,7 @@ class XMLExportController extends BatchController {
   /**
    * Serialize a Node to XML
    * @param $fileHandle The file handle to write to
-   * @param $oid The oid of the node
+   * @param $oid The object id of the node
    * @param $depth The depth of the node in the tree
    * @param $documentInfo An assoziative array (see DOCUMENT_INFO)
    * @return The updated document state
@@ -371,9 +366,7 @@ class XMLExportController extends BatchController {
       foreach ($attributes as $curAttribute) {
         $attributeName = $curAttribute->getName();
         $value = $node->getValue($attributeName);
-        if ($value) {
-          $fileUtil->fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
-        }
+        $fileUtil->fputsUnicode($fileHandle, ' '.$attributeName.'="'.$this->formatValue($value).'"');
       }
       // close start tag
       $fileUtil->fputsUnicode($fileHandle, '>');

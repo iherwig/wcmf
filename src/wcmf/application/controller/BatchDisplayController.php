@@ -77,6 +77,9 @@ class BatchDisplayController extends BatchController {
       $session->set($this->REQUEST, $request);
       $reg = array();
       $session->set($this->REGISTRY, $reg);
+
+      // reset iterator
+      PersistentIterator::reset($this->ITERATOR_ID, $session);
     }
   }
 
@@ -115,8 +118,8 @@ class BatchDisplayController extends BatchController {
   }
 
   /**
-   * Initialize the iterator (oids parameter will be ignored)
-   * @param $oids The oids to process
+   * Initialize the iterator (object ids parameter will be ignored)
+   * @param $oids The object ids to process
    */
   protected function startProcess($oids) {
     $session = $this->getSession();
@@ -127,9 +130,8 @@ class BatchDisplayController extends BatchController {
     $nodeOID = ObjectId::parse($request->getValue('oid'));
 
     // do the action
-    $iterator = new PersistentIterator($persistenceFacade, $session, $nodeOID);
-    $iteratorID = $iterator->save();
-    $session->set($this->ITERATOR_ID, $iteratorID);
+    $iterator = new PersistentIterator($this->ITERATOR_ID, $persistenceFacade, $session, $nodeOID);
+    $iterator->save();
 
     // display the first node in order to reduce the number of calls
     $this->loadNode($iterator->current());
@@ -138,8 +140,7 @@ class BatchDisplayController extends BatchController {
 
     // proceed if nodes are left
     if ($iterator->valid()) {
-      $iteratorID = $iterator->save();
-      $session->set($this->ITERATOR_ID, $iteratorID);
+      $iterator->save();
 
       $name = $this->getMessage()->getText('Loading tree: continue with %0%',
               array($iterator->current()));
@@ -152,8 +153,8 @@ class BatchDisplayController extends BatchController {
   }
 
   /**
-   * Load nodes provided by the persisted iterator (oids parameter will be ignored)
-   * @param $oids The oids to process
+   * Load nodes provided by the persisted iterator (object ids parameter will be ignored)
+   * @param $oids The object ids to process
    */
   protected function loadNodes($oids) {
     $session = $this->getSession();
@@ -163,14 +164,10 @@ class BatchDisplayController extends BatchController {
     $request = $session->get($this->REQUEST);
 
     // check for iterator in session
-    $iterator = null;
-    $iteratorID = $session->get($this->ITERATOR_ID);
-    if ($iteratorID != null) {
-      $iterator = PersistentIterator::load($persistenceFacade, $session, $iteratorID);
-    }
+    $iterator = PersistentIterator::load($this->ITERATOR_ID, $persistenceFacade, $session);
 
     // no iterator, finish
-    if ($iterator == null) {
+    if ($iterator == null || !$iterator->valid()) {
       // set the result and finish
       $this->endProcess();
     }
@@ -188,8 +185,7 @@ class BatchDisplayController extends BatchController {
     // decide what to do next
     if ($iterator->valid()) {
       // proceed with current iterator
-      $iteratorID = $iterator->save();
-      $session->set($this->ITERATOR_ID, $iteratorID);
+      $iterator->save();
 
       $name = $this->getMessage()->getText('Loading tree: continue with %0%',
               array($iterator->current()));
@@ -211,12 +207,11 @@ class BatchDisplayController extends BatchController {
     $tmp = null;
     $session->set($this->REQUEST, $tmp);
     $session->set($this->REGISTRY, $tmp);
-    $session->set($this->ITERATOR_ID, $tmp);
   }
 
   /**
    * Load the node with the given object id and assign it to the response.
-   * @param $oid The oid of the node to copy
+   * @param $oid The object id of the node to copy
    */
   protected function loadNode(ObjectId $oid) {
     // check if we already loaded the node
@@ -280,7 +275,7 @@ class BatchDisplayController extends BatchController {
   /**
    * Check if an object id is registered in the registry
    * @param $oid The object id to check
-   * @return Boolean whether the oid is registered or not
+   * @return Boolean whether the object id is registered or not
    */
   protected function isRegistered(ObjectId $oid) {
     $session = $this->getSession();

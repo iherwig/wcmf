@@ -105,7 +105,7 @@ class IteratorTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $session = ObjectFactory::getInstance('session');
 
-    $iterator1 = new PersistentIterator($persistenceFacade, $session,
+    $iterator1 = new PersistentIterator('PersistentIterator1', $persistenceFacade, $session,
             ObjectId::parse($this->_authorOid));
     $count1 = 0;
     foreach($iterator1 as $depth => $oid) {
@@ -115,7 +115,7 @@ class IteratorTest extends DatabaseTestCase {
       $count1++;
     }
 
-    $iterator2 = new PersistentIterator($persistenceFacade, $session,
+    $iterator2 = new PersistentIterator('PersistentIterator2', $persistenceFacade, $session,
             ObjectId::parse($this->_publisherOid));
     $count2 = 0;
     foreach($iterator2 as $depth => $oid) {
@@ -125,7 +125,7 @@ class IteratorTest extends DatabaseTestCase {
       $count2++;
     }
 
-    $iterator3 = new PersistentIterator($persistenceFacade, $session,
+    $iterator3 = new PersistentIterator('PersistentIterator3', $persistenceFacade, $session,
             ObjectId::parse($this->_bookOid));
     $count3 = 0;
     foreach($iterator3 as $depth => $oid) {

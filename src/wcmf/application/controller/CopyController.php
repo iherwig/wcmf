@@ -88,6 +88,9 @@ class CopyController extends BatchController {
       $session->set($this->REQUEST, $request);
       $map = array();
       $session->set($this->OBJECT_MAP, $map);
+
+      // reset iterator
+      PersistentIterator::reset($this->ITERATOR_ID, $session);
     }
   }
 
@@ -171,8 +174,8 @@ class CopyController extends BatchController {
   }
 
   /**
-   * Copy/Move the first node (oids parameter will be ignored)
-   * @param $oids The oids to process
+   * Copy/Move the first node (object ids parameter will be ignored)
+   * @param $oids The object ids to process
    */
   protected function startProcess($oids) {
     $session = $this->getSession();
@@ -214,10 +217,9 @@ class CopyController extends BatchController {
     else if ($action == 'copy') {
       // with copy action, we need to attach a copy of the Node to the new target,
       // the children need to be loaded and treated in the same way too
-      $iterator = new PersistentIterator($persistenceFacade, $session, $nodeOID,
+      $iterator = new PersistentIterator($this->ITERATOR_ID, $persistenceFacade, $session, $nodeOID,
               array('composite'));
-      $iteratorID = $iterator->save();
-      $session->set($this->ITERATOR_ID, $iteratorID);
+      $iterator->save();
 
       // copy the first node in order to reduce the number of calls for a single copy
       $nodeCopy = $this->copyNode($iterator->current());
@@ -234,8 +236,7 @@ class CopyController extends BatchController {
 
         // proceed if nodes are left
         if ($request->getBooleanValue('recursive') && $iterator->valid()) {
-          $iteratorID = $iterator->save();
-          $session->set($this->ITERATOR_ID, $iteratorID);
+          $iterator->save();
 
           $name = $this->getMessage()->getText('Copying tree: continue with %0%',
                   array($iterator->current()));
@@ -250,8 +251,8 @@ class CopyController extends BatchController {
   }
 
   /**
-   * Copy nodes provided by the persisted iterator (oids parameter will be ignored)
-   * @param $oids The oids to process
+   * Copy nodes provided by the persisted iterator (object ids parameter will be ignored)
+   * @param $oids The object ids to process
    */
   protected function copyNodes($oids) {
     $session = $this->getSession();
@@ -264,14 +265,10 @@ class CopyController extends BatchController {
     $nodeOID = ObjectId::parse($request->getValue('oid'));
 
     // check for iterator in session
-    $iterator = null;
-    $iteratorID = $session->get($this->ITERATOR_ID);
-    if ($iteratorID != null) {
-      $iterator = PersistentIterator::load($persistenceFacade, $session, $iteratorID);
-    }
+    $iterator = PersistentIterator::load($this->ITERATOR_ID, $persistenceFacade, $session);
 
     // no iterator, finish
-    if ($iterator == null) {
+    if ($iterator == null || !$iterator->valid()) {
       // set the result and finish
       $this->endProcess($this->getCopyOID($nodeOID));
     }
@@ -289,8 +286,7 @@ class CopyController extends BatchController {
     // decide what to do next
     if ($iterator->valid()) {
       // proceed with current iterator
-      $iteratorID = $iterator->save();
-      $session->set($this->ITERATOR_ID, $iteratorID);
+      $iterator->save();
 
       $name = $this->getMessage()->getText('Copying tree: continue with %0%',
               array($iterator->current()));
@@ -316,13 +312,12 @@ class CopyController extends BatchController {
     $tmp = null;
     $session->set($this->REQUEST, $tmp);
     $session->set($this->OBJECT_MAP, $tmp);
-    $session->set($this->ITERATOR_ID, $tmp);
   }
 
   /**
    * Create a copy of the node with the given object id. The returned
    * node is already persisted.
-   * @param $oid The oid of the node to copy
+   * @param $oid The object id of the node to copy
    * @return The copied Node or null
    */
   protected function copyNode(ObjectId $oid) {
@@ -388,7 +383,7 @@ class CopyController extends BatchController {
 
   /**
    * Get the target node from the request parameter targetoid
-   * @param $targetOID The oid of the target node
+   * @param $targetOID The object id of the target node
    * @return Node instance
    */
   protected function getTargetNode(ObjectId $targetOID) {
@@ -415,8 +410,8 @@ class CopyController extends BatchController {
   }
 
   /**
-   * Update the copied oids in the registry
-   * @param $oidMap Map of changed oids (key: old value, value: new value)
+   * Update the copied object ids in the registry
+   * @param $oidMap Map of changed object ids (key: old value, value: new value)
    */
   protected function updateCopyOIDs(array $oidMap) {
     $session = $this->getSession();
