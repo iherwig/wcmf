@@ -19,6 +19,7 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\util\StringUtil;
 
 /**
  * CopyController is used to copy or move Node instances.
@@ -57,9 +58,12 @@ use wcmf\lib\presentation\Response;
 class CopyController extends BatchController {
 
   // session name constants
-  private $REQUEST = 'CopyController.request';
-  private $OBJECT_MAP = 'CopyController.objectmap';
-  private $ITERATOR_ID = 'CopyController.iteratorid';
+  const SESSION_VARNAME = __CLASS__;
+  const OBJECT_MAP_VAR = 'objectmap';
+  const ACTION_VAR = 'action';
+  
+  // persistent iterator id
+  const ITERATOR_ID_VAR = 'CopyController.iteratorid';
 
   private $_targetNode = null;
 
@@ -84,13 +88,15 @@ class CopyController extends BatchController {
         $request->setValue('recursive', true);
       }
 
-      // store request in session
-      $session->set($this->REQUEST, $request);
-      $map = array();
-      $session->set($this->OBJECT_MAP, $map);
+      // initialize session variables
+      $sessionData = array(
+        self::OBJECT_MAP_VAR => array(),
+        self::ACTION_VAR => $request->getAction()
+      );
+      $session->set(self::SESSION_VARNAME, $sessionData);
 
       // reset iterator
-      PersistentIterator::reset($this->ITERATOR_ID, $session);
+      PersistentIterator::reset(self::ITERATOR_ID_VAR, $session);
     }
   }
 
@@ -178,14 +184,14 @@ class CopyController extends BatchController {
    * @param $oids The object ids to process
    */
   protected function startProcess($oids) {
-    $session = $this->getSession();
     $persistenceFacade = $this->getPersistenceFacade();
+    $session = $this->getSession();
+    $sessionData = $session->get(self::SESSION_VARNAME);
 
     // restore the request from session
-    $request = $session->get($this->REQUEST);
-    $action = $request->getAction();
-    $targetOID = ObjectId::parse($request->getValue('targetoid'));
-    $nodeOID = ObjectId::parse($request->getValue('oid'));
+    $action = $sessionData[self::ACTION_VAR];
+    $targetOID = ObjectId::parse($this->getRequestValue('targetoid'));
+    $nodeOID = ObjectId::parse($this->getRequestValue('oid'));
 
     // do the action
     if ($action == 'move') {
@@ -217,7 +223,7 @@ class CopyController extends BatchController {
     else if ($action == 'copy') {
       // with copy action, we need to attach a copy of the Node to the new target,
       // the children need to be loaded and treated in the same way too
-      $iterator = new PersistentIterator($this->ITERATOR_ID, $persistenceFacade, $session, $nodeOID,
+      $iterator = new PersistentIterator(self::ITERATOR_ID_VAR, $persistenceFacade, $session, $nodeOID,
               array('composite'));
       $iterator->save();
 
@@ -235,7 +241,7 @@ class CopyController extends BatchController {
         $iterator->next();
 
         // proceed if nodes are left
-        if ($request->getBooleanValue('recursive') && $iterator->valid()) {
+        if (StringUtil::getBoolean($this->getRequestValue('recursive')) && $iterator->valid()) {
           $iterator->save();
 
           $name = $this->getMessage()->getText('Copying tree: continue with %0%',
@@ -255,17 +261,14 @@ class CopyController extends BatchController {
    * @param $oids The object ids to process
    */
   protected function copyNodes($oids) {
-    $session = $this->getSession();
     $persistenceFacade = $this->getPersistenceFacade();
+    $session = $this->getSession();
 
     // restore the request from session
-    $request = $session->get($this->REQUEST);
-    $action = $request->getAction();
-    $targetOID = ObjectId::parse($request->getValue('targetoid'));
-    $nodeOID = ObjectId::parse($request->getValue('oid'));
+    $nodeOID = ObjectId::parse($this->getRequestValue('oid'));
 
     // check for iterator in session
-    $iterator = PersistentIterator::load($this->ITERATOR_ID, $persistenceFacade, $session);
+    $iterator = PersistentIterator::load(self::ITERATOR_ID_VAR, $persistenceFacade, $session);
 
     // no iterator, finish
     if ($iterator == null || !$iterator->valid()) {
@@ -275,7 +278,7 @@ class CopyController extends BatchController {
 
     // process _NODES_PER_CALL nodes
     $counter = 0;
-    while ($iterator->valid() && $counter < $request->getValue('nodesPerCall')) {
+    while ($iterator->valid() && $counter < $this->getRequestValue('nodesPerCall')) {
       $currentOID = $iterator->current();
       $this->copyNode($currentOID);
 
@@ -309,9 +312,8 @@ class CopyController extends BatchController {
     $session = $this->getSession();
 
     // clear session variables
-    $tmp = null;
-    $session->set($this->REQUEST, $tmp);
-    $session->set($this->OBJECT_MAP, $tmp);
+    $sessionData = array();
+    $session->set(self::SESSION_VARNAME, $sessionData);
   }
 
   /**
@@ -403,10 +405,10 @@ class CopyController extends BatchController {
    */
   protected function registerCopy(PersistentObject $origNode, PersistentObject $copyNode) {
     $session = $this->getSession();
-    $registry = $session->get($this->OBJECT_MAP);
+    $sessionData = $session->get(self::SESSION_VARNAME);
     // store oid in the registry
-    $registry[$origNode->getOID()->__toString()] = $copyNode->getOID()->__toString();
-    $session->set($this->OBJECT_MAP, $registry);
+    $sessionData[self::OBJECT_MAP_VAR][$origNode->getOID()->__toString()] = $copyNode->getOID()->__toString();
+    $session->set(self::SESSION_VARNAME, $sessionData);
   }
 
   /**
@@ -415,7 +417,8 @@ class CopyController extends BatchController {
    */
   protected function updateCopyOIDs(array $oidMap) {
     $session = $this->getSession();
-    $registry = $session->get($this->OBJECT_MAP);
+    $sessionData = $session->get(self::SESSION_VARNAME);
+    $registry = $sessionData[self::OBJECT_MAP_VAR];
     // registry maybe deleted already if it's the last step
     if ($registry) {
       $flippedRegistry = array_flip($registry);
@@ -427,7 +430,8 @@ class CopyController extends BatchController {
         }
       }
       $registry = array_flip($flippedRegistry);
-      $session->set($this->OBJECT_MAP, $registry);
+      $sessionData[self::OBJECT_MAP_VAR] = $registry;
+      $session->set(self::SESSION_VARNAME, $sessionData);
     }
   }
 
@@ -438,7 +442,8 @@ class CopyController extends BatchController {
    */
   protected function getCopyOID(ObjectId $origOID) {
     $session = $this->getSession();
-    $registry = $session->get($this->OBJECT_MAP);
+    $sessionData = $session->get(self::SESSION_VARNAME);
+    $registry = $sessionData[self::OBJECT_MAP_VAR];
 
     // check if the oid exists in the registry
     $oidStr = $origOID->__toString();

@@ -68,7 +68,6 @@ class DisplayControllerTest extends ControllerTestCase {
     $response = $this->runRequest('read', $data);
 
     // test
-    $this->assertTrue($response->getValue('success'), 'The request was successful');
     $obj = $response->getValue('object');
     $this->assertEquals('Administrator', $obj->getValue('name'));
 
@@ -100,7 +99,6 @@ class DisplayControllerTest extends ControllerTestCase {
     $response = $this->runRequest('read', $data);
 
     // test
-    $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = $response->getValue('object');
     $this->assertEquals('Administrator [de]', $translatedObj->getValue('name'));
 
@@ -141,7 +139,6 @@ class DisplayControllerTest extends ControllerTestCase {
     $response = $this->runRequest('read', $data);
 
     // test
-    $this->assertTrue($response->getValue('success'), 'The request was successful');
     $translatedObj = $response->getValue('object');
     $translatedChild = $translatedObj->getFirstChild();
     $this->assertEquals('Value [de]', $translatedChild->getValue('val'));

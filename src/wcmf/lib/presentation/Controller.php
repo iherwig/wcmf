@@ -280,16 +280,7 @@ class Controller {
       $this->_response->setValue('errorMessage', $error->getMessage());
       $this->_response->setValue('errorData', $error->getData());
       $this->_response->setStatus($error->getStatusCode());
-      $this->_response->setValue('success', false);
     }
-    else {
-      $this->_response->setValue('success', true);
-    }
-
-    // set wCMF specific values
-    $this->_response->setValue('controller', get_class($this));
-    $this->_response->setValue('context', $this->_response->getContext());
-    $this->_response->setValue('action', $this->_response->getAction());
   }
 
   /**

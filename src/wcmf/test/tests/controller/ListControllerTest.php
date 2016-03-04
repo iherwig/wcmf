@@ -68,7 +68,6 @@ class ListControllerTest extends ControllerTestCase {
     $response = $this->runRequest('list', $data);
 
     // test
-    $this->assertTrue($response->getValue('success'), 'The request was successful');
     $objects = $response->getValue('list');
     $filteredObjects = Node::filter($objects, $oid, null, null, null);
     $this->assertEquals(1, sizeof($filteredObjects));

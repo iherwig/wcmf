@@ -10,6 +10,7 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
@@ -69,11 +70,13 @@ use wcmf\lib\presentation\Response;
 abstract class BatchController extends Controller {
 
   // session name constants
-  const ONE_CALL_SESSION_VARNAME = 'BatchController.oneCall';
-  const STEP_SESSION_VARNAME = 'BatchController.curStep';
-  const NUM_STEPS_VARNAME = 'BatchController.numSteps';
-  const DOWNLOAD_STEP = 'BatchController.downloadStep'; // signals that the next continue action triggers the download
-  const WORK_PACKAGES_VARNAME = 'BatchController.workPackages';
+  const SESSION_VARNAME = __CLASS__;    
+  const REQUEST_VAR = 'request';
+  const ONE_CALL_VAR = 'oneCall';
+  const STEP_VAR = 'step';
+  const NUM_STEPS_VAR = 'numSteps';
+  const DOWNLOAD_STEP_VAR = 'downloadStep'; // signals that the next continue action triggers the download
+  const PACKAGES_VAR = 'packages';
 
   private $_curStep = 1;
   private $_workPackages = array();
@@ -86,29 +89,35 @@ abstract class BatchController extends Controller {
 
     $session = $this->getSession();
     if ($request->getAction() == 'continue') {
+      $sessionData = $session->get(self::SESSION_VARNAME);
       // get step for current call from session
-      if ($session->exist(self::STEP_SESSION_VARNAME)) {
-        $this->_curStep = $session->get(self::STEP_SESSION_VARNAME);
+      if (isset($sessionData[self::STEP_VAR])) {
+        $this->_curStep = $sessionData[self::STEP_VAR];
       }
       else {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("Current step undefined."));
       }
       // get workpackage definition for current call from session
-      if ($session->exist(self::WORK_PACKAGES_VARNAME)) {
-        $this->_workPackages = $session->get(self::WORK_PACKAGES_VARNAME);
+      if (isset($sessionData[self::PACKAGES_VAR])) {
+        $this->_workPackages = $sessionData[self::PACKAGES_VAR];
       }
       else {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("Work packages undefined."));
       }
     }
     else {
-      // first call, initialize step session variable
+      // first call
       $this->_curStep = 1;
-      $session->set(self::ONE_CALL_SESSION_VARNAME, $request->getBooleanValue('oneCall', false));
-
-      $tmpArray = array();
-      $session->set(self::WORK_PACKAGES_VARNAME, $tmpArray);
-      $session->set(self::DOWNLOAD_STEP, false);
+      
+      // initialize session variables
+      $sessionData = array(
+        self::ONE_CALL_VAR => $request->getBooleanValue('oneCall', false),
+        self::REQUEST_VAR => $request->getValues(),
+        self::PACKAGES_VAR => array(),
+        self::STEP_VAR => $this->_curStep,
+        self::NUM_STEPS_VAR => 0,
+        self::DOWNLOAD_STEP_VAR => false
+      );
 
       // define work packages
       $number = 0;
@@ -127,8 +136,12 @@ abstract class BatchController extends Controller {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("No work packages."));
       }
     }
-    $nextStep = $this->_curStep+1;
-    $session->set(self::STEP_SESSION_VARNAME, $nextStep);
+
+    // next step
+    $sessionData[self::STEP_VAR]++;
+    
+    // update session
+    $session->set(self::SESSION_VARNAME, $sessionData);
   }
 
   /**
@@ -137,9 +150,10 @@ abstract class BatchController extends Controller {
   protected function doExecute() {
     $session = $this->getSession();
     $response = $this->getResponse();
+    $sessionData = $session->get(self::SESSION_VARNAME);
 
     // check if a download was triggered in the last step
-    if ($session->get(self::DOWNLOAD_STEP) == true) {
+    if ($sessionData[self::DOWNLOAD_STEP_VAR] == true) {
       $file = $this->getDownloadFile();
       $response->setFile($file);
       return;
@@ -159,21 +173,25 @@ abstract class BatchController extends Controller {
     // check if we are finished or should continue
     // (number of packages may have changed while processing)
     $numberOfSteps = $this->getNumberOfSteps();
-    if ($curStep >= $numberOfSteps || $session->get(self::ONE_CALL_SESSION_VARNAME) == true) {
+    if ($curStep >= $numberOfSteps || $sessionData[self::ONE_CALL_VAR] == true) {
       // finished -> check for download
       $file = $this->getDownloadFile();
       if ($file) {
         $response->setAction('download');
-        $session->set(self::DOWNLOAD_STEP, true);
+        $sessionData[self::DOWNLOAD_STEP_VAR] = true;
       }
       else {
         $response->setAction('done');
+        $sessionData = array();
       }
     }
     else {
       // proceed
       $response->setAction('next');
     }
+    
+    // update session
+    $session->set(self::SESSION_VARNAME, $sessionData);
   }
 
   /**
@@ -204,7 +222,7 @@ abstract class BatchController extends Controller {
       throw new ApplicationException($request, $response,
               ApplicationError::getGeneral("Wrong work package description '".$name."': Size must be at least 1."));
     }
-    if (sizeOf($oids) == 0) {
+    if (sizeof($oids) == 0) {
       throw new ApplicationException($request, $response,
               ApplicationError::getGeneral("Wrong work package description '".$name."': No oids given."));
     }
@@ -214,25 +232,26 @@ abstract class BatchController extends Controller {
     }
 
     $session = $this->getSession();
-    $workPackages = $session->get(self::WORK_PACKAGES_VARNAME);
-
+    $sessionData = $session->get(self::SESSION_VARNAME);
+    
+    $workPackages = $sessionData[self::WORK_PACKAGES_VARNAME];
     $counter = 1;
-    $total = sizeOf($oids);
-    while(sizeOf($oids) > 0) {
+    $total = sizeof($oids);
+    while(sizeof($oids) > 0) {
       $items = array();
       for($i=0; $i<$size; $i++) {
         $nextItem = array_shift($oids);
         if($nextItem !== null) {
-          $items[] = $nextItem;
+          $items[] = $nextItem->__toString();
         }
       }
 
       // define status text
       $start = $counter;
-      $end = ($counter+sizeOf($items)-1);
+      $end = ($counter+sizeof($items)-1);
       $stepsText = $counter;
       if ($start != $end) {
-        $stepsText .= '-'.($counter+sizeOf($items)-1);
+        $stepsText .= '-'.($counter+sizeof($items)-1);
       }
       $statusText = "";
       if ($total > 1) {
@@ -246,10 +265,12 @@ abstract class BatchController extends Controller {
       $workPackages[] = $curWorkPackage;
       $counter += $size;
     }
-    $session->set(self::WORK_PACKAGES_VARNAME, $workPackages);
-    $session->set(self::NUM_STEPS_VARNAME, sizeOf($workPackages));
-
     $this->_workPackages = $workPackages;
+    
+    // update session
+    $sessionData[self::PACKAGES_VAR] = $workPackages;
+    $sessionData[self::NUM_STEPS_VAR] = sizeof($workPackages);
+    $session->set(self::SESSION_VARNAME, $sessionData);
   }
 
   /**
@@ -266,9 +287,25 @@ abstract class BatchController extends Controller {
                 ApplicationError::getGeneral("Method '".$curWorkPackageDef['callback']."' must be implemented by ".get_class($this)));
       }
       else {
-        call_user_func(array($this, $curWorkPackageDef['callback']), $curWorkPackageDef['oids'], $curWorkPackageDef['args']);
+        // unserialize oids
+        $oids = array_map(function($oidStr) {
+          return ObjectId::parse($oidStr);
+        }, $curWorkPackageDef['oids']);
+        call_user_func(array($this, $curWorkPackageDef['callback']), $oids, $curWorkPackageDef['args']);
       }
     }
+  }
+
+  /**
+   * Get a value from the initial request.
+   * @param $name The name of the value
+   * @return Mixed
+   */
+  protected function getRequestValue($name) {
+    $session = $this->getSession();
+    $sessionData = $session->get(self::SESSION_VARNAME);
+    $requestValues = $sessionData[self::REQUEST_VAR];
+    return isset($requestValues[$name]) ? $requestValues[$name] : null;
   }
 
   /**
@@ -276,7 +313,9 @@ abstract class BatchController extends Controller {
    * @return Integer
    */
   protected function getNumberOfSteps() {
-    return $this->getSession()->get(self::NUM_STEPS_VARNAME);
+    $session = $this->getSession();
+    $sessionData = $session->get(self::SESSION_VARNAME);
+    return $sessionData[self::NUM_STEPS_VAR];
   }
 
   /**

@@ -48,9 +48,11 @@ use wcmf\lib\presentation\Response;
 class BatchDisplayController extends BatchController {
 
   // session name constants
-  private $REQUEST = 'BatchDisplayController.request';
-  private $REGISTRY = 'BatchDisplayController.registry';
-  private $ITERATOR_ID = 'BatchDisplayController.iteratorid';
+  const SESSION_VARNAME = __CLASS__;
+  const REGISTRY_VAR = 'registry';
+
+  // persistent iterator id
+  const ITERATOR_ID_VAR = 'BatchDisplayController.iteratorid';
 
   // default values, maybe overriden by corresponding request values (see above)
   private $_NODES_PER_CALL = 50;
@@ -73,13 +75,14 @@ class BatchDisplayController extends BatchController {
         $request->setValue('translateValues', true);
       }
 
-      // store request in session
-      $session->set($this->REQUEST, $request);
-      $reg = array();
-      $session->set($this->REGISTRY, $reg);
+      // initialize session variables
+      $sessionData = array(
+        self::REGISTRY_VAR => array()
+      );
+      $session->set(self::SESSION_VARNAME, $sessionData);
 
       // reset iterator
-      PersistentIterator::reset($this->ITERATOR_ID, $session);
+      PersistentIterator::reset(self::ITERATOR_ID_VAR, $session);
     }
   }
 
@@ -125,12 +128,11 @@ class BatchDisplayController extends BatchController {
     $session = $this->getSession();
     $persistenceFacade = $this->getPersistenceFacade();
 
-    // restore the request from session
-    $request = $session->get($this->REQUEST);
-    $nodeOID = ObjectId::parse($request->getValue('oid'));
+    // restore the request oid from session
+    $nodeOID = ObjectId::parse($this->getRequestValue('oid'));
 
     // do the action
-    $iterator = new PersistentIterator($this->ITERATOR_ID, $persistenceFacade, $session, $nodeOID);
+    $iterator = new PersistentIterator(self::ITERATOR_ID_VAR, $persistenceFacade, $session, $nodeOID);
     $iterator->save();
 
     // display the first node in order to reduce the number of calls
@@ -160,11 +162,8 @@ class BatchDisplayController extends BatchController {
     $session = $this->getSession();
     $persistenceFacade = $this->getPersistenceFacade();
 
-    // restore the request from session
-    $request = $session->get($this->REQUEST);
-
     // check for iterator in session
-    $iterator = PersistentIterator::load($this->ITERATOR_ID, $persistenceFacade, $session);
+    $iterator = PersistentIterator::load(self::ITERATOR_ID_VAR, $persistenceFacade, $session);
 
     // no iterator, finish
     if ($iterator == null || !$iterator->valid()) {
@@ -174,7 +173,8 @@ class BatchDisplayController extends BatchController {
 
     // process _NODES_PER_CALL nodes
     $counter = 0;
-    while ($iterator->valid() && $counter < $request->getValue('nodesPerCall')) {
+    $nodesPerCall = $this->getRequestValue('nodesPerCall');
+    while ($iterator->valid() && $counter < $nodesPerCall) {
       $currentOID = $iterator->current();
       $this->loadNode($currentOID);
 
@@ -204,9 +204,8 @@ class BatchDisplayController extends BatchController {
     $session = $this->getSession();
 
     // clear session variables
-    $tmp = null;
-    $session->set($this->REQUEST, $tmp);
-    $session->set($this->REGISTRY, $tmp);
+    $sessionData = array();
+    $session->set(self::SESSION_VARNAME, $sessionData);
   }
 
   /**
@@ -219,10 +218,10 @@ class BatchDisplayController extends BatchController {
       return;
     }
     $persistenceFacade = $this->getPersistenceFacade();
-    $session = $this->getSession();
 
-    // restore the request from session
-    $request = $session->get($this->REQUEST);
+    // restore the request values from session
+    $language = $this->getRequestValue('language');
+    $translateValues = $this->getRequestValue('translateValues');
 
     // load the node
     $node = $persistenceFacade->load($oid);
@@ -233,14 +232,14 @@ class BatchDisplayController extends BatchController {
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
       $localization = $this->getLocalization();
-      $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
+      $node = $localization->loadTranslation($node, $language, true, true);
     }
 
     // translate values if requested
-    if ($request->getBooleanValue('translateValues')) {
+    if ($translateValues) {
       $nodes = array($node);
       if ($this->isLocalizedRequest()) {
-        NodeUtil::translateValues($nodes, $request->getValue('language'));
+        NodeUtil::translateValues($nodes, $language);
       }
       else {
         NodeUtil::translateValues($nodes);
@@ -267,9 +266,9 @@ class BatchDisplayController extends BatchController {
    */
   protected function register(ObjectId $oid) {
     $session = $this->getSession();
-    $registry = $session->get($this->REGISTRY);
-    $registry[] = $oid;
-    $session->set($this->REGISTRY, $registry);
+    $sessionData = $session->get(self::SESSION_VARNAME);
+    $sessionData[self::REGISTRY_VAR][] = $oid;
+    $session->set(self::SESSION_VARNAME, $sessionData);
   }
 
   /**
@@ -279,9 +278,9 @@ class BatchDisplayController extends BatchController {
    */
   protected function isRegistered(ObjectId $oid) {
     $session = $this->getSession();
-    $registry = $session->get($this->REGISTRY);
+    $sessionData = $session->get(self::SESSION_VARNAME);
 
-    return in_array($oid, $registry);
+    return in_array($oid, $sessionData[self::REGISTRY_VAR]);
   }
 
   /**

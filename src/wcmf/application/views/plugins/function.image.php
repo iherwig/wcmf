@@ -133,8 +133,8 @@ function smarty_function_image($params, \Smarty_Internal_Template $template) {
     $destName = URIUtil::makeRelative($destNameAbs, dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/');
 
     // if the file does not exist in the cache, we have to create it
-    $dateOrig = @fileatime($file);
-    $dateCache = @fileatime($destName);
+    $dateOrig = @filemtime($file);
+    $dateCache = @filemtime($destName);
     if (!file_exists($destName) || $dateOrig > $dateCache) {
       $graphicsUtil = new GraphicsUtil();
       if ($sizemode == 'resample') {
