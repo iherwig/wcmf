@@ -346,23 +346,25 @@ class AbstractPermissionManager {
       self::$_logger->debug("Matching roles for ".$login);
     }
     $user = $this->_principalFactory->getUser($login, true);
-    if (isset($permissions['allow'])) {
-      foreach ($permissions['allow'] as $value) {
-        if ($user->hasRole($value)) {
-          if (self::$_logger->isDebugEnabled()) {
-            self::$_logger->debug("Allowed because of role ".$value);
+    if ($user != null) {
+      if (isset($permissions['allow'])) {
+        foreach ($permissions['allow'] as $value) {
+          if ($user->hasRole($value)) {
+            if (self::$_logger->isDebugEnabled()) {
+              self::$_logger->debug("Allowed because of role ".$value);
+            }
+            return true;
           }
-          return true;
         }
       }
-    }
-    if (isset($permissions['deny'])) {
-      foreach ($permissions['deny'] as $value) {
-        if ($user->hasRole($value)) {
-          if (self::$_logger->isDebugEnabled()) {
-            self::$_logger->debug("Denied because of role ".$value);
+      if (isset($permissions['deny'])) {
+        foreach ($permissions['deny'] as $value) {
+          if ($user->hasRole($value)) {
+            if (self::$_logger->isDebugEnabled()) {
+              self::$_logger->debug("Denied because of role ".$value);
+            }
+            return false;
           }
-          return false;
         }
       }
     }

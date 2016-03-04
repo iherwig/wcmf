@@ -177,12 +177,12 @@ abstract class AbstractUser extends Node implements User {
         throw new ValidationException($message->getText("The user requires a login name"));
       }
       if ($value == AnonymousUser::USER_GROUP_NAME) {
-        throw new ValidationException($message->getText("The login '%0%' is not allowed", 
+        throw new ValidationException($message->getText("The login '%0%' is not allowed",
                 array(AnonymousUser::USER_GROUP_NAME)));
       }
       $principalFactory = ObjectFactory::getInstance('principalFactory');
       $user = $principalFactory->getUser($value);
-      if ($user != null && $user->getOID() != $this->getOID()) {
+      if ($user != null && $user->getLogin() == $value && $user->getOID() != $this->getOID()) {
         throw new ValidationException($message->getText("The login '%0%' already exists", array($value)));
       }
     }
