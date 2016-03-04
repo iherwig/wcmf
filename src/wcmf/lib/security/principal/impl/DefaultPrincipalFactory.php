@@ -30,6 +30,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
   private $_permissionManager = null;
   private $_userType = null;
   private $_roleType = null;
+  private $_users = array();
 
   private $_roleRelationNames = null;
 
@@ -52,19 +53,23 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    * @see PrincipalFactory::getUser()
    */
   public function getUser($login, $useTempPermission=false) {
-    if ($useTempPermission) {
-      $this->_permissionManager->addTempPermission($this->_userType, '', PersistenceAction::READ);
-    }
+    if (!isset($this->_users[$login])) {
+      // load user if not done before
+      if ($useTempPermission) {
+        $tmpPerm = $this->_permissionManager->addTempPermission($this->_userType, '', PersistenceAction::READ);
+      }
+      $this->_users[$login] = 'loading';
+      $user = $this->_persistenceFacade->loadFirstObject($this->_userType, BuildDepth::SINGLE,
+                  array(
+                      new Criteria($this->_userType, 'login', '=', $login)
+                  ), null);
+      $this->_users[$login] = $user;
 
-    $user = $this->_persistenceFacade->loadFirstObject($this->_userType, BuildDepth::SINGLE,
-                array(
-                    new Criteria($this->_userType, 'login', '=', $login)
-                ), null);
-
-    if ($useTempPermission) {
-      $this->_permissionManager->removeTempPermission($this->_userType, '', PersistenceAction::READ);
+      if ($useTempPermission) {
+        $this->_permissionManager->removeTempPermission($tmpPerm);
+      }
     }
-    return $user;
+    return $this->_users[$login];
   }
 
   /**
@@ -72,7 +77,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    */
   public function getUserRoles(User $user, $useTempPermission=false) {
     if ($useTempPermission) {
-      $this->_permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $tmpPerm = $this->_permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
     }
 
     // initialize role relation definition
@@ -89,7 +94,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
     }
 
     if ($useTempPermission) {
-      $this->_permissionManager->removeTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $this->_permissionManager->removeTempPermission($tmpPerm);
     }
 
     // TODO add role nodes from addedNodes array
@@ -102,7 +107,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    */
   public function getRole($name, $useTempPermission=false) {
     if ($useTempPermission) {
-      $this->_permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $tmpPerm = $this->_permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
     }
 
     $role = $this->_persistenceFacade->loadFirstObject($this->_roleType, BuildDepth::SINGLE,
@@ -111,7 +116,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
                 ), null);
 
     if ($useTempPermission) {
-      $this->_permissionManager->removeTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $this->_permissionManager->removeTempPermission($tmpPerm);
     }
     return $role;
   }

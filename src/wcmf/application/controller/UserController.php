@@ -14,6 +14,7 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\security\principal\User;
 
 /**
@@ -39,6 +40,32 @@ use wcmf\lib\security\principal\User;
  */
 class UserController extends Controller {
 
+  private $_principalFactory = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $actionMapper
+   * @param $localization
+   * @param $message
+   * @param $configuration
+   * @param $principalFactory
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
+          Localization $localization,
+          Message $message,
+          Configuration $configuration,
+          PrincipalFactory $principalFactory) {
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
+    $this->_principalFactory = $principalFactory;
+  }
+
   /**
    * @see Controller::doExecute()
    */
@@ -52,28 +79,29 @@ class UserController extends Controller {
     // change password
 
     // load model
-    $authUser = $session->getAuthUser();
+    $authUser = $this->_principalFactory->getUser($session->getAuthUser());
+    if ($authUser) {
+      // add permissions for this operation
+      $oidStr = $authUser->getOID()->__toString();
+      $tmpPerm1 = $permissionManager->addTempPermission($oidStr, '', PersistenceAction::READ);
+      $tmpPerm2 = $permissionManager->addTempPermission($oidStr, '', PersistenceAction::UPDATE);
 
-    // add permissions for this operation
-    $oidStr = $authUser->getOID()->__toString();
-    $permissionManager->addTempPermission($oidStr, '', PersistenceAction::READ);
-    $permissionManager->addTempPermission($oidStr, '', PersistenceAction::UPDATE);
-
-    // start the persistence transaction
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    try {
-      $this->changePassword($authUser, $request->getValue('oldpassword'),
-        $request->getValue('newpassword1'), $request->getValue('newpassword2'));
-      $transaction->commit();
+      // start the persistence transaction
+      $transaction = $persistenceFacade->getTransaction();
+      $transaction->begin();
+      try {
+        $this->changePassword($authUser, $request->getValue('oldpassword'),
+          $request->getValue('newpassword1'), $request->getValue('newpassword2'));
+        $transaction->commit();
+      }
+      catch(\Exception $ex) {
+        $response->addError(ApplicationError::fromException($ex));
+        $transaction->rollback();
+      }
+      // remove temporary permissions
+      $permissionManager->removeTempPermission($tmpPerm1);
+      $permissionManager->removeTempPermission($tmpPerm2);
     }
-    catch(\Exception $ex) {
-      $response->addError(ApplicationError::fromException($ex));
-      $transaction->rollback();
-    }
-    // remove temporary permissions
-    $permissionManager->clearTempPermissions();
-
     // success
     $response->setAction('ok');
   }

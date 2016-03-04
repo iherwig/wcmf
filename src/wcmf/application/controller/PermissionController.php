@@ -201,7 +201,7 @@ class PermissionController extends Controller {
     elseif ($request->getAction() == 'checkPermissionsOfUser') {
       $result = array();
       $permissions = $request->hasValue('operations') ? $request->getValue('operations') : array();
-      $user = $request->hasValue('user') ? $this->_principalFactory->getUser($request->getValue('user')) : null;
+      $user = $request->hasValue('user') ? $request->getValue('user') : null;
       foreach($permissions as $permission) {
         $keyParts = ActionKey::parseKey($permission);
         $result[$permission] = $permissionManager->authorize($keyParts['resource'], $keyParts['context'], $keyParts['action'],

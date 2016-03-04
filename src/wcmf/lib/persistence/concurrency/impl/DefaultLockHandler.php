@@ -60,10 +60,7 @@ class DefaultLockHandler implements LockHandler {
    * @see LockHandler::aquireLock()
    */
   public function aquireLock(ObjectId $oid, $type, PersistentObject $currentState=null) {
-    $currentUser = $this->getCurrentUser();
-    if (!$currentUser) {
-      return;
-    }
+    $authUserLogin = $this->getAuthUser();
 
     // check for existing locks
     $lock = $this->getLock($oid);
@@ -71,7 +68,7 @@ class DefaultLockHandler implements LockHandler {
       if ($lock->getType() == Lock::TYPE_PESSIMISTIC) {
         // if the existing lock is a pessimistic lock and it is owned by another
         // user, we throw an exception
-        if ($lock->getLogin() != $currentUser->getLogin()) {
+        if ($lock->getLogin() != $authUserLogin) {
           throw new PessimisticLockException($lock);
         }
         // if the existing lock is a pessimistic lock and is owned by the user
@@ -83,7 +80,7 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // create the lock instance
-    $lock = new Lock($type, $oid, $currentUser->getLogin(), $this->_session->getID());
+    $lock = new Lock($type, $oid, $authUserLogin, $this->_session->getID());
 
     // set the current state for optimistic locks
     if ($type == Lock::TYPE_OPTIMISTIC) {
@@ -98,16 +95,13 @@ class DefaultLockHandler implements LockHandler {
    * @see LockHandler::releaseLock()
    */
   public function releaseLock(ObjectId $oid, $type=null) {
-    $currentUser = $this->getCurrentUser();
-    if (!$currentUser) {
-      return;
-    }
+    $authUserLogin = $this->getAuthUser();
 
     // delete locks for the given oid and current user
     $query = new ObjectQuery($this->_lockType, __CLASS__.__METHOD__);
     $tpl = $query->getObjectTemplate($this->_lockType);
     $tpl->setValue('objectid', Criteria::asValue("=", $oid));
-    $tpl->setValue('login', Criteria::asValue("=", $currentUser->getLogin()));
+    $tpl->setValue('login', Criteria::asValue("=", $authUserLogin));
     $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
       // delete lock immediatly
@@ -136,15 +130,12 @@ class DefaultLockHandler implements LockHandler {
    * @see LockHandler::releaseAllLocks()
    */
   public function releaseAllLocks() {
-    $currentUser = $this->getCurrentUser();
-    if (!$currentUser) {
-      return;
-    }
+    $authUserLogin = $this->getAuthUser();
 
     // delete locks for the current user
     $query = new ObjectQuery($this->_lockType, __CLASS__.__METHOD__);
     $tpl = $query->getObjectTemplate($this->_lockType);
-    $tpl->setValue('login', Criteria::asValue("=", $currentUser->getLogin()));
+    $tpl->setValue('login', Criteria::asValue("=", $authUserLogin));
     $locks = $query->execute(BuildDepth::SINGLE);
     foreach($locks as $lock) {
       // delete lock immediatly
@@ -183,8 +174,8 @@ class DefaultLockHandler implements LockHandler {
 
         // if the lock belongs to the current user, we store
         // it in the session for later retrieval
-        $currentUser = $this->getCurrentUser();
-        if ($currentUser && $lockObj->getValue('login') == $currentUser->getLogin()) {
+        $authUserLogin = $this->getAuthUser();
+        if ($lockObj->getValue('login') == $authUserLogin) {
           $this->addSessionLock($lock);
         }
         return $lock;
@@ -201,8 +192,8 @@ class DefaultLockHandler implements LockHandler {
     $lock = $this->getLock($oid);
     if ($lock) {
       if ($lock->getType() == Lock::TYPE_OPTIMISTIC) {
-        $currentUser = $this->getCurrentUser();
-        if ($currentUser && $lock->getLogin() == $currentUser->getLogin()) {
+        $authUserLogin = $this->getAuthUser();
+        if ($lock->getLogin() == $authUserLogin) {
           $lock->setCurrentState($object);
           $this->storeLock($lock);
         }
@@ -230,10 +221,10 @@ class DefaultLockHandler implements LockHandler {
   }
 
   /**
-   * Get the current user
-   * @return User instance
+   * Get the login of the current user
+   * @return String
    */
-  protected function getCurrentUser() {
+  protected function getAuthUser() {
     return $this->_session->getAuthUser();
   }
 

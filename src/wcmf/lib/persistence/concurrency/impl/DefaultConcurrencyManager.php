@@ -118,8 +118,8 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
       // if there is a pessimistic lock on the object and it's not
       // owned by the current user, throw a PessimisticLockException
       if ($type == Lock::TYPE_PESSIMISTIC) {
-        $currentUser = $this->_session->getAuthUser();
-        if ($lock->getLogin() != $currentUser->getLogin()) {
+        $authUserLogin = $this->_session->getAuthUser();
+        if ($lock->getLogin() != $authUserLogin) {
             throw new PessimisticLockException($lock);
         }
       }

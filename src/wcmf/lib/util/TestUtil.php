@@ -156,7 +156,7 @@ class TestUtil {
     $authUser = $authManager->login($user, $password);
     if ($authUser) {
       $session->clear();
-      $session->setAuthUser($authUser);
+      $session->setAuthUser($authUser->getLogin());
     }
     else {
       throw new \RuntimeException("Session could not be started for user '$user'");

@@ -11,8 +11,6 @@
 namespace wcmf\lib\core\impl;
 
 use wcmf\lib\core\Session;
-use wcmf\lib\security\principal\PrincipalFactory;
-use wcmf\lib\security\principal\User;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 
 // session configuration
@@ -34,17 +32,12 @@ class DefaultSession implements Session {
 
   private static $ERROR_VARNAME = 'Session.errors';
 
-  private $_anonymousUser = null;
   private $_authUserVarName = null;
-
-  private $_authUser = null;
-  private $_principalFactory = null;
 
   /**
    * Constructor
    */
   public function __construct() {
-    $this->_anonymousUser = new AnonymousUser();
     $this->_authUserVarName = 'auth_user_'.md5(__FILE__);
 
     $sessionName = 'wcmf'.md5(__FILE__);
@@ -61,14 +54,6 @@ class DefaultSession implements Session {
 
   public function __destruct() {
     session_write_close();
-  }
-
-  /**
-   * Set the PrincipalFactory instance
-   * @param $principalFactory
-   */
-  public function setPrincipalFactory(PrincipalFactory $principalFactory) {
-    $this->_principalFactory = $principalFactory;
   }
 
   /**
@@ -129,27 +114,20 @@ class DefaultSession implements Session {
   /**
    * @see Session::setAuthUser()
    */
-  public function setAuthUser(User $authUser) {
-    $this->set($this->_authUserVarName, $authUser->getLogin());
-    $this->_authUser = $authUser;
+  public function setAuthUser($login) {
+    $this->set($this->_authUserVarName, $login);
   }
 
   /**
    * @see Session::getAuthUser()
    */
   public function getAuthUser() {
-    if ($this->_authUser != null) {
-      return $this->_authUser;
-    }
-
-    $user = $this->_anonymousUser;
+    $login = AnonymousUser::USER_GROUP_NAME;
     // check for auth user in session
     if ($this->exist($this->_authUserVarName)) {
       $login = $this->get($this->_authUserVarName);
-      $user = $this->_principalFactory->getUser($login);
-      $this->_authUser = $user;
     }
-    return $user;
+    return $login;
   }
 
   /**

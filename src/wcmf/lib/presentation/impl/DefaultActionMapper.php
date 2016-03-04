@@ -42,7 +42,6 @@ class DefaultActionMapper implements ActionMapper {
   private $_formatter = null;
   private $_configuration = null;
 
-
   /**
    * Constructor
    * @param $session
@@ -85,14 +84,13 @@ class DefaultActionMapper implements ActionMapper {
 
     // check authorization for controller/context/action triple
     if (!$this->_permissionManager->authorize($referrer, $context, $action)) {
-      $authUser = $this->_session->getAuthUser();
-      if ($authUser instanceof AnonymousUser) {
+      $authUserLogin = $this->_session->getAuthUser();
+      if ($authUserLogin == AnonymousUser::USER_GROUP_NAME) {
         self::$_logger->error("Session invalid. The request was: ".$request->__toString());
         throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
       }
       else {
-        $login = $authUser->getLogin();
-        self::$_logger->error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$login."'");
+        self::$_logger->error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$authUserLogin."'");
         throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
       }
     }

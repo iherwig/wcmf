@@ -96,6 +96,8 @@ class DefaultFactory implements Factory {
    */
   protected $_configuration = null;
 
+  protected $_currentStack = array();
+
   /**
    * Constructor.
    * @param $configuration Configuration instance used to construct instances.
@@ -110,6 +112,10 @@ class DefaultFactory implements Factory {
    */
   public function getInstance($name, $dynamicConfiguration=array()) {
     $instance = null;
+    if (in_array($name, $this->_currentStack)) {
+      //throw new \Exception("Circular dependency detected: ".join(' - ', $this->_currentStack));
+    }
+    $this->_currentStack[] = $name;
 
     // dynamic configuration must be included in internal instance key
     $instanceKey = sizeof($dynamicConfiguration) == 0 ? strtolower($name) :
@@ -125,6 +131,7 @@ class DefaultFactory implements Factory {
     else {
       $instance = $this->_instances[$instanceKey];
     }
+    $this->_currentStack = array();
     return $instance;
   }
 

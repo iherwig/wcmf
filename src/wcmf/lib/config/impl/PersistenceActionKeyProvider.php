@@ -114,10 +114,10 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
     // add temporary permission to allow to read entitys
     $this->_isLoadingKeys = true;
     $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $permissionManager->addTempPermission($this->_entityType, '', PersistenceAction::READ);
+    $tmpPerm = $permissionManager->addTempPermission($this->_entityType, '', PersistenceAction::READ);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $objects = $persistenceFacade->loadObjects($this->_entityType, BuildDepth::SINGLE);
-    $permissionManager->removeTempPermission($this->_entityType, '', PersistenceAction::READ);
+    $permissionManager->removeTempPermission($tmpPerm);
     $this->_isLoadingKeys = false;
     foreach ($objects as $object) {
       $key = ActionKey::createKey(

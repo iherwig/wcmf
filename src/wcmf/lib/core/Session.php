@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\core;
 
-use wcmf\lib\security\principal\User;
-
 /**
  * Session is the interface for session implementations
  * and defines access to session variables.
@@ -64,14 +62,14 @@ interface Session {
   public function destroy();
 
   /**
-   * Set the authenticated user.
-   * @param $authUser User instance.
+   * Set the login of authenticated user.
+   * @param $login Login name of the user
    */
-  public function setAuthUser(User $authUser);
+  public function setAuthUser($login);
 
   /**
-   * Get the authenticated user.
-   * @return User instance.
+   * Get the login of the authenticated user.
+   * @return String
    */
   public function getAuthUser();
 

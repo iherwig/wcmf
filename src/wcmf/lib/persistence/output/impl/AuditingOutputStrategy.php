@@ -56,12 +56,12 @@ class AuditingOutputStrategy implements OutputStrategy {
    */
   public function writeObject(PersistentObject $obj) {
     if (self::$_logger->isInfoEnabled()) {
-      $user = $this->_session->getAuthUser();
+      $authUserLogin = $this->_session->getAuthUser();
 
       switch ($state = $obj->getState()) {
         // log insert action
         case PersistentObject::STATE_NEW:
-          self::$_logger->info('INSERT '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$user->getLogin());
+          self::$_logger->info('INSERT '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$authUserLogin);
           break;
         // log update action
         case PersistentObject::STATE_DIRTY:
@@ -82,12 +82,12 @@ class AuditingOutputStrategy implements OutputStrategy {
               $diff .= $value['name'].':'.serialize($value['old']).'->'.serialize($value['new']).' ';
             }
           }
-          self::$_logger->info('SAVE '.$obj->getOID().': '.$diff.' USER: '.$user->getLogin());
+          self::$_logger->info('SAVE '.$obj->getOID().': '.$diff.' USER: '.$authUserLogin);
           break;
         // log delete action
         case PersistentObject::STATE_DELETED:
           // get old object from storage
-          self::$_logger->info('DELETE '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$user->getLogin());
+          self::$_logger->info('DELETE '.$obj->getOID().': '.str_replace("\n", " ", $obj->__toString()).' USER: '.$authUserLogin);
           break;
       }
     }
