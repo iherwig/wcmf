@@ -19,7 +19,6 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 use wcmf\lib\security\principal\PrincipalFactory;
-use wcmf\lib\security\principal\User;
 use wcmf\lib\util\StringUtil;
 
 /**

@@ -87,7 +87,7 @@ class Application {
 
     // load user configuration
     $principalFactory = ObjectFactory::getInstance('principalFactory');
-    $authUser = $principalFactory->getUser($session->getAuthUser());
+    $authUser = $principalFactory->getUser($session->getAuthUser(), true);
     if ($authUser && strlen($authUser->getConfig()) > 0) {
       $config->addConfiguration($authUser->getConfig(), true);
     }

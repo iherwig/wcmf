@@ -138,7 +138,7 @@ class LoginController extends Controller {
       if ($authUser) {
         // login succeeded
         $session->clear();
-        $session->setAuthUser($authUser);
+        $session->setAuthUser($authUser->getLogin());
 
         // return role names of the user
         $roleNames = array();

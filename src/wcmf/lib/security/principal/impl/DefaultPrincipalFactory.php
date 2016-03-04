@@ -17,6 +17,7 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\security\principal\User;
+use wcmf\lib\security\principal\impl\AnonymousUser;
 
 /**
  * Default implementation of PrincipalFactory.
@@ -58,13 +59,14 @@ class DefaultPrincipalFactory implements PrincipalFactory {
       if ($useTempPermission) {
         $tmpPerm = $this->_permissionManager->addTempPermission($this->_userType, '', PersistenceAction::READ);
       }
-      $this->_users[$login] = 'loading';
+      $this->_users[$login] = new AnonymousUser();
       $user = $this->_persistenceFacade->loadFirstObject($this->_userType, BuildDepth::SINGLE,
                   array(
                       new Criteria($this->_userType, 'login', '=', $login)
                   ), null);
-      $this->_users[$login] = $user;
-
+      if ($user != null) {
+        $this->_users[$login] = $user;
+      }
       if ($useTempPermission) {
         $this->_permissionManager->removeTempPermission($tmpPerm);
       }
