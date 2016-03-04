@@ -151,11 +151,20 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_4gVdILLnEeWcwaDPJFy4ig" name="DELETE/session" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_4gVdIbLnEeWcwaDPJFy4ig" value="action=logout"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_mUohsLLnEeWcwaDPJFy4ig" name="PUT/settings/password" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_mUohsLLnEeWcwaDPJFy4ig" name="PUT/user/password" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_mUohsbLnEeWcwaDPJFy4ig" value="action=changePassword"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_q2x3MLLnEeWcwaDPJFy4ig" name="GET/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_q2x3MbLnEeWcwaDPJFy4ig" value="action=checkPermissions"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_d1QekOIvEeWTmJ7K0rVXhg" name="GET/permissions/{user}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_d1QekeIvEeWTmJ7K0rVXhg" value="action=checkPermissions"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_d-R3sOIvEeWTmJ7K0rVXhg" name="GET/permissions/{resource}/{context}/{action}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_d-R3seIvEeWTmJ7K0rVXhg" value="action=getPermissions"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_eDKXsOIvEeWTmJ7K0rVXhg" name="PUT/permissions/{resource}/{context}/{action}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_eDK-wOIvEeWTmJ7K0rVXhg" value="action=setPermissions"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_u_buoLLnEeWcwaDPJFy4ig" name="GET/messages/{language}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_u_buobLnEeWcwaDPJFy4ig" value="action=messages"/>
@@ -168,6 +177,9 @@
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_MknSsLMHEeWcwaDPJFy4ig" name="DELETE/lock/{type|optimistic|pessimistic}/{oid}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_MknSsbMHEeWcwaDPJFy4ig" value="action=unlock"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="__vNvgMweEeWPWdu5UKHfcA" name="GET,POST/media/files" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="__vNvgcweEeWPWdu5UKHfcA" value="action=browseMedia"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEswRHEeSxY9ess8EBIw" name="/rest/{language}/{className}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEtARHEeSxY9ess8EBIw" value="action=restAction&amp;collection=1"/>
@@ -700,9 +712,14 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_gMo7YDkOEeSuCfpXnqk73Q" name="managers" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_yOL1QDkOEeSuCfpXnqk73Q" value="{$defaultPermissionManager, $staticPermissionManager}"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="__TaF0OIuEeWTmJ7K0rVXhg" name="principalFactory" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__TaF0eIuEeWTmJ7K0rVXhg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__TaF0uIuEeWTmJ7K0rVXhg" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="__TaF0-IuEeWTmJ7K0rVXhg" value="$principalFactory"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_VV5D4LQ-EeOQ5oJFa1i8cg" name="RoleConfig">
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_YabL4LQ-EeOQ5oJFa1i8cg" name="administrators" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_YabL4LQ-EeOQ5oJFa1i8cg" name=";administrators" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_b5tWMLQ-EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_b5tWMbQ-EeOQ5oJFa1i8cg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_b5vLYLQ-EeOQ5oJFa1i8cg" value="admin.ini"/>
@@ -842,12 +859,22 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_cV3PYDkUEeSGKuH2mWBLGA" name="permissionType" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_kFM5oDkUEeSGKuH2mWBLGA" value="app.src.model.wcmf.Permission"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_9p-p4OIuEeWTmJ7K0rVXhg" name="principalFactory" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_9p-p4eIuEeWTmJ7K0rVXhg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9p-p4uIuEeWTmJ7K0rVXhg" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_9p-p4-IuEeWTmJ7K0rVXhg" value="$principalFactory"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_1mktYDkOEeSuCfpXnqk73Q" name="StaticPermissionManager">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_1mktYTkOEeSuCfpXnqk73Q" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_1mktYjkOEeSuCfpXnqk73Q" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_1mktYzkOEeSuCfpXnqk73Q" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_1mktZDkOEeSuCfpXnqk73Q" value="wcmf\lib\security\impl\StaticPermissionManager"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_4ijdEOIuEeWTmJ7K0rVXhg" name="principalFactory" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_4ijdEeIuEeWTmJ7K0rVXhg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_4ikEIOIuEeWTmJ7K0rVXhg" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_4ikEIeIuEeWTmJ7K0rVXhg" value="$principalFactory"/>
                 </ownedAttribute>
               </packagedElement>
             </packagedElement>
