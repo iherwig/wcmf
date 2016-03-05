@@ -38,7 +38,7 @@ class DefaultSession implements Session {
    * Constructor
    */
   public function __construct() {
-    $this->_authUserVarName = 'auth_user_'.md5(__FILE__);
+    $this->_authUserVarName = 'auth_user';
 
     $sessionName = 'wcmf'.md5(__FILE__);
     session_name($sessionName);

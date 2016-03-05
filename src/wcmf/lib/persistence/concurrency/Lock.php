@@ -10,12 +10,14 @@
  */
 namespace wcmf\lib\persistence\concurrency;
 
+use \wcmf\lib\persistence\ObjectId;
+
 /**
  * Lock represents a lock on an object.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Lock {
+class Lock implements \Serializable {
 
   const TYPE_OPTIMISTIC = 'optimistic';
   const TYPE_PESSIMISTIC = 'pessimistic'; // pessimistic write lock
@@ -92,6 +94,19 @@ class Lock {
    */
   public function getCurrentState() {
     return unserialize($this->_currentState);
+  }
+
+  public function serialize() {
+    return serialize(array($this->_objectId->__toString(),
+        $this->_login, $this->_created, serialize($this->_currentState)));
+  }
+
+  public function unserialize($data) {
+    $parts = unserialize($data);
+    $this->_objectId = ObjectId::parse($parts[0]);
+    $this->_login = $parts[1];
+    $this->_created = $parts[2];
+    $this->_currentState = unserialize($parts[3]);
   }
 }
 ?>

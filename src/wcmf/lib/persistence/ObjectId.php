@@ -24,7 +24,7 @@ use wcmf\lib\core\ObjectFactory;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ObjectId {
+class ObjectId implements \Serializable {
 
   const DELIMITER = ':';
 
@@ -258,6 +258,18 @@ class ObjectId {
       self::$_numPkKeys[$type] = $numPKs;
     }
     return self::$_numPkKeys[$type];
+  }
+
+  public function serialize() {
+    return $this->__toString();
+  }
+
+  public function unserialize($data) {
+    $oid = self::parse($data);
+    $this->_prefix = $oid->_prefix;
+    $this->_fqType = $oid->_fqType;
+    $this->_id = $oid->_id;
+    $this->_strVal = $oid->_strVal;
   }
 }
 ?>
