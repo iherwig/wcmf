@@ -70,7 +70,7 @@ use wcmf\lib\presentation\Response;
 abstract class BatchController extends Controller {
 
   // session name constants
-  const SESSION_VARNAME = __CLASS__;    
+  const SESSION_VARNAME = __CLASS__;
   const REQUEST_VAR = 'request';
   const ONE_CALL_VAR = 'oneCall';
   const STEP_VAR = 'step';
@@ -108,7 +108,7 @@ abstract class BatchController extends Controller {
     else {
       // first call
       $this->_curStep = 1;
-      
+
       // initialize session variables
       $sessionData = array(
         self::ONE_CALL_VAR => $request->getBooleanValue('oneCall', false),
@@ -139,7 +139,7 @@ abstract class BatchController extends Controller {
 
     // next step
     $sessionData[self::STEP_VAR]++;
-    
+
     // update session
     $session->set(self::SESSION_VARNAME, $sessionData);
   }
@@ -189,7 +189,7 @@ abstract class BatchController extends Controller {
       // proceed
       $response->setAction('next');
     }
-    
+
     // update session
     $session->set(self::SESSION_VARNAME, $sessionData);
   }
@@ -233,7 +233,7 @@ abstract class BatchController extends Controller {
 
     $session = $this->getSession();
     $sessionData = $session->get(self::SESSION_VARNAME);
-    
+
     $workPackages = $sessionData[self::WORK_PACKAGES_VARNAME];
     $counter = 1;
     $total = sizeof($oids);
@@ -266,7 +266,7 @@ abstract class BatchController extends Controller {
       $counter += $size;
     }
     $this->_workPackages = $workPackages;
-    
+
     // update session
     $sessionData[self::PACKAGES_VAR] = $workPackages;
     $sessionData[self::NUM_STEPS_VAR] = sizeof($workPackages);

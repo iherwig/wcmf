@@ -61,7 +61,7 @@ class CopyController extends BatchController {
   const SESSION_VARNAME = __CLASS__;
   const OBJECT_MAP_VAR = 'objectmap';
   const ACTION_VAR = 'action';
-  
+
   // persistent iterator id
   const ITERATOR_ID_VAR = 'CopyController.iteratorid';
 
