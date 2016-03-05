@@ -24,7 +24,7 @@ use wcmf\lib\core\ObjectFactory;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ObjectId implements \Serializable {
+class ObjectId implements \Serializable, \JsonSerializable {
 
   const DELIMITER = ':';
 
@@ -270,6 +270,10 @@ class ObjectId implements \Serializable {
     $this->_fqType = $oid->_fqType;
     $this->_id = $oid->_id;
     $this->_strVal = $oid->_strVal;
+  }
+
+  public function jsonSerialize() {
+    return $this->__toString();
   }
 }
 ?>
