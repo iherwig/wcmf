@@ -80,7 +80,7 @@ class DefaultLockHandler implements LockHandler {
     }
 
     // create the lock instance
-    $lock = new Lock($type, $oid, $authUserLogin, $this->_session->getID());
+    $lock = new Lock($type, $oid, $authUserLogin);
 
     // set the current state for optimistic locks
     if ($type == Lock::TYPE_OPTIMISTIC) {
@@ -170,7 +170,7 @@ class DefaultLockHandler implements LockHandler {
       if (sizeof($locks) > 0) {
         $lockObj = $locks[0];
         $lock = new Lock(Lock::TYPE_PESSIMISTIC, $oid, $lockObj->getValue('login'),
-                $lockObj->getValue('sessionid'), $lockObj->getValue('created'));
+                $lockObj->getValue('created'));
 
         // if the lock belongs to the current user, we store
         // it in the session for later retrieval
