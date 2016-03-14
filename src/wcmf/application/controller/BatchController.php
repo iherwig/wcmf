@@ -234,7 +234,7 @@ abstract class BatchController extends Controller {
     $session = $this->getSession();
     $sessionData = $session->get(self::SESSION_VARNAME);
 
-    $workPackages = $sessionData[self::WORK_PACKAGES_VARNAME];
+    $workPackages = $sessionData[self::PACKAGES_VAR];
     $counter = 1;
     $total = sizeof($oids);
     while(sizeof($oids) > 0) {
