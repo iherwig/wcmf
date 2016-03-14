@@ -58,12 +58,12 @@ class SoapClient extends \SoapClient {
    * Overridden in order to strip bom characters
    * @see SoapClient::__doRequest
    */
-  public function __doRequest($request, $location, $action, $version, $one_way=0){
+  public function __doRequest($request, $location, $action, $version, $oneway=0){
       if (self::$_logger->isDebugEnabled()) {
         self::$_logger->debug("Request:");
         self::$_logger->debug($request);
       }
-      $response = trim(parent::__doRequest($request, $location, $action, $version, $one_way));
+      $response = trim(parent::__doRequest($request, $location, $action, $version, $oneway));
       if (self::$_logger->isDebugEnabled()) {
         self::$_logger->debug("Response:");
         self::$_logger->debug($response);

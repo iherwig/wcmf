@@ -76,10 +76,10 @@ class LayoutVisitor extends Visitor
     $parent = & $obj->getParent();
     if (!$parent) {
       // start here
-      $position = new Position(0,0,0);
+      $position = new Position(0, 0, 0);
     }
     else {
-      $position = new Position(0,0,0);
+      $position = new Position(0, 0, 0);
       $parentPos = $this->_map[$parent->getOID()];
       $position->y = $parentPos->y + 1;
       $position->z = $parentPos->z + 1;
@@ -90,7 +90,7 @@ class LayoutVisitor extends Visitor
       }
       else {
         // find leftmost sibling of object
-        for ($i=0;$i<sizeOf($siblings);$i++) {
+        for ($i=0; $i<sizeOf($siblings); $i++) {
           if ($siblings[$i]->getOID() == $obj->getOID()) {
             $leftSibling = & $siblings[$i-1];
           }

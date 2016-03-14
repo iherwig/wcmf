@@ -25,6 +25,6 @@ function smarty_function_prevent_caching($params, \Smarty_Internal_Template $tem
   if (isset($params['name'])) {
     $params['name'] = 'cacheKiller';
   }
-  echo $params['url']."?".$params['name']."=".uniqid((double)microtime()*1000000,1);
+  echo $params['url']."?".$params['name']."=".uniqid((double)microtime()*1000000, 1);
 }
 ?>

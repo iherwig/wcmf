@@ -18,11 +18,11 @@
 * Purpose: Remove protected region ids (used by wCMFGenerator).
 * -------------------------------------------------------------
 */
-function smarty_prefilter_removeprids($tpl_source, \Smarty_Internal_Template $template) {
+function smarty_prefilter_removeprids($tplSource, \Smarty_Internal_Template $template) {
   // remove protected regions
-  $tpl_source = preg_replace("/<!-- PROTECTED REGION .*? -->/U", "", $tpl_source);
+  $tplSource = preg_replace("/<!-- PROTECTED REGION .*? -->/U", "", $tplSource);
 
   // remove any wCMFGenerator generated comments
-  return preg_replace("/<!--.*?ChronosGenerator.*?-->/s", "", $tpl_source);
+  return preg_replace("/<!--.*?ChronosGenerator.*?-->/s", "", $tplSource);
 }
 ?>

@@ -153,7 +153,7 @@ class Application {
   public function outputHandler($buffer) {
     // log last error
     $error = error_get_last();
-    if ($error !== NULL) {
+    if ($error !== null) {
       $info = "Error: ".$error['message']." in ".$error['file']." on line ".$error['line'];
       self::$_logger->error($info);
 

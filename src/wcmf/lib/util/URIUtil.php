@@ -20,23 +20,23 @@ class URIUtil {
   /**
    * Convert an absolute URI to a relative
    * code from http://www.webmasterworld.com/forum88/334.htm
-   * @param $abs_uri Absolute URI to convert, may have a trailing filename
+   * @param $absUri Absolute URI to convert, may have a trailing filename
    * @param $base Base URI
    */
-  public static function makeRelative($abs_uri, $base) {
+  public static function makeRelative($absUri, $base) {
     // normalize slashes and remove drive names
-    list($abs_uri, $base) = self::normalize(array($abs_uri, $base));
+    list($absUri, $base) = self::normalize(array($absUri, $base));
 
     // add slash to base if missing
     if (!preg_match('/\/$/', $base)) {
       $base .= '/';
     }
-    $abs_array = explode('/', $abs_uri);
+    $abs_array = explode('/', $absUri);
     $base_array = explode('/', $base);
 
     // remove trailing file names
     $fileName = '';
-    if (strrpos($abs_uri, '/') !== strlen($abs_uri)) {
+    if (strrpos($absUri, '/') !== strlen($absUri)) {
       $fileName = array_pop($abs_array);
     }
     if (strrpos($base, '/') !== strlen($base)) {
@@ -57,27 +57,27 @@ class URIUtil {
   /**
    * Convert a relative URI to an absolute
    * code from http://99webtools.com/relative-path-into-absolute-url.php
-   * @param $rel_uri Relative URI to convert
+   * @param $relUri Relative URI to convert
    * @param $base Base URI
    */
-  public static function makeAbsolute($rel_uri, $base) {
-    list($rel_uri, $base) = self::normalize(array($rel_uri, $base));
+  public static function makeAbsolute($relUri, $base) {
+    list($relUri, $base) = self::normalize(array($relUri, $base));
 
-    if(strpos($rel_uri, "//") === 0) {
-      return "http:".$rel_uri;
+    if(strpos($relUri, "//") === 0) {
+      return "http:".$relUri;
     }
     // return if already absolute URL
-    if (parse_url($rel_uri, PHP_URL_SCHEME) != '') {
-      return $rel_uri;
+    if (parse_url($relUri, PHP_URL_SCHEME) != '') {
+      return $relUri;
     }
     // add slash to base if missing
     if (!preg_match('/\/$/', $base)) {
       $base .= '/';
     }
-    $firstChar = (strlen($rel_uri) > 0) ? substr($rel_uri, 0, 1) : '';
+    $firstChar = (strlen($relUri) > 0) ? substr($relUri, 0, 1) : '';
     // queries and anchors
     if ($firstChar == '#' || $firstChar == '?') {
-      return $base.$rel_uri;
+      return $base.$relUri;
     }
     // parse base URL and convert to local variables: $scheme, $host, $path
     extract(parse_url($base));
@@ -91,7 +91,7 @@ class URIUtil {
       $path = '';
     }
     // dirty absolute URL
-    $abs = "$host$path/$rel_uri";
+    $abs = "$host$path/$relUri";
     // replace '//' or '/./' or '/foo/../' with '/'
     $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
     for ($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
@@ -104,17 +104,17 @@ class URIUtil {
    * For example if a file path is stored relative to location A and should be
    * translated to the script URI (location B), use
    * URIUtil::translate($filepathAsSeenFromA, $pathFromBtoA)
-   * @param $rel_uri Relative URI to translate as seen from base
+   * @param $relUri Relative URI to translate as seen from base
    * @param $base Base URI
-   * @return An associtative array with keys 'absolute' and 'relative'
+   * @return An associative array with keys 'absolute' and 'relative'
    * and the absolute and relative URI (as seen from the executed script) as values
    */
-  public static function translate($rel_uri, $base) {
-    list($rel_uri, $base) = self::normalize(array($rel_uri, $base));
+  public static function translate($relUri, $base) {
+    list($relUri, $base) = self::normalize(array($relUri, $base));
 
     $self = self::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $path = dirname($self).'/';
-    $absUrl = self::makeAbsolute($rel_uri, $path.$base);
+    $absUrl = self::makeAbsolute($relUri, $path.$base);
     $relUrl = self::makeRelative($absUrl, $path);
 
     return array('absolute' => $absUrl, 'relative' => $relUrl);

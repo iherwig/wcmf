@@ -30,7 +30,7 @@ class PDF extends FPDI {
   var $_pageEnded = false;
 
   /**
-   * Overriden to set the template on the page
+   * Overridden to set the template on the page
    */
   public function Header() {
     parent::Header();
@@ -129,7 +129,7 @@ class PDF extends FPDI {
       $w=$this->w-$this->rMargin-$this->x;
     }
     $wmax=($w-2*$this->cMargin)*1000/$this->FontSize;
-    $s=str_replace("\r",'',$txt);
+    $s=str_replace("\r", '', $txt);
     $nb=strlen($s);
     if($nb>0 && $s[$nb-1]=="\n") {
       $nb--;

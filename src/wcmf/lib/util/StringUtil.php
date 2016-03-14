@@ -171,7 +171,7 @@ class StringUtil {
    * @return An array of strings
    */
   public static function quotesplit($string) {
-    $r = Array();
+    $r = array();
     $p = 0;
     $l = strlen($string);
     while ($p < $l) {

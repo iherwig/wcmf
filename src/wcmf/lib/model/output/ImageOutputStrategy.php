@@ -70,13 +70,13 @@ class ImageOutputStrategy implements OutputStrategy {
     $this->_border = $border;
     $this->_usemap = $usemap;
     // define label dimensions relative to connector position
-    $this->_labelDim['left']   = -10;
-    $this->_labelDim['top']    = -10;
-    $this->_labelDim['right']  = 80;
+    $this->_labelDim['left'] = -10;
+    $this->_labelDim['top'] = -10;
+    $this->_labelDim['right'] = 80;
     $this->_labelDim['bottom'] = 20;
     // define text position relative to connector position
-    $this->_textPos['left']   = -5;
-    $this->_textPos['top']    = -8;
+    $this->_textPos['left'] = -5;
+    $this->_textPos['top'] = -8;
   }
 
   /**
@@ -95,10 +95,10 @@ class ImageOutputStrategy implements OutputStrategy {
     $this->_width = $this->_width * $this->_xscale + $this->_labelDim['right'] - $this->_labelDim['left'] + 2*$this->_border;
     $this->_height = $this->_height * $this->_yscale + $this->_labelDim['bottom'] - $this->_labelDim['top'] + 2*$this->_border;
     $this->_img = ImageCreate($this->_width,$this->_height);
-    $this->_bgColor = ImageColorAllocate($this->_img,255,255,255);
-    $this->_txtColor = ImageColorAllocate($this->_img,0,128,192);
+    $this->_bgColor = ImageColorAllocate($this->_img, 255, 255, 255);
+    $this->_txtColor = ImageColorAllocate($this->_img, 0, 128, 192);
     $this->_lineColor = $this->_txtColor;
-    ImageFilledRectangle($this->_img,0,0,$this->_width,$this->_height,$this->_bgColor);
+    ImageFilledRectangle($this->_img, 0, 0, $this->_width,$this->_height,$this->_bgColor);
 
     if ($this->_usemap != '') {
       echo "\n".'<map name="'.$this->_usemap.'">'."\n";
@@ -109,7 +109,7 @@ class ImageOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
-    ImageString($this->_img,1,$this->_width-350,$this->_height-10,'wemove digital solutions. '.date ("l dS of F Y h:i:s A"),$this->_txtColor);
+    ImageString($this->_img, 1, $this->_width-350, $this->_height-10, 'wemove digital solutions. '.date ("l dS of F Y h:i:s A"), $this->_txtColor);
     if ($this->_format & IMG_GIF) {
       ImageGIF($this->_img, $this->_file);
     }
@@ -132,8 +132,8 @@ class ImageOutputStrategy implements OutputStrategy {
    */
   public function writeObject(PersistentObject $obj) {
     $oid = $obj->getOID();
-    $x = $this->_map[$oid]->x * $this->_xscale - $this->_labelDim['left'] +  $this->_border;
-    $y = $this->_map[$oid]->y * $this->_yscale - $this->_labelDim['top'] +  $this->_border;
+    $x = $this->_map[$oid]->x * $this->_xscale - $this->_labelDim['left'] + $this->_border;
+    $y = $this->_map[$oid]->y * $this->_yscale - $this->_labelDim['top'] + $this->_border;
 
     $statusStr = '';
     if ($obj->getState() == PersistentObject::STATE_DIRTY) {
@@ -154,7 +154,7 @@ class ImageOutputStrategy implements OutputStrategy {
       $y + $this->_labelDim['bottom'],
       $this->_txtColor);
     // write text
-    ImageString($this->_img,1,
+    ImageString($this->_img, 1,
       $x + $this->_textPos['left'],
       $y + $this->_textPos['top'],
       $obj->getType(),
@@ -165,7 +165,7 @@ class ImageOutputStrategy implements OutputStrategy {
     else {
       $idStr = $oid;
     }
-    ImageString($this->_img,5,
+    ImageString($this->_img, 5,
       $x + $this->_textPos['left'],
       $y + $this->_textPos['top']+14,
       $idStr.' '.$statusStr,
@@ -286,15 +286,15 @@ class ImageOutputStrategy implements OutputStrategy {
     // ...to parent
     if ($this->_map["type"] == MAPTYPE_HORIZONTAL) {
       // ...to mid bottom
-      $x2 = $this->_map[$poid]->x * $this->_xscale + ($this->_labelDim['right'] - $this->_labelDim['left'])/2 +  $this->_border;
-      $y2 = $this->_map[$poid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top']) +  $this->_border + 1;
+      $x2 = $this->_map[$poid]->x * $this->_xscale + ($this->_labelDim['right'] - $this->_labelDim['left'])/2 + $this->_border;
+      $y2 = $this->_map[$poid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top']) + $this->_border + 1;
     }
     else {
       // ...to mid right
-      $x2 = $this->_map[$poid]->x * $this->_xscale + $this->_labelDim['right'] - $this->_labelDim['left'] +  $this->_border + 1;
-      $y2 = $this->_map[$poid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top'])/2 +  $this->_border;
+      $x2 = $this->_map[$poid]->x * $this->_xscale + $this->_labelDim['right'] - $this->_labelDim['left'] + $this->_border + 1;
+      $y2 = $this->_map[$poid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top'])/2 + $this->_border;
     }
-    return array(new Position($x1,$y1,0), new Position($x2,$y2,0));
+    return array(new Position($x1, $y1, 0), new Position($x2, $y2, 0));
   }
 }
 ?>
