@@ -42,6 +42,9 @@ use wcmf\lib\util\StringUtil;
  * caching = false
  * cacheLifetime = 3600
  * cacheDir = app/cache/smarty/
+ *
+ * [HtmlView]
+ * __ref = $view
  * @endcode
  *
  * In this example views are instances of _SmartyView_. They are not shared,
@@ -50,7 +53,7 @@ use wcmf\lib\util\StringUtil;
  * of _SmartyView_ or there is an appropriate setter method (e.g.
  * _SmartyView::setCompileCheck_). Any other constructor parameter of _SmartyView_
  * is tried to resolve from either another instance defined in the configuration
- * or an existing class.
+ * or an existing class. _HtmlView_ is defined as an alias for _View_.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -113,7 +116,7 @@ class DefaultFactory implements Factory {
   public function getInstance($name, $dynamicConfiguration=array()) {
     $instance = null;
     if (in_array($name, $this->_currentStack)) {
-      //throw new \Exception("Circular dependency detected: ".join(' - ', $this->_currentStack));
+      throw new \Exception("Circular dependency detected: ".join(' - ', $this->_currentStack));
     }
     $this->_currentStack[] = $name;
 
@@ -122,14 +125,14 @@ class DefaultFactory implements Factory {
       strtolower($name.json_encode($dynamicConfiguration));
 
     // check if the instance is registered already
-    if (!isset($this->_instances[$instanceKey])) {
-      // get static instance configuration
+    if (isset($this->_instances[$instanceKey])) {
+      $instance = $this->_instances[$instanceKey];
+    }
+    else {
+      // construct instance
       $staticConfiguration = $this->_configuration->getSection($name);
       $configuration = array_merge($staticConfiguration, $dynamicConfiguration);
       $instance = $this->createInstance($name, $configuration, $instanceKey);
-    }
-    else {
-      $instance = $this->_instances[$instanceKey];
     }
     $this->_currentStack = array();
     return $instance;
@@ -185,15 +188,22 @@ class DefaultFactory implements Factory {
    * using Factory::getInstance(). The name is also used to check the interface
    * (see Factory::addInterfaces())
    * @param $configuration Associative array with key value pairs for instance properties
-   * passed to the constructor, setters or public properties and the special keys '__class'
-   * (optional, denotes the instance class name), '__shared' (optional, if true, the
-   * instance may be reused using Factory::getInstance())
+   * passed to the constructor, setters or public properties and the special keys:
+   * - '__class': optional, denotes the instance class name
+   * - '__shared' optional, if true, the instance may be reused using Factory::getInstance())
+   * - '__ref' optional, defines this instance as an alias of the referenced instance
    * @param $instanceKey The name under which the instance is registered for later retrieval
    * @return Object
    */
   protected function createInstance($name, $configuration, $instanceKey) {
     $instance = null;
 
+    // return referenced instance, if the instance is an alias
+    if (isset($configuration['__ref'])) {
+      return $this->getInstance(preg_replace('/^\$/', '', $configuration['__ref']));
+    }
+
+    // create instance
     if (isset($configuration['__class'])) {
       // the instance belongs to the given class
       $className = $configuration['__class'];

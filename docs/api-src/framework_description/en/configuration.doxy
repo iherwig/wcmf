@@ -78,7 +78,7 @@ are either set through the _constructor_ or a _setter method_ of the client clas
 or a _public member variable_.
 
 Assembly details for client instances are defined in the application configuration
-in special sections containing a  `__class` key. The value of the key denotes the
+in special sections containing a `__class` key. The value of the key denotes the
 class to be used to create the client instance. All other keys are tried to be
 mapped to constructor parameters or setters/members of that class. Complex
 dependencies of an instance may be set by using the `$` notation, which refers
@@ -192,6 +192,27 @@ compileCheck = true
 caching = false
 cacheLifetime = 3600
 cacheDir = app/cache/smarty/
+~~~~~~~~~~~~~
+
+### Aliases ### {#conf_aliasdi}
+
+The same instance may be referenced using different names (_aliases_). To define
+an alias, the `__ref` key is used. Aliases help avoiding duplicate configuration
+sections.
+
+The following example shows the configuration of different caches, that actually
+use the same configuration.
+
+~~~~~~~~~~~~~{.ini}
+[Cache]
+__class = wcmf\lib\io\impl\FileCache
+cacheDir = app/cache/
+
+[SQLCache]
+__ref = $cache
+
+[ActionKeyCache]
+__ref = $cache
 ~~~~~~~~~~~~~
 
 ### Circular dependencies ### {#conf_circulardi}

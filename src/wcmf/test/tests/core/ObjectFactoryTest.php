@@ -20,7 +20,7 @@ use wcmf\lib\core\ObjectFactory;
  */
 class ObjectFactoryTest extends BaseTestCase {
 
-  public function testDIShared() {
+  public function testShared() {
     $conf = ObjectFactory::getInstance('configuration');
     $this->assertEquals('wcmf\lib\config\impl\InifileConfiguration', get_class($conf));
     $this->assertEquals('WCMF TEST MODEL', $conf->getValue('title', 'Application'));
@@ -35,7 +35,7 @@ class ObjectFactoryTest extends BaseTestCase {
     $this->assertEquals('WCMF TEST MODEL2', $conf->getValue('title', 'Application'));
   }
 
-  public function testDINonShared() {
+  public function testNonShared() {
     $obj = ObjectFactory::getInstance('request');
     $this->assertEquals('wcmf\lib\presentation\impl\DefaultRequest', get_class($obj));
 
@@ -53,6 +53,15 @@ class ObjectFactoryTest extends BaseTestCase {
 
     // check first instance
     $this->assertEquals('value1', $obj->getValue('test'));
+  }
+
+  public function testAlias() {
+    $conf = ObjectFactory::getInstance('configuration');
+    $conf->addConfiguration('misc.ini', true);
+
+    // get second time (same instance)
+    $cache = ObjectFactory::getInstance('filecache');
+    $this->assertEquals('wcmf\lib\io\impl\FileCache', get_class($cache));
   }
 }
 ?>
