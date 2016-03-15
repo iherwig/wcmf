@@ -161,9 +161,7 @@ class PermissionControllerTest extends ControllerTestCase {
 
     // simulate get permissions call
     $data = array(
-      'resource' => 'app.src.model.wcmf.User',
-      'context' => '',
-      'action' => 'read'
+      'operation' => 'app.src.model.wcmf.User??read'
     );
     $response = $this->runRequest('getPermissions', $data);
 
@@ -186,9 +184,7 @@ class PermissionControllerTest extends ControllerTestCase {
 
     // simulate set permissions call
     $data = array(
-      'resource' => 'app.src.model.wcmf.User',
-      'context' => '',
-      'action' => 'read',
+      'operation' => 'app.src.model.wcmf.User??read',
       'permissions' => array(
         'allow' => array('administrators'),
         'deny' => array('tester'),
@@ -199,9 +195,7 @@ class PermissionControllerTest extends ControllerTestCase {
 
     // test
     $data = array(
-      'resource' => 'app.src.model.wcmf.User',
-      'context' => '',
-      'action' => 'read'
+      'operation' => 'app.src.model.wcmf.User??read'
     );
     $response = $this->runRequest('getPermissions', $data);
     $result = $response->getValue('result');
@@ -222,9 +216,7 @@ class PermissionControllerTest extends ControllerTestCase {
 
     // simulate get permissions call
     $data = array(
-      'resource' => 'Chapter:111',
-      'context' => 'test',
-      'action' => 'delete'
+      'operation' => 'Chapter:111?test?delete'
     );
     $response = $this->runRequest('getPermissions', $data);
 
@@ -236,18 +228,14 @@ class PermissionControllerTest extends ControllerTestCase {
 
     // simulate set permissions call
     $data = array(
-      'resource' => 'Chapter:111',
-      'context' => 'test',
-      'action' => 'delete',
+      'operation' => 'Chapter:111?test?delete',
       'permissions' => null
     );
     $response = $this->runRequest('setPermissions', $data);
 
     // test
     $data = array(
-      'resource' => 'Chapter:111',
-      'context' => 'test',
-      'action' => 'delete'
+      'operation' => 'Chapter:111?test?delete'
     );
     $response = $this->runRequest('getPermissions', $data);
     $result = $response->getValue('result');
@@ -278,9 +266,7 @@ class PermissionControllerTest extends ControllerTestCase {
 
     // simulate set permissions call
     $data = array(
-      'resource' => $oid,
-      'context' => '',
-      'action' => 'delete',
+      'operation' => $oid.'??delete',
       'permissions' => array(
         'allow' => array(),
         'deny' => array('administrators'),

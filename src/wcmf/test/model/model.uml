@@ -154,16 +154,16 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_mUohsLLnEeWcwaDPJFy4ig" name="PUT/user/password" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_mUohsbLnEeWcwaDPJFy4ig" value="action=changePassword"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_q2x3MLLnEeWcwaDPJFy4ig" name="GET/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_q2x3MLLnEeWcwaDPJFy4ig" name="GET/user/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_q2x3MbLnEeWcwaDPJFy4ig" value="action=checkPermissions"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_d1QekOIvEeWTmJ7K0rVXhg" name="GET/permissions/{user}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_d1QekOIvEeWTmJ7K0rVXhg" name="GET/user/permissions/{user}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_d1QekeIvEeWTmJ7K0rVXhg" value="action=checkPermissions"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_d-R3sOIvEeWTmJ7K0rVXhg" name="GET/permissions/{resource}/{context}/{action}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_d-R3sOIvEeWTmJ7K0rVXhg" name="GET/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_d-R3seIvEeWTmJ7K0rVXhg" value="action=getPermissions"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_eDKXsOIvEeWTmJ7K0rVXhg" name="PUT/permissions/{resource}/{context}/{action}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_eDKXsOIvEeWTmJ7K0rVXhg" name="PUT/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_eDK-wOIvEeWTmJ7K0rVXhg" value="action=setPermissions"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_u_buoLLnEeWcwaDPJFy4ig" name="GET/messages/{language}" type="_agg3ALQwEeOLlbB2YLI0iw">
@@ -214,7 +214,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEuwRHEeSxY9ess8EBIw" name="/soap" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEvARHEeSxY9ess8EBIw" value="action=soapAction"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEvQRHEeSxY9ess8EBIw" name="/list/{language}/{listDef}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEvQRHEeSxY9ess8EBIw" name="GET/list/{language}/{listDef}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEvgRHEeSxY9ess8EBIw" value="action=listValues"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_gAIdwLLnEeWcwaDPJFy4ig" name="GET/*" type="_agg3ALQwEeOLlbB2YLI0iw">

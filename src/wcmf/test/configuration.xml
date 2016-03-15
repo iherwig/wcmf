@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- see http://www.phpunit.de/wiki/Documentation -->
 <phpunit bootstrap="bootstrap.php"
-         verbose="true">
+         verbose="false">
   <testsuites>
     <testsuite name="Controller">
       <file>tests/controller/DeleteControllerTest.php</file>
