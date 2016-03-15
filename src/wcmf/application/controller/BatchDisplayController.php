@@ -61,8 +61,6 @@ class BatchDisplayController extends BatchController {
    * @see Controller::initialize()
    */
   public function initialize(Request $request, Response $response) {
-    parent::initialize($request, $response);
-
     // initialize controller
     if ($request->getAction() != 'continue') {
       $session = $this->getSession();
@@ -84,6 +82,8 @@ class BatchDisplayController extends BatchController {
       // reset iterator
       PersistentIterator::reset(self::ITERATOR_ID_VAR, $session);
     }
+    // initialize parent controller after default request values are set
+    parent::initialize($request, $response);
   }
 
   /**

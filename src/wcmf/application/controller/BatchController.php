@@ -42,8 +42,9 @@ use wcmf\lib\presentation\Response;
  * | _out_ `stepNumber`    | The current step starting with 1, ending with _numberOfSteps_+1
  * | _out_ `numberOfSteps` | Total number of steps
  * | _out_ `displayText`   | The display text for the current step
+ * | _out_ `status`        | The value of the response action
  * | __Response Actions__  | |
- * | `next`                | The process is not finished and `continue` should be called as next action
+ * | `progress`            | The process is not finished and `continue` should be called as next action
  * | `download`            | The process is finished and the next call to `continue` will trigger the file download
  * | `done`                | The process is finished
  * </div>
@@ -58,8 +59,9 @@ use wcmf\lib\presentation\Response;
  * | _out_ `stepNumber`    | The current step starting with 1, ending with _numberOfSteps_+1
  * | _out_ `numberOfSteps` | Total number of steps
  * | _out_ `displayText`   | The display text for the current step
+ * | _out_ `status`        | The value of the response action
  * | __Response Actions__  | |
- * | `next`                | The process is not finished and `continue` should be called as next action
+ * | `progress`            | The process is not finished and `continue` should be called as next action
  * | `download`            | The process is finished and the next call to `continue` will trigger the file download
  * | `done`                | The process is finished
  * </div>
@@ -118,6 +120,7 @@ abstract class BatchController extends Controller {
         self::NUM_STEPS_VAR => 0,
         self::DOWNLOAD_STEP_VAR => false
       );
+      $session->set(self::SESSION_VARNAME, $sessionData);
 
       // define work packages
       $number = 0;
@@ -136,6 +139,9 @@ abstract class BatchController extends Controller {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("No work packages."));
       }
     }
+
+    // get updated session data
+    $sessionData = $session->get(self::SESSION_VARNAME);
 
     // next step
     $sessionData[self::STEP_VAR]++;
@@ -165,14 +171,17 @@ abstract class BatchController extends Controller {
     if ($curStep <= $numberOfSteps) {
       $this->processPart();
 
+      // update local variables after processing
+      $numberOfSteps = $this->getNumberOfSteps();
+      $sessionData = $session->get(self::SESSION_VARNAME);
+
+      // set response data
       $response->setValue('stepNumber', $curStep);
       $response->setValue('numberOfSteps', $numberOfSteps);
       $response->setValue('displayText', $this->getDisplayText($curStep));
     }
 
     // check if we are finished or should continue
-    // (number of packages may have changed while processing)
-    $numberOfSteps = $this->getNumberOfSteps();
     if ($curStep >= $numberOfSteps || $sessionData[self::ONE_CALL_VAR] == true) {
       // finished -> check for download
       $file = $this->getDownloadFile();
@@ -187,8 +196,9 @@ abstract class BatchController extends Controller {
     }
     else {
       // proceed
-      $response->setAction('next');
+      $response->setAction('progress');
     }
+    $response->setValue('status', $response->getAction());
 
     // update session
     $session->set(self::SESSION_VARNAME, $sessionData);
@@ -241,9 +251,7 @@ abstract class BatchController extends Controller {
       $items = array();
       for($i=0; $i<$size; $i++) {
         $nextItem = array_shift($oids);
-        if($nextItem !== null) {
-          $items[] = $nextItem->__toString();
-        }
+        $items[] = sprintf('%s', $nextItem);
       }
 
       // define status text
@@ -278,22 +286,22 @@ abstract class BatchController extends Controller {
    */
   protected function processPart() {
     $curWorkPackageDef = $this->_workPackages[$this->getStepNumber()-1];
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     if (strlen($curWorkPackageDef['callback']) == 0) {
       throw new ApplicationException($request, $response, ApplicationError::getGeneral("Empty callback name."));
     }
-    else {
-      if (!method_exists($this, $curWorkPackageDef['callback'])) {
-        throw new ApplicationException($request, $response,
-                ApplicationError::getGeneral("Method '".$curWorkPackageDef['callback']."' must be implemented by ".get_class($this)));
-      }
-      else {
-        // unserialize oids
-        $oids = array_map(function($oidStr) {
-          return ObjectId::parse($oidStr);
-        }, $curWorkPackageDef['oids']);
-        call_user_func(array($this, $curWorkPackageDef['callback']), $oids, $curWorkPackageDef['args']);
-      }
+    if (!method_exists($this, $curWorkPackageDef['callback'])) {
+      throw new ApplicationException($request, $response,
+              ApplicationError::getGeneral("Method '".$curWorkPackageDef['callback']."' must be implemented by ".get_class($this)));
     }
+
+    // unserialize oids
+    $oids = array_map(function($oidStr) {
+      $oid = ObjectId::parse($oidStr);
+      return $oid != null ? $oid : $oidStr;
+    }, $curWorkPackageDef['oids']);
+    call_user_func(array($this, $curWorkPackageDef['callback']), $oids, $curWorkPackageDef['args']);
   }
 
   /**

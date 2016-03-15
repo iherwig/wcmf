@@ -116,12 +116,11 @@ class XMLExportController extends BatchController {
    * @see Controller::initialize()
    */
   public function initialize(Request $request, Response $response) {
-    parent::initialize($request, $response);
-
-    // construct initial document info
+    // initialize controller
     if ($request->getAction() != 'continue') {
       $session = $this->getSession();
 
+      // construct initial document info
       $docFile = $request->hasValue('docFile') ? $request->getValue('docFile') : $this->getDownloadFile();
       $docType = $request->hasValue('docType') ? $request->getValue('docType') : $this->_DOCTYPE;
       $dtd = $request->hasValue('dtd') ? $request->getValue('dtd') : $this->_DTD;
@@ -140,6 +139,8 @@ class XMLExportController extends BatchController {
       // reset iterator
       PersistentIterator::reset($this->ITERATOR_ID, $session);
     }
+    // initialize parent controller after default request values are set
+    parent::initialize($request, $response);
   }
 
   /**
