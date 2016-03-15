@@ -139,12 +139,14 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           if (self::$_logger->isDebugEnabled()) {
             self::$_logger->debug("Match");
           }
-          // set parameters from request definition
-          parse_str($requestDef, $baseRequestData);
           // set parameters from request path
           for ($i=0, $count=sizeof($params); $i<$count; $i++) {
             $baseRequestData[$params[$i]] = isset($matches[$i+1]) ? $matches[$i+1] : null;
           }
+          // set parameters from request definition (overriding path parameters)
+          $requestDefData = array();
+          parse_str($requestDef, $requestDefData);
+          $baseRequestData = array_merge($baseRequestData, $requestDefData);
           $routeFound = true;
 
           // check if method is allowed
