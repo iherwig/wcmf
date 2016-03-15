@@ -199,19 +199,19 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="__vNvgMweEeWPWdu5UKHfcA" name="GET,POST/media/files" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="__vNvgcweEeWPWdu5UKHfcA" value="action=browseMedia"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEswRHEeSxY9ess8EBIw" name="/rest/{language}/{className}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEswRHEeSxY9ess8EBIw" name="GET,POST/rest/{language}/{className}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEtARHEeSxY9ess8EBIw" value="action=restAction&amp;collection=1"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEtQRHEeSxY9ess8EBIw" name="/rest/{language}/{className}/{id|[0-9]+}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEtQRHEeSxY9ess8EBIw" name="GET,PUT,DELETE/rest/{language}/{className}/{id|[0-9]+}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEtgRHEeSxY9ess8EBIw" value="action=restAction&amp;collection=0"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEtwRHEeSxY9ess8EBIw" name="/rest/{language}/{className}/{sourceId|[0-9]+}/{relation}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEtwRHEeSxY9ess8EBIw" name="GET,POST/rest/{language}/{className}/{sourceId|[0-9]+}/{relation}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEuARHEeSxY9ess8EBIw" value="action=restAction&amp;collection=1"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEuQRHEeSxY9ess8EBIw" name="/rest/{language}/{className}/{sourceId|[0-9]+}/{relation}/{targetId|[0-9]+}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEuQRHEeSxY9ess8EBIw" name="PUT,DELETE/rest/{language}/{className}/{sourceId|[0-9]+}/{relation}/{targetId|[0-9]+}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEugRHEeSxY9ess8EBIw" value="action=restAction&amp;collection=0"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEuwRHEeSxY9ess8EBIw" name="/soap" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEuwRHEeSxY9ess8EBIw" name="GET,POST/soap" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_S4bEvARHEeSxY9ess8EBIw" value="action=soapAction"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_S4bEvQRHEeSxY9ess8EBIw" name="GET/list/{language}/{listDef}" type="_agg3ALQwEeOLlbB2YLI0iw">
