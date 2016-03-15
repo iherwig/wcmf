@@ -20,7 +20,8 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * RESTController handles REST requests.
+ * RESTController handles requests sent from a dstore/Rest client.
+ * @see http://dstorejs.io
  *
  * The controller supports the following actions:
  *
