@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\persistence\concurrency;
 
-use \wcmf\lib\persistence\ObjectId;
-
 /**
  * Lock represents a lock on an object.
  *
@@ -97,13 +95,13 @@ class Lock implements \Serializable {
   }
 
   public function serialize() {
-    return serialize(array($this->_objectId->__toString(),
+    return serialize(array(serialize($this->_objectId),
         $this->_login, $this->_created, serialize($this->_currentState)));
   }
 
   public function unserialize($data) {
     $parts = unserialize($data);
-    $this->_objectId = ObjectId::parse($parts[0]);
+    $this->_objectId = unserialize($parts[0]);
     $this->_login = $parts[1];
     $this->_created = $parts[2];
     $this->_currentState = unserialize($parts[3]);

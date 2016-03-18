@@ -47,7 +47,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
    * the object between others of the same type. If not given, a dummy id will be
    * assigned (optional, default: _null_)
    * @param $prefix A prefix for identifying a set of objects belonging to one storage in a
-   * distributed enviroment
+   * distributed environment (optional, default: _null_)
    * @note If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
    */
@@ -116,7 +116,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
   }
 
   /**
-   * Get the first id. This is especially usefull, when you know that this id only consists of one id.
+   * Get the first id. This is especially useful, when you know that this id only consists of one id.
    * @return String
    */
   public function getFirstId() {
@@ -147,15 +147,36 @@ class ObjectId implements \Serializable, \JsonSerializable {
       return $oid;
     }
 
+    $oidParts = self::parseOidString($oid);
+    $type = $oidParts['type'];
+    $ids = $oidParts['id'];
+    $prefix = $oidParts['prefix'];
+
+    // check the type
+    if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
+      return null;
+    }
+
+    // check if number of ids match the type
+    $numPks = self::getNumberOfPKs($type);
+    if ($numPks == null || $numPks != sizeof($ids)) {
+      return null;
+    }
+
+    return new ObjectID($type, $ids, $prefix);
+  }
+
+  /**
+   * Parse the given object id string into it's parts
+   * @param $oid The string
+   * @return Associative array with keys 'type', 'id', 'prefix'
+   */
+  private static function parseOidString($oid) {
     if (strlen($oid) == 0) {
       return null;
     }
 
-    if (self::$_delimiterPattern == null) {
-      self::$_delimiterPattern = '/'.self::DELIMITER.'/';
-    }
-
-    $oidParts = preg_split(self::$_delimiterPattern, $oid);
+    $oidParts = preg_split(self::getDelimiterPattern(), $oid);
     if (sizeof($oidParts) < 2) {
       return null;
     }
@@ -181,20 +202,15 @@ class ObjectId implements \Serializable, \JsonSerializable {
 
     // get the type
     $type = $nextPart;
-    if (!ObjectFactory::getInstance('persistenceFacade')->isKnownType($type)) {
-      return null;
-    }
-
-    // check if number of ids match the type
-    $numPks = self::getNumberOfPKs($type);
-    if ($numPks == null || $numPks != sizeof($ids)) {
-      return null;
-    }
 
     // get the prefix
     $prefix = join(self::DELIMITER, $oidParts);
 
-    return new ObjectID($type, $ids, $prefix);
+    return array(
+      'type' => $type,
+      'id' => $ids,
+      'prefix' => $prefix
+    );
   }
 
   /**
@@ -260,16 +276,23 @@ class ObjectId implements \Serializable, \JsonSerializable {
     return self::$_numPkKeys[$type];
   }
 
+  private static function getDelimiterPattern() {
+    if (self::$_delimiterPattern == null) {
+      self::$_delimiterPattern = '/'.self::DELIMITER.'/';
+    }
+    return self::$_delimiterPattern;
+  }
+
   public function serialize() {
     return $this->__toString();
   }
 
   public function unserialize($data) {
-    $oid = self::parse($data);
-    $this->_prefix = $oid->_prefix;
-    $this->_fqType = $oid->_fqType;
-    $this->_id = $oid->_id;
-    $this->_strVal = $oid->_strVal;
+    $oidParts = self::parseOidString($data);
+    $this->_prefix = $oidParts['prefix'];
+    $this->_fqType = $oidParts['type'];
+    $this->_id = $oidParts['id'];
+    $this->_strVal = $this->__toString();
   }
 
   public function jsonSerialize() {

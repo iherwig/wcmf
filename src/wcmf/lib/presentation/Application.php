@@ -131,13 +131,14 @@ class Application {
         $persistenceFacade->getTransaction()->rollback();
 
         // redirect to failure action
-        $this->_request->addError(ApplicationError::fromException($exception));
-        $this->_request->setAction('failure');
-        ObjectFactory::getInstance('actionMapper')->processAction($this->_request, $this->_response);
+        if ($this->_request) {
+          $this->_request->addError(ApplicationError::fromException($exception));
+          $this->_request->setAction('failure');
+          ObjectFactory::getInstance('actionMapper')->processAction($this->_request, $this->_response);
+          return;
+        }
       }
-      else {
-        throw $exception;
-      }
+      throw $exception;
     }
     catch (Exception $ex) {
       self::$_logger->error($ex->getMessage()."\n".$ex->getTraceAsString());

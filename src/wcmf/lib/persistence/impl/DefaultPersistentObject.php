@@ -632,6 +632,5 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
       $this->$key = $value;
     }
   }
-
 }
 ?>

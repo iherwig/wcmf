@@ -11,7 +11,7 @@
 namespace wcmf\lib\persistence\output\impl;
 
 use wcmf\lib\core\LogManager;
-use wcmf\lib\core\Session;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PersistentObject;
 
@@ -24,14 +24,11 @@ use wcmf\lib\persistence\PersistentObject;
 class AuditingOutputStrategy implements OutputStrategy {
 
   private static $_logger = null;
-  private $_session = null;
 
   /**
    * Constructor
-   * @param $session
    */
-  public function __construct(Session $session) {
-    $this->_session = $session;
+  public function __construct() {
     if (self::$_logger == null) {
       self::$_logger = LogManager::getLogger(__CLASS__);
     }
@@ -56,7 +53,8 @@ class AuditingOutputStrategy implements OutputStrategy {
    */
   public function writeObject(PersistentObject $obj) {
     if (self::$_logger->isInfoEnabled()) {
-      $authUserLogin = $this->_session->getAuthUser();
+      $session = ObjectFactory::getInstance('session');
+      $authUserLogin = $session->getAuthUser();
 
       switch ($state = $obj->getState()) {
         // log insert action

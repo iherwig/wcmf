@@ -18,7 +18,7 @@ use wcmf\lib\util\URIUtil;
 if (!class_exists('\elFinder')) {
     throw new \wcmf\lib\config\ConfigurationException(
             'wcmf\application\controller\MediaController requires '.
-            'elFinder. If you are using composer, add nao-pon/elfinder-nightly '.
+            'elFinder. If you are using composer, add studio-42/elfinder '.
             'as dependency to your project');
 }
 
@@ -86,13 +86,13 @@ class MediaController extends Controller {
     $refURL = dirname(URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']).'/';
     $rootUrl = URIUtil::makeAbsolute($relRootPath, $refURL);
 
-    // requested directory (ElFinder expects DIRECTORY_SEPARATOR)
+    // requested directory (elFinder expects DIRECTORY_SEPARATOR)
     if (!is_dir($request->getValue('directory'))) {
       // empty if not valid
       $request->clearValue('directory');
     }
     else {
-      // force ElFinder to use directory parameter
+      // force elFinder to use directory parameter
       $request->setValue('target', '');
     }
     $directory = $request->hasValue('directory') ? $request->getValue('directory') : $rootPath;
