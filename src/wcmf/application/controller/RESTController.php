@@ -204,7 +204,7 @@ class RESTController extends Controller {
         }
       }
 
-      // create query from optional GET values
+      // create query from optional GET values encoded in RQL (https://github.com/persvr/rql)
       if ($request->hasValue('className')) {
         $operatorMap = array('eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
             'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp');
@@ -218,19 +218,19 @@ class RESTController extends Controller {
             list($typeInName, $attributeInName) = preg_split('/\.+(?=[^\.]+$)/', $name);
             if (($typeInName == $type || $typeInName == $simpleType) &&
                     $mapper->hasAttribute($attributeInName)) {
-            $queryTemplate = $objectQuery->getObjectTemplate($type);
-            // handle null values correctly
-            $value = strtolower($value) == 'null' ? null : $value;
-            // extract optional operator from value e.g. lt=2015-01-01
-            $parts = explode('=', $value);
-            $op = $parts[0];
-            if (sizeof($parts) > 0 && isset($operatorMap[$op])) {
-              $operator = $operatorMap[$op];
-              $value = $parts[1];
-            }
-            else {
-              $operator = '=';
-            }
+              $queryTemplate = $objectQuery->getObjectTemplate($type);
+              // handle null values correctly
+              $value = strtolower($value) == 'null' ? null : $value;
+              // extract optional operator from value e.g. lt=2015-01-01
+              $parts = explode('=', $value);
+              $op = $parts[0];
+              if (sizeof($parts) > 0 && isset($operatorMap[$op])) {
+                $operator = $operatorMap[$op];
+                $value = $parts[1];
+              }
+              else {
+                $operator = '=';
+              }
               $queryTemplate->setValue($attributeInName, Criteria::asValue($operator, $value));
             }
           }
