@@ -13,6 +13,7 @@ namespace wcmf\lib\presentation\control\lists\impl;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\control\lists\ListStrategy;
+use wcmf\lib\util\StringUtil;
 
 /**
  * ConfigListStrategy implements a list of key/value pairs that is retrieved
@@ -36,7 +37,7 @@ class ConfigListStrategy implements ListStrategy {
    */
   public function getList($options, $language=null) {
     if (!isset($options['section'])) {
-      throw new ConfigurationException("No 'pattern' given in list options: "+$options);
+      throw new ConfigurationException("No 'pattern' given in list options: "+StringUtil::getDump($options));
     }
     $section = $options['section'];
     $listKey = $section.$language;

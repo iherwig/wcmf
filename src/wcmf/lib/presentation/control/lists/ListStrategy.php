@@ -21,7 +21,7 @@ interface ListStrategy {
   /**
    * Get a list of key/value pairs defined by the given configuration.
    * @param $options Associative array of implementation specific configuration
-   * @param $language The lanugage if the values should be localized. Optional,
+   * @param $language The language if the values should be localized. Optional,
    *                 default is Localization::getDefaultLanguage()
    * @return An assoziative array containing the key/value pairs
    */

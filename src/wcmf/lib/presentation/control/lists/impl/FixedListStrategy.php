@@ -13,6 +13,7 @@ namespace wcmf\lib\presentation\control\lists\impl;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\control\lists\ListStrategy;
+use wcmf\lib\util\StringUtil;
 
 /**
  * FixedListStrategy implements a constant list of key/value pairs.
@@ -39,7 +40,7 @@ class FixedListStrategy implements ListStrategy {
    */
   public function getList($options, $language=null) {
     if (!isset($options['items'])) {
-      throw new ConfigurationException("No 'items' given in list options: "+$options);
+      throw new ConfigurationException("No 'items' given in list options: "+StringUtil::getDump($options));
     }
     $items = $options['items'];
 
@@ -47,7 +48,7 @@ class FixedListStrategy implements ListStrategy {
     if (!is_array($items) && strPos($options, '$') === 0) {
       $items = $GLOBALS[subStr($options, 1)];
       if (!is_array($items)) {
-        throw new ConfigurationException($options['items']." is no array.");
+        throw new ConfigurationException("'items' option is no array.");
       }
     }
     // check if we only have values and need to create keys

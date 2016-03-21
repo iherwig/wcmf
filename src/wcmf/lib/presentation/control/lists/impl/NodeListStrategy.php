@@ -14,6 +14,7 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\presentation\control\lists\ListStrategy;
+use wcmf\lib\util\StringUtil;
 
 /**
  * NodeListStrategy implements a list of entities that is retrieved
@@ -42,7 +43,7 @@ class NodeListStrategy implements ListStrategy {
    */
   public function getList($options, $language=null) {
     if (!isset($options['types'])) {
-      throw new ConfigurationException("No 'types' given in list options: "+$options);
+      throw new ConfigurationException("No 'types' given in list options: "+StringUtil::getDump($options));
     }
     $types = $options['types'];
 

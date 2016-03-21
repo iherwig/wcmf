@@ -985,6 +985,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
     // apply data to the created object
     if ($createFromLoadedData) {
+      $data = $this->convertValuesFromStorage($data);
       $this->applyDataOnLoad($object, $data);
     }
     else {
@@ -1025,6 +1026,26 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $values[$name] = $curAttributeDesc->getDefaultValue();
     }
     $object->initialize($values);
+  }
+
+  /**
+   * Convert values after getting from storage
+   * @param $values Associative Array
+   * @return Associative Array
+   */
+  protected function convertValuesFromStorage($values) {
+    // filter values according to type
+    foreach($values as $valueName => $value) {
+      if ($this->hasAttribute($valueName)) {
+        $type = $this->getAttribute($valueName)->getType();
+        // integer
+        if (strpos(strtolower($type), 'int') === 0) {
+          $value = (strlen($value) == 0) ? null : intval($value);
+          $values[$valueName] = $value;
+        }
+      }
+    }
+    return $values;
   }
 
   /**

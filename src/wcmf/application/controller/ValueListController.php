@@ -26,7 +26,7 @@ use wcmf\lib\presentation\control\ValueListProvider;
  * |------------------------|-------------------------
  * | _in_ `listDef`         | The list definition (expected to be base64 encoded)
  * | _in_ `displayFilter`   | A regular expression that the returned 'value' values should match (optional)
- * | _out_ `list`           | Array of associative arrays with keys 'oid', 'displayText'
+ * | _out_ `list`           | Array of associative arrays with keys 'oid', 'value', 'displayText'
  * | _out_ `static`         | Boolean indicating whether returned data are static or not
  * | __Response Actions__   | |
  * | `ok`                   | In all cases
@@ -67,8 +67,9 @@ class ValueListController extends Controller {
 
     $list = ValueListProvider::getList($listDef, $language);
     $items = array();
-    foreach($list['items'] as $id => $name) {
-      $items[] = array('oid' => $id, 'displayText' => $name);
+    for($i=0, $count=sizeof($list['items']); $i<$count; $i++) {
+      $item = $list['items'][$i];
+      $items[] = array('oid' => $i, 'value' => $item['key'], 'displayText' => $item['value']);
     }
 
     $response->setValue('list', $items);

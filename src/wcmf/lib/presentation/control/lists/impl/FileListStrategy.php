@@ -11,8 +11,9 @@
 namespace wcmf\lib\presentation\control\lists\impl;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\presentation\control\lists\ListStrategy;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\presentation\control\lists\ListStrategy;
+use wcmf\lib\util\StringUtil;
 
 /**
  * FileListStrategy implements a list of key value pairs that is retrieved
@@ -40,7 +41,7 @@ class FileListStrategy implements ListStrategy {
    */
   public function getList($options, $language=null) {
     if (!isset($options['paths']) || !is_array($options['paths'])) {
-      throw new ConfigurationException("No array 'paths' given in list options: "+$options);
+      throw new ConfigurationException("No array 'paths' given in list options: "+StringUtil::getDump($options));
     }
     $paths = $options['paths'];
     $pattern = isset($options['pattern']) ? '/'.$options['pattern'].'/' : '/./';

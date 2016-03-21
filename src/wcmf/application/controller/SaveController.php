@@ -191,7 +191,7 @@ class SaveController extends Controller {
                   // set the new value
                   $oldValue = $curNode->getValue($curValueName);
                   $curNode->setValue($curValueName, $curRequestValue);
-                  if ($oldValue != $curRequestValue) {
+                  if ($oldValue !== $curRequestValue) {
                     $needCommit = true;
                   }
                 }

@@ -33,8 +33,8 @@ class ValueListProvider {
    *                  in the 'list' parameter (e.g. '{"type":"config","section":"EntityStage"}')
    * @param $language The language if the values should be localized. Optional,
    *                  default is Localization::getDefaultLanguage()
-   * @return An assoziative array with keys 'items' (array containing the key/value pairs)
-   *                  and 'isStatic'
+   * @return An assoziative array with keys 'items' (array of arrays with keys 'key' and 'value'),
+   *                  'isStatic' (indicating if the list may change of not)
    */
   public static function getList($definition, $language=null) {
 
@@ -52,12 +52,16 @@ class ValueListProvider {
     // add empty item, if defined
     $items = array();
     if (isset($decodedDefinition['emptyItem'])) {
-      $items[''] = ObjectFactory::getInstance('message')->getText($decodedDefinition['emptyItem'], null, $language);
+      $emtpyItemText = $decodedDefinition['emptyItem'];
+      $items[] = array(
+          'key' => null,
+          'value' => ObjectFactory::getInstance('message')->getText($emtpyItemText, null, $language)
+      );
     }
 
     // build list
     foreach($strategy->getList($decodedDefinition, $language) as $key => $value) {
-      $items[$key] = $value;
+      $items[] = array('key' => $key, 'value' => $value);
     }
 
     return array(
@@ -67,13 +71,13 @@ class ValueListProvider {
   }
 
   /**
-   * Translate a value with use of it's assoziated input type e.g get the location string from a location id.
+   * Translate a value with use of it's assoziated input type e.g. get the location string from a location id.
    * (this is only done when the input type has a list definition).
-   * @param $value The value to translate (maybe comma separated list for list controls)
+   * @param $value The value to translate (might be a comma separated list for list controls)
    * @param $inputType The description of the control as given in the 'input_type' property of a value
    * @param $language The language if the value should be localized. Optional,
    *                 default is Localization::getDefaultLanguage()
-   * @return The translated value
+   * @return String
    */
   public static function translateValue($value, $inputType, $language=null) {
     // get definition and list from inputType
@@ -94,13 +98,12 @@ class ValueListProvider {
         if (is_array($value)) {
           foreach($value as $curValue) {
             $curValue = trim($curValue);
-            $translated .= (isset($items[$curValue]) ? $items[$curValue] : $value).", ";
+            $translated .= self::getItemValue($items, $curValue, false).", ";
           }
           $translated = StringUtil::removeTrailingComma($translated);
         }
         else {
-          $value = trim($value);
-          $translated = isset($items[$value]) ? $items[$value] : $value;
+          $translated = self::getItemValue($items, $value, true);
         }
         return $translated;
       }
@@ -130,6 +133,23 @@ class ValueListProvider {
       throw new ConfigurationException('No ListStrategy implementation registered for '.$listType);
     }
     return $strategy;
+  }
+
+  /**
+   * Get the value of the item with the given key. Returns the key, if it does
+   * not exist in the list.
+   * @param $list Array of associative arrays with keys 'key' and 'value'
+   * @param $key The key to search
+   * @param $strict Boolean whether to check the key type as well (optional, default: __true__)
+   * @return String
+   */
+  protected static function getItemValue($list, $key, $strict=true) {
+    foreach ($list as $item) {
+      if (($strict && $item['key'] === $key) || (!$strict && $item['key'] == $key)) {
+        return $item['value'];
+      }
+    }
+    return $key;
   }
 }
 ?>

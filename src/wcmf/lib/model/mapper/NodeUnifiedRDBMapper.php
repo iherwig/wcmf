@@ -668,7 +668,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   }
 
   /**
-   * Convert values for before storage
+   * Convert values before putting into storage
    * @param $values Associative Array
    * @return Associative Array
    */

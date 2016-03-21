@@ -12,6 +12,7 @@ namespace wcmf\lib\presentation\control\lists\impl;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\presentation\control\lists\ListStrategy;
+use wcmf\lib\util\StringUtil;
 
 /**
  * FunctionListStrategy implements a list of key/value pairs that is retrieved
@@ -36,7 +37,7 @@ class FunctionListStrategy implements ListStrategy {
    */
   public function getList($options, $language=null) {
     if (!isset($options['name'])) {
-      throw new ConfigurationException("No 'name' given in list options: "+$options);
+      throw new ConfigurationException("No 'name' given in list options: "+StringUtil::getDump($options));
     }
     $name = $options['name'];
     $params = isset($options['params']) ? $options['params'] : null;

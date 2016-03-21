@@ -53,7 +53,7 @@ class ValueListProviderTest extends DatabaseTestCase {
     $listDef = '{"type":"config","section":"Languages"}';
     $list = ValueListProvider::getList($listDef);
     $this->assertEquals(2, sizeof(array_keys($list['items'])));
-    $this->assertEquals('Deutsch', $list['items']['de']);
+    $this->assertEquals('Deutsch', $this->getDisplayValue($list['items'], 'de'));
     $this->assertTrue($list['isStatic']);
 
     $inputType = 'select:{"list":'.$listDef.'}';
@@ -68,7 +68,7 @@ class ValueListProviderTest extends DatabaseTestCase {
     $listDef = '{"type":"file","paths":["../../install"],"pattern":"\\\\.sql$"}';
     $list = ValueListProvider::getList($listDef);
     $this->assertEquals(2, sizeof(array_keys($list['items'])));
-    $this->assertEquals('tables_mysql.sql', $list['items']['tables_mysql.sql']);
+    $this->assertEquals('tables_mysql.sql', $this->getDisplayValue($list['items'], 'tables_mysql.sql'));
     $this->assertFalse($list['isStatic']);
 
     $inputType = 'select:{"list":'.$listDef.'}';
@@ -81,13 +81,13 @@ class ValueListProviderTest extends DatabaseTestCase {
     $listDef1 = '{"type":"fix","items":["val1","val2"]}';
     $list1 = ValueListProvider::getList($listDef1);
     $this->assertEquals(2, sizeof(array_keys($list1['items'])));
-    $this->assertEquals('val1', $list1['items']['val1']);
+    $this->assertEquals('val1', $this->getDisplayValue($list1['items'], 'val1'));
     $this->assertTrue($list1['isStatic']);
 
     $listDef2 = '{"type":"fix","items":{"key1":"val1","key2":"val2"}}';
     $list2 = ValueListProvider::getList($listDef2);
     $this->assertEquals(2, sizeof(array_keys($list2['items'])));
-    $this->assertEquals('val1', $list2['items']['key1']);
+    $this->assertEquals('val1', $this->getDisplayValue($list2['items'], 'key1'));
     $this->assertTrue($list2['isStatic']);
 
     $inputType = 'select:{"list":'.$listDef2.'}';
@@ -99,7 +99,7 @@ class ValueListProviderTest extends DatabaseTestCase {
     $listDef = '{"type":"function","name":"wcmf\\\\test\\\\tests\\\\presentation\\\\g_getListValues","params":["test"]}';
     $list = ValueListProvider::getList($listDef);
     $this->assertEquals(2, sizeof(array_keys($list['items'])));
-    $this->assertEquals('testval1', $list['items']['key1']);
+    $this->assertEquals('testval1', $this->getDisplayValue($list['items'], 'key1'));
     $this->assertFalse($list['isStatic']);
 
     $inputType = 'select:{"list":'.$listDef.'}';
@@ -112,11 +112,11 @@ class ValueListProviderTest extends DatabaseTestCase {
     $listDef = '{"type":"node","types":["Author"],"query":"Author.name LIKE \'A%\'"}';
     $list = ValueListProvider::getList($listDef);
     $this->assertEquals(2, sizeof(array_keys($list['items'])));
-    $this->assertEquals('A1', $list['items']['1']);
+    $this->assertEquals('A1', $this->getDisplayValue($list['items'], 1));
     $this->assertFalse($list['isStatic']);
 
     $inputType = 'select:{"list":'.$listDef.'}';
-    $this->assertEquals('A1', ValueListProvider::translateValue('1', $inputType));
+    $this->assertEquals('A1', ValueListProvider::translateValue(1, $inputType));
     $this->assertEquals('A1, A2', ValueListProvider::translateValue('1,2', $inputType));
     TestUtil::endSession();
   }
@@ -126,13 +126,27 @@ class ValueListProviderTest extends DatabaseTestCase {
     $listDef1 = '{"type":"node","types":["Author"],"query":"Author.name LIKE \'A%\'","emptyItem":""}';
     $list1 = ValueListProvider::getList($listDef1);
     $this->assertEquals(3, sizeof(array_keys($list1['items'])));
-    $this->assertEquals("", $list1['items']['']);
+    $this->assertEquals("", $this->getDisplayValue($list1['items'], null));
 
     $listDef2 = '{"type":"node","types":["Author"],"query":"Author.name LIKE \'A%\'","emptyItem":"- Please select -"}';
     $list2 = ValueListProvider::getList($listDef2);
     $this->assertEquals(3, sizeof(array_keys($list2['items'])));
-    $this->assertEquals("- Please select -", $list2['items']['']);
+    $this->assertEquals("- Please select -", $this->getDisplayValue($list2['items'], null));
     TestUtil::endSession();
+  }
+
+  /**
+   * Get the value for the given key
+   * @param $list
+   * @param $key
+   */
+  private function getDisplayValue($list, $key) {
+    foreach ($list as $item) {
+      if ($item['key'] === $key) {
+        return $item['value'];
+      }
+    }
+    return '';
   }
 }
 ?>
