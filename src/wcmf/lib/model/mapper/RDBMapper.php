@@ -503,6 +503,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           $this->_relations['bytype'][$otherType] = array();
         }
         $this->_relations['bytype'][$otherType][] = $desc;
+        $this->_relations['bytype'][$this->_persistenceFacade->getSimpleType($otherType)][] = $desc;
 
         $hierarchyType = $desc->getHierarchyType();
         if ($hierarchyType == 'parent') {
@@ -985,7 +986,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
     // apply data to the created object
     if ($createFromLoadedData) {
-      $data = $this->convertValuesFromStorage($data);
       $this->applyDataOnLoad($object, $data);
     }
     else {
@@ -1006,6 +1006,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $values = array();
     foreach($objectData as $name => $value) {
       if ($this->hasAttribute($name) || strpos($name, self::INTERNAL_VALUE_PREFIX) === 0) {
+        $value = $this->convertValueFromStorage($name, $value);
         $values[$name] = $value;
       }
     }
@@ -1029,23 +1030,21 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * Convert values after getting from storage
-   * @param $values Associative Array
-   * @return Associative Array
+   * Convert value after retrieval from storage
+   * @param $valueName
+   * @param $value
+   * @return Mixed
    */
-  protected function convertValuesFromStorage($values) {
+  protected function convertValueFromStorage($valueName, $value) {
     // filter values according to type
-    foreach($values as $valueName => $value) {
-      if ($this->hasAttribute($valueName)) {
-        $type = $this->getAttribute($valueName)->getType();
-        // integer
-        if (strpos(strtolower($type), 'int') === 0) {
-          $value = (strlen($value) == 0) ? null : intval($value);
-          $values[$valueName] = $value;
-        }
+    if ($this->hasAttribute($valueName)) {
+      $type = $this->getAttribute($valueName)->getType();
+      // integer
+      if (strpos(strtolower($type), 'int') === 0) {
+        $value = (strlen($value) == 0) ? null : intval($value);
       }
     }
-    return $values;
+    return $value;
   }
 
   /**

@@ -363,6 +363,8 @@ class DefaultTransaction implements Transaction {
       }
       unset($this->_newObjects[$key]);
       $insertOids = array_keys($this->_newObjects);
+      unset($this->_observedObjects[$key]);
+      $this->_observedObjects[$object->getOID()->__toString()] = $object;
     }
     // re-add pending inserts
     foreach ($pendingInserts as $object) {

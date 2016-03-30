@@ -26,6 +26,13 @@ class NullPermissionManager extends AbstractPermissionManager implements Permiss
   );
 
   /**
+   * @see PermissionManager::authorize()
+   */
+  public function authorize($resource, $context, $action, $login=null) {
+    return true;
+  }
+
+  /**
    * @see PermissionManager::getPermissions()
    */
   public function getPermissions($resource, $context, $action) {

@@ -132,7 +132,7 @@ class RESTController extends Controller {
    * | _in_ `id`        | If collection is _false_, the object with _className_/_id_ will be loaded
    * | _in_ `sortBy`    | _?sortBy=+foo_ for sorting the list by foo ascending or
    * | _in_ `sort`      | _?sort(+foo)_ for sorting the list by foo ascending
-   * | _in_ `limit`     | _?limit(10,25)_ for loading 25 objects starting from position 10
+   * | _in_ `limit`     | _?limit(10,25)_ for loading 10 objects starting from position 25
    * | _in_ `relation`  | Relation name if objects in relation to another object should be loaded (determines the type of the returned objects)
    * | _in_ `sourceId`  | Id of the object to which the returned objects are related (determines the object id together with _className_)
    * | _out_            | Single object or list of objects. In case of a list, the _Content-Range_ header will be set.
@@ -191,16 +191,14 @@ class RESTController extends Controller {
           $sortDirection = preg_match('/^-/', $sortDef) ? 'desc' : 'asc';
           $request->setValue('sortFieldName', $sortFieldName);
           $request->setValue('sortDirection', $sortDirection);
-          break;
         }
         // limit
         if (preg_match('/^limit\(([^\)]+)\)$/', $key, $matches)) {
           $rangeDefs = preg_split('/,/', $matches[1]);
-          $limit = intval(array_pop($rangeDefs));
-          $offset = sizeof($rangeDefs) > 0 ? intval($rangeDefs[0]) : 0;
+          $limit = intval($rangeDefs[0]);
+          $offset = sizeof($rangeDefs) > 0 ? intval($rangeDefs[1]) : 0;
           $request->setValue('offset', $offset);
           $request->setValue('limit', $limit);
-          break;
         }
       }
 

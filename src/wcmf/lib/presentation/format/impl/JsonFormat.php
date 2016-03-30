@@ -52,9 +52,9 @@ class JsonFormat extends HierarchicalFormat {
       $data = self::$_jsonData;
       if ($data !== null) {
         $encoded = json_encode($data);
-        if (self::$_logger->isDebugEnabled('JsonFormat')) {
-          self::$_logger->debug($data, 'JsonFormat');
-          self::$_logger->debug($encoded, 'JsonFormat');
+        if (self::$_logger->isDebugEnabled(__CLASS__)) {
+          self::$_logger->debug($data);
+          self::$_logger->debug($encoded);
         }
         print($encoded);
       }

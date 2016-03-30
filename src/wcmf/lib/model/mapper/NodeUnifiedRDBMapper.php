@@ -516,7 +516,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     foreach($this->getReferences() as $curReferenceDesc) {
       $referencedType = $curReferenceDesc->getOtherType();
       $referencedValue = $curReferenceDesc->getOtherName();
-      $relationDesc = $this->getRelation($referencedType);
+      $relationDescs = $this->getRelationsByType($referencedType);
+      // get relation try role name if ambiguous
+      $relationDesc = sizeof($relationDescs) == 1 ? $relationDescs[0] : $this->getRelation($referencedType);
       $otherMapper = $this->_persistenceFacade->getMapper($relationDesc->getOtherType());
       if ($otherMapper) {
         $otherTable = $otherMapper->getRealTableName();
@@ -528,7 +530,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
             $references[$otherTable]['attributes'] = array();
 
             $tableNameQ = $this->quoteIdentifier($tableName);
-            $otherTableQ = $this->quoteIdentifier($otherTable);
+            $otherTableQ = $this->quoteIdentifier($otherTable.'Ref');
 
             // determine the join condition
             if ($relationDesc instanceof RDBManyToOneRelationDescription) {
@@ -561,7 +563,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
     // add references from each referenced table
     foreach($references as $otherTable => $curReference) {
-      $selectStmt->joinLeft($otherTable, $curReference['joinCond'], $curReference['attributes']);
+      $selectStmt->joinLeft(array($otherTable.'Ref' => $otherTable), $curReference['joinCond'], $curReference['attributes']);
     }
     return $selectStmt;
   }
@@ -723,8 +725,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           // we expect single valued relation ends
           $thisEndObject = $object->getValue($thisEndRelation->getThisRole());
           $otherEndObject = $object->getValue($otherEndRelation->getOtherRole());
-          if ($objectProxy->getRealSubject() == $thisEndObject &&
-                  $relativeProxy->getRealSubject() == $otherEndObject) {
+          if ($objectProxy->getOID() == $thisEndObject->getOID() &&
+                  $relativeProxy->getOID() == $otherEndObject->getOID()) {
             $nmObjects[] = $object;
           }
         }
