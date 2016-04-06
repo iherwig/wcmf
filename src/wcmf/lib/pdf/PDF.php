@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\pdf;
 
+use FPDI;
+
 if (!class_exists('FPDI')) {
     throw new \wcmf\lib\config\ConfigurationException(
             'wcmf\lib\pdf\PDF requires '.

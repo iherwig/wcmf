@@ -16,7 +16,7 @@ namespace wcmf\lib\pdf;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class PDFPage {
+interface PDFPage {
 
   /**
    * Render data onto a pdf.

@@ -48,7 +48,7 @@ class Criteria {
   }
 
   /**
-   * Factory method for constructing a Critera that may be used as value on
+   * Factory method for constructing a Criteria that may be used as value on
    * a PersistentObject's attribute (no type, attribute parameter needed)
    * @param $operator The comparison operator used to compare the given value with
    *  the attribute's value

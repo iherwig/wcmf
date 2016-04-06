@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\pdf;
 
-use \RuntimeException;
 use wcmf\lib\pdf\PDF;
 use wcmf\lib\pdf\PDFPage;
 
@@ -95,7 +94,7 @@ class PDFTemplate {
   public function output($name='', $dest='') {
 
     if ($this->_tpl == null) {
-      throw new RuntimeException("No PDF template provided. Use PDFTemplate::setTemplate.");
+      throw new \RuntimeException("No PDF template provided. Use PDFTemplate::setTemplate.");
     }
 
     $pageIndex = 0;

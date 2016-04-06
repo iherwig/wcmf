@@ -225,6 +225,10 @@ class RESTController extends Controller {
               if (sizeof($parts) > 0 && isset($operatorMap[$op])) {
                 $operator = $operatorMap[$op];
                 $value = $parts[1];
+                if ($operator == 'in') {
+                  // in operator expects array value
+                  $value = explode(',', $value);
+                }
               }
               else {
                 $operator = '=';
