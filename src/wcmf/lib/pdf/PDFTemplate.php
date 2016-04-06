@@ -107,7 +107,7 @@ class PDFTemplate {
 
       // render the PDFPage onto the template page
       if ($pageIndex < sizeof($this->_pages)) {
-        $curPage = &$this->_pages[$pageIndex];
+        $curPage = $this->_pages[$pageIndex];
         if ($curPage instanceof PDFPage) {
           $this->_pdf->startPage();
           $curPage->render($this->_pdf, $i, $this->_data);
