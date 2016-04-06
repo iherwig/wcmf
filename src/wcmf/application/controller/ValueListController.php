@@ -10,8 +10,9 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\control\ValueListProvider;
+use wcmf\lib\presentation\Controller;
 
 /**
  * ValueListController is used to resolve lists for _input_type_ definitions.
