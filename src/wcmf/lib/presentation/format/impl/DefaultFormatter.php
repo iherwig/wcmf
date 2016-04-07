@@ -11,7 +11,6 @@
 namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
