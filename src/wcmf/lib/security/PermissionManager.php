@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\security;
 
-use wcmf\lib\security\principal\User;
-
 /**
  * PermissionManager implementations are used to handle all authorization
  * requests. PermissionManager instances are configured with an AuthUser
