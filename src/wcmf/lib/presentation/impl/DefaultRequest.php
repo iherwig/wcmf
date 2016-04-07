@@ -107,7 +107,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       foreach ($routes as $route => $requestDef) {
         // extract allowed http methods
         $allowedMethods = null;
-        if (strpos($route, '/') !== 0) {
+        if (strpos($route, '/') !== false) {
           list($methodStr, $route) = explode('/', $route, 2);
           $allowedMethods = preg_split('/\s*,\s*/', trim($methodStr));
           $route = '/'.trim($route);

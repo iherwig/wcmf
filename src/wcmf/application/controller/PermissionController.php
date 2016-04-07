@@ -11,16 +11,9 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\config\ActionKey;
-use wcmf\lib\config\Configuration;
-use wcmf\lib\core\Session;
-use wcmf\lib\i18n\Localization;
-use wcmf\lib\i18n\Message;
-use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\PermissionManager;
-use wcmf\lib\security\principal\PrincipalFactory;
 
 /**
  * PermissionController checks, gets and sets permissions.
@@ -102,32 +95,6 @@ use wcmf\lib\security\principal\PrincipalFactory;
  * @author ingo herwig <ingo@wemove.com>
  */
 class PermissionController extends Controller {
-
-  private $_principalFactory = null;
-
-  /**
-   * Constructor
-   * @param $session
-   * @param $persistenceFacade
-   * @param $permissionManager
-   * @param $actionMapper
-   * @param $localization
-   * @param $message
-   * @param $configuration
-   * @param $principalFactory
-   */
-  public function __construct(Session $session,
-          PersistenceFacade $persistenceFacade,
-          PermissionManager $permissionManager,
-          ActionMapper $actionMapper,
-          Localization $localization,
-          Message $message,
-          Configuration $configuration,
-          PrincipalFactory $principalFactory) {
-    parent::__construct($session, $persistenceFacade, $permissionManager,
-            $actionMapper, $localization, $message, $configuration);
-    $this->_principalFactory = $principalFactory;
-  }
 
   /**
    * @see Controller::validate()

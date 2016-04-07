@@ -573,8 +573,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   }
 
   /**
-   * Merge two arrays, preserving entries in first one unless they are
-   * overridden by ones in the second.
+   * Merge the second array into the first, preserving entries of the first array
+   * unless the second array contains the special key '__inherit' set to false 
+   * or they are re-defined in the second array.
    * @param $array1 First array.
    * @param $array2 Second array.
    * @param $override Boolean whether values defined in array1 should be overriden by values defined in array2.
@@ -584,9 +585,19 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $result = $array1;
     foreach(array_keys($array2) as $key) {
       if (!array_key_exists($key, $result)) {
+        // copy complete section, if new
         $result[$key] = $array2[$key];
       }
       else {
+        // process existing section
+        // remove old keys, if inheritence is disabled
+        $inherit = !isset($array2[$key]['__inherit']) || $array2[$key]['__inherit'] == false;
+        if (!$inherit) {
+          foreach(array_keys($result[$key]) as $subkey) {
+            unset($result[$key][$subkey]);
+          }
+        }
+        // merge in new keys
         foreach(array_keys($array2[$key]) as $subkey) {
           if ((array_key_exists($subkey, $result[$key]) && $override) || !isset($result[$key][$subkey])) {
             $result[$key][$subkey] = $array2[$key][$subkey];
