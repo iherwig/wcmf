@@ -25,33 +25,34 @@ class URIUtil {
    */
   public static function makeRelative($absUri, $base) {
     // normalize slashes and remove drive names
-    list($absUri, $base) = self::normalize(array($absUri, $base));
+    list($absUri, $base) = self::normalizePaths(
+            self::removeProtocols(self::normalizeSlashes(array($absUri, $base))));
 
     // add slash to base if missing
     if (!preg_match('/\/$/', $base)) {
       $base .= '/';
     }
-    $abs_array = explode('/', $absUri);
-    $base_array = explode('/', $base);
+    $absArray = explode('/', $absUri);
+    $baseArray = explode('/', $base);
 
     // remove trailing file names
     $fileName = '';
     if (strrpos($absUri, '/') !== strlen($absUri)) {
-      $fileName = array_pop($abs_array);
+      $fileName = array_pop($absArray);
     }
     if (strrpos($base, '/') !== strlen($base)) {
-      array_pop($base_array);
+      array_pop($baseArray);
     }
 
     // ignore common path
-    while (sizeof($abs_array) > 0 && sizeof($base_array) > 0 && $abs_array[0] == $base_array[0]) {
-      array_shift($abs_array);
-      array_shift($base_array);
+    while (sizeof($absArray) > 0 && sizeof($baseArray) > 0 && $absArray[0] == $baseArray[0]) {
+      array_shift($absArray);
+      array_shift($baseArray);
     }
 
     // construct connecting path
-    $rel_uri = str_repeat('../', sizeof($base_array)).join('/', $abs_array).'/'.$fileName;
-    return $rel_uri;
+    $relUri = self::normalizePaths(str_repeat('../', sizeof($baseArray)).join('/', $absArray).'/'.$fileName);
+    return $relUri;
   }
 
   /**
@@ -61,11 +62,8 @@ class URIUtil {
    * @param $base Base URI
    */
   public static function makeAbsolute($relUri, $base) {
-    list($relUri, $base) = self::normalize(array($relUri, $base));
+    list($relUri, $base) = self::normalizeSlashes(array($relUri, $base));
 
-    if(strpos($relUri, "//") === 0) {
-      return "http:".$relUri;
-    }
     // return if already absolute URL
     if (parse_url($relUri, PHP_URL_SCHEME) != '') {
       return $relUri;
@@ -92,9 +90,8 @@ class URIUtil {
     }
     // dirty absolute URL
     $abs = "$host$path/$relUri";
-    // replace '//' or '/./' or '/foo/../' with '/'
-    $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
-    for ($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
+    // normalize
+    $abs = self::normalizePaths($abs);
     // absolute URL is ready!
     return $scheme.'://'.$abs;
   }
@@ -104,17 +101,17 @@ class URIUtil {
    * For example if a file path is stored relative to location A and should be
    * translated to the script URI (location B), use
    * URIUtil::translate($filepathAsSeenFromA, $pathFromBtoA)
-   * @param $relUri Relative URI to translate as seen from base
-   * @param $base Base URI
+   * @param $pathFromA Relative URI to translate as seen from base
+   * @param $pathFromScriptToA Base URI
    * @return An associative array with keys 'absolute' and 'relative'
    * and the absolute and relative URI (as seen from the executed script) as values
    */
-  public static function translate($relUri, $base) {
-    list($relUri, $base) = self::normalize(array($relUri, $base));
+  public static function translate($pathFromA, $pathFromScriptToA) {
+    list($pathFromA, $pathFromScriptToA) = self::normalizeSlashes(array($pathFromA, $pathFromScriptToA));
 
     $self = self::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $path = dirname($self).'/';
-    $absUrl = self::makeAbsolute($relUri, $path.$base);
+    $absUrl = self::makeAbsolute($pathFromA, $path.$pathFromScriptToA);
     $relUrl = self::makeRelative($absUrl, $path);
 
     return array('absolute' => $absUrl, 'relative' => $relUrl);
@@ -178,13 +175,31 @@ class URIUtil {
   }
 
   /**
-   * Normalize slashes and remove drive names
+   * Normalize slashes
    * @param $paths Path to normalize or array of paths
    */
-  public static function normalize($paths) {
+  public static function normalizeSlashes($paths) {
     return preg_replace(
-            array("/\\\\/", "/^[^:]{1}:/", ), array('/', ''),
+            array("/\\\\/"), array('/'),
             $paths);
+  }
+
+  /**
+   * Remove protocols
+   * @param $paths Path to normalize or array of paths
+   */
+  public static function removeProtocols($paths) {
+    return preg_replace(array("/^[^:]{1}:/"), array(''), $paths);
+  }
+
+  /**
+   * Normalize paths (replace '//' or '/./' or '/foo/../' with '/')
+   * @param $paths Path to normalize or array of paths
+   */
+  public static function normalizePaths($paths) {
+    $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+    for ($n=1; $n>0; $paths=preg_replace($re, '/', $paths, -1, $n)) {}
+    return $paths;
   }
 }
 ?>

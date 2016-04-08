@@ -47,6 +47,8 @@ use wcmf\lib\security\PermissionManager;
  * @author ingo herwig <ingo@wemove.com>
  */
 class Controller {
+  
+  const CSRF_TOKEN_PARAM = 'csrf_token';
 
   private $_request = null;
   private $_response = null;
@@ -166,9 +168,10 @@ class Controller {
   /**
    * Delegate the current request to another action. The context is the same as
    * the current context and the source controller will be set to this.
-   * The request and response format will be NullFormat
-   * which means that all request values should be passed in the application internal
-   * format and all response values will have that format.
+   * The request and response format will be NullFormat which means that all 
+   * request values should be passed in the application internal format and 
+   * all response values will have that format. Execution will return to the
+   * calling controller instance afterwards.
    * @param $action The name of the action to execute
    * @return Response instance
    */
@@ -185,6 +188,23 @@ class Controller {
     $subResponse = ObjectFactory::getInstance('response');
     $this->_actionMapper->processAction($subRequest, $subResponse);
     return $subResponse;
+  }
+
+  /**
+   * Redirect to the given action with the given context and request data 
+   * internally. Execution will not return to the calling controller instance 
+   * afterwards.
+   * @param $action The name of the action to execute
+   * @param $context The context
+   * @param $data Associative array containing the request data
+   */
+  protected function internalRedirect($action, $context, $data) {
+    $request = ObjectFactory::getInstance('request');
+    $request->setAction($action);
+    $request->setContext($context);
+    $request->setValues($data);
+    $response = ObjectFactory::getInstance('response');
+    ObjectFactory::getInstance('actionMapper')->processAction($request, $response);
   }
 
   /**
@@ -314,6 +334,42 @@ class Controller {
       }
     }
     return true;
+  }
+
+  /**
+   * Create a CSRF token, store it in the session and set it in the response.
+   * The name of the response parameter is Controller::CSRF_TOKEN_PARAM.
+   * @param $name The name of the token to be used in Controller::validateCsrfToken()
+   */
+  protected function generateCsrfToken($name) {
+    // generate token and store in session
+    $token = base64_encode(openssl_random_pseudo_bytes(32));
+    $this->getSession()->set(self::CSRF_TOKEN_PARAM.'_'.$name, $token);
+    
+    // set token in response
+    $response = $this->getResponse();
+    $response->setValue(self::CSRF_TOKEN_PARAM, $token);
+  }
+
+  /**
+   * Validate the CSRF token contained in the request against the token stored
+   * in the session. The name of the request parameter is Controller::CSRF_TOKEN_PARAM.
+   * @param $name The name of the token as set in Controller::generateCsrfToken()
+   * @return boolean
+   */
+  protected function validateCsrfToken($name) {
+    // get token from session
+    $session = $this->getSession();
+    $tokenKey = self::CSRF_TOKEN_PARAM.'_'.$name;
+    if (!$session->exist($tokenKey)) {
+      return false;
+    }
+    $storedToken = $session->get($tokenKey);
+    $session->remove($tokenKey);
+
+    // compare session token with request token
+    $token = $this->getRequest()->getValue(self::CSRF_TOKEN_PARAM);
+    return $token === $storedToken;
   }
 }
 ?>
