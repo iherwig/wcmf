@@ -66,8 +66,8 @@ class DefaultSession implements Session {
   /**
    * @see Session::get()
    */
-  public function get($key) {
-    $value = null;
+  public function get($key, $default=null) {
+    $value = $default;
     if (isset($_SESSION[$key])) {
       $value = $_SESSION[$key];
     }

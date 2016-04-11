@@ -116,7 +116,7 @@ class UserController extends Controller {
   protected function changePassword(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
     $message = $this->getMessage();
     // check old password
-    if (!$user->verifyPassword($oldPassword, $user->getPassword())) {
+    if (!$user->verifyPassword($oldPassword)) {
       throw new IllegalArgumentException($message->getText("The old password is incorrect"));
     }
     if (strlen($newPassword) == 0) {

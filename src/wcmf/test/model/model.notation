@@ -7644,6 +7644,14 @@
       </eAnnotations>
       <children xmi:type="notation:DecorationNode" xmi:id="_zby6iLTNEeOYkOsR5IzpsA" type="5029"/>
       <children xmi:type="notation:BasicCompartment" xmi:id="_zby6ibTNEeOYkOsR5IzpsA" type="7017">
+        <children xmi:type="notation:Shape" xmi:id="_fDNxwP_DEeWzxP-Oi6uCUQ" type="3012">
+          <element xmi:type="uml:Property" href="model.uml#_PsZYwP_DEeWzxP-Oi6uCUQ"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_fDNxwf_DEeWzxP-Oi6uCUQ"/>
+        </children>
+        <children xmi:type="notation:Shape" xmi:id="_fDPm8P_DEeWzxP-Oi6uCUQ" type="3012">
+          <element xmi:type="uml:Property" href="model.uml#_QCBDcP_DEeWzxP-Oi6uCUQ"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_fDPm8f_DEeWzxP-Oi6uCUQ"/>
+        </children>
         <styles xmi:type="notation:TitleStyle" xmi:id="_zby6irTNEeOYkOsR5IzpsA"/>
         <styles xmi:type="notation:SortingStyle" xmi:id="_zby6i7TNEeOYkOsR5IzpsA"/>
         <styles xmi:type="notation:FilteringStyle" xmi:id="_zby6jLTNEeOYkOsR5IzpsA"/>
@@ -7674,7 +7682,7 @@
         <layoutConstraint xmi:type="notation:Location" xmi:id="_yIuhgStFEeWoF5Z7Jotdrw" y="5"/>
       </children>
       <element xmi:type="uml:Class" href="model.uml#_s2Ve4LTMEeOYkOsR5IzpsA"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_zby6gbTNEeOYkOsR5IzpsA" x="15" y="15" width="196" height="63"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_zby6gbTNEeOYkOsR5IzpsA" x="15" y="15" width="196" height="69"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_YcPHULTOEeOYkOsR5IzpsA" type="2008" lineColor="0">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_YcPHUrTOEeOYkOsR5IzpsA" source="ShadowFigure">
@@ -8722,6 +8730,14 @@
       <element xsi:nil="true"/>
       <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ktISw-qxEeWgWJWjcGunwg" x="689" y="43"/>
     </children>
+    <children xmi:type="notation:Shape" xmi:id="_NXUXwP_DEeWzxP-Oi6uCUQ" type="StereotypeComment">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_NXUXwf_DEeWzxP-Oi6uCUQ" showTitle="true"/>
+      <styles xmi:type="notation:EObjectValueStyle" xmi:id="_NXUXw__DEeWzxP-Oi6uCUQ" name="BASE_ELEMENT">
+        <eObjectValue xmi:type="uml:Class" href="model.uml#_gLuoYLRnEeOfbtYsPp7Oyg"/>
+      </styles>
+      <element xsi:nil="true"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_NXUXwv_DEeWzxP-Oi6uCUQ" x="689" y="43"/>
+    </children>
     <styles xmi:type="notation:DiagramStyle" xmi:id="_WheIIfu5EeOmMdys2glKCA"/>
     <styles xmi:type="notation:StringValueStyle" xmi:id="_yLdFZitFEeWoF5Z7Jotdrw" name="diagram_compatibility_version" stringValue="1.1.0"/>
     <element xmi:type="uml:Package" href="model.uml#_B7Q5IPu5EeOmMdys2glKCA"/>
@@ -9012,6 +9028,16 @@
       <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_ktISx-qxEeWgWJWjcGunwg" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
       <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ktSDoOqxEeWgWJWjcGunwg"/>
       <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ktSDoeqxEeWgWJWjcGunwg"/>
+    </edges>
+    <edges xmi:type="notation:Connector" xmi:id="_NXUXxP_DEeWzxP-Oi6uCUQ" type="StereotypeCommentLink" source="_C0BfUHIBEeWqqJ8U6ttukA" target="_NXUXwP_DEeWzxP-Oi6uCUQ">
+      <styles xmi:type="notation:FontStyle" xmi:id="_NXUXxf_DEeWzxP-Oi6uCUQ"/>
+      <styles xmi:type="notation:EObjectValueStyle" xmi:id="_NXU-0P_DEeWzxP-Oi6uCUQ" name="BASE_ELEMENT">
+        <eObjectValue xmi:type="uml:Class" href="model.uml#_gLuoYLRnEeOfbtYsPp7Oyg"/>
+      </styles>
+      <element xsi:nil="true"/>
+      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_NXUXxv_DEeWzxP-Oi6uCUQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+      <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_NXUXx__DEeWzxP-Oi6uCUQ"/>
+      <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_NXUXyP_DEeWzxP-Oi6uCUQ"/>
     </edges>
   </notation:Diagram>
   <notation:Diagram xmi:id="_8b7VcDRJEeSRmq5T8ey5JQ" type="PapyrusUMLClassDiagram" name="security.ini" measurementUnit="Pixel">

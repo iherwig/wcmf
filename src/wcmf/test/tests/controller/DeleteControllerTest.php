@@ -39,7 +39,7 @@ class DeleteControllerTest extends ControllerTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'DBSequence' => array(
-        array('id' => 1),
+        array('table' => ''),
       ),
       'User' => array(
         array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),

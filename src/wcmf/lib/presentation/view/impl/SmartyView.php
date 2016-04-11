@@ -202,8 +202,9 @@ class SmartyView implements View {
     // get corresponding view
     try {
       $view = $config->getValue($actionKey, 'views', false);
-    } catch (\Exception $ex) {
-      throw new ConfigurationException("No view defined for ".$controller."?".$context."?".$action);
+    }
+    catch (\Exception $ex) {
+      return false;
     }
     return $view;
   }

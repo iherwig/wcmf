@@ -51,12 +51,11 @@ interface User {
   public function getPassword();
 
   /**
-   * Verify a password.
+   * Verify the given password against the password of the user.
    * @param $password The plaintext password to verify
-   * @param $passwordHash The password hash to match
    * @return Boolean.
    */
-  public function verifyPassword($password, $passwordHash);
+  public function verifyPassword($password);
 
   /**
    * Set the configuration file of the user.

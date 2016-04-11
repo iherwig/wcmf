@@ -132,8 +132,12 @@ class Application {
 
         // redirect to failure action
         if ($this->_request) {
-          $this->_request->addError(ApplicationError::fromException($exception));
+          $error = ApplicationError::fromException($exception);
+          $this->_request->addError($error);
+          $this->_response->addError($error);
           $this->_request->setAction('failure');
+          $this->_response->setAction('failure');
+          $this->_response->setFinal();
           ObjectFactory::getInstance('actionMapper')->processAction($this->_request, $this->_response);
           return;
         }

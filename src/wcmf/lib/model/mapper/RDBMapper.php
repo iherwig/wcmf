@@ -240,22 +240,30 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
       $sequenceTable = $sequenceMapper->getTableName();
       $sequenceConn = $sequenceMapper->getConnection();
+      $tableName = strtolower($this->getTableName());
 
       if ($this->_idSelectStmt == null) {
-        $this->_idSelectStmt = $sequenceConn->prepare("SELECT id FROM ".$sequenceTable);
+        $this->_idSelectStmt = $sequenceConn->prepare("SELECT ".$this->quoteIdentifier("id").
+                " FROM ".$this->quoteIdentifier($sequenceTable)." WHERE ".
+                $this->quoteIdentifier("table")."=".$this->quoteValue($tableName));
       }
       if ($this->_idInsertStmt == null) {
-        $this->_idInsertStmt = $sequenceConn->prepare("INSERT INTO ".$sequenceTable." (id) VALUES (0)");
+        $this->_idInsertStmt = $sequenceConn->prepare("INSERT INTO ".
+                $this->quoteIdentifier($sequenceTable)." (".$this->quoteIdentifier("id").
+                ", ".$this->quoteIdentifier("table").") VALUES (1, ".
+                $this->quoteValue($tableName).")");
       }
       if ($this->_idUpdateStmt == null) {
-        $this->_idUpdateStmt = $sequenceConn->prepare("UPDATE ".$sequenceTable." SET id=(id+1);");
+        $this->_idUpdateStmt = $sequenceConn->prepare("UPDATE ".$this->quoteIdentifier($sequenceTable).
+                " SET ".$this->quoteIdentifier("id")."=(".$this->quoteIdentifier("id")."+1) WHERE ".
+                $this->quoteIdentifier("table")."=".$this->quoteValue($tableName));
       }
       $this->_idSelectStmt->execute();
       $rows = $this->_idSelectStmt->fetchAll(PDO::FETCH_ASSOC);
       if (sizeof($rows) == 0) {
         $this->_idInsertStmt->execute();
         $this->_idInsertStmt->closeCursor();
-        $rows = array(array('id' => 0));
+        $rows = array(array('id' => 1));
       }
       $id = $rows[0]['id'];
       $this->_idUpdateStmt->execute();
@@ -320,12 +328,17 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $this->connect();
     }
     try {
-      if ($isSelect) {
+      if (sizeof($bindValues) > 0) {
         $stmt = $this->_conn->prepare($sql);
         $stmt->execute($bindValues);
-        $result = $stmt->fetchAll();
-        $stmt->closeCursor();
-        return $result;
+        if ($isSelect) {
+          $result = $stmt->fetchAll();
+          $stmt->closeCursor();
+          return $result;
+        }
+        else {
+          return $stmt->rowCount();
+        }
       }
       else {
         return $this->_conn->exec($sql);

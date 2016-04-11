@@ -18,13 +18,22 @@ namespace wcmf\lib\security\principal;
 class PasswordService {
 
   /**
+   * Check if the given password is hashed
+   * @param $password
+   * @return boolean
+   */
+  public static function isHashed($password) {
+    $info = password_get_info($password);
+    return $info['algo'] == PASSWORD_BCRYPT;
+  }
+
+  /**
    * Hash the given cleartext password
    * @param $password
    * @return String
    */
   public static function hash($password) {
     return password_hash($password, PASSWORD_BCRYPT);
-
   }
 
   /**

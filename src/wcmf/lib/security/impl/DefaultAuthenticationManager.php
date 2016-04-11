@@ -45,7 +45,7 @@ class DefaultAuthenticationManager implements AuthenticationManager {
     $loginOk = false;
     if ($user != null) {
       // check password
-      $loginOk = $user->verifyPassword($password, $user->getPassword());
+      $loginOk = $user->verifyPassword($password);
       if ($loginOk) {
         // load user config initially
         $userConfig = $user->getConfig();

@@ -14,6 +14,7 @@ use Exception;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
@@ -35,6 +36,7 @@ class DefaultTransaction implements Transaction {
 
   private $_id = '';
   private $_isActive = false;
+  private $_isInCommit = false;
   private $_observedObjects = array();
 
   protected $_newObjects = array();
@@ -187,9 +189,13 @@ class DefaultTransaction implements Transaction {
    * @see Transaction::commit()
    */
   public function commit() {
+    if ($this->_isInCommit) {
+      return;
+    }
     if (self::$_isInfoEnabled) {
       self::$_logger->info("Commit transaction");
     }
+    $this->_isInCommit = true;
     $changedOids = array();
     if ($this->_isActive) {
       $knowTypes = $this->_persistenceFacade->getKnownTypes();
@@ -203,14 +209,25 @@ class DefaultTransaction implements Transaction {
         // object changes may occure during the commit, we
         // loop until all queues are empty
         $commitDone = false;
+        $emptyState = '0:0:0';
         while (!$commitDone) {
+          // check queues before processing
+          $oldState = sizeof($this->_newObjects).':'.
+                  sizeof($this->_dirtyObjects).':'.
+                  sizeof($this->_deletedObjects);
           $changedOids = array_merge($changedOids, $this->processInserts());
           $this->processUpdates();
           $this->processDeletes();
+          // check queues after processing
+          $newState = sizeof($this->_newObjects).':'.
+                  sizeof($this->_dirtyObjects).':'.
+                  sizeof($this->_deletedObjects);
+          // prevent recursion (queue sizes didn't change)
+          if ($oldState != $emptyState && $oldState == $newState) {
+            throw new PersistenceException("Recursion in transaction commit");
+          }
           // check if all queues are empty
-          $commitDone = (sizeof($this->_newObjects) == 0 &&
-                  sizeof($this->_dirtyObjects) == 0 &&
-                          sizeof($this->_deletedObjects) == 0);
+          $commitDone = $newState == $emptyState;
         }
         // commit transaction for each mapper
         if (self::$_isInfoEnabled) {
@@ -247,6 +264,7 @@ class DefaultTransaction implements Transaction {
     // forget changes
     $this->clear();
     $this->_isActive = false;
+    $this->_isInCommit = false;
   }
 
   /**

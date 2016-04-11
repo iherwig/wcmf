@@ -154,10 +154,10 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_mUohsLLnEeWcwaDPJFy4ig" name="PUT/user/password" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_mUohsbLnEeWcwaDPJFy4ig" value="action=changePassword"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_q2x3MLLnEeWcwaDPJFy4ig" name="GET/user/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_q2x3MLLnEeWcwaDPJFy4ig" name="POST/permissions/check" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_q2x3MbLnEeWcwaDPJFy4ig" value="action=checkPermissions"/>
                 </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_d1QekOIvEeWTmJ7K0rVXhg" name="GET/user/permissions/{user}" type="_agg3ALQwEeOLlbB2YLI0iw">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_d1QekOIvEeWTmJ7K0rVXhg" name="POST/permissions/check/{user}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_d1QekeIvEeWTmJ7K0rVXhg" value="action=checkPermissions"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_d-R3sOIvEeWTmJ7K0rVXhg" name="GET/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
@@ -1440,7 +1440,22 @@
           <packagedElement xmi:type="uml:Package" xmi:id="_nmqxoOj5EeOllcOTHGuLUw" name="src">
             <packagedElement xmi:type="uml:Package" xmi:id="_r7Q9ALQ4EeOQ5oJFa1i8cg" name="model">
               <packagedElement xmi:type="uml:Package" xmi:id="_p3FfgLTMEeOYkOsR5IzpsA" name="wcmf">
-                <packagedElement xmi:type="uml:Class" xmi:id="_s2Ve4LTMEeOYkOsR5IzpsA" name="DBSequence"/>
+                <packagedElement xmi:type="uml:Class" xmi:id="_s2Ve4LTMEeOYkOsR5IzpsA" name="DBSequence">
+                  <ownedAttribute xmi:type="uml:Property" xmi:id="_PsZYwP_DEeWzxP-Oi6uCUQ" name="table" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_PsZYwf_DEeWzxP-Oi6uCUQ" value="1"/>
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_PsZYwv_DEeWzxP-Oi6uCUQ" value="1"/>
+                    <defaultValue xmi:type="uml:LiteralString" xmi:id="_PsZYw__DEeWzxP-Oi6uCUQ">
+                      <value xsi:nil="true"/>
+                    </defaultValue>
+                  </ownedAttribute>
+                  <ownedAttribute xmi:type="uml:Property" xmi:id="_QCBDcP_DEeWzxP-Oi6uCUQ" name="id" visibility="public" type="_dbezULQwEeOLlbB2YLI0iw">
+                    <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QCBDcf_DEeWzxP-Oi6uCUQ" value="1"/>
+                    <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QCBDcv_DEeWzxP-Oi6uCUQ" value="1"/>
+                    <defaultValue xmi:type="uml:LiteralString" xmi:id="_QCBDc__DEeWzxP-Oi6uCUQ">
+                      <value xsi:nil="true"/>
+                    </defaultValue>
+                  </ownedAttribute>
+                </packagedElement>
                 <packagedElement xmi:type="uml:Class" xmi:id="_s73fILTMEeOYkOsR5IzpsA" name="Lock">
                   <ownedAttribute xmi:type="uml:Property" xmi:id="_EVGnsLTTEeOYkOsR5IzpsA" name="objectid" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                     <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LuOKULTTEeOYkOsR5IzpsA" value="1"/>
@@ -1968,7 +1983,7 @@
   <Chronos:ChiActionKey xmi:id="_h0jtwLRvEeOfbtYsPp7Oyg" action="continue" base_Association="_ft5jQ7RvEeOfbtYsPp7Oyg"/>
   <Chronos:ChiActionKey xmi:id="_xdcHILRvEeOfbtYsPp7Oyg" action="indexAll" base_Association="_wcZg4LRvEeOfbtYsPp7Oyg"/>
   <Chronos:ChiActionKey xmi:id="_16x1ILRvEeOfbtYsPp7Oyg" action="continue" base_Association="_0VZyw7RvEeOfbtYsPp7Oyg"/>
-  <Chronos:ChiNode xmi:id="_VViRkLTNEeOYkOsR5IzpsA" base_Class="_s2Ve4LTMEeOYkOsR5IzpsA"/>
+  <Chronos:ChiNode xmi:id="_VViRkLTNEeOYkOsR5IzpsA" base_Class="_s2Ve4LTMEeOYkOsR5IzpsA" display_value="table|id" pk_name="table"/>
   <Chronos:ChiNode xmi:id="_dQEfMLTNEeOYkOsR5IzpsA" base_Class="_s73fILTMEeOYkOsR5IzpsA" display_value="objectid|login|created"/>
   <Chronos:ChiNode xmi:id="_fMz4sLTNEeOYkOsR5IzpsA" base_Class="_s5AYYLTMEeOYkOsR5IzpsA" display_value="name" orderby="name"/>
   <Chronos:ChiNode xmi:id="_haVgMLTNEeOYkOsR5IzpsA" base_Class="_tCKUYLTMEeOYkOsR5IzpsA" display_value="objectid|attribute|language"/>
@@ -2047,4 +2062,6 @@
   <Chronos:ChiAssociation xmi:id="_l6wycE0IEeWgTqa5Y3-hfQ" fk_name="fk_chapter_id" base_Association="_rf_CcLU5EeORdpT3S9OOtw"/>
   <Chronos:ChiView xmi:id="_dGdRUHIBEeWqqJ8U6ttukA" base_Class="_dGbcIHIBEeWqqJ8U6ttukA"/>
   <Chronos:ChiActionKey xmi:id="_3W8ikHIBEeWqqJ8U6ttukA" base_Association="_j0gdsHIBEeWqqJ8U6ttukA"/>
+  <Chronos:ChiValue xmi:id="_PwJQUP_DEeWzxP-Oi6uCUQ" base_Property="_PsZYwP_DEeWzxP-Oi6uCUQ"/>
+  <Chronos:ChiValue xmi:id="_QCF78P_DEeWzxP-Oi6uCUQ" db_data_type="INT(11)" base_Property="_QCBDcP_DEeWzxP-Oi6uCUQ"/>
 </xmi:XMI>

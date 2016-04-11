@@ -44,7 +44,7 @@ class ApplicationError {
   const LEVEL_ERROR = 'error';
   const LEVEL_FATAL = 'fatal';
 
-  const DEFAULT_ERROR_STATUS = 400;
+  const DEFAULT_ERROR_STATUS = 500;
 
   private $_code = null;
   private $_level = null;
@@ -180,7 +180,7 @@ $message = ObjectFactory::getInstance('message');
 define('GENERAL_WARNING', serialize(array('GENERAL_WARNING', ApplicationError::LEVEL_WARNING, 400,
   $message->getText('An unspecified warning occured.')
 )));
-define('GENERAL_ERROR', serialize(array('GENERAL_ERROR', ApplicationError::LEVEL_ERROR, 400,
+define('GENERAL_ERROR', serialize(array('GENERAL_ERROR', ApplicationError::LEVEL_ERROR, 500,
   $message->getText('An unspecified error occured.')
 )));
 define('GENERAL_FATAL', serialize(array('GENERAL_FATAL', ApplicationError::LEVEL_FATAL, 500,

@@ -27,9 +27,10 @@ interface Session {
   /**
    * Returns the value of an session variable
    * @param $key The key (name) of the session vaiable.
+   * @param $default The default value if the key is not defined (optional, default: _null_)
    * @return The session var or null if it doesn't exist.
    */
-  public function get($key);
+  public function get($key, $default=null);
 
   /**
    * Sets the value of an session variable.

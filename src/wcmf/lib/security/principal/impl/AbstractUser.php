@@ -60,8 +60,8 @@ abstract class AbstractUser extends Node implements User {
   /**
    * @see User::verifyPassword()
    */
-  public function verifyPassword($password, $passwordHash) {
-    return PasswordService::verify($password, $passwordHash);
+  public function verifyPassword($password) {
+    return PasswordService::verify($password, $this->getPassword());
   }
 
   /**
@@ -123,11 +123,8 @@ abstract class AbstractUser extends Node implements User {
   protected function ensureHashedPassword() {
     // the password is expected to be stored in the 'password' value
     $password = $this->getValue('password');
-    if (strlen($password) > 0) {
-      $info = password_get_info($password);
-      if ($info['algo'] != PASSWORD_BCRYPT) {
-        $this->setValue('password', PasswordService::hash($password));
-      }
+    if (strlen($password) > 0 && !PasswordService::isHashed($password)) {
+      $this->setValue('password', PasswordService::hash($password));
     }
   }
 

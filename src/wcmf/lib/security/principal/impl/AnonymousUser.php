@@ -57,7 +57,7 @@ class AnonymousUser implements User {
   /**
    * @see User::verifyPassword
    */
-  public function verifyPassword($password, $passwordHash) {
+  public function verifyPassword($password) {
     return false;
   }
 

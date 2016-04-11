@@ -47,7 +47,7 @@ use wcmf\lib\security\PermissionManager;
  * @author ingo herwig <ingo@wemove.com>
  */
 class Controller {
-  
+
   const CSRF_TOKEN_PARAM = 'csrf_token';
 
   private $_request = null;
@@ -168,8 +168,8 @@ class Controller {
   /**
    * Delegate the current request to another action. The context is the same as
    * the current context and the source controller will be set to this.
-   * The request and response format will be NullFormat which means that all 
-   * request values should be passed in the application internal format and 
+   * The request and response format will be NullFormat which means that all
+   * request values should be passed in the application internal format and
    * all response values will have that format. Execution will return to the
    * calling controller instance afterwards.
    * @param $action The name of the action to execute
@@ -191,8 +191,8 @@ class Controller {
   }
 
   /**
-   * Redirect to the given action with the given context and request data 
-   * internally. Execution will not return to the calling controller instance 
+   * Redirect to the given action with the given context and request data
+   * internally. Execution will not return to the calling controller instance
    * afterwards.
    * @param $action The name of the action to execute
    * @param $context The context
@@ -205,6 +205,26 @@ class Controller {
     $request->setValues($data);
     $response = ObjectFactory::getInstance('response');
     ObjectFactory::getInstance('actionMapper')->processAction($request, $response);
+  }
+
+  /**
+   * Redirect to the given location with the given request data externally
+   * (HTTP status code 302). Execution will not return to the calling controller
+   * instance afterwards. The given data are stored in the session under the
+   * given key.
+   * @param $location The location to redirect to
+   * @param $key The key used as session variable name (optional)
+   * @param $data The data to be stored in the session (optional)
+   */
+  protected function externalRedirect($location, $key=null, $data=null) {
+    if (strlen($key) > 0 && $data != null) {
+      $session = $this->getSession();
+      $session->set($key, $data);
+    }
+    $response = $this->getResponse();
+    $response->setHeader('Location', $location);
+    $response->setFormat('null'); // prevent any rendering
+    $response->setFinal(); // prevent any further processing
   }
 
   /**
@@ -345,7 +365,7 @@ class Controller {
     // generate token and store in session
     $token = base64_encode(openssl_random_pseudo_bytes(32));
     $this->getSession()->set(self::CSRF_TOKEN_PARAM.'_'.$name, $token);
-    
+
     // set token in response
     $response = $this->getResponse();
     $response->setValue(self::CSRF_TOKEN_PARAM, $token);
