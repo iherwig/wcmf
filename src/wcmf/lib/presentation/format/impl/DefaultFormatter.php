@@ -75,8 +75,11 @@ class DefaultFormatter implements Formatter {
     // if the response has a file, we send it and return
     $file = $response->getFile();
     if ($file) {
-      self::sendHeader("Content-Type: application/octet-stream");
-      self::sendHeader('Content-Disposition: attachment; filename="'.basename($file['filename']).'"');
+      self::sendHeader("Content-Type: ".$file['type']);
+      self::sendHeader("Content-Length: ".strlen($file['content']));
+      if ($file['isDownload']) {
+        self::sendHeader('Content-Disposition: attachment; filename="'.basename($file['filename']).'"');
+      }
       self::sendHeader("Pragma: no-cache");
       self::sendHeader("Expires: 0");
       echo $file['content'];

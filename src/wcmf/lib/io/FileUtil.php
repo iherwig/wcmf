@@ -61,6 +61,26 @@ class FileUtil {
   }
 
   /**
+   * Get the mime type of the given file
+   * @param $file The file
+   * @return String
+   */
+  public static function getMimeType($file) {
+    $defaultType = 'application/octet-stream';
+    if (class_exists('\FileInfo')) {
+      // use extension
+      $fileInfo = new finfo(FILEINFO_MIME);
+      $fileType = $fileInfo->file(file_get_contents($file));
+    }
+    else {
+      // try detect image mime type
+      $imageInfo = getimagesize($file);
+      $fileType = isset($imageInfo['mime']) ? $imageInfo['mime'] : '';
+    }
+    return (is_string($fileType) && !empty($fileType)) ? $fileType : $defaultType;
+  }
+
+  /**
    * Write unicode to file.
    * @param $fp File Handle
    * @param $str String to write

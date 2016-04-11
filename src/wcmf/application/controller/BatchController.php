@@ -161,7 +161,7 @@ abstract class BatchController extends Controller {
     // check if a download was triggered in the last step
     if ($sessionData[self::DOWNLOAD_STEP_VAR] == true) {
       $file = $this->getDownloadFile();
-      $response->setFile($file);
+      $response->setFile($file, true);
       return;
     }
 

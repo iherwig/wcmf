@@ -33,7 +33,7 @@ use wcmf\lib\pdf\PDFPage;
  *
  *   // output the final page
  *   $downloadfile = 'wcmf.pdf';
- *   $response->setFile($downloadfile, $template->output($downloadfile, 'S'));
+ *   $response->setFile($downloadfile, true, $template->output($downloadfile, 'S'), 'application/pdf');
  * }
  * @endcode
  *
