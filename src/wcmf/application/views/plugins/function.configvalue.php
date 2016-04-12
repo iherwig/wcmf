@@ -16,7 +16,7 @@ use wcmf\lib\core\ObjectFactory;
 * File:     function.configvalue.php
 * Type:     function
 * Name:     configvalue
-* Purpose:  output a configuration value
+* Purpose:  output a configuration value/section
 *           or assign it to a smarty variable
 * Usage:    e.g. {configvalue key="exportDir" section="cms"} or
 *           {configvalue key="exportDir" section="cms" varname="exportDir"}
@@ -24,7 +24,12 @@ use wcmf\lib\core\ObjectFactory;
 */
 function smarty_function_configvalue($params, \Smarty_Internal_Template $template) {
   $config = ObjectFactory::getInstance('configuration');
-  $value = $config->getValue($params['key'], $params['section'], false);
+  if (isset($params['key'])) {
+    $value = $config->getValue($params['key'], $params['section']);
+  }
+  else {
+    $value = $config->getSection($params['section']);
+  }
   if (isset($params['varname'])) {
     $template->assign($params['varname'], $value);
   }
