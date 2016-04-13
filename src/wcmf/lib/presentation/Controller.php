@@ -192,8 +192,9 @@ class Controller {
 
   /**
    * Redirect to the given action with the given context and request data
-   * internally. Execution will not return to the calling controller instance
-   * afterwards.
+   * internally. The method will not return a result to the calling
+   * controller method. The calling method should return immediatly in order to
+   * avoid any side effects of code executed after the redirect.
    * @param $action The name of the action to execute
    * @param $context The context
    * @param $data Associative array containing the request data
@@ -209,9 +210,10 @@ class Controller {
 
   /**
    * Redirect to the given location with the given request data externally
-   * (HTTP status code 302). Execution will not return to the calling controller
-   * instance afterwards. The given data are stored in the session under the
-   * given key.
+   * (HTTP status code 302). The method will not return a result to the calling
+   * controller method. The calling method should return immediatly in order to
+   * avoid any side effects of code executed after the redirect. The given data
+   * are stored in the session under the given key.
    * @param $location The location to redirect to
    * @param $key The key used as session variable name (optional)
    * @param $data The data to be stored in the session (optional)
@@ -223,6 +225,7 @@ class Controller {
     }
     $response = $this->getResponse();
     $response->setHeader('Location', $location);
+    $response->setStatus(302);
     $response->setFormat('null'); // prevent any rendering
     $response->setFinal(); // prevent any further processing
   }
