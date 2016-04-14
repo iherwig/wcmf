@@ -20,8 +20,8 @@ class URIUtil {
   /**
    * Convert an absolute URI to a relative
    * code from http://www.webmasterworld.com/forum88/334.htm
-   * @param $absUri Absolute URI to convert, may have a trailing filename
-   * @param $base Base URI
+   * @param $absUri Absolute URI at which the path should end, may have a trailing filename
+   * @param $base Absolute URI from which the relative should start
    */
   public static function makeRelative($absUri, $base) {
     // normalize slashes and remove drive names
@@ -58,8 +58,8 @@ class URIUtil {
   /**
    * Convert a relative URI to an absolute
    * code from http://99webtools.com/relative-path-into-absolute-url.php
-   * @param $relUri Relative URI to convert
-   * @param $base Base URI
+   * @param $relUri URI relative to base
+   * @param $base Absolute URI
    */
   public static function makeAbsolute($relUri, $base) {
     list($relUri, $base) = self::normalizeSlashes(array($relUri, $base));
@@ -79,7 +79,7 @@ class URIUtil {
     }
     // parse base URL and convert to local variables: $scheme, $host, $path
     extract(parse_url($base));
-    $scheme = !isset($scheme) ? 'http' : $scheme;
+    $scheme = !isset($scheme) ? '' : $scheme.'://';
     $host = !isset($host) ? '' : $host;
     $path = !isset($path) ? '' : $path;
     // remove non-directory element from path
@@ -93,7 +93,7 @@ class URIUtil {
     // normalize
     $abs = self::normalizePaths($abs);
     // absolute URL is ready!
-    return $scheme.'://'.$abs;
+    return $scheme.$abs;
   }
 
   /**
