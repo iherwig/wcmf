@@ -21,7 +21,12 @@ ini_set('session.use_strict_mode', 'On');
 ini_set('session.cookie_httponly', 'On');
 ini_set('session.use_trans_sid', 'Off');
 ini_set('session.cache_limiter', 'nocache');
-ini_set('session.hash_function', 'sha256');
+if (in_array('sha256', hash_algos())) {
+  ini_set('session.hash_function', 'sha256');
+}
+else {
+  ini_set('session.hash_function', 1);
+}
 
 /**
  * Default session implementation.
