@@ -117,7 +117,10 @@ class DefaultSession implements Session {
    */
   public function setAuthUser($login) {
     $this->set($this->_authUserVarName, $login);
-    session_regenerate_id(true);
+    // NOTE: prevent "headers already sent" errors in phpunit tests
+    if (!headers_sent()) {
+      session_regenerate_id(true);
+    }
   }
 
   /**
