@@ -888,16 +888,21 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @note The type parameter is not used here because this class only constructs one type
    */
   protected function getOIDsImpl($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+    if ($this->_conn == null) {
+      $this->connect();
+    }
     $oids = array();
 
-    // create query (load only pk columns and no children oids)
-    $type = $this->getType();
-    $objects = $this->loadObjectsFromQueryParts($type, BuildDepth::SINGLE, $criteria, $orderby,
-            $pagingInfo);
+    // create query
+    $selectStmt = $this->getSelectSQL($criteria, null, $orderby, $pagingInfo);
+    $data = $this->select($selectStmt, $pagingInfo);
+    if (sizeof($data) == 0) {
+      return $oids;
+    }
 
     // collect oids
-    for ($i=0; $i<sizeof($objects); $i++) {
-      $oids[] = $objects[$i]->getOID();
+    for ($i=0, $count=sizeof($data); $i<$count; $i++) {
+      $oids[] = $this->constructOID($data[$i]);
     }
     return $oids;
   }
