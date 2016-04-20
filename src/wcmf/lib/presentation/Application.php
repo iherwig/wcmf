@@ -157,12 +157,9 @@ class Application {
    * @return String
    */
   public function outputHandler($buffer) {
-    // log last error
+    // log last error, if it's level is enabled
     $error = error_get_last();
-    if ($error !== null) {
-      $info = "Error: ".$error['message']." in ".$error['file']." on line ".$error['line'];
-      self::$_logger->error($info);
-
+    if ($error !== null && ($error['type'] & ini_get('error_reporting'))) {
       // suppress error message in browser
       if (!$this->_debug) {
         header('HTTP/1.1 500 Internal Server Error');

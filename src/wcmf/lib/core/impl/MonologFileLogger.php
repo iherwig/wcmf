@@ -16,6 +16,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\impl\AbstractLogger;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\util\StringUtil;
 
@@ -32,7 +33,7 @@ use wcmf\lib\util\StringUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class MonologFileLogger implements \wcmf\lib\core\Logger {
+class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger {
 
   const ROOT_SECTION_NAME = 'Root';
   const LOGGER_SECTION_NAME = 'Logger';

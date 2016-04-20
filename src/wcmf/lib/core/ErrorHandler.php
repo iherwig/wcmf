@@ -61,14 +61,14 @@ class ErrorHandler {
     $errorIsEnabled = (bool)($errno & ini_get('error_reporting'));
 
     // -- FATAL ERROR
-    if(isset(self::$FATAL_ERRORS[$errno]) && $errorIsEnabled ) {
-        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+    if(isset(self::$FATAL_ERRORS[$errno]) && $errorIsEnabled) {
+      throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 
     // -- NON-FATAL ERROR/WARNING/NOTICE
-    else if( $errorIsEnabled ) {
-        self::$_logger->warn($errstr);
-        return false; // Make sure this ends up in $php_errormsg, if appropriate
+    else if($errorIsEnabled) {
+      $info = $errstr." in ".$errfile." on line ".$errline;
+      self::$_logger->logByErrorType($errno, $info);
     }
   }
 }

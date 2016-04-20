@@ -11,13 +11,14 @@
 namespace wcmf\lib\core\impl;
 
 use \Logger;
+use wcmf\lib\core\impl\AbstractLogger;
 
 /**
  * Log4phpLogger is a wrapper for the log4php library.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Log4phpLogger implements \wcmf\lib\core\Logger {
+class Log4phpLogger extends AbstractLogger implements \wcmf\lib\core\Logger {
 
   private static $_initialized = false;
 

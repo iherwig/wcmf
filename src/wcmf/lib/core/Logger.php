@@ -78,6 +78,14 @@ interface Logger {
   public function isFatalEnabled();
 
   /**
+   * Log the given message and choose the level from
+   * the given type
+   * @param $type PHP error constant (e.g. E_WARNING)
+   * @param $message
+   */
+  public function logByErrorType($type, $message);
+
+  /**
    * Get a Logger instance by name
    * @param $name The name
    * @return Logger
