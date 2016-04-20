@@ -71,25 +71,33 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "ORDER BY `ChapterAlias`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql3));
 
-    // order 1
-    $sql4 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
-            array(array($criteria), null, array("name ASC")))->__toString();
-    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
-      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
-      "`AuthorRef`.`name` AS `author_name` ".
-      "FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
-      "ORDER BY `Chapter`.`name` ASC";
+    // attributes
+    $sql4 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL', array(array($criteria), null, array('id', 'name')))->__toString();
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`name`, ".
+      "`AuthorRef`.`name` AS `author_name` FROM `Chapter` ".
+      "LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
+      "ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql4));
 
-    // order 2
+    // order 1
     $sql5 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
-            array(array($criteria), null, array("Chapter.name ASC")))->__toString();
+            array(array($criteria), null, null, array("name ASC")))->__toString();
     $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
       "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
       "`AuthorRef`.`name` AS `author_name` ".
       "FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
       "ORDER BY `Chapter`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql5));
+
+    // order 2
+    $sql6 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
+            array(array($criteria), null, null, array("Chapter.name ASC")))->__toString();
+    $expected = "SELECT `Chapter`.`id`, `Chapter`.`fk_chapter_id`, `Chapter`.`fk_book_id`, `Chapter`.`fk_author_id`, `Chapter`.`name`, `Chapter`.`content`, `Chapter`.`created`, ".
+      "`Chapter`.`creator`, `Chapter`.`modified`, `Chapter`.`last_editor`, `Chapter`.`sortkey_author`, `Chapter`.`sortkey_book`, `Chapter`.`sortkey_parentchapter`, `Chapter`.`sortkey`, ".
+      "`AuthorRef`.`name` AS `author_name` ".
+      "FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` WHERE (`Chapter`.`name` = :Chapter_name) ".
+      "ORDER BY `Chapter`.`name` ASC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql6));
 
     // dbprefix
     $this->dbParams['dbPrefix'] = 'WCMF_';

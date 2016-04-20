@@ -894,7 +894,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $oids = array();
 
     // create query
-    $selectStmt = $this->getSelectSQL($criteria, null, $orderby, $pagingInfo);
+    $selectStmt = $this->getSelectSQL($criteria, null, $this->getPkNames(), $orderby, $pagingInfo);
     $data = $this->select($selectStmt, $pagingInfo);
     if (sizeof($data) == 0) {
       return $oids;
@@ -934,7 +934,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     }
 
     // create query
-    $selectStmt = $this->getSelectSQL($criteria, null, $orderby, $pagingInfo);
+    $selectStmt = $this->getSelectSQL($criteria, null, null, $orderby, $pagingInfo);
 
     $objects = $this->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo);
     return $objects;
@@ -1278,6 +1278,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * Get the SQL command to select object data from the database.
    * @param $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
    * @param $alias The alias for the table name (default: _null_)
+   * @param $attributes An array holding names of attributes to select (optional, default: _null_)
    * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
    * @param $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_))
    * @param $queryId Identifier for the query cache (maybe null to let implementers handle it). (default: _null_)
@@ -1285,7 +1286,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @note The names of the data item columns MUST match the data item names provided in the '_datadef' array from RDBMapper::getObjectDefinition()
    *       Use alias names if not! The selected data will be put into the '_data' array of the object definition.
    */
-  abstract public function getSelectSQL($criteria=null, $alias=null, $orderby=null, PagingInfo $pagingInfo=null, $queryId=null);
+  abstract public function getSelectSQL($criteria=null, $alias=null, $attributes=null, $orderby=null, PagingInfo $pagingInfo=null, $queryId=null);
 
   /**
    * Get the SQL command to select those objects from the database that are related to the given object.

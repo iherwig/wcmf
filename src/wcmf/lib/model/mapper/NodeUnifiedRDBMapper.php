@@ -204,9 +204,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   /**
    * @see RDBMapper::getSelectSQL()
    */
-  public function getSelectSQL($criteria=null, $alias=null, $orderby=null, PagingInfo $pagingInfo=null, $queryId=null) {
+  public function getSelectSQL($criteria=null, $alias=null, $attributes=null, $orderby=null, PagingInfo $pagingInfo=null, $queryId=null) {
     // use own query id, if none is given
-    $queryId = $queryId == null ? $this->getCacheKey($alias, $criteria, $orderby, $pagingInfo) : $queryId;
+    $queryId = $queryId == null ? $this->getCacheKey($alias, $attributes, $criteria, $orderby, $pagingInfo) : $queryId;
 
     $selectStmt = SelectStatement::get($this, $queryId);
     if (!$selectStmt->isCached()) {
@@ -223,7 +223,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
 
       // columns
-      $this->addColumns($selectStmt, $tableName);
+      $this->addColumns($selectStmt, $tableName, $attributes);
 
       // condition
       $bind = $this->addCriteria($selectStmt, $criteria, $tableName);
@@ -290,7 +290,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
 
     // statement
-    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), $criteria, $orderby, $pagingInfo);
+    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), null, $criteria, $orderby, $pagingInfo);
     $selectStmt = SelectStatement::get($this, $queryId);
     if (!$selectStmt->isCached()) {
       // initialize the statement
@@ -340,7 +340,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
 
     // statement
-    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), $criteria, $orderby, $pagingInfo);
+    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), null, $criteria, $orderby, $pagingInfo);
     $selectStmt = SelectStatement::get($this, $queryId);
     if (!$selectStmt->isCached()) {
       // initialize the statement
@@ -393,7 +393,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
 
     // statement
-    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), $criteria, $orderby, $pagingInfo);
+    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), null, $criteria, $orderby, $pagingInfo);
     $selectStmt = SelectStatement::get($this, $queryId);
     if (!$selectStmt->isCached()) {
       // initialize the statement
@@ -488,13 +488,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * Add the columns to a given select statement.
    * @param $selectStmt The select statement (instance of SelectStatement)
    * @param $tableName The table name
+   * @param $attributes Array of attribute names (optional)
    * @return SelectStatement
    */
-  protected function addColumns(SelectStatement $selectStmt, $tableName) {
+  protected function addColumns(SelectStatement $selectStmt, $tableName, $attributes=null) {
     // columns
     $attributeDescs = $this->getAttributes();
     foreach($attributeDescs as $curAttributeDesc) {
-      if (!($curAttributeDesc instanceof ReferenceDescription)) {
+      $name = $curAttributeDesc->getName();
+      if (($attributes == null || in_array($name, $attributes)) && !($curAttributeDesc instanceof ReferenceDescription)) {
         $selectStmt->columns(array($curAttributeDesc->getName() => $curAttributeDesc->getColumn()), $tableName);
       }
     }
@@ -799,21 +801,25 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Get a unique string for the given parameter values
-   * @param $string
+   * @param $alias
+   * @param $attributeArray
    * @param $criteriaArray
-   * @param $stringArray
+   * @param $orderArray
    * @param $pagingInfo
    * @return String
    */
-  protected function getCacheKey($string, $criteriaArray, $stringArray, PagingInfo $pagingInfo=null) {
-    $result = $this->getRealTableName().','.$string.',';
+  protected function getCacheKey($alias, $attributeArray, $criteriaArray, $orderArray, PagingInfo $pagingInfo=null) {
+    $result = $this->getRealTableName().','.$alias.',';
+    if ($attributeArray != null) {
+      $result .= join(',', $attributeArray);
+    }
     if ($criteriaArray != null) {
       foreach ($criteriaArray as $c) {
         $result .= $c->getId();
       }
     }
-    if ($stringArray != null) {
-      $result .= join(',', $stringArray);
+    if ($orderArray != null) {
+      $result .= join(',', $orderArray);
     }
     if ($pagingInfo != null) {
       $result .= $pagingInfo->getOffset().','.$pagingInfo->getPageSize();

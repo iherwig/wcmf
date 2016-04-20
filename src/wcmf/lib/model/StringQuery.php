@@ -58,7 +58,7 @@ class StringQuery extends ObjectQuery {
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $selectStmt = $mapper->getSelectSQL(null, null, null, $pagingInfo, $this->getId());
+    $selectStmt = $mapper->getSelectSQL(null, null, null, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
       // initialize the statement
       $selectStmt->distinct(true);

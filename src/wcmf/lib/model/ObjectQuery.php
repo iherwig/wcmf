@@ -276,7 +276,7 @@ class ObjectQuery extends AbstractQuery {
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
     $tableName = self::processTableName($this->_typeNode);
-    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], array(), $pagingInfo, $this->getId());
+    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], null, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
       // initialize the statement
       $selectStmt->distinct(true);
