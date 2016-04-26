@@ -162,6 +162,7 @@ abstract class BatchController extends Controller {
     if ($sessionData[self::DOWNLOAD_STEP_VAR] == true) {
       $file = $this->getDownloadFile();
       $response->setFile($file, true);
+      $this->cleanup();
       return;
     }
 
@@ -191,7 +192,7 @@ abstract class BatchController extends Controller {
       }
       else {
         $response->setAction('done');
-        $sessionData = array();
+        $this->cleanup();
       }
     }
     else {
@@ -249,7 +250,7 @@ abstract class BatchController extends Controller {
     $total = sizeof($oids);
     while(sizeof($oids) > 0) {
       $items = array();
-      for($i=0; $i<$size; $i++) {
+      for($i=0; $i<$size && sizeof($oids)>0; $i++) {
         $nextItem = array_shift($oids);
         $items[] = sprintf('%s', $nextItem);
       }
@@ -352,5 +353,14 @@ abstract class BatchController extends Controller {
    *         as required for BatchController::addWorkPackage() method or null to terminate.
    */
   protected abstract function getWorkPackage($number);
+
+  /**
+   * Clean up after all tasks are finished.
+   * @note Suclasses may override this to do custom clean up, but should call the parent method.
+   */
+  protected function cleanup() {
+    $session = $this->getSession();
+    $session->set(self::SESSION_VARNAME, null);
+  }
 }
 ?>

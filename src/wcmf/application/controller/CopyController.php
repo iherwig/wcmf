@@ -78,7 +78,7 @@ class CopyController extends BatchController {
     if ($request->getAction() != 'continue') {
       $session = $this->getSession();
 
-      // set defaults
+      // set defaults (will be stored with first request)
       if (!$request->hasValue('nodesPerCall')) {
         $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
       }
@@ -276,7 +276,7 @@ class CopyController extends BatchController {
       $this->endProcess($this->getCopyOID($nodeOID));
     }
 
-    // process _NODES_PER_CALL nodes
+    // process nodes
     $counter = 0;
     while ($iterator->valid() && $counter < $this->getRequestValue('nodesPerCall')) {
       $currentOID = $iterator->current();
@@ -312,8 +312,8 @@ class CopyController extends BatchController {
     $session = $this->getSession();
 
     // clear session variables
-    $sessionData = array();
-    $session->set(self::SESSION_VARNAME, $sessionData);
+    $tmp = array();
+    $session->set(self::SESSION_VARNAME, $tmp);
   }
 
   /**

@@ -31,6 +31,9 @@ use wcmf\lib\security\PermissionManager;
  * <div> __Action__ _default_ </div>
  * <div>
  * Create the index.
+ * | Parameter              | Description
+ * |------------------------|-------------------------
+ * | _in_ `nodesPerCall`    | The number of nodes to process in one call (default: 10)
  * </div>
  * </div>
  *
@@ -41,6 +44,9 @@ use wcmf\lib\security\PermissionManager;
 class SearchIndexController extends BatchController {
 
   private $_search = null;
+
+  // default values, maybe overriden by corresponding request values (see above)
+  private $_NODES_PER_CALL = 10;
 
   /**
    * Constructor
@@ -64,6 +70,21 @@ class SearchIndexController extends BatchController {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
     $this->_search = $search;
+  }
+
+  /**
+   * @see Controller::initialize()
+   */
+  public function initialize(Request $request, Response $response) {
+    // initialize controller
+    if ($request->getAction() != 'continue') {
+      // set defaults (will be stored with first request)
+      if (!$request->hasValue('nodesPerCall')) {
+        $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
+      }
+    }
+    // initialize parent controller after default request values are set
+    parent::initialize($request, $response);
   }
 
   /**
@@ -102,13 +123,14 @@ class SearchIndexController extends BatchController {
    */
   protected function collect($types) {
     $persistenceFacade = $this->getPersistenceFacade();
+    $nodesPerCall = $this->getRequestValue('nodesPerCall');
     foreach ($types as $type) {
       $oids = $persistenceFacade->getOIDs($type);
       if (sizeof($oids) == 0) {
         $oids = array(1);
       }
       $this->addWorkPackage($this->getMessage()->getText('Indexing %0%', array($type)),
-              10, $oids, 'index');
+              $nodesPerCall, $oids, 'index');
     }
   }
 

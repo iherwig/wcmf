@@ -65,7 +65,7 @@ class BatchDisplayController extends BatchController {
     if ($request->getAction() != 'continue') {
       $session = $this->getSession();
 
-      // set defaults
+      // set defaults (will be stored with first request)
       if (!$request->hasValue('nodesPerCall')) {
         $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
       }
@@ -171,7 +171,7 @@ class BatchDisplayController extends BatchController {
       $this->endProcess();
     }
 
-    // process _NODES_PER_CALL nodes
+    // process nodes
     $counter = 0;
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     while ($iterator->valid() && $counter < $nodesPerCall) {
@@ -204,8 +204,8 @@ class BatchDisplayController extends BatchController {
     $session = $this->getSession();
 
     // clear session variables
-    $sessionData = array();
-    $session->set(self::SESSION_VARNAME, $sessionData);
+    $tmp = null;
+    $session->set(self::SESSION_VARNAME, $tmp);
   }
 
   /**

@@ -57,6 +57,13 @@ class ListController extends Controller {
   protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
+    if (!$request->hasValue('className') ||
+      !$this->getPersistenceFacade()->isKnownType($request->getValue('className')))
+    {
+      $response->addError(ApplicationError::get('PARAMETER_INVALID',
+        array('invalidParameters' => array('className'))));
+      return false;
+    }
     if($request->hasValue('limit') && intval($request->getValue('limit')) < 0) {
       $this->getLogger()->warn(ApplicationError::get('LIMIT_NEGATIVE'));
     }
@@ -64,6 +71,7 @@ class ListController extends Controller {
       $sortDirection = $request->getValue('sortDirection');
       if (strtolower($sortDirection) != 'asc' && strtolower($sortDirection) != 'desc') {
         $response->addError(ApplicationError::get('SORT_DIRECTION_UNKNOWN'));
+        return false;
       }
     }
     if (!$this->checkLanguageParameter()) {
