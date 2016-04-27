@@ -356,7 +356,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_)
    * @return An array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC)
    */
-  protected function select(SelectStatement $selectStmt, PagingInfo $pagingInfo=null) {
+  public function select(SelectStatement $selectStmt, PagingInfo $pagingInfo=null) {
     if ($this->_conn == null) {
       $this->connect();
     }
@@ -655,7 +655,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param $data An associative array with the pk column names as keys and pk values as values
    * @return The oid
    */
-  protected function constructOID($data) {
+  public function constructOID($data) {
     $pkNames = $this->getPkNames();
     $ids = array();
     foreach ($pkNames as $pkName) {

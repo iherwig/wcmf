@@ -44,7 +44,7 @@ abstract class AbstractQuery {
    */
   public function execute($buildDepth, $orderby=null, $pagingInfo=null) {
     // build the query
-    $this->_selectStmt = $this->buildQuery($orderby, $pagingInfo);
+    $this->_selectStmt = $this->buildQuery($buildDepth, $orderby, $pagingInfo);
 
     return $this->executeInternal($this->_selectStmt, $buildDepth, $pagingInfo);
   }
@@ -78,11 +78,13 @@ abstract class AbstractQuery {
 
   /**
    * Build the query
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
+   * or false if only object ids should be returned
    * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
    * @param $pagingInfo A reference paging info instance (optional, default: _null_)
    * @return SelectStatement instance
    */
-  protected abstract function buildQuery($orderby=null, PagingInfo $pagingInfo=null);
+  protected abstract function buildQuery($buildDepth, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Execute the query and return the results.
@@ -94,46 +96,45 @@ abstract class AbstractQuery {
    */
   protected function executeInternal(SelectStatement $selectStmt, $buildDepth, PagingInfo $pagingInfo=null) {
     $type = $this->getQueryType();
+    $mapper = self::getMapper($type);
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     $loadOidsOnly = ($buildDepth === false);
 
-    // load only the necessary attributes if only object ids are requested
-    if ($loadOidsOnly) {
-      $buildDepth = BuildDepth::SINGLE;
-    }
-
     // execute the query
-    $mapper = self::getMapper($type);
-    $objects = $mapper->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo);
-
-    // remove objects for which the user is not authorized
-    $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $tx = $persistenceFacade->getTransaction();
-
-    // remove objects for which the user is not authorized
     $result = array();
-    for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
-      $object = $objects[$i];
-      if ($permissionManager->authorize($object->getOID(), '', PersistenceAction::READ)) {
-        // call lifecycle callback
-        $object->afterLoad();
-        $result[] = $object;
-      }
-      else {
-        $tx->detach($object->getOID());
-      }
-      // TODO remove attribute values for which the user is not authorized
-      // should use some pre-check if restrictions on the entity type exist
-    }
-
-    // transform the result
     if ($loadOidsOnly) {
+      $data = $mapper->select($selectStmt, $pagingInfo);
+
       // collect oids
-      $oids = array();
-      foreach ($result as $object) {
-        $oids[] = $object->getOID();
+      for ($i=0, $count=sizeof($data); $i<$count; $i++) {
+        $oid = $mapper->constructOID($data[$i]);
+        if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
+          $result[] = $oid;
+        }
       }
-      $result = $oids;
+    }
+    else {
+      $objects = $mapper->loadObjectsFromSQL($selectStmt, $buildDepth, $pagingInfo);
+
+      // remove objects for which the user is not authorized
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $tx = $persistenceFacade->getTransaction();
+
+      // remove objects for which the user is not authorized
+      for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
+        $object = $objects[$i];
+        $oid = $object->getOID();
+        if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
+          // call lifecycle callback
+          $object->afterLoad();
+          $result[] = $object;
+        }
+        else {
+          $tx->detach($oid);
+        }
+        // TODO remove attribute values for which the user is not authorized
+        // should use some pre-check if restrictions on the entity type exist
+      }
     }
     return $result;
   }

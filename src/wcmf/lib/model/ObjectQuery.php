@@ -268,7 +268,7 @@ class ObjectQuery extends AbstractQuery {
   /**
    * @see AbstractQuery::buildQuery()
    */
-  protected function buildQuery($orderby=null, PagingInfo $pagingInfo=null) {
+  protected function buildQuery($buildDepth, $orderby=null, PagingInfo $pagingInfo=null) {
     $type = $this->_typeNode->getType();
     $mapper = self::getMapper($type);
     $this->_involvedTypes[$type] = true;
@@ -276,7 +276,8 @@ class ObjectQuery extends AbstractQuery {
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
     $tableName = self::processTableName($this->_typeNode);
-    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], null, null, $pagingInfo, $this->getId());
+    $attributes = $buildDepth === false ? $mapper->getPkNames() : null;
+    $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], $attributes, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
       // initialize the statement
       $selectStmt->distinct(true);

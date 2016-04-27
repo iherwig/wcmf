@@ -52,13 +52,14 @@ class StringQuery extends ObjectQuery {
   /**
    * @see AbstractQuery::buildQuery()
    */
-  protected function buildQuery($orderby=null, PagingInfo $pagingInfo=null) {
+  protected function buildQuery($buildDepth, $orderby=null, PagingInfo $pagingInfo=null) {
     $queryType = $this->getQueryType();
     $mapper = self::getMapper($queryType);
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $selectStmt = $mapper->getSelectSQL(null, null, null, null, $pagingInfo, $this->getId());
+    $attributes = $buildDepth === false ? $mapper->getPkNames() : null;
+    $selectStmt = $mapper->getSelectSQL(null, null, $attributes, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
       // initialize the statement
       $selectStmt->distinct(true);

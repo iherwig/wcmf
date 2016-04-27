@@ -11,11 +11,14 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
+use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\control\ValueListProvider;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\util\Obfuscator;
 
 /**
  * CSVExportController exports instances of one type into a CSV file. It uses
@@ -30,8 +33,11 @@ use wcmf\lib\presentation\Response;
  * Initiate the export.
  * | Parameter              | Description
  * |------------------------|-------------------------
- * | _in_ `docFile`         | The name of the file to write to (path relative to script main location) (default: '{type}.csv')
+ * | _in_ `docFile`         | The name of the file to write to (path relative to script main location) (default: 'export.csv')
  * | _in_ `className`       | The entity type to export instances of
+ * | _in_ `sortFieldName`   | The field name to sort the list by. Must be one of the fields of the type selected by the className parameter. If omitted, the sorting is undefined (optional)
+ * | _in_ `sortDirection`   | The direction to sort the list. Must be either _asc_ for ascending or _desc_ for descending (optional, default: _asc_)
+ * | _in_ `query`           | A query condition to be used with StringQuery::setConditionString()
  * | _in_ `nodesPerCall`    | The number of nodes to process in one call (default: 50)
  * </div>
  * </div>
@@ -43,6 +49,7 @@ use wcmf\lib\presentation\Response;
 class CSVExportController extends BatchController {
 
   // default values, maybe overriden by corresponding request values (see above)
+  private $_DOCFILE = "export.csv";
   private $_NODES_PER_CALL = 50;
 
   /**
@@ -53,7 +60,7 @@ class CSVExportController extends BatchController {
     if ($request->getAction() != 'continue') {
       // set defaults (will be stored with first request)
       if (!$request->hasValue('docFile')) {
-        $request->setValue('docFile', $request->getValue('className').'.csv');
+        $request->setValue('docFile', $this->_DOCFILE);
       }
       if (!$request->hasValue('nodesPerCall')) {
         $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
@@ -76,6 +83,23 @@ class CSVExportController extends BatchController {
         $response->addError(ApplicationError::get('PARAMETER_INVALID',
           array('invalidParameters' => array('className'))));
         return false;
+      }
+      // check for permission to read instances of className
+      if (!$this->getPermissionManager()->authorize($request->getValue('className'), '', PersistenceAction::READ)) {
+        $response->addError(ApplicationError::get('PERMISSION_DENIED'));
+        return false;
+      }
+      if ($request->hasValue('sortFieldName') &&
+        !$this->getPersistenceFacade()->getMapper($request->getValue('className'))->hasAttribute($request->hasValue('sortFieldName'))) {
+        $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));
+        return false;
+      }
+      if ($request->hasValue('sortDirection')) {
+        $sortDirection = $request->getValue('sortDirection');
+        if (strtolower($sortDirection) != 'asc' && strtolower($sortDirection) != 'desc') {
+          $response->addError(ApplicationError::get('SORT_DIRECTION_UNKNOWN'));
+          return false;
+        }
       }
     }
     // do default validation
@@ -102,7 +126,7 @@ class CSVExportController extends BatchController {
   }
 
   /**
-   * Initialize the XML export (object ids parameter will be ignored)
+   * Initialize the CSV export (object ids parameter will be ignored)
    * @param $oids The object ids to process
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
@@ -119,6 +143,31 @@ class CSVExportController extends BatchController {
       unlink($docFile);
     }
 
+    // unveil the query value if it is ofuscated
+    $queryTerm = $this->getRequestValue('query');
+    if (strlen($queryTerm) > 0) {
+      $obfuscator = new Obfuscator($this->getSession());
+      $unveiled = $obfuscator->unveil($queryTerm);
+      if (strlen($unveiled) > 0) {
+        $queryTerm = stripslashes($unveiled);
+      }
+    }
+
+    // add sort term
+    $sortArray = null;
+    $orderBy = $this->getRequestValue('sortFieldName');
+    if (strlen($orderBy) > 0) {
+      $sortArray = array($orderBy." ".$this->getRequestValue('sortDirection'));
+    }
+
+    // get object ids of all nodes to export
+    $query = new StringQuery($className);
+    $query->setConditionString($queryTerm);
+    $oids = $query->execute(false, $sortArray);
+    if (sizeof($oids) == 0) {
+      $oids = array(1);
+    }
+
     // get csv columns
     $names = [];
     $mapper = $persistenceFacade->getMapper($className);
@@ -131,14 +180,8 @@ class CSVExportController extends BatchController {
     fputcsv($fileHandle, $names);
     fclose($fileHandle);
 
-    // get object ids of all nodes to export
-    $nodesPerCall = $this->getRequestValue('nodesPerCall');
-    $oids = $persistenceFacade->getOIDs($className);
-    if (sizeof($oids) == 0) {
-      $oids = array(1);
-    }
-
     // create work packages for nodes
+    $nodesPerCall = $this->getRequestValue('nodesPerCall');
     $this->addWorkPackage(
             $message->getText('Exporting %0%', array($className)),
             $nodesPerCall, $oids, 'exportNodes');
@@ -151,6 +194,7 @@ class CSVExportController extends BatchController {
    */
   protected function exportNodes($oids) {
     $persistenceFacade = $this->getPersistenceFacade();
+    $permissionManager = $this->getPermissionManager();
 
     // get document definition
     $docFile = $this->getDownloadFile();
@@ -162,14 +206,16 @@ class CSVExportController extends BatchController {
     // process nodes
     $fileHandle = fopen($docFile, "a");
     foreach ($oids as $oid) {
-      $node = $persistenceFacade->load($oid);
-      $values = [];
-      foreach ($attributes as $attribute) {
-        $inputType = $attribute->getInputType();
-        $values[] = ValueListProvider::translateValue(
-                $node->getValue($attribute->getName()), $inputType);
+      if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
+        $node = $persistenceFacade->load($oid);
+        $values = [];
+        foreach ($attributes as $attribute) {
+          $inputType = $attribute->getInputType();
+          $values[] = ValueListProvider::translateValue(
+                  $node->getValue($attribute->getName()), $inputType);
+        }
+        fputcsv($fileHandle, $values);
       }
-      fputcsv($fileHandle, $values);
     }
     fclose($fileHandle);
   }

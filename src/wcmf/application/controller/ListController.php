@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -19,6 +18,7 @@ use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\UnknownFieldException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\util\Obfuscator;
 
 /**
@@ -64,8 +64,18 @@ class ListController extends Controller {
         array('invalidParameters' => array('className'))));
       return false;
     }
+    // check for permission to read instances of className
+    if (!$this->getPermissionManager()->authorize($request->getValue('className'), '', PersistenceAction::READ)) {
+      $response->addError(ApplicationError::get('PERMISSION_DENIED'));
+      return false;
+    }
     if($request->hasValue('limit') && intval($request->getValue('limit')) < 0) {
       $this->getLogger()->warn(ApplicationError::get('LIMIT_NEGATIVE'));
+    }
+    if ($request->hasValue('sortFieldName') &&
+      !$this->getPersistenceFacade()->getMapper($request->getValue('className'))->hasAttribute($request->hasValue('sortFieldName'))) {
+      $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));
+      return false;
     }
     if($request->hasValue('sortDirection')) {
       $sortDirection = $request->getValue('sortDirection');
@@ -116,7 +126,7 @@ class ListController extends Controller {
     if (strlen($orderBy) > 0) {
       $sortArray = array($orderBy." ".$request->getValue('sortDirection'));
     }
-    // get the object ids
+    // get the objects
     $objects = $this->getObjects($className, $query, $sortArray, $pagingInfo);
 
     // collect the nodes
@@ -166,30 +176,13 @@ class ListController extends Controller {
     if (!$persistenceFacade->isKnownType($type)) {
       return array();
     }
-    $permissionManager = $this->getPermissionManager();
-    if (!$permissionManager->authorize($type, '', PersistenceAction::READ)) {
-      $message = $this->getMessage();
-      throw new AuthorizationException($message->getText("Authorization failed for action '%0%' on '%1%'.",
-              array($message->getText('read'), $persistenceFacade->getSimpleType($type))));
-    }
-    $objects = array();
+
     $query = new StringQuery($type);
     $query->setConditionString($queryCondition);
-    try {
-      $objects = $query->execute(BuildDepth::SINGLE, $sortArray, $pagingInfo);
+    $objects = $query->execute(BuildDepth::SINGLE, $sortArray, $pagingInfo);
+    if ($this->getLogger()->isDebugEnabled()) {
+      $this->getLogger()->debug("Load objects with query: ".$query->getLastQueryString());
     }
-    catch (UnknownFieldException $ex) {
-      // check if the sort field is illegal
-      $response = $this->getResponse();
-      $request = $this->getRequest();
-      if($request->hasValue('sortFieldName')) {
-        $sortFieldName = $request->getValue('sortFieldName');
-        if ($sortFieldName == $ex->getField()) {
-          $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));
-        }
-      }
-    }
-    $this->getLogger()->debug("Load objects with query: ".$query->getLastQueryString());
     return $objects;
   }
 

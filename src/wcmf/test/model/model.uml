@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_1jaukLQuEeOLlbB2YLI0iw" name="PrimitiveTypes">
@@ -1054,6 +1054,10 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ft5jQrRvEeOfbtYsPp7Oyg" value="1"/>
                 </ownedAttribute>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_DE_s0AvLEeaBb42pasDyug" name="CSVExportController">
+                <generalization xmi:type="uml:Generalization" xmi:id="_DE_s0QvLEeaBb42pasDyug" general="_f1B_oLRnEeOfbtYsPp7Oyg"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_QLELMgvLEeaBb42pasDyug" name="csvexportcontroller" type="_DE_s0AvLEeaBb42pasDyug" association="_QLDkIAvLEeaBb42pasDyug"/>
+              </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_ICYQg7RsEeOfbtYsPp7Oyg" name="continue" memberEnd="_ICYQhLRsEeOfbtYsPp7Oyg _ICYQgLRsEeOfbtYsPp7Oyg">
                 <ownedEnd xmi:type="uml:Property" xmi:id="_ICYQhLRsEeOfbtYsPp7Oyg" name="copyController" type="_f-qcwLRnEeOfbtYsPp7Oyg" association="_ICYQg7RsEeOfbtYsPp7Oyg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ICYQhbRsEeOfbtYsPp7Oyg" value="1"/>
@@ -1072,27 +1076,17 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ft5jRrRvEeOfbtYsPp7Oyg" value="1"/>
                 </ownedEnd>
               </packagedElement>
-              <packagedElement xmi:type="uml:Association" xmi:id="_0VZyw7RvEeOfbtYsPp7Oyg" name="continue" memberEnd="_0VZyxLRvEeOfbtYsPp7Oyg _0VZywLRvEeOfbtYsPp7Oyg">
-                <ownedEnd xmi:type="uml:Property" xmi:id="_0VZyxLRvEeOfbtYsPp7Oyg" name="searchIndexController" type="_MlxgALRoEeOfbtYsPp7Oyg" association="_0VZyw7RvEeOfbtYsPp7Oyg">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0VZyxbRvEeOfbtYsPp7Oyg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0VZyxrRvEeOfbtYsPp7Oyg" value="1"/>
-                </ownedEnd>
-              </packagedElement>
-              <packagedElement xmi:type="uml:Class" xmi:id="_DE_s0AvLEeaBb42pasDyug" name="CSVExportController">
-                <generalization xmi:type="uml:Generalization" xmi:id="_DE_s0QvLEeaBb42pasDyug" general="_f1B_oLRnEeOfbtYsPp7Oyg"/>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_QLELMgvLEeaBb42pasDyug" name="csvexportcontroller" type="_DE_s0AvLEeaBb42pasDyug" association="_QLDkIAvLEeaBb42pasDyug"/>
-              </packagedElement>
-              <packagedElement xmi:type="uml:Association" xmi:id="_IEklMAvLEeaBb42pasDyug" name="exportCSV" memberEnd="_IElMQQvLEeaBb42pasDyug _IElMQgvLEeaBb42pasDyug">
-                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_IEklMQvLEeaBb42pasDyug" source="org.eclipse.papyrus">
-                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_IElMQAvLEeaBb42pasDyug" key="nature" value="UML_Nature"/>
-                </eAnnotations>
-                <ownedEnd xmi:type="uml:Property" xmi:id="_IElMQgvLEeaBb42pasDyug" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_IEklMAvLEeaBb42pasDyug"/>
-              </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_QLDkIAvLEeaBb42pasDyug" name="continue" memberEnd="_QLELMgvLEeaBb42pasDyug _QLFZUAvLEeaBb42pasDyug">
                 <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_QLELMAvLEeaBb42pasDyug" source="org.eclipse.papyrus">
                   <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_QLELMQvLEeaBb42pasDyug" key="nature" value="UML_Nature"/>
                 </eAnnotations>
                 <ownedEnd xmi:type="uml:Property" xmi:id="_QLFZUAvLEeaBb42pasDyug" name="csvexportcontroller" type="_DE_s0AvLEeaBb42pasDyug" association="_QLDkIAvLEeaBb42pasDyug"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_0VZyw7RvEeOfbtYsPp7Oyg" name="continue" memberEnd="_0VZyxLRvEeOfbtYsPp7Oyg _0VZywLRvEeOfbtYsPp7Oyg">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_0VZyxLRvEeOfbtYsPp7Oyg" name="searchIndexController" type="_MlxgALRoEeOfbtYsPp7Oyg" association="_0VZyw7RvEeOfbtYsPp7Oyg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0VZyxbRvEeOfbtYsPp7Oyg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0VZyxrRvEeOfbtYsPp7Oyg" value="1"/>
+                </ownedEnd>
               </packagedElement>
             </packagedElement>
           </packagedElement>
@@ -1398,6 +1392,12 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ZUlQxbRvEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ZUlQxrRvEeOfbtYsPp7Oyg" value="1"/>
                 </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_IEklMAvLEeaBb42pasDyug" name="exportCSV" memberEnd="_IElMQQvLEeaBb42pasDyug _IElMQgvLEeaBb42pasDyug">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_IEklMQvLEeaBb42pasDyug" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_IElMQAvLEeaBb42pasDyug" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_IElMQgvLEeaBb42pasDyug" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_IEklMAvLEeaBb42pasDyug"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_wcZg4LRvEeOfbtYsPp7Oyg" name="indexAll" memberEnd="_wcZg4bRvEeOfbtYsPp7Oyg _wcTaQLRvEeOfbtYsPp7Oyg">
                 <ownedEnd xmi:type="uml:Property" xmi:id="_wcZg4bRvEeOfbtYsPp7Oyg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_wcZg4LRvEeOfbtYsPp7Oyg">
@@ -2089,5 +2089,5 @@
   <Chronos:ChiValue xmi:id="_QCF78P_DEeWzxP-Oi6uCUQ" db_data_type="INT(11)" base_Property="_QCBDcP_DEeWzxP-Oi6uCUQ"/>
   <Chronos:ChiController xmi:id="_DFA68AvLEeaBb42pasDyug" base_Class="_DE_s0AvLEeaBb42pasDyug"/>
   <Chronos:ChiActionKey xmi:id="_J6BD4AvLEeaBb42pasDyug" action="exportCSV" base_Association="_IEklMAvLEeaBb42pasDyug"/>
-  <Chronos:ChiActionKey xmi:id="_S0xYYAvLEeaBb42pasDyug" action="exportCSV" base_Association="_QLDkIAvLEeaBb42pasDyug"/>
+  <Chronos:ChiActionKey xmi:id="_S0xYYAvLEeaBb42pasDyug" action="continue" base_Association="_QLDkIAvLEeaBb42pasDyug"/>
 </xmi:XMI>
