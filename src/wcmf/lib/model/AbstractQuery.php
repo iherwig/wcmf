@@ -51,11 +51,13 @@ abstract class AbstractQuery {
 
   /**
    * Get the query serialized to a string. Placeholder are replaced with quoted values.
+   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to load (except BuildDepth::REQUIRED)
+   * or false if only object ids should be returned (optional, default: _BuildDepth::SINGLE_)
    * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
    * @return String
    */
-  public function getQueryString($orderby=null) {
-    $selectStmt = $this->buildQuery($orderby);
+  public function getQueryString($buildDepth=BuildDepth::SINGLE, $orderby=null) {
+    $selectStmt = $this->buildQuery($buildDepth, $orderby);
     $str = $selectStmt->__toString();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = $persistenceFacade->getMapper($selectStmt->getType());

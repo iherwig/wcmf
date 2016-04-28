@@ -16,7 +16,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
-use wcmf\lib\util\TestUtil;
 
 /**
  * ObjectQueryTest.
@@ -26,8 +25,6 @@ use wcmf\lib\util\TestUtil;
 class ObjectQueryTest extends BaseTestCase {
 
   public function testSimple() {
-    TestUtil::startSession('admin', 'admin');
-
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, ".
@@ -36,13 +33,20 @@ class ObjectQueryTest extends BaseTestCase {
 
     $cond = $query->getQueryCondition();
     $this->assertEquals('', $cond);
+  }
 
-    TestUtil::endSession();
+  public function testOid() {
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
+    $sql = $query->getQueryString(false);
+    $expected = "SELECT DISTINCT `Author`.`id` ".
+      "FROM `Author` ORDER BY `Author`.`name` ASC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+
+    $cond = $query->getQueryCondition();
+    $this->assertEquals('', $cond);
   }
 
   public function testOneNode() {
-    TestUtil::startSession('admin', 'admin');
-
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."2");
     $authorTpl = $query->getObjectTemplate('Author');
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
@@ -55,27 +59,16 @@ class ObjectQueryTest extends BaseTestCase {
 
     $cond = $query->getQueryCondition();
     $this->assertEquals($this->fixQueryQuotes("(`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%')", 'Author'), $cond);
-
-    TestUtil::endSession();
   }
 
   public function testOrderby() {
-    TestUtil::startSession('admin', 'admin');
-
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."3");
-    //
-    // we need to execute the query first in order to define the attributes
-    $query->execute(BuildDepth::SINGLE, array('name ASC', 'created DESC'));
-    $sql = $query->getLastQueryString();
+    $sql = $query->getQueryString(BuildDepth::SINGLE, array('name ASC', 'created DESC'));
     $expected = "SELECT DISTINCT `Author`.`id`, `Author`.`name`, `Author`.`created`, `Author`.`creator`, `Author`.`modified`, `Author`.`last_editor` FROM `Author` ORDER BY `Author`.`name` ASC, `Author`.`created` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
-
-    TestUtil::endSession();
   }
 
   public function testOneNodeRegistered() {
-    TestUtil::startSession('admin', 'admin');
-
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $authorTpl = $persistenceFacade->create('Author', BuildDepth::SINGLE);
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
@@ -88,13 +81,9 @@ class ObjectQueryTest extends BaseTestCase {
       "`Author`.`last_editor` FROM `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
       "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
-
-    TestUtil::endSession();
   }
 
   public function testParentChild() {
-    TestUtil::startSession('admin', 'admin');
-
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."5");
     $authorTpl = $query->getObjectTemplate('Author');
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
@@ -106,13 +95,9 @@ class ObjectQueryTest extends BaseTestCase {
       "`Author`.`last_editor` FROM `Author` INNER JOIN `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
       "WHERE (`Author`.`name` LIKE '%ingo%') AND (`Chapter`.`name` LIKE 'Chapter 1%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
-
-    TestUtil::endSession();
   }
 
   public function testParentChildSameType() {
-    TestUtil::startSession('admin', 'admin');
-
     $query = new ObjectQuery('Chapter', __CLASS__.__METHOD__."6");
     $page1Tpl = $query->getObjectTemplate('Chapter');
     $page1Tpl->setValue("creator", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
@@ -127,13 +112,9 @@ class ObjectQueryTest extends BaseTestCase {
       "`Chapter_1`.`fk_chapter_id` = `Chapter`.`id` WHERE (`Chapter`.`creator` LIKE '%ingo%') AND (`Chapter_1`.`name` LIKE 'Chapter 1%') ".
       "ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql));
-
-    TestUtil::endSession();
   }
 
   public function testManyToMany() {
-    TestUtil::startSession('admin', 'admin');
-
     $query = new ObjectQuery('Publisher', __CLASS__.__METHOD__."7");
     $publisherTpl = $query->getObjectTemplate('Publisher');
     $publisherTpl->setValue("name", Criteria::asValue("LIKE", "%Publisher 1%")); // explicit LIKE
@@ -145,31 +126,23 @@ class ObjectQueryTest extends BaseTestCase {
       "FROM `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
       "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `Publisher`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
-
-    TestUtil::endSession();
   }
 
   public function testSortManyToManyRelation() {
-    TestUtil::startSession('admin', 'admin');
-
     $query = new ObjectQuery('Publisher', __CLASS__.__METHOD__."9");
     $publisherTpl = $query->getObjectTemplate('Publisher');
     $publisherTpl->setValue("name", Criteria::asValue("LIKE", "%Publisher 1%")); // explicit LIKE
     $authorTpl = $query->getObjectTemplate('Author');
     $authorTpl->setValue("name", Criteria::asValue("=", "Author")); // explicit LIKE
     $publisherTpl->addNode($authorTpl);
-    $sql = $query->getQueryString(array('sortkey_publisher DESC'));
+    $sql = $query->getQueryString(BuildDepth::SINGLE, array('sortkey_publisher DESC'));
     $expected = "SELECT DISTINCT `Publisher`.`id`, `Publisher`.`name`, `Publisher`.`created`, `Publisher`.`creator`, `Publisher`.`modified`, `Publisher`.`last_editor` ".
       "FROM `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
       "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `NMPublisherAuthor`.`sortkey_publisher` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
-
-    TestUtil::endSession();
   }
 
   public function testComplex() {
-    TestUtil::startSession('admin', 'admin');
-
     /*
     WHERE (Author.name LIKE '%ingo%' AND Author.creator LIKE '%admin%') OR (Author.name LIKE '%herwig%') AND
       (Chapter.created >= '2004-01-01') AND (Chapter.created < '2005-01-01') AND ((Chapter.name LIKE 'Chapter 1%') OR (Chapter.creator = 'admin'))
@@ -212,8 +185,6 @@ class ObjectQueryTest extends BaseTestCase {
       "AND (`Chapter`.`created` < '2005-01-01') OR (`Author`.`name` LIKE '%herwig%') AND ".
       "((`Chapter`.`name` LIKE 'Chapter 1%') OR (`Chapter`.`creator` = 'admin')) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
-
-    TestUtil::endSession();
   }
 }
 ?>
