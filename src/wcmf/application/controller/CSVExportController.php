@@ -136,7 +136,7 @@ class CSVExportController extends BatchController {
 
     // get document definition
     $docFile = $this->getDownloadFile();
-    $className = $this->getRequestValue('className');
+    $type =  $this->getRequestValue('className');
 
     // delete export file
     if (file_exists($docFile)) {
@@ -161,16 +161,13 @@ class CSVExportController extends BatchController {
     }
 
     // get object ids of all nodes to export
-    $query = new StringQuery($className);
+    $query = new StringQuery($type);
     $query->setConditionString($queryTerm);
     $oids = $query->execute(false, $sortArray);
-    if (sizeof($oids) == 0) {
-      $oids = array(1);
-    }
 
     // get csv columns
     $names = [];
-    $mapper = $persistenceFacade->getMapper($className);
+    $mapper = $persistenceFacade->getMapper($type);
     foreach($mapper->getAttributes() as $attribute) {
       $names[] = $attribute->getName();
     }
@@ -183,7 +180,7 @@ class CSVExportController extends BatchController {
     // create work packages for nodes
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     $this->addWorkPackage(
-            $message->getText('Exporting %0%', array($className)),
+            $message->getText('Exporting %0%', array($type)),
             $nodesPerCall, $oids, 'exportNodes');
   }
 
@@ -198,9 +195,9 @@ class CSVExportController extends BatchController {
 
     // get document definition
     $docFile = $this->getDownloadFile();
-    $className = $this->getRequestValue('className');
+    $type = $this->getRequestValue('className');
 
-    $mapper = $persistenceFacade->getMapper($className);
+    $mapper = $persistenceFacade->getMapper($type);
     $attributes = $mapper->getAttributes();
 
     // process nodes

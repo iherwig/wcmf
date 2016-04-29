@@ -67,6 +67,11 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if (isset($_SERVER['QUERY_STRING'])) {
       self::fix($_GET, $_SERVER['QUERY_STRING']);
     }
+    if (isset($_SERVER['QUERY_STRING'])) {
+      self::fix($_COOKIE, $_SERVER['COOKIES']);
+    }
+    self::fix($_POST, file_get_contents("php://input"));
+
     $this->_method = isset($_SERVER['REQUEST_METHOD']) ?
             strtoupper($_SERVER['REQUEST_METHOD']) : '';
   }
@@ -178,7 +183,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         break;
       case 'POST':
       case 'PUT':
-        $requestData = file_get_contents("php://input");
+        $requestData = $_POST;
         break;
     }
 
@@ -187,13 +192,6 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       case 'json':
         $jsonData = json_decode($requestData, true);
         $requestData = $jsonData;
-      case 'html':
-        // decode data passed as query string
-        if (!is_array($requestData)) {
-          $htmlData = array();
-          parse_str($requestData, $htmlData);
-          $requestData = $htmlData;
-        }
     }
 
     // get controller/context/action triple

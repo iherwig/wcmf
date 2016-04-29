@@ -126,9 +126,6 @@ class SearchIndexController extends BatchController {
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     foreach ($types as $type) {
       $oids = $persistenceFacade->getOIDs($type);
-      if (sizeof($oids) == 0) {
-        $oids = array(1);
-      }
       $this->addWorkPackage($this->getMessage()->getText('Indexing %0%', array($type)),
               $nodesPerCall, $oids, 'index');
     }

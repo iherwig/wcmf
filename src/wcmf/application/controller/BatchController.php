@@ -219,7 +219,7 @@ abstract class BatchController extends Controller {
    * Add a work package to session. This package will be devided into sub packages of given size.
    * @param $name Display name of the package (will be supplemented by startNumber-endNumber, e.g. '1-7', '8-14', ...)
    * @param $size Size of one sub package. This defines how many of the oids will be passed to the callback in one call (e.g. '7' means pass 7 oids per call)
-   * @param $oids An array of object ids (or other application specific package identifiers) with _at least one value_ that will be distributed into sub packages of given size
+   * @param $oids An array of object ids (or other application specific package identifiers) that will be distributed into sub packages of given size
    * @param $callback The name of method to call for this package type.
    *      The callback method must accept the following parameters:
    *      1. array parameter (the object ids to process in the current call)
@@ -229,14 +229,6 @@ abstract class BatchController extends Controller {
   protected function addWorkPackage($name, $size, $oids, $callback, $args=null) {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    if ($size < 1) {
-      throw new ApplicationException($request, $response,
-              ApplicationError::getGeneral("Wrong work package description '".$name."': Size must be at least 1."));
-    }
-    if (sizeof($oids) == 0) {
-      throw new ApplicationException($request, $response,
-              ApplicationError::getGeneral("Wrong work package description '".$name."': No oids given."));
-    }
     if (strlen($callback) == 0) {
       throw new ApplicationException($request, $response,
               ApplicationError::getGeneral("Wrong work package description '".$name."': No callback given."));

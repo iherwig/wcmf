@@ -41,7 +41,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7gMtsLQ8EeOQ5oJFa1i8cg" name="listeners" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OYK5QLQ9EeOQ5oJFa1i8cg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OYLgULQ9EeOQ5oJFa1i8cg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OYMucLQ9EeOQ5oJFa1i8cg" value="{Search, EventListener}"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OYMucLQ9EeOQ5oJFa1i8cg" value="{Search, EventListener, DefaultRequestListener}"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_SQkHILQ9EeOQ5oJFa1i8cg" name="Media">
@@ -240,6 +240,11 @@
               <packagedElement xmi:type="uml:Class" xmi:id="_QM0nECshEeWUuIR_KoweBQ" name="EventListener">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_XEozcCshEeWUuIR_KoweBQ" name="__class" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_adlsQCshEeWUuIR_KoweBQ" value="app\src\lib\EventListener"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_rt0IoA4HEeaDh6xKuYoMqA" name="DefaultRequestListener">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_rt0IoQ4HEeaDh6xKuYoMqA" name="__class" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_rt0Iog4HEeaDh6xKuYoMqA" value="wcmf\lib\presentation\impl\DefaultRequestListener"/>
                 </ownedAttribute>
               </packagedElement>
             </packagedElement>
@@ -2090,4 +2095,5 @@
   <Chronos:ChiController xmi:id="_DFA68AvLEeaBb42pasDyug" base_Class="_DE_s0AvLEeaBb42pasDyug"/>
   <Chronos:ChiActionKey xmi:id="_J6BD4AvLEeaBb42pasDyug" action="exportCSV" base_Association="_IEklMAvLEeaBb42pasDyug"/>
   <Chronos:ChiActionKey xmi:id="_S0xYYAvLEeaBb42pasDyug" action="continue" base_Association="_QLDkIAvLEeaBb42pasDyug"/>
+  <Chronos:ChiSystem xmi:id="_rwmW4A4HEeaDh6xKuYoMqA" plattform="wcmf" base_Class="_rt0IoA4HEeaDh6xKuYoMqA"/>
 </xmi:XMI>

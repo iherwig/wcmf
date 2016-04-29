@@ -11,8 +11,6 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\model\NodeUtil;
-use wcmf\lib\model\ObjectQuery;
-use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -141,7 +139,6 @@ class RESTController extends Controller {
   protected function handleGet() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $persistenceFacade = $this->getPersistenceFacade();
 
     if ($request->getBooleanValue('collection') === false) {
       // read a specific object
@@ -152,96 +149,17 @@ class RESTController extends Controller {
 
       // return object list only
       $object = $subResponse->getValue('object');
-      $response->clearValues();
       if ($object != null) {
+        $response->clearValues();
         $response->setValue($object->getOID()->__toString(), $object);
       }
       else {
         $response->setStatus(404);
       }
-
-      // set the response headers
-      //$this->setLocationHeaderFromOid($request->getValue('oid'));
     }
     else {
       // read all objects of the given type
       // delegate further processing to ListController
-      $offset = 0;
-
-      // parse headers
-
-      // range
-      if ($request->hasHeader('Range')) {
-        if (preg_match('/^items=([\-]?[0-9]+)-([\-]?[0-9]+)$/', $request->getHeader('Range'), $matches)) {
-          $offset = intval($matches[1]);
-          $limit = intval($matches[2])-$offset+1;
-          $request->setValue('offset', $offset);
-          $request->setValue('limit', $limit);
-        }
-      }
-
-      // parse get paramters
-      foreach ($request->getValues() as $key => $value) {
-        // sort definition
-        if (preg_match('/^sort\(([^\)]+)\)$|sortBy=([.]+)$/', $key, $matches)) {
-          $sortDefs = preg_split('/,/', $matches[1]);
-          // ListController allows only one sortfield
-          $sortDef = $sortDefs[0];
-          $sortFieldName = substr($sortDef, 1);
-          $sortDirection = preg_match('/^-/', $sortDef) ? 'desc' : 'asc';
-          $request->setValue('sortFieldName', $sortFieldName);
-          $request->setValue('sortDirection', $sortDirection);
-        }
-        // limit
-        if (preg_match('/^limit\(([^\)]+)\)$/', $key, $matches)) {
-          $rangeDefs = preg_split('/,/', $matches[1]);
-          $limit = intval($rangeDefs[0]);
-          $offset = sizeof($rangeDefs) > 0 ? intval($rangeDefs[1]) : 0;
-          $request->setValue('offset', $offset);
-          $request->setValue('limit', $limit);
-        }
-      }
-
-      // create query from optional GET values encoded in RQL (https://github.com/persvr/rql)
-      if ($request->hasValue('className')) {
-        $operatorMap = array('eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
-            'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp');
-        $mapper = $persistenceFacade->getMapper($request->getValue('className'));
-        $type = $mapper->getType();
-        $simpleType = $persistenceFacade->getSimpleType($type);
-        $objectQuery = new ObjectQuery($type);
-        foreach ($request->getValues() as $name => $value) {
-          if (strpos($name, '.') > 0) {
-            // check name for type.attribute
-            list($typeInName, $attributeInName) = preg_split('/\.+(?=[^\.]+$)/', $name);
-            if (($typeInName == $type || $typeInName == $simpleType) &&
-                    $mapper->hasAttribute($attributeInName)) {
-              $queryTemplate = $objectQuery->getObjectTemplate($type);
-              // handle null values correctly
-              $value = strtolower($value) == 'null' ? null : $value;
-              // extract optional operator from value e.g. lt=2015-01-01
-              $parts = explode('=', $value);
-              $op = $parts[0];
-              if (sizeof($parts) > 0 && isset($operatorMap[$op])) {
-                $operator = $operatorMap[$op];
-                $value = $parts[1];
-                if ($operator == 'in') {
-                  // in operator expects array value
-                  $value = explode(',', $value);
-                }
-              }
-              else {
-                $operator = '=';
-              }
-              $queryTemplate->setValue($attributeInName, Criteria::asValue($operator, $value));
-            }
-          }
-        }
-        $query = $objectQuery->getQueryCondition();
-        if (strlen($query) > 0) {
-          $request->setValue('query', $query);
-        }
-      }
 
       // rewrite query if querying for a relation
       if ($request->hasValue("relation") && $request->hasValue('sourceOid')) {
@@ -249,6 +167,7 @@ class RESTController extends Controller {
 
         // set the query
         $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
+        $persistenceFacade = $this->getPersistenceFacade();
         $sourceNode = $persistenceFacade->load($sourceOid);
         if ($sourceNode) {
           $query = NodeUtil::getRelationQueryCondition($sourceNode, $relationName);
@@ -277,12 +196,6 @@ class RESTController extends Controller {
       $objects = $subResponse->getValue('list');
       $response->clearValues();
       $response->setValues($objects);
-
-      // set response range header
-      $size = sizeof($objects);
-      $limit = $size == 0 ? $offset : $offset+$size-1;
-      $total = $subResponse->getValue('totalCount');
-      $response->setHeader('Content-Range', 'items '.$offset.'-'.$limit.'/'.$total);
     }
   }
 
@@ -374,41 +287,20 @@ class RESTController extends Controller {
   protected function handlePut() {
     $request = $this->getRequest();
 
-    // check position header for reordering
-    $orderReferenceOid = null;
-    if ($request->hasHeader('Position')) {
-      $position = $request->getHeader('Position');
-      if ($position == 'last') {
-        $orderReferenceOid = 'ORDER_BOTTOM';
-      }
-      else {
-        list($ignore, $orderReferenceIdStr) = preg_split('/ /', $position);
-        if ($request->hasValue('relation') && $request->hasValue('sourceOid')) {
-          // sort in relation
-          $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
-          $relatedType = $this->getRelatedType($sourceOid, $request->getValue('relation'));
-          $orderReferenceOid = new ObjectId($relatedType, $orderReferenceIdStr);
-        }
-        else {
-          // sort in root
-          $orderReferenceOid = new ObjectId($request->getValue('className'), $orderReferenceIdStr);
-        }
-      }
-    }
+    $isOrderRequest = $request->hasValue('referenceOid');
+    $isRelationRequest = $request->hasValue('relation');
 
-    if ($request->hasValue('relation') && $request->hasValue('sourceOid') &&
-            $request->hasValue('targetOid')) {
-      if ($orderReferenceOid != null) {
+    if ($isRelationRequest) {
+      $request->setValue('role', $request->getValue('relation'));
+
+      if ($isOrderRequest) {
         // change order in a relation
         $request->setValue('containerOid', $request->getValue('sourceOid'));
         $request->setValue('insertOid', $request->getValue('targetOid'));
-        $request->setValue('referenceOid', $orderReferenceOid);
-        $request->setValue('role', $request->getValue('relation'));
         $subResponse = $this->executeSubAction('insertBefore');
       }
       else {
         // add existing object to relation
-        $request->setValue('role', $request->getValue('relation'));
         $subResponse = $this->executeSubAction('associate');
         if ($subResponse->getStatus() == 200) {
           // and update object
@@ -427,10 +319,9 @@ class RESTController extends Controller {
       }
     }
     else {
-      if ($orderReferenceOid != null) {
-        // change order in a relation
+      if ($isOrderRequest) {
+        // change order in all objects of the same type
         $request->setValue('insertOid', $this->getFirstRequestOid());
-        $request->setValue('referenceOid', $orderReferenceOid);
         $subResponse = $this->executeSubAction('moveBefore');
 
         // add sorted object to subresponse similar to default update action

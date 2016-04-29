@@ -13,12 +13,12 @@ namespace wcmf\lib\model;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
-use wcmf\lib\model\Node;
-use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\model\mapper\SelectStatement;
+use wcmf\lib\model\Node;
+use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\PagingInfo;
@@ -127,12 +127,56 @@ class ObjectQuery extends AbstractQuery {
    */
   public function __construct($type, $queryId=SelectStatement::NO_CACHE) {
     // don't use PersistenceFacade::create, because template instances must be transient
-    $mapper = $this->getMapper($type);
+    $mapper = self::getMapper($type);
     $this->_typeNode = $mapper->create($type, BuildDepth::SINGLE);
     $this->_rootNodes[] = $this->_typeNode;
     $this->_id = $queryId == null ? SelectStatement::NO_CACHE : $queryId;
     ObjectFactory::getInstance('eventManager')->addListener(ValueChangeEvent::NAME,
       array($this, 'valueChanged'));
+  }
+
+  /**
+   * Create a query instance from the given query parts encoded in
+   * RQL (https://github.com/persvr/rql)
+   * @param $type The netity type to query for
+   * @param $queryParts Associate array mapping attribute names to query values
+   * @return ObjectQuery
+   */
+  public static function fromRql($type, $queryParts) {
+    $operatorMap = array('eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
+        'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp');
+    $mapper = self::getMapper($type);
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $simpleType = $persistenceFacade->getSimpleType($type);
+    $objectQuery = new ObjectQuery($type);
+    foreach ($queryParts as $name => $value) {
+      if (strpos($name, '.') > 0) {
+        // check name for type.attribute
+        list($typeInName, $attributeInName) = preg_split('/\.+(?=[^\.]+$)/', $name);
+        if (($typeInName == $type || $typeInName == $simpleType) &&
+                $mapper->hasAttribute($attributeInName)) {
+          $queryTemplate = $objectQuery->getObjectTemplate($type);
+          // handle null values correctly
+          $value = strtolower($value) == 'null' ? null : $value;
+          // extract optional operator from value e.g. lt=2015-01-01
+          $parts = explode('=', $value);
+          $op = $parts[0];
+          if (sizeof($parts) > 0 && isset($operatorMap[$op])) {
+            $operator = $operatorMap[$op];
+            $value = $parts[1];
+            if ($operator == 'in') {
+              // in operator expects array value
+              $value = explode(',', $value);
+            }
+          }
+          else {
+            $operator = '=';
+          }
+          $queryTemplate->setValue($attributeInName, Criteria::asValue($operator, $value));
+        }
+      }
+    }
+    return $objectQuery;
   }
 
   /**
@@ -172,7 +216,7 @@ class ObjectQuery extends AbstractQuery {
     }
     else {
       // don't use PersistenceFacade::create, because template instances must be transient
-      $mapper = $this->getMapper($fqType);
+      $mapper = self::getMapper($fqType);
       $template = $mapper->create($fqType, BuildDepth::SINGLE);
       $this->_rootNodes[] = $template;
     }
