@@ -80,7 +80,7 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
         // setup assetic
         $config = ObjectFactory::getInstance('configuration');
         $basePath = dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/';
-        $cacheRootAbs = WCMF_BASE.$config->getValue('cacheDir', 'View').'cache';
+        $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'Media');
         $cacheRootRel = URIUtil::makeRelative($cacheRootAbs, $basePath);
 
         // process resources
@@ -89,7 +89,7 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
           $writer = new AssetWriter($cacheRootAbs);
 
           $cacheFile = (isset($params['name']) ? $params['name'] : uniqid()).'.min.'.$type;
-          $cachePathRel = $cacheRootRel.'/'.$cacheFile;
+          $cachePathRel = $cacheRootRel.$cacheFile;
 
           // create filters
           $filters = array();

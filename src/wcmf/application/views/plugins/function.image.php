@@ -8,6 +8,8 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
+
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
@@ -40,7 +42,7 @@ use wcmf\lib\util\URIUtil;
 *           default="images/blank.gif" sizemode="resize" nosizeoutput=true}
 * -------------------------------------------------------------
 */
-function smarty_function_image($params, \Smarty_Internal_Template $template) {
+function smarty_function_image($params, Smarty_Internal_Template $template) {
   $file = $params['src'];
   $default = isset($params['default']) ? $params['default'] : '';
   $sizemode = isset($params['sizemode']) ? $params['sizemode'] : 'resample';
@@ -129,7 +131,10 @@ function smarty_function_image($params, \Smarty_Internal_Template $template) {
     preg_match('/\.(\w+)$/', $file, $matches);
     $extension = $matches[1];
 
-    $destNameAbs = $template->cache_dir.md5($file.filectime($file).$requestedWidth.$requestedHeight.$sizemode).'.'.$extension;
+    $config = ObjectFactory::getInstance('configuration');
+    $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'Media');
+
+    $destNameAbs = $cacheRootAbs.md5($file.filectime($file).$requestedWidth.$requestedHeight.$sizemode).'.'.$extension;
     $destName = URIUtil::makeRelative($destNameAbs, dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/');
 
     // if the file does not exist in the cache, we have to create it
