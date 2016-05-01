@@ -15,6 +15,7 @@ use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 
@@ -168,52 +169,26 @@ class SortController extends Controller {
     if ($this->checkObjects($objectMap)) {
       // determine the sort key
       $mapper = $insertObject->getMapper();
+      $type = $insertObject->getType();
       $sortkeyDef = $mapper->getSortkey();
       $sortkey = $sortkeyDef['sortFieldName'];
+      $sortdir = $sortkeyDef['sortDirection'];
 
-      // determine the sort boundaries
-      $referenceValue = $isOrderBottom ? self::UNBOUND : $this->getSortkeyValue($referenceObject, $sortkey);
-      $insertValue = $this->getSortkeyValue($insertObject, $sortkey);
-
-      // determine the sort direction
-      $isSortup = false;
-      if ($referenceValue == self::UNBOUND || $referenceValue > $insertValue) {
-        $isSortup = true;
-      }
-
-      // load the objects in the sortkey range
-      $objects = array();
-      $type = $insertObject->getType();
-      if ($isSortup) {
-        $objects = $this->loadObjectsInSortkeyRange($type, $sortkey, $insertValue, $referenceValue);
+      // get the sortkey values of the objects before and after the insert position
+      if ($isOrderBottom) {
+        $lastObject = $this->loadLastObject($type, $sortkey, $sortdir);
+        $prevValue = $lastObject != null ? $this->getSortkeyValue($lastObject, $sortkey) : 1;
+        $nextValue = ceil($prevValue+1);
       }
       else {
-        $objects = $this->loadObjectsInSortkeyRange($type, $sortkey, $referenceValue, $insertValue);
+        $nextValue = $this->getSortkeyValue($referenceObject, $sortkey);
+        $prevObject = $this->loadPreviousObject($type, $sortkey, $nextValue, $sortdir);
+        $prevValue = $prevObject != null ? $this->getSortkeyValue($prevObject, $sortkey) :
+          ceil($nextValue-1);
       }
 
-      // add insert (and reference) object at the correct end of the list
-      if ($isSortup) {
-        $objects[] = $insertObject;
-        // sortkey of reference object does not change
-        // update sort keys
-        $count=sizeof($objects);
-        $lastValue = $this->getSortkeyValue($objects[$count-1], $sortkey);
-        for ($i=$count-1; $i>0; $i--) {
-          $objects[$i]->setValue($sortkey, $this->getSortkeyValue($objects[$i-1], $sortkey));
-        }
-        $objects[0]->setValue($sortkey, $lastValue);
-      }
-      else {
-        array_unshift($objects, $referenceObject);
-        array_unshift($objects, $insertObject);
-        // update sort keys
-        $count=sizeof($objects);
-        $firstValue = $this->getSortkeyValue($objects[0], $sortkey);
-        for ($i=0; $i<$count-1; $i++) {
-          $objects[$i]->setValue($sortkey, $this->getSortkeyValue($objects[$i+1], $sortkey));
-        }
-        $objects[$count-1]->setValue($sortkey, $firstValue);
-      }
+      // set the sortkey value to the average
+      $insertObject->setValue($sortkey, ($nextValue+$prevValue)/2);
     }
   }
 
@@ -264,24 +239,35 @@ class SortController extends Controller {
   }
 
   /**
-   * Load all objects between two sortkey values
+   * Load the object which order position is before the given sort value
    * @param $type The type of objects
    * @param $sortkeyName The name of the sortkey attribute
-   * @param $lowerValue The lower value of the sortkey or UNBOUND
-   * @param $upperValue The upper value of the sortkey or UNBOUND
+   * @param $sortkeyValue The reference sortkey value
+   * @param $sortDirection The sort direction used with the sort key
    */
-  protected function loadObjectsInSortkeyRange($type, $sortkeyName, $lowerValue, $upperValue) {
+  protected function loadPreviousObject($type, $sortkeyName, $sortkeyValue, $sortDirection) {
     $query = new ObjectQuery($type);
-    $tpl1 = $query->getObjectTemplate($type);
-    $tpl2 = $query->getObjectTemplate($type);
-    if ($lowerValue != self::UNBOUND) {
-      $tpl1->setValue($sortkeyName, Criteria::asValue('>', $lowerValue), true);
-    }
-    if ($upperValue != self::UNBOUND) {
-      $tpl2->setValue($sortkeyName, Criteria::asValue('<', $upperValue), true);
-    }
-    $objects = $query->execute(BuildDepth::SINGLE);
-    return $objects;
+    $tpl = $query->getObjectTemplate($type);
+    $tpl->setValue($sortkeyName, Criteria::asValue('<', $sortkeyValue), true);
+    $pagingInfo = new PagingInfo(1);
+    $invSortDir = $sortDirection == 'ASC' ? 'DESC' : 'ASC';
+    $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$invSortDir), $pagingInfo);
+    return sizeof($objects) > 0 ? $objects[0] : null;
+  }
+
+  /**
+   * Load the last object regarding the given sort key
+   * @param $type The type of objects
+   * @param $sortkeyName The name of the sortkey attribute
+   * @param $sortDirection The sort direction used with the sort key
+   */
+  protected function loadLastObject($type, $sortkeyName, $sortDirection) {
+    $query = new ObjectQuery($type);
+    $tpl = $query->getObjectTemplate($type);
+    $pagingInfo = new PagingInfo(1);
+    $invSortDir = $sortDirection == 'ASC' ? 'DESC' : 'ASC';
+    $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$invSortDir), $pagingInfo);
+    return sizeof($objects) > 0 ? $objects[0] : null;
   }
 
   /**

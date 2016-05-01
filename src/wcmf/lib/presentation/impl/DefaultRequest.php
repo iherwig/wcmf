@@ -59,10 +59,12 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if (self::$_logger == null) {
       self::$_logger = LogManager::getLogger(__CLASS__);
     }
+
     // add header values to request
     foreach (self::getAllHeaders() as $name => $value) {
       $this->setHeader($name, $value);
     }
+
     // fix get request parameters
     if (isset($_SERVER['QUERY_STRING'])) {
       self::fix($_GET, $_SERVER['QUERY_STRING']);
@@ -70,7 +72,13 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if (isset($_SERVER['QUERY_STRING'])) {
       self::fix($_COOKIE, $_SERVER['COOKIES']);
     }
-    self::fix($_POST, file_get_contents("php://input"));
+    $requestBody = file_get_contents("php://input");
+    if ($this->getFormat() != 'json') {
+      self::fix($_POST, $requestBody);
+    }
+    else {
+      $_POST = json_decode($requestBody, true);
+    }
 
     $this->_method = isset($_SERVER['REQUEST_METHOD']) ?
             strtoupper($_SERVER['REQUEST_METHOD']) : '';
@@ -185,13 +193,6 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       case 'PUT':
         $requestData = $_POST;
         break;
-    }
-
-    // decode json
-    switch ($this->getFormat()) {
-      case 'json':
-        $jsonData = json_decode($requestData, true);
-        $requestData = $jsonData;
     }
 
     // get controller/context/action triple
