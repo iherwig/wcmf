@@ -74,6 +74,14 @@ class SearchController extends ListController {
   }
 
   /**
+   * @see Controller::validate()
+   */
+  protected function validate() {
+    // skip validation
+    return true;
+  }
+
+  /**
    * @see ListController::getObjects()
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
