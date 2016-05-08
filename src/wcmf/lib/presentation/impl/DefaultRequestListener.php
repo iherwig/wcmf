@@ -4,6 +4,7 @@ namespace wcmf\lib\presentation\impl;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ApplicationEvent;
 
 /**
@@ -15,14 +16,16 @@ use wcmf\lib\presentation\ApplicationEvent;
 class DefaultRequestListener {
 
   private $_eventManager = null;
+  private $_persistenceFacade = null;
 
   /**
    * Constructor
    */
-  public function __construct(EventManager $eventManager) {
+  public function __construct(EventManager $eventManager, PersistenceFacade $persistenceFacade) {
     $this->_eventManager = $eventManager;
     $this->_eventManager->addListener(ApplicationEvent::NAME,
       array($this, 'listen'));
+    $this->_persistenceFacade = $persistenceFacade;
   }
 
   /**
@@ -132,6 +135,19 @@ class DefaultRequestListener {
       $total = $response->getValue('totalCount');
       $response->setHeader('Content-Range', 'items '.$offset.'-'.$limit.'/'.$total);
     }
+  }
+
+  /**
+   * Get the type that is used in the given role related to the
+   * given source object.
+   * @param $sourceOid ObjectId of the source object
+   * @param $role The role name
+   * @return String
+   */
+  protected function getRelatedType(ObjectId $sourceOid, $role) {
+    $sourceMapper = $this->_persistenceFacade->getMapper($sourceOid->getType());
+    $relation = $sourceMapper->getRelation($role);
+    return $relation->getOtherType();
   }
 }
 ?>

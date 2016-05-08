@@ -10,6 +10,7 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\model\Node;
 use wcmf\lib\model\NullNode;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -206,7 +207,7 @@ class SortController extends Controller {
     $containerOid = ObjectId::parse($request->getValue('containerOid'));
     $insertObject = $persistenceFacade->load($insertOid);
     $referenceObject = $isOrderBottom ? new NullNode() : $persistenceFacade->load($referenceOid);
-    $containerObject = $persistenceFacade->load($containerOid, 1);
+    $containerObject = $persistenceFacade->load($containerOid);
 
     // check object existence
     $objectMap = array('insertOid' => $insertObject,
@@ -214,27 +215,48 @@ class SortController extends Controller {
         'containerOid' => $containerObject);
     if ($this->checkObjects($objectMap)) {
       $role = $request->getValue('role');
+      $children = $containerObject->getValue($role);
       // add the new node to the container, if it is not yet
-      $nodeExists = sizeof($containerObject->getChildrenEx($insertOid)) == 1;
+      $nodeExists = sizeof(Node::filter($children, $insertOid)) == 1;
       if (!$nodeExists) {
         $containerObject->addNode($insertObject, $role);
       }
-      // reorder the children list
-      $children = $containerObject->getChildrenEx(null, $role);
-      $newChildren = array();
-      foreach ($children as $curChild) {
-        $oid = $curChild->getOID();
-        if ($oid == $referenceOid) {
-          $newChildren[] = $insertObject;
-        }
-        if ($oid != $insertOid) {
-          $newChildren[] = $curChild;
-        }
-      }
+
+      // determine the sort key
+      $containerMapper = $persistenceFacade->getMapper($containerOid->getType());
+      $relationDesc = $containerMapper->getRelation($request->getValue('role'));
+      $containerRole = $relationDesc->getThisRole();
+      $mapper = $insertObject->getMapper();
+      $sortkeyDef = $mapper->getSortkey($containerRole);
+      $sortkey = $sortkeyDef['sortFieldName'];
+      $sortdir = $sortkeyDef['sortDirection'];
+
+      // get the sortkey values of the objects before and after the insert position
       if ($isOrderBottom) {
-        $newChildren[] = $insertObject;
+        $lastObject = $sortdir == 'ASC' ? $children[sizeof($children)-1] : $children[0];
+        $prevValue = $lastObject != null ? $this->getSortkeyValue($lastObject, $sortkey) : 1;
+        $nextValue = ceil($prevValue+1);
       }
-      $containerObject->setNodeOrder($newChildren);
+      else {
+        for ($i=0, $count=sizeof($children); $i<$count; $i++) {
+          $curChild = $children[$i];
+          if ($curChild->getOID() == $referenceOid) {
+            if ($sortdir == 'ASC') {
+              $prevObject = $i>0 ? $children[$i-1] : null;
+            }
+            else {
+              $prevObject = $i<$count-1 ? $children[$i+1] : null;
+            }
+            break;
+          }
+        }
+        $nextValue = $this->getSortkeyValue($referenceObject, $sortkey);
+        $prevValue = $prevObject != null ? $this->getSortkeyValue($prevObject, $sortkey) :
+          ceil($nextValue-1);
+      }
+
+      // set the sortkey value to the average
+      $insertObject->setValue($sortkey, ($nextValue+$prevValue)/2);
     }
   }
 
@@ -263,7 +285,6 @@ class SortController extends Controller {
    */
   protected function loadLastObject($type, $sortkeyName, $sortDirection) {
     $query = new ObjectQuery($type);
-    $tpl = $query->getObjectTemplate($type);
     $pagingInfo = new PagingInfo(1);
     $invSortDir = $sortDirection == 'ASC' ? 'DESC' : 'ASC';
     $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$invSortDir), $pagingInfo);
