@@ -239,7 +239,7 @@ class LuceneSearch implements IndexedSearch {
 
         $valueNames = $indexObj->getValueNames(true);
 
-        $doc->addField(\Zend_Search_Lucene_Field::unIndexed('oid', $oidStr, 'UTF-8'));
+        $doc->addField(\Zend_Search_Lucene_Field::keyword('oid', $oidStr, 'UTF-8'));
         $typeField = \Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'UTF-8');
         $typeField->isStored = false;
         $doc->addField($typeField);

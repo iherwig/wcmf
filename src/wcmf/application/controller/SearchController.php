@@ -115,7 +115,7 @@ class SearchController extends ListController {
 
     $persistenceFacade = $this->getPersistenceFacade();
     for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
-      $curNode = &$nodes[$i];
+      $curNode = $nodes[$i];
       $hit = $this->_hits[$curNode->getOID()->__toString()];
       $curNode->setValue('_displayValue', $curNode->getDisplayValue(), true);
       $curNode->setValue('_summary', "... ".$hit['summary']." ...", true);
