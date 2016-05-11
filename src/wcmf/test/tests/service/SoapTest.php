@@ -174,7 +174,8 @@ class SoapTest extends DatabaseTestCase {
     $params2 = array('oid' => $oid, 'depth' => 0);
     $result2 = $client->call("readAuthor", $params2);
 
-    $this->assertTrue($result2 instanceof \SoapFault);
+    $this->assertFalse($result2 instanceof \SoapFault);
+    $this->assertFalse(isset($result2->oid));
   }
 }
 ?>
