@@ -136,50 +136,6 @@ class ObjectQuery extends AbstractQuery {
   }
 
   /**
-   * Create a query instance from the given query parts encoded in
-   * RQL (https://github.com/persvr/rql)
-   * @param $type The netity type to query for
-   * @param $queryParts Associate array mapping attribute names to query values
-   * @return ObjectQuery
-   */
-  public static function fromRql($type, $queryParts) {
-    $operatorMap = array('eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
-        'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp');
-    $mapper = self::getMapper($type);
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $simpleType = $persistenceFacade->getSimpleType($type);
-    $objectQuery = new ObjectQuery($type);
-    foreach ($queryParts as $name => $value) {
-      if (strpos($name, '.') > 0) {
-        // check name for type.attribute
-        list($typeInName, $attributeInName) = preg_split('/\.+(?=[^\.]+$)/', $name);
-        if (($typeInName == $type || $typeInName == $simpleType) &&
-                $mapper->hasAttribute($attributeInName)) {
-          $queryTemplate = $objectQuery->getObjectTemplate($type);
-          // handle null values correctly
-          $value = strtolower($value) == 'null' ? null : $value;
-          // extract optional operator from value e.g. lt=2015-01-01
-          $parts = explode('=', $value);
-          $op = $parts[0];
-          if (sizeof($parts) > 0 && isset($operatorMap[$op])) {
-            $operator = $operatorMap[$op];
-            $value = $parts[1];
-            if ($operator == 'in') {
-              // in operator expects array value
-              $value = explode(',', $value);
-            }
-          }
-          else {
-            $operator = '=';
-          }
-          $queryTemplate->setValue($attributeInName, Criteria::asValue($operator, $value));
-        }
-      }
-    }
-    return $objectQuery;
-  }
-
-  /**
    * Desctructor.
    */
   public function __destruct() {

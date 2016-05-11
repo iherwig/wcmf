@@ -42,6 +42,39 @@ class StringQuery extends ObjectQuery {
   private $_condition = '';
 
   /**
+   * Create a query instance from the given query parts encoded in RQL (https://github.com/persvr/rql), e.g.
+   * (Profile.keyword1=in=8,1|Profile.keyword2=in=8,2|Profile.keywords3=in=8,3)&Profile.yearlySalary=gte=1000
+   * @param $type The entity type to query for
+   * @param $query RQL query string
+   * @return StringQuery
+   */
+  public static function fromRql($type, $query) {
+    $operatorMap = array('eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
+        'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp');
+    $combineMap = array('|' => 'OR', '&' => 'AND');
+    $mapper = self::getMapper($type);
+    $stringQuery = new StringQuery($type);
+    foreach ($operatorMap as $rqlOp => $sqlOp) {
+      $query = preg_replace_callback('/(='.$rqlOp.'=)([^|&\)]+)/', function ($match)
+              use($rqlOp, $sqlOp, $mapper) {
+        $replace = ' '.$sqlOp.' ';
+        if ($rqlOp == 'in') {
+          $replace .= '('.join(',', array_map(array($mapper,'quoteValue'), explode(',', $match[2]))).')';
+        }
+        else {
+          $replace .= $mapper->quoteValue($match[2]);
+        }
+        return $replace;
+      }, $query);
+    }
+    foreach ($combineMap as $rqlOp => $sqlOp) {
+      $query = str_replace($rqlOp, ' '.$sqlOp.' ', $query);
+    }
+    $stringQuery->setConditionString($query);
+    return $stringQuery;
+  }
+
+  /**
    * Set the query condition string
    * @param $condition The query definition string
    */

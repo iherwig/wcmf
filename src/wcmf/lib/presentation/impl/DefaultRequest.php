@@ -130,7 +130,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         $params = array();
         $routePattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match)
                 use($defaultValuePattern, &$params) {
-          // a variabel may be either defined by {name} or by {name|pattern} where
+          // a variable may be either defined by {name} or by {name|pattern} where
           // name is the variable's name and pattern is an optional regex pattern, the
           // values should match
           $paramParts = explode('|', $match[1], 2);

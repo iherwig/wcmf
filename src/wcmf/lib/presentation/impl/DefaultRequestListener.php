@@ -2,7 +2,7 @@
 namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\core\EventManager;
-use wcmf\lib\model\ObjectQuery;
+use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ApplicationEvent;
@@ -113,13 +113,11 @@ class DefaultRequestListener {
 
     // create query from optional GET values encoded in RQL
     // (https://github.com/persvr/rql)
-    if ($request->hasValue('className')) {
+    if ($request->hasValue('className') && $request->hasValue('query')) {
       $type = $request->getValue('className');
-      $objectQuery = ObjectQuery::fromRql($type, $request->getValues());
-      $query = $objectQuery->getQueryCondition();
-      if (strlen($query) > 0) {
-        $request->setValue('query', $query);
-      }
+      $stringQuery = StringQuery::fromRql($type, urldecode($request->getValue('query')));
+      $query = $stringQuery->getQueryCondition();
+      $request->setValue('query', $query);
     }
   }
 
