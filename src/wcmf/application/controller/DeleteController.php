@@ -100,6 +100,7 @@ class DeleteController extends Controller {
     }
 
     $response->setValue('oid', $oid);
+    $response->setStatus(204);
     $response->setAction('ok');
   }
 

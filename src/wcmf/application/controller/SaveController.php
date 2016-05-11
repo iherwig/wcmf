@@ -290,11 +290,12 @@ class SaveController extends Controller {
     }
 
     // return oid of the lastly created node
-    if (sizeof($insertOids) > 0) {
+    if (sizeof($insertOids) > 0 && !$response->hasErrors()) {
       $keys = array_keys($insertOids);
       $lastCreatedNode = $nodeArray[array_pop($keys)];
       $lastCreatedOid = $lastCreatedNode->getOid();
       $response->setValue('oid', $lastCreatedOid);
+      $response->setStatus(201);
     }
 
     $response->setAction('ok');

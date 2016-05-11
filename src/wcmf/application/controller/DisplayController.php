@@ -10,14 +10,13 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\security\AuthorizationException;
 
 /**
  * DisplayController is used to read a Node instance.
@@ -76,50 +75,41 @@ class DisplayController extends Controller {
     $permissionManager = $this->getPermissionManager();
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $logger = $this->getLogger();
-    $message = $this->getMessage();
+
+    // check permission
+    $oid = ObjectId::parse($request->getValue('oid'));
+    if (!$permissionManager->authorize($oid, '', PersistenceAction::READ)) {
+      throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
+    }
 
     // load model
-    $oid = ObjectId::parse($request->getValue('oid'));
-    if ($oid && $permissionManager->authorize($oid, '', PersistenceAction::READ)) {
-      // determine the builddepth
-      $buildDepth = BuildDepth::SINGLE;
-      if ($request->hasValue('depth')) {
-        $buildDepth = $request->getValue('depth');
-      }
-      $node = $persistenceFacade->load($oid, $buildDepth);
-      if ($node == null) {
-        throw new IllegalArgumentException($message->getText("The object with oid '%0%' does not exist.", array($oid)));
-      }
+    $buildDepth = $request->getValue('depth', BuildDepth::SINGLE);
+    $node = $persistenceFacade->load($oid, $buildDepth);
+    if ($node == null) {
+      $response->setStatus(404);
+      return;
+    }
 
-      // translate all nodes to the requested language if requested
+    // translate all nodes to the requested language if requested
+    if ($this->isLocalizedRequest()) {
+      $localization = $this->getLocalization();
+      $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
+    }
+
+    // translate values if requested
+    if ($request->getBooleanValue('translateValues')) {
+      $nodes = array($node);
       if ($this->isLocalizedRequest()) {
-        $localization = $this->getLocalization();
-        $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
+        NodeUtil::translateValues($nodes, $request->getValue('language'));
       }
-
-      if ($logger->isDebugEnabled()) {
-        $logger->debug(nl2br($node->__toString()));
+      else {
+        NodeUtil::translateValues($nodes);
       }
-
-      // translate values if requested
-      if ($request->getBooleanValue('translateValues')) {
-        $nodes = array($node);
-        if ($this->isLocalizedRequest()) {
-          NodeUtil::translateValues($nodes, $request->getValue('language'));
-        }
-        else {
-          NodeUtil::translateValues($nodes);
-        }
-      }
-
-      // assign node data
-      $response->setValue('object', $node);
     }
-    else {
-      throw new AuthorizationException($message->getText("Authorization failed for action '%0%' on '%1%'.",
-              array($message->getText('read'), $oid)));
-    }
+
+    // assign node data
+    $response->setValue('object', $node);
+
     // success
     $response->setAction('ok');
   }

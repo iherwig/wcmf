@@ -23,7 +23,7 @@ use wcmf\lib\persistence\PersistentObjectProxy;
 /**
  * DojoNodeSerializer is used to serialize Nodes into the Dojo rest format and
  * vice versa. The format of serialized Nodes is defined in the Dojo documentation (See:
- * http://dojotoolkit.org/reference-guide/1.8/quickstart/rest.html)
+ * http://dojotoolkit.org/reference-guide/1.10/quickstart/rest.html)
  *
  * @author ingo herwig <ingo@wemove.com>
  */

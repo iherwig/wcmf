@@ -209,7 +209,7 @@ define('CLASS_NAME_INVALID', serialize(array('CLASS_NAME_INVALID', ApplicationEr
 define('AUTHENTICATION_FAILED', serialize(array('AUTHENTICATION_FAILED', ApplicationError::LEVEL_ERROR, 401,
   $message->getText('Authentication failed.')
 )));
-define('PERMISSION_DENIED', serialize(array('PERMISSION_DENIED', ApplicationError::LEVEL_ERROR, 401,
+define('PERMISSION_DENIED', serialize(array('PERMISSION_DENIED', ApplicationError::LEVEL_ERROR, 403,
   $message->getText('The user does not have the permission to perform this action.')
 )));
 
