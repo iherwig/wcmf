@@ -29,7 +29,7 @@
         "olympos/chronos-generator": "1.0.*",
         "monolog/monolog": "~1.17",
         "zf1/zend-db": "~1.12",
-        "zf1/zend-search-lucene": "~1.12",
+        "zendframework/zendsearch": "^2.0@rc",
         "fergusean/nusoap": "~0.9"
     },
     "require-dev": {

@@ -21,8 +21,19 @@ use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\search\IndexedSearch;
 use wcmf\lib\util\StringUtil;
 
+use ZendSearch\Lucene\Analysis\Analyzer\Analyzer;
+use ZendSearch\Lucene\Analysis\Analyzer\Common\Utf8Num\CaseInsensitive;
+use ZendSearch\Lucene\Analysis\TokenFilter\StopWords;
+use ZendSearch\Lucene\Document;
+use ZendSearch\Lucene\Document\Field;
+use ZendSearch\Lucene\Index\Term;
+use ZendSearch\Lucene\Lucene;
+use ZendSearch\Lucene\Search\Query\Wildcard;
+use ZendSearch\Lucene\Search\QueryParser;
+use ZendSearch\Lucene\Search\Weight\Boolean;
+
 /**
- * LuceneSearch provides access to the search based on Zend_Search_Lucene.
+ * LuceneSearch provides access to the search based on ZendSearch/Lucene.
  * The search index stored in the location that is defined by the parameter 'indexPath'.
  * To manage PersistentObjects in the index use the methods LuceneSearch::addToIndex()
  * and LuceneSearch::deleteFromIndex() and LuceneSearch::commitIndex().
@@ -124,7 +135,7 @@ class LuceneSearch implements IndexedSearch {
     $index = $this->getIndex(false);
     if ($index) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $query = \Zend_Search_Lucene_Search_QueryParser::parse($searchTerm, 'UTF-8');
+      $query = QueryParser::parse($searchTerm, 'UTF-8');
       try {
         $hits = $index->find($query);
         if ($pagingInfo != null && $pagingInfo->getPageSize() > 0) {
@@ -187,7 +198,7 @@ class LuceneSearch implements IndexedSearch {
    */
   public function resetIndex() {
     $indexPath = $this->getIndexPath();
-    return \Zend_Search_Lucene::create($indexPath);
+    return Lucene::create($indexPath);
   }
 
   /**
@@ -197,11 +208,9 @@ class LuceneSearch implements IndexedSearch {
     self::$_logger->debug("Commit index");
     if ($this->_indexIsDirty) {
       $index = $this->getIndex(false);
-      if ($index) {
-        $index->commit();
-        if ($optimize) {
-          $index->optimize();
-        }
+      $index->commit();
+      if ($optimize) {
+        $index->optimize();
       }
     }
   }
@@ -211,9 +220,7 @@ class LuceneSearch implements IndexedSearch {
    */
   public function optimizeIndex() {
     $index = $this->getIndex(false);
-    if ($index) {
-      $index->optimize();
-    }
+    $index->optimize();
   }
 
   /**
@@ -235,16 +242,16 @@ class LuceneSearch implements IndexedSearch {
         }
 
         // create the document
-        $doc = new \Zend_Search_Lucene_Document();
+        $doc = new Document();
 
         $valueNames = $indexObj->getValueNames(true);
 
-        $doc->addField(\Zend_Search_Lucene_Field::keyword('oid', $oidStr, 'UTF-8'));
-        $typeField = \Zend_Search_Lucene_Field::keyword('type', $obj->getType(), 'UTF-8');
+        $doc->addField(Field::keyword('oid', $oidStr, 'UTF-8'));
+        $typeField = Field::keyword('type', $obj->getType(), 'UTF-8');
         $typeField->isStored = false;
         $doc->addField($typeField);
         if ($language != null) {
-          $languageField = \Zend_Search_Lucene_Field::keyword('lang', $language, 'UTF-8');
+          $languageField = Field::keyword('lang', $language, 'UTF-8');
           $languageField->isStored = false;
           $doc->addField($languageField);
         }
@@ -256,17 +263,17 @@ class LuceneSearch implements IndexedSearch {
             $value = $this->encodeValue($value, $inputType);
             if (preg_match('/^text|^f?ckeditor/', $inputType)) {
               $value = strip_tags($value);
-              $doc->addField(\Zend_Search_Lucene_Field::unStored($curValueName, $value, 'UTF-8'));
+              $doc->addField(Field::unStored($curValueName, $value, 'UTF-8'));
             }
             else {
-              $field = \Zend_Search_Lucene_Field::keyword($curValueName, $value, 'UTF-8');
+              $field = Field::keyword($curValueName, $value, 'UTF-8');
               $field->isStored = false;
               $doc->addField($field);
             }
           }
         }
 
-        $term = new \Zend_Search_Lucene_Index_Term($oidStr, 'oid');
+        $term = new Term($oidStr, 'oid');
         $docIds  = $index->termDocs($term);
         foreach ($docIds as $id) {
           $index->delete($id);
@@ -288,7 +295,7 @@ class LuceneSearch implements IndexedSearch {
       }
       $index = $this->getIndex();
 
-      $term = new \Zend_Search_Lucene_Index_Term($obj->getOID()->__toString(), 'oid');
+      $term = new Term($obj->getOID()->__toString(), 'oid');
       $docIds  = $index->termDocs($term);
       foreach ($docIds as $id) {
         $index->delete($id);
@@ -319,30 +326,30 @@ class LuceneSearch implements IndexedSearch {
   /**
    * Get the search index.
    * @param $create Boolean whether to create the index, if it does not exist (default: _true_)
-   * @return An instance of Zend_Search_Lucene_Interface or null
+   * @return An instance of ZendSearch/SearchIndexInterface or null
    */
   private function getIndex($create = true) {
     if (!$this->_index || $create) {
       $indexPath = $this->getIndexPath();
 
-      $analyzer = new Analyzer();
+      $analyzer = new Utf8Analyzer();
 
       // add stop words filter
       $stopWords = $this->getStopWords();
-      $stopWordsFilter = new \Zend_Search_Lucene_Analysis_TokenFilter_StopWords($stopWords);
+      $stopWordsFilter = new StopWords($stopWords);
       $analyzer->addFilter($stopWordsFilter);
 
-      \Zend_Search_Lucene_Analysis_Analyzer::setDefault($analyzer);
-      \Zend_Search_Lucene_Search_Query_Wildcard::setMinPrefixLength(0);
-      \Zend_Search_Lucene_Search_QueryParser::setDefaultEncoding('UTF-8');
-      \Zend_Search_Lucene_Search_QueryParser::setDefaultOperator(\Zend_Search_Lucene_Search_QueryParser::B_AND);
+      Analyzer::setDefault($analyzer);
+      Wildcard::setMinPrefixLength(0);
+      QueryParser::setDefaultEncoding('UTF-8');
+      QueryParser::setDefaultOperator(QueryParser::B_AND);
 
       try {
-        $this->_index = \Zend_Search_Lucene::open($indexPath);
+        $this->_index = Lucene::open($indexPath);
         //$this->_index->setMaxMergeDocs(5);
         //$this->_index->setMergeFactor(5);
       }
-      catch (\Zend_Search_Lucene_Exception $ex) {
+      catch (\Exception $ex) {
         $this->_index = $this->resetIndex();
       }
     }
@@ -371,7 +378,7 @@ class LuceneSearch implements IndexedSearch {
   }
 }
 
-class Analyzer extends \Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive {
+class Utf8Analyzer extends CaseInsensitive {
   /**
    * Override method to make sure we are using utf-8
    */
