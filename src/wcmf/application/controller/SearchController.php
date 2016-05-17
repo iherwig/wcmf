@@ -15,6 +15,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\model\NodeComparator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -110,9 +111,10 @@ class SearchController extends ListController {
   /**
    * @see ListController::modifyModel()
    */
-  protected function modifyModel($nodes) {
+  protected function modifyModel(&$nodes) {
     parent::modifyModel($nodes);
 
+    // add search related values
     $persistenceFacade = $this->getPersistenceFacade();
     for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
       $curNode = $nodes[$i];
@@ -121,6 +123,18 @@ class SearchController extends ListController {
       $curNode->setValue('_summary', "... ".$hit['summary']." ...", true);
       $curNode->setValue('_type', $persistenceFacade->getSimpleType($curNode->getType()), true);
     }
+
+    // sort
+    $request = $this->getRequest();
+    if ($request->hasValue('sortFieldName')) {
+      $sortDir = $request->hasValue('sortDirection') ? $request->getValue('sortDirection') : 'asc';
+      $sortCriteria = array(
+         $request->getValue('sortFieldName') => $sortDir == 'asc' ?
+              NodeComparator::SORTTYPE_ASC : NodeComparator::SORTTYPE_DESC
+      );
+      $comparator = new NodeComparator($sortCriteria);
+      usort($nodes, array($comparator, 'compare'));
+  }
   }
 }
 ?>

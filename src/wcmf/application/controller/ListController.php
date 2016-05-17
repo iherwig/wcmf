@@ -189,7 +189,7 @@ class ListController extends Controller {
    * @note subclasses will override this to implement special application requirements.
    * @param $nodes A reference to the array of node references passed to the view
    */
-  protected function modifyModel($nodes) {
+  protected function modifyModel(&$nodes) {
     $request = $this->getRequest();
     // TODO: put this into subclass ListController
 
