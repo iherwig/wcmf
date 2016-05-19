@@ -53,13 +53,13 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  */
 class DefaultLocalization implements Localization {
 
-  private $_persistenceFacade = null;
-  private $_configuration = null;
+  private $persistenceFacade = null;
+  private $configuration = null;
 
-  private $_supportedLanguages = null;
-  private $_defaultLanguage = null;
-  private $_translationType = null;
-  private $_languageType = null;
+  private $supportedLanguages = null;
+  private $defaultLanguage = null;
+  private $translationType = null;
+  private $languageType = null;
 
   /**
    * Configuration
@@ -71,31 +71,31 @@ class DefaultLocalization implements Localization {
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           Configuration $configuration, $defaultLanguage, $translationType, $languageType) {
-    $this->_persistenceFacade = $persistenceFacade;
-    $this->_configuration = $configuration;
+    $this->persistenceFacade = $persistenceFacade;
+    $this->configuration = $configuration;
     $supportedLanguages = $this->getSupportedLanguages();
 
     if (!isset($supportedLanguages[$defaultLanguage])) {
       throw new ConfigurationException('No supported language equals the default language \''.$defaultLanguage.'\'');
     }
-    $this->_defaultLanguage = $defaultLanguage;
+    $this->defaultLanguage = $defaultLanguage;
 
-    if (!$this->_persistenceFacade->isKnownType($translationType)) {
+    if (!$this->persistenceFacade->isKnownType($translationType)) {
       throw new IllegalArgumentException('The translation type \''.$translationType.'\' is unknown.');
     }
-    $this->_translationType = $translationType;
+    $this->translationType = $translationType;
 
-    if (!$this->_persistenceFacade->isKnownType($languageType)) {
+    if (!$this->persistenceFacade->isKnownType($languageType)) {
       throw new IllegalArgumentException('The language type \''.$languageType.'\' is unknown.');
     }
-    $this->_languageType = $languageType;
+    $this->languageType = $languageType;
   }
 
   /**
    * @see Localization::getDefaultLanguage()
    */
   public function getDefaultLanguage() {
-    return $this->_defaultLanguage;
+    return $this->defaultLanguage;
   }
 
   /**
@@ -103,28 +103,28 @@ class DefaultLocalization implements Localization {
    * Reads the configuration section 'languages'
    */
   public function getSupportedLanguages() {
-    if ($this->_supportedLanguages == null) {
+    if ($this->supportedLanguages == null) {
       // check if the configuration section exists
-      if (($languages = $this->_configuration->getSection('languages')) !== false) {
-        $this->_supportedLanguages = $languages;
+      if (($languages = $this->configuration->getSection('languages')) !== false) {
+        $this->supportedLanguages = $languages;
       }
       // if not, use the languageType
       else {
-        $languages = $this->_persistenceFacade->loadObjects($this->_languageType, BuildDepth::SINGLE);
+        $languages = $this->persistenceFacade->loadObjects($this->languageType, BuildDepth::SINGLE);
         for($i=0, $count=sizeof($languages); $i<$count; $i++) {
           $curLanguage = $languages[$i];
-          $this->_supportedLanguages[$curLanguage->getCode()] = $curLanguage->getName();
+          $this->supportedLanguages[$curLanguage->getCode()] = $curLanguage->getName();
         }
       }
     }
-    return $this->_supportedLanguages;
+    return $this->supportedLanguages;
   }
 
   /**
    * @see Localization::loadTranslatedObject()
    */
   public function loadTranslatedObject(ObjectId $oid, $lang, $useDefaults=true) {
-    $object = $this->_persistenceFacade->load($oid, BuildDepth::SINGLE);
+    $object = $this->persistenceFacade->load($oid, BuildDepth::SINGLE);
 
     return $this->loadTranslation($object, $lang, $useDefaults, false);
   }
@@ -180,13 +180,13 @@ class DefaultLocalization implements Localization {
     // load the translations and translate the object for any language
     // different to the default language
     if ($lang != $this->getDefaultLanguage()) {
-      $transaction = $this->_persistenceFacade->getTransaction();
-      $translatedObject = $this->_persistenceFacade->create($object->getType());
+      $transaction = $this->persistenceFacade->getTransaction();
+      $translatedObject = $this->persistenceFacade->create($object->getType());
       $transaction->detach($translatedObject->getOID());
       $object->copyValues($translatedObject, true);
 
-      $query = new ObjectQuery($this->_translationType, __CLASS__.'load_save');
-      $tpl = $query->getObjectTemplate($this->_translationType);
+      $query = new ObjectQuery($this->translationType, __CLASS__.'load_save');
+      $tpl = $query->getObjectTemplate($this->translationType);
       $tpl->setValue('objectid', Criteria::asValue('=', $oidStr));
       $tpl->setValue('language', Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
@@ -237,8 +237,8 @@ class DefaultLocalization implements Localization {
       $object->beforeUpdate();
 
       // get the existing translations for the requested language
-      $query = new ObjectQuery($this->_translationType, __CLASS__.'load_save');
-      $tpl = $query->getObjectTemplate($this->_translationType);
+      $query = new ObjectQuery($this->translationType, __CLASS__.'load_save');
+      $tpl = $query->getObjectTemplate($this->translationType);
       $tpl->setValue('objectid', Criteria::asValue('=', $object->getOID()->__toString()));
       $tpl->setValue('language', Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
@@ -267,8 +267,8 @@ class DefaultLocalization implements Localization {
     // delete the translations for any other language
     else {
       // get the existing translations for the requested language or all languages
-      $query = new ObjectQuery($this->_translationType, __CLASS__.'delete_trans'.($lang != null));
-      $tpl = $query->getObjectTemplate($this->_translationType);
+      $query = new ObjectQuery($this->translationType, __CLASS__.'delete_trans'.($lang != null));
+      $tpl = $query->getObjectTemplate($this->translationType);
       $tpl->setValue('objectid', Criteria::asValue('=', $oid->__toString()));
       if ($lang != null) {
         $tpl->setValue('language', Criteria::asValue('=', $lang));
@@ -293,8 +293,8 @@ class DefaultLocalization implements Localization {
     // delete the translations for any other language
     else {
       // get the existing translations for the requested language
-      $query = new ObjectQuery($this->_translationType, __CLASS__.'delete_lang');
-      $tpl = $query->getObjectTemplate($this->_translationType);
+      $query = new ObjectQuery($this->translationType, __CLASS__.'delete_lang');
+      $tpl = $query->getObjectTemplate($this->translationType);
       $tpl->setValue('language', Criteria::asValue('=', $lang));
       $translations = $query->execute(BuildDepth::SINGLE);
 
@@ -362,7 +362,7 @@ class DefaultLocalization implements Localization {
 
       // if not, create a new translation
       if ($translation == null) {
-        $translation = $this->_persistenceFacade->create($this->_translationType);
+        $translation = $this->persistenceFacade->create($this->translationType);
       }
 
       // set all required properties

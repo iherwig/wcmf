@@ -23,17 +23,17 @@ use wcmf\lib\persistence\PersistenceFacade;
  */
 class PersistentIterator implements \Iterator {
 
-  private $_id = null;
-  private $_persistenceFacade = null;
-  private $_session = null;
+  private $id = null;
+  private $persistenceFacade = null;
+  private $session = null;
 
-  protected $_end;              // indicates if the iteration is ended
-  protected $_oidList;          // the list of oids to process
-  protected $_processedOidList; // the list of all seen object ids
-  protected $_currentOid;       // the oid the iterator points to
-  protected $_startOid;         // the oid the iterator started with
-  protected $_currentDepth;     // the depth in the tree of the oid the iterator points to
-  protected $_aggregationKinds; // array of aggregation kind values to follow (empty: all)
+  protected $end;              // indicates if the iteration is ended
+  protected $oidList;          // the list of oids to process
+  protected $processedOidList; // the list of all seen object ids
+  protected $currentOid;       // the oid the iterator points to
+  protected $startOid;         // the oid the iterator started with
+  protected $currentDepth;     // the depth in the tree of the oid the iterator points to
+  protected $aggregationKinds; // array of aggregation kind values to follow (empty: all)
 
   /**
    * Constructor.
@@ -48,27 +48,27 @@ class PersistentIterator implements \Iterator {
           Session $session,
           ObjectId $oid,
           $aggregationKinds=array()) {
-    $this->_id = $id;
-    $this->_persistenceFacade = $persistenceFacade;
-    $this->_session = $session;
+    $this->id = $id;
+    $this->persistenceFacade = $persistenceFacade;
+    $this->session = $session;
 
-    $this->_end = false;
-    $this->_oidList = array();
-    $this->_processedOidList = array();
-    $this->_currentOid = $oid;
-    $this->_startOid = $oid;
-    $this->_currentDepth = 0;
-    $this->_aggregationKinds = $aggregationKinds;
-    $this->_session->remove($this->_id);
+    $this->end = false;
+    $this->oidList = array();
+    $this->processedOidList = array();
+    $this->currentOid = $oid;
+    $this->startOid = $oid;
+    $this->currentDepth = 0;
+    $this->aggregationKinds = $aggregationKinds;
+    $this->session->remove($this->id);
   }
 
   /**
    * Save the iterator state to the session
    */
   public function save() {
-    $state = array('end' => $this->_end, 'oidList' => $this->_oidList, 'processedOidList' => $this->_processedOidList,
-      'currentOID' => $this->_currentOid, 'currentDepth' => $this->_currentDepth, 'aggregationKinds' => $this->_aggregationKinds);
-    $this->_session->set($this->_id, $state);
+    $state = array('end' => $this->end, 'oidList' => $this->oidList, 'processedOidList' => $this->processedOidList,
+      'currentOID' => $this->currentOid, 'currentDepth' => $this->currentDepth, 'aggregationKinds' => $this->aggregationKinds);
+    $this->session->set($this->id, $state);
   }
 
   /**
@@ -96,11 +96,11 @@ class PersistentIterator implements \Iterator {
     // create instance
     $instance = new PersistentIterator($id, $persistenceFacade, $session,
             $state['currentOID']);
-    $instance->_end = $state['end'];
-    $instance->_oidList = $state['oidList'];
-    $instance->_processedOidList = $state['processedOidList'];
-    $instance->_currentDepth = $state['currentDepth'];
-    $instance->_aggregationKinds = $state['aggregationKinds'];
+    $instance->end = $state['end'];
+    $instance->oidList = $state['oidList'];
+    $instance->processedOidList = $state['processedOidList'];
+    $instance->currentDepth = $state['currentDepth'];
+    $instance->aggregationKinds = $state['aggregationKinds'];
     return $instance;
   }
 
@@ -109,7 +109,7 @@ class PersistentIterator implements \Iterator {
    * @return ObjectId, the current object id
    */
   public function current() {
-    return $this->_currentOid;
+    return $this->currentOid;
   }
 
   /**
@@ -117,7 +117,7 @@ class PersistentIterator implements \Iterator {
    * @return Number, the current depth
    */
   public function key() {
-    return $this->_currentDepth;
+    return $this->currentDepth;
   }
 
   /**
@@ -125,18 +125,18 @@ class PersistentIterator implements \Iterator {
    */
   public function next() {
     // the current oid was processed
-    $this->_processedOidList[] = $this->_currentOid->__toString();
+    $this->processedOidList[] = $this->currentOid->__toString();
 
-    $node = $this->_persistenceFacade->load($this->_currentOid);
+    $node = $this->persistenceFacade->load($this->currentOid);
 
     // collect navigable children for the given aggregation kinds
     $childOIDs = array();
     $mapper = $node->getMapper();
     $relations = $mapper->getRelations('child');
-    $followAll = sizeof($this->_aggregationKinds) == 0;
+    $followAll = sizeof($this->aggregationKinds) == 0;
     foreach ($relations as $relation) {
       $aggregationKind = $relation->getOtherAggregationKind();
-      if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->_aggregationKinds))) {
+      if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->aggregationKinds))) {
         $childValue = $node->getValue($relation->getOtherRole());
         if ($childValue != null) {
           $children = $relation->isMultiValued() ? $childValue : array($childValue);
@@ -146,26 +146,26 @@ class PersistentIterator implements \Iterator {
         }
       }
     }
-    $this->addToQueue($childOIDs, ++$this->_currentDepth);
+    $this->addToQueue($childOIDs, ++$this->currentDepth);
 
     // set current node
-    if (sizeof($this->_oidList) != 0) {
-      list($oid, $depth) = array_pop($this->_oidList);
+    if (sizeof($this->oidList) != 0) {
+      list($oid, $depth) = array_pop($this->oidList);
       $oidStr = $oid->__toString();
       // not the last node -> search for unprocessed nodes
-      while (sizeof($this->_oidList) > 0 && in_array($oidStr, $this->_processedOidList)) {
-        list($oid, $depth) = array_pop($this->_oidList);
+      while (sizeof($this->oidList) > 0 && in_array($oidStr, $this->processedOidList)) {
+        list($oid, $depth) = array_pop($this->oidList);
         $oidStr = $oid->__toString();
       }
       // last node found, but it was processed already
-      if (sizeof($this->_oidList) == 0 && in_array($oidStr, $this->_processedOidList)) {
-        $this->_end = true;
+      if (sizeof($this->oidList) == 0 && in_array($oidStr, $this->processedOidList)) {
+        $this->end = true;
       }
-      $this->_currentOid = $oid;
-      $this->_currentDepth = $depth;
+      $this->currentOid = $oid;
+      $this->currentDepth = $depth;
     }
     else {
-      $this->_end = true;
+      $this->end = true;
     }
     return $this;
   }
@@ -174,18 +174,18 @@ class PersistentIterator implements \Iterator {
    * Rewind the Iterator to the first element
    */
   public function rewind() {
-    $this->_end = false;
-    $this->_oidList= array();
-    $this->_processedOidList = array();
-    $this->_currentOid = $this->_startOid;
-    $this->_currentDepth = 0;
+    $this->end = false;
+    $this->oidList= array();
+    $this->processedOidList = array();
+    $this->currentOid = $this->startOid;
+    $this->currentDepth = 0;
   }
 
   /**
    * Checks if current position is valid
    */
   public function valid() {
-    return !$this->_end;
+    return !$this->end;
   }
 
   /**
@@ -195,7 +195,7 @@ class PersistentIterator implements \Iterator {
    */
   protected function addToQueue($oidList, $depth) {
     for ($i=sizeOf($oidList)-1; $i>=0; $i--) {
-      $this->_oidList[] = array($oidList[$i], $depth);
+      $this->oidList[] = array($oidList[$i], $depth);
     }
   }
 }

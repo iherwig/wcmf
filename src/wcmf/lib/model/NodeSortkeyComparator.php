@@ -31,8 +31,8 @@ use wcmf\lib\model\Node;
  */
 class NodeSortkeyComparator {
 
-  private $_referenceNode;
-  private $_oidRoleMap = array();
+  private $referenceNode;
+  private $oidRoleMap = array();
 
   /**
    * Constructor
@@ -43,12 +43,12 @@ class NodeSortkeyComparator {
    * uses the first relation that has the type of the given node
    */
   public function __construct(Node $referenceNode, array $nodeList) {
-    $this->_referenceNode = $referenceNode;
+    $this->referenceNode = $referenceNode;
     // map oids to roles for faster access
     foreach ($nodeList as $curNode) {
       $curRole = $referenceNode->getNodeRelation($curNode);
       if ($curRole != null) {
-        $this->_oidRoleMap[$curNode->getOID()->__toString()] = $curRole->getOtherRole();
+        $this->oidRoleMap[$curNode->getOID()->__toString()] = $curRole->getOtherRole();
       }
     }
   }
@@ -75,8 +75,8 @@ class NodeSortkeyComparator {
   protected function getSortkeyValue(Node $node) {
     // if no role is defined for a or b, the sortkey is
     // determined from the type of the reference node
-    $defaultRole = $this->_referenceNode->getType();
-    $referenceMapper = $this->_referenceNode->getMapper();
+    $defaultRole = $this->referenceNode->getType();
+    $referenceMapper = $this->referenceNode->getMapper();
     $mapper = $node->getMapper();
 
     if ($referenceMapper && $mapper) {
@@ -85,8 +85,8 @@ class NodeSortkeyComparator {
       // get the sortkey of the node for the relation to the reference node,
       // if a role is defined
       $oidStr = $node->getOID()->__toString();
-      if (isset($this->_oidRoleMap[$oidStr])) {
-        $nodeRole = $this->_oidRoleMap[$oidStr];
+      if (isset($this->oidRoleMap[$oidStr])) {
+        $nodeRole = $this->oidRoleMap[$oidStr];
         $relationDesc = $referenceMapper->getRelation($nodeRole);
         $referenceRole = $relationDesc->getThisRole();
       }

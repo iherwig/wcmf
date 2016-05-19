@@ -17,13 +17,13 @@ namespace wcmf\lib\core;
  */
 abstract class Event {
 
-  private $_isStopped = false;
+  private $isStopped = false;
 
   /**
    * Stop further processing of the event
    */
   public function stopPropagation() {
-    $this->_isStopped = true;
+    $this->isStopped = true;
   }
 
   /**
@@ -31,7 +31,7 @@ abstract class Event {
    * @return Boolean
    */
   public function isStopped() {
-    return $this->_isStopped;
+    return $this->isStopped;
   }
 }
 ?>

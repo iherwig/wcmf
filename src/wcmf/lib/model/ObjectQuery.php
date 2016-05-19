@@ -107,18 +107,18 @@ class ObjectQuery extends AbstractQuery {
   const PROPERTY_TABLE_NAME = "object_query_table_name";
   const PROPERTY_INITIAL_OID = "object_query_initial_oid";
 
-  private $_id = '';
-  private $_typeNode = null;
-  private $_isTypeNodeInQuery = false;
-  private $_rootNodes = array();
-  private $_conditions = array();
-  private $_groups = array();
-  private $_groupedOIDs = array();
-  private $_processedNodes = array();
-  private $_involvedTypes = array();
-  private $_aliasCounter = 1;
-  private $_observedObjects = array();
-  private $_bindOrder = array();
+  private $id = '';
+  private $typeNode = null;
+  private $isTypeNodeInQuery = false;
+  private $rootNodes = array();
+  private $conditions = array();
+  private $groups = array();
+  private $groupedOIDs = array();
+  private $processedNodes = array();
+  private $involvedTypes = array();
+  private $aliasCounter = 1;
+  private $observedObjects = array();
+  private $bindOrder = array();
 
   /**
    * Constructor.
@@ -128,9 +128,9 @@ class ObjectQuery extends AbstractQuery {
   public function __construct($type, $queryId=SelectStatement::NO_CACHE) {
     // don't use PersistenceFacade::create, because template instances must be transient
     $mapper = self::getMapper($type);
-    $this->_typeNode = $mapper->create($type, BuildDepth::SINGLE);
-    $this->_rootNodes[] = $this->_typeNode;
-    $this->_id = $queryId == null ? SelectStatement::NO_CACHE : $queryId;
+    $this->typeNode = $mapper->create($type, BuildDepth::SINGLE);
+    $this->rootNodes[] = $this->typeNode;
+    $this->id = $queryId == null ? SelectStatement::NO_CACHE : $queryId;
     ObjectFactory::getInstance('eventManager')->addListener(ValueChangeEvent::NAME,
       array($this, 'valueChanged'));
   }
@@ -148,7 +148,7 @@ class ObjectQuery extends AbstractQuery {
    * @return String
    */
   public function getId() {
-    return $this->_id;
+    return $this->id;
   }
 
   /**
@@ -165,16 +165,16 @@ class ObjectQuery extends AbstractQuery {
     // use the typeNode, the first time a node template of the query type is requested
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $fqType = $persistenceFacade->getFullyQualifiedType($type);
-    if ($fqType == $this->_typeNode->getType() && !$this->_isTypeNodeInQuery) {
-      $template = $this->_typeNode;
-      $this->_isTypeNodeInQuery = true;
+    if ($fqType == $this->typeNode->getType() && !$this->isTypeNodeInQuery) {
+      $template = $this->typeNode;
+      $this->isTypeNodeInQuery = true;
       // the typeNode is contained already in the rootNodes array
     }
     else {
       // don't use PersistenceFacade::create, because template instances must be transient
       $mapper = self::getMapper($fqType);
       $template = $mapper->create($fqType, BuildDepth::SINGLE);
-      $this->_rootNodes[] = $template;
+      $this->rootNodes[] = $template;
     }
     $template->setProperty(self::PROPERTY_COMBINE_OPERATOR, $combineOperator);
     if ($alias != null) {
@@ -182,7 +182,7 @@ class ObjectQuery extends AbstractQuery {
     }
     $initialOid = $template->getOID()->__toString();
     $template->setProperty(self::PROPERTY_INITIAL_OID, $initialOid);
-    $this->_observedObjects[$initialOid] = $template;
+    $this->observedObjects[$initialOid] = $template;
     return $template;
   }
 
@@ -197,7 +197,7 @@ class ObjectQuery extends AbstractQuery {
     if ($template != null) {
       $initialOid = $template->getOID()->__toString();
       $template->setProperty(self::PROPERTY_INITIAL_OID, $initialOid);
-      $this->_observedObjects[$initialOid] = $template;
+      $this->observedObjects[$initialOid] = $template;
 
       // call the setters for all attributes in order to register them in the query
       $template->copyValues($template);
@@ -208,18 +208,18 @@ class ObjectQuery extends AbstractQuery {
       }
 
       // replace the typeNode, the first time a node template of the query type is registered
-      if ($template->getType() == $this->_typeNode->getType() && !$this->_isTypeNodeInQuery) {
+      if ($template->getType() == $this->typeNode->getType() && !$this->isTypeNodeInQuery) {
         $newRootNodes = array($template);
-        foreach($this->_rootNodes as $node) {
-          if ($node != $this->_typeNode) {
+        foreach($this->rootNodes as $node) {
+          if ($node != $this->typeNode) {
             $newRootNodes[] = $node;
           }
         }
-        $this->_rootNodes = $newRootNodes;
-        $this->_isTypeNodeInQuery = true;
+        $this->rootNodes = $newRootNodes;
+        $this->isTypeNodeInQuery = true;
       }
       else {
-        $this->_rootNodes[] = $template;
+        $this->rootNodes[] = $template;
       }
     }
   }
@@ -231,11 +231,11 @@ class ObjectQuery extends AbstractQuery {
    * @param $combineOperator One of the Criteria::OPERATOR constants that precedes the group (default: _Criteria::OPERATOR_AND_)
    */
   public function makeGroup($templates, $combineOperator=Criteria::OPERATOR_AND) {
-    $this->_groups[] = array('tpls' => $templates, self::PROPERTY_COMBINE_OPERATOR => $combineOperator);
+    $this->groups[] = array('tpls' => $templates, self::PROPERTY_COMBINE_OPERATOR => $combineOperator);
     // store grouped nodes in an extra array to separate them from the others
     for ($i=0; $i<sizeof($templates); $i++) {
       if ($templates[$i] != null) {
-        $this->_groupedOIDs[] = $templates[$i]->getOID();
+        $this->groupedOIDs[] = $templates[$i]->getOID();
       }
       else {
         throw new IllegalArgumentException("Null value found in group");
@@ -262,20 +262,20 @@ class ObjectQuery extends AbstractQuery {
    * @see AbstractQuery::getQueryType()
    */
   protected function getQueryType() {
-    return $this->_typeNode->getType();
+    return $this->typeNode->getType();
   }
 
   /**
    * @see AbstractQuery::buildQuery()
    */
   protected function buildQuery($buildDepth, $orderby=null, PagingInfo $pagingInfo=null) {
-    $type = $this->_typeNode->getType();
+    $type = $this->typeNode->getType();
     $mapper = self::getMapper($type);
-    $this->_involvedTypes[$type] = true;
+    $this->involvedTypes[$type] = true;
 
     // create the attribute string (use the default select from the mapper,
     // since we are only interested in the attributes)
-    $tableName = self::processTableName($this->_typeNode);
+    $tableName = self::processTableName($this->typeNode);
     $attributes = $buildDepth === false ? $mapper->getPkNames() : null;
     $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], $attributes, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
@@ -283,17 +283,17 @@ class ObjectQuery extends AbstractQuery {
       $selectStmt->distinct(true);
 
       // process all root nodes except for grouped nodes
-      foreach ($this->_rootNodes as $curNode) {
-        if (!in_array($curNode->getOID(), $this->_groupedOIDs)) {
+      foreach ($this->rootNodes as $curNode) {
+        if (!in_array($curNode->getOID(), $this->groupedOIDs)) {
           $this->processObjectTemplate($curNode, $selectStmt);
         }
       }
 
       // process groups
-      for ($i=0, $countI=sizeof($this->_groups); $i<$countI; $i++) {
-        $group = $this->_groups[$i];
+      for ($i=0, $countI=sizeof($this->groups); $i<$countI; $i++) {
+        $group = $this->groups[$i];
         $tmpSelectStmt = SelectStatement::get($mapper, $this->getId().'_g'.$i);
-        $tmpSelectStmt->from($this->_typeNode->getProperty(self::PROPERTY_TABLE_NAME));
+        $tmpSelectStmt->from($this->typeNode->getProperty(self::PROPERTY_TABLE_NAME));
         for ($j=0, $countJ=sizeof($group['tpls']); $j<$countJ; $j++) {
           $tpl = $group['tpls'][$j];
           $this->processObjectTemplate($tpl, $tmpSelectStmt);
@@ -320,11 +320,11 @@ class ObjectQuery extends AbstractQuery {
       $this->processOrderBy($orderby, $selectStmt);
 
       // set bind order to be reused next time
-      $selectStmt->setMeta('bindOrder', $this->_bindOrder);
+      $selectStmt->setMeta('bindOrder', $this->bindOrder);
     }
 
     // set parameters
-    $selectStmt->bind($this->getBind($this->_conditions, $selectStmt->getMeta('bindOrder')));
+    $selectStmt->bind($this->getBind($this->conditions, $selectStmt->getMeta('bindOrder')));
 
     // reset internal variables
     $this->resetInternals();
@@ -340,21 +340,21 @@ class ObjectQuery extends AbstractQuery {
   protected function processObjectTemplate(PersistentObject $tpl, SelectStatement $selectStmt) {
     // avoid infinite recursion
     $oidStr = $tpl->getOID()->__toString();
-    if (isset($this->_processedNodes[$oidStr])) {
+    if (isset($this->processedNodes[$oidStr])) {
       return;
     }
 
     $mapper = self::getMapper($tpl->getType());
     $tableName = self::processTableName($tpl);
-    $this->_involvedTypes[$tpl->getType()] = true;
+    $this->involvedTypes[$tpl->getType()] = true;
 
     // add condition
     $condition = '';
     $iter = new NodeValueIterator($tpl, false);
     foreach($iter as $valueName => $value) {
       // check if the value was set when building the query
-      if (isset($this->_conditions[$oidStr][$valueName])) {
-        $criterion = $this->_conditions[$oidStr][$valueName];
+      if (isset($this->conditions[$oidStr][$valueName])) {
+        $criterion = $this->conditions[$oidStr][$valueName];
         if ($criterion instanceof Criteria) {
           $attributeDesc = $mapper->getAttribute($valueName);
           if ($attributeDesc) {
@@ -365,7 +365,7 @@ class ObjectQuery extends AbstractQuery {
             // because the attributes are not selected with alias, the column name has to be used
             $condition .= $mapper->renderCriteria($criterion, '?',
                 $tpl->getProperty(self::PROPERTY_TABLE_NAME), $attributeDesc->getColumn());
-            $this->_bindOrder[] = $this->getBindPosition($criterion, $this->_conditions);
+            $this->bindOrder[] = $this->getBindPosition($criterion, $this->conditions);
           }
         }
       }
@@ -381,7 +381,7 @@ class ObjectQuery extends AbstractQuery {
     }
 
     // register the node as processed
-    $this->_processedNodes[$oidStr] = $tpl;
+    $this->processedNodes[$oidStr] = $tpl;
 
     // add relations to children (this includes also many to many relations)
     // and process children
@@ -397,7 +397,7 @@ class ObjectQuery extends AbstractQuery {
 
           // don't process the relation twice (e.g. in a many to many relation, both
           // ends are child ends)
-          if (!isset($this->_processedNodes[$curChild->getOID()->__toString()])) {
+          if (!isset($this->processedNodes[$curChild->getOID()->__toString()])) {
             // don't join the tables twice
             $childTableName = self::processTableName($curChild);
             $fromPart = $selectStmt->getPart(SelectStatement::FROM);
@@ -446,13 +446,13 @@ class ObjectQuery extends AbstractQuery {
                 $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, '');
 
                 // register the nm type
-                $this->_involvedTypes[$nmMapper->getType()] = true;
+                $this->involvedTypes[$nmMapper->getType()] = true;
               }
             }
           }
 
           // process child
-          if (!in_array($curChild->getOID(), $this->_groupedOIDs)) {
+          if (!in_array($curChild->getOID(), $this->groupedOIDs)) {
             $this->processObjectTemplate($curChild, $selectStmt);
           }
         }
@@ -488,7 +488,7 @@ class ObjectQuery extends AbstractQuery {
         }
         else {
           // check all involved types
-          foreach (array_keys($this->_involvedTypes) as $curType) {
+          foreach (array_keys($this->involvedTypes) as $curType) {
             $mapper = $persistenceFacade->getMapper($curType);
             if ($mapper->hasAttribute($orderAttribute)) {
               $orderTypeMapper = $mapper;
@@ -562,10 +562,10 @@ class ObjectQuery extends AbstractQuery {
    * Reset internal variables. Must be called after buildQuery
    */
   protected function resetInternals() {
-    $this->_processedNodes = array();
-    $this->_bindOrder = array();
-    $this->_involvedTypes = array();
-    $this->_aliasCounter = 1;
+    $this->processedNodes = array();
+    $this->bindOrder = array();
+    $this->involvedTypes = array();
+    $this->aliasCounter = 1;
   }
 
   /**
@@ -588,7 +588,7 @@ class ObjectQuery extends AbstractQuery {
       foreach ($parents as $curParent) {
         $curParentTableName = $curParent->getProperty(self::PROPERTY_TABLE_NAME);
         if ($curParentTableName == $tableName) {
-          $tableName .= '_'.($this->_aliasCounter++);
+          $tableName .= '_'.($this->aliasCounter++);
         }
       }
       // set the table name for later reference
@@ -606,7 +606,7 @@ class ObjectQuery extends AbstractQuery {
     $object = $event->getObject();
     $name = $event->getValueName();
     $initialOid = $object->getProperty(self::PROPERTY_INITIAL_OID);
-    if (isset($this->_observedObjects[$initialOid])) {
+    if (isset($this->observedObjects[$initialOid])) {
       $newValue = $event->getNewValue();
       // make a criteria from newValue and make sure that all properties are set
       if (!($newValue instanceof Criteria)) {
@@ -634,10 +634,10 @@ class ObjectQuery extends AbstractQuery {
 
       $oid = $object->getOID()->__toString();
       // store change in internal array to have it when constructing the query
-      if (!isset($this->_conditions[$oid])) {
-        $this->_conditions[$oid] = array();
+      if (!isset($this->conditions[$oid])) {
+        $this->conditions[$oid] = array();
       }
-      $this->_conditions[$oid][$name] = $newValue;
+      $this->conditions[$oid][$name] = $newValue;
     }
   }
 }

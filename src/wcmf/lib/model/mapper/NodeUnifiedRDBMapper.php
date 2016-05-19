@@ -41,7 +41,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   const CACHE_KEY = 'mapper';
 
-  private $_fkRelations = null;
+  private $fkRelations = null;
 
   /**
    * @see RDBMapper::prepareForStorage()
@@ -114,7 +114,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
               $thisEndRelation = $relationDesc->getThisEndRelation();
               $otherEndRelation = $relationDesc->getOtherEndRelation();
               $nmType = $thisEndRelation->getOtherType();
-              $nmObj = $this->_persistenceFacade->create($nmType);
+              $nmObj = $this->persistenceFacade->create($nmType);
               // add the parent nodes to the many to many object, don't
               // update the other side of the relation, because there may be no
               // relation defined to the many to many object
@@ -377,7 +377,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           PagingInfo $pagingInfo=null) {
     $thisRelationDesc = $relationDescription->getThisEndRelation();
     $otherRelationDesc = $relationDescription->getOtherEndRelation();
-    $nmMapper = $this->_persistenceFacade->getMapper($thisRelationDesc->getOtherType());
+    $nmMapper = $this->persistenceFacade->getMapper($thisRelationDesc->getOtherType());
     $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
     $nmTablename = $nmMapper->getRealTableName();
 
@@ -521,7 +521,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $relationDescs = $this->getRelationsByType($referencedType);
       // get relation try role name if ambiguous
       $relationDesc = sizeof($relationDescs) == 1 ? $relationDescs[0] : $this->getRelation($referencedType);
-      $otherMapper = $this->_persistenceFacade->getMapper($relationDesc->getOtherType());
+      $otherMapper = $this->persistenceFacade->getMapper($relationDesc->getOtherType());
       if ($otherMapper) {
         $otherTable = $otherMapper->getRealTableName();
         $otherAttributeDesc = $otherMapper->getAttribute($referencedValue);
@@ -704,7 +704,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   protected function loadRelationObjects(PersistentObjectProxy $objectProxy,
           PersistentObjectProxy $relativeProxy, RDBManyToManyRelationDescription $relationDesc,
           $includeTransaction=false) {
-    $nmMapper = $this->_persistenceFacade->getMapper($relationDesc->getThisEndRelation()->getOtherType());
+    $nmMapper = $this->persistenceFacade->getMapper($relationDesc->getThisEndRelation()->getOtherType());
     $nmType = $nmMapper->getType();
 
     $thisId = $objectProxy->getOID()->getFirstId();
@@ -720,7 +720,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $nmObjects = $nmMapper->loadObjects($nmType, BuildDepth::SINGLE, $criteria);
 
     if ($includeTransaction) {
-      $transaction = $this->_persistenceFacade->getTransaction();
+      $transaction = $this->persistenceFacade->getTransaction();
       $objects = $transaction->getObjects();
       foreach ($objects as $object) {
         if ($object->getType() == $nmType && $object instanceof Node) {
@@ -757,16 +757,16 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @return An array of RDBManyToOneRelationDescription instances
    */
   protected function getForeignKeyRelations() {
-    if ($this->_fkRelations == null) {
-      $this->_fkRelations = array();
+    if ($this->fkRelations == null) {
+      $this->fkRelations = array();
       $relationDescs = $this->getRelations();
       foreach($relationDescs as $relationDesc) {
         if ($relationDesc instanceof RDBManyToOneRelationDescription) {
-          $this->_fkRelations[] = $relationDesc;
+          $this->fkRelations[] = $relationDesc;
         }
       }
     }
-    return $this->_fkRelations;
+    return $this->fkRelations;
   }
 
   /**

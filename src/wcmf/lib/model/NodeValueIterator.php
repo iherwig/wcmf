@@ -42,11 +42,11 @@ use wcmf\lib\model\NodeIterator;
  */
 class NodeValueIterator implements \Iterator {
 
-  protected $_end;               // indicates if the iteration is ended
-  protected $_recursive;         // indicates if the iterator should also process child nodes
-  protected $_nodeIterator;      // the NodeIterator used internally
-  protected $_currentAttributes; // the list of attributes of the current node
-  protected $_currentAttribute;  // the attribute the iterator points to
+  protected $end;               // indicates if the iteration is ended
+  protected $recursive;         // indicates if the iterator should also process child nodes
+  protected $nodeIterator;      // the NodeIterator used internally
+  protected $currentAttributes; // the list of attributes of the current node
+  protected $currentAttribute;  // the attribute the iterator points to
 
   /**
    * Constructor.
@@ -54,11 +54,11 @@ class NodeValueIterator implements \Iterator {
    * @param $recursive Boolean whether the iterator should also process child nodes
    */
   public function __construct($node, $recursive) {
-    $this->_recursive = $recursive;
-    $this->_nodeIterator = new NodeIterator($node);
-    $this->_currentAttributes = $node->getValueNames(false);
-    $this->_currentAttribute = current($this->_currentAttributes);
-    $this->_end = sizeof($this->_currentAttributes) == 0;
+    $this->recursive = $recursive;
+    $this->nodeIterator = new NodeIterator($node);
+    $this->currentAttributes = $node->getValueNames(false);
+    $this->currentAttribute = current($this->currentAttributes);
+    $this->end = sizeof($this->currentAttributes) == 0;
   }
 
   /**
@@ -66,8 +66,8 @@ class NodeValueIterator implements \Iterator {
    * @return Value of the current attribute
    */
   public function current() {
-    $node = $this->_nodeIterator->current();
-    return $node->getValue($this->_currentAttribute);
+    $node = $this->nodeIterator->current();
+    return $node->getValue($this->currentAttribute);
   }
 
   /**
@@ -75,31 +75,31 @@ class NodeValueIterator implements \Iterator {
    * @return String, the name of the current attribute
    */
   public function key() {
-    return $this->_currentAttribute;
+    return $this->currentAttribute;
   }
 
   /**
    * Move forward to next element
    */
   public function next() {
-    $next = next($this->_currentAttributes);
+    $next = next($this->currentAttributes);
     if ($next !== false) {
-      $this->_currentAttribute = $next;
+      $this->currentAttribute = $next;
     }
     else {
-      if ($this->_recursive) {
-        $this->_nodeIterator->next();
-        if (!$this->_nodeIterator->valid()) {
-          $this->_end = true;
+      if ($this->recursive) {
+        $this->nodeIterator->next();
+        if (!$this->nodeIterator->valid()) {
+          $this->end = true;
         }
         else {
-          $nextNode = $this->_nodeIterator->current();
-          $this->_currentAttributes = $nextNode->getValueNames(false);
-          $this->_currentAttribute = current($this->_currentAttributes);
+          $nextNode = $this->nodeIterator->current();
+          $this->currentAttributes = $nextNode->getValueNames(false);
+          $this->currentAttribute = current($this->currentAttributes);
         }
       }
       else {
-        $this->_end = true;
+        $this->end = true;
       }
     }
     return $this;
@@ -109,17 +109,17 @@ class NodeValueIterator implements \Iterator {
    * Rewind the Iterator to the first element
    */
   public function rewind() {
-    $this->_nodeIterator->rewind();
-    $this->_currentAttributes = $this->_nodeIterator->current()->getValueNames(false);
-    $this->_currentAttribute = current($this->_currentAttributes);
-    $this->_end = (sizeof($this->_currentAttributes) == 0);
+    $this->nodeIterator->rewind();
+    $this->currentAttributes = $this->nodeIterator->current()->getValueNames(false);
+    $this->currentAttribute = current($this->currentAttributes);
+    $this->end = (sizeof($this->currentAttributes) == 0);
   }
 
   /**
    * Checks if current position is valid
    */
   public function valid() {
-    return !$this->_end;
+    return !$this->end;
   }
 
   /**
@@ -127,7 +127,7 @@ class NodeValueIterator implements \Iterator {
    * @return Node instance
    */
   public function currentNode() {
-    return $this->_nodeIterator->current();
+    return $this->nodeIterator->current();
   }
 }
 ?>

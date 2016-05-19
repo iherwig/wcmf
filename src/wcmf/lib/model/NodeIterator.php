@@ -35,12 +35,12 @@ use wcmf\lib\model\Node;
  */
 class NodeIterator implements \Iterator {
 
-  protected $_end;              // indicates if the iteration is ended
-  protected $_nodeList;         // the list of seen nodes
-  protected $_processedOidList; // the list of processed object ids
-  protected $_currentNode;      // the node the iterator points to
-  protected $_startNode;        // the start node
-  protected $_aggregationKinds; // array of aggregation kind values to follow (empty: all)
+  protected $end;              // indicates if the iteration is ended
+  protected $nodeList;         // the list of seen nodes
+  protected $processedOidList; // the list of processed object ids
+  protected $currentNode;      // the node the iterator points to
+  protected $startNode;        // the start node
+  protected $aggregationKinds; // array of aggregation kind values to follow (empty: all)
 
   /**
    * Constructor.
@@ -49,12 +49,12 @@ class NodeIterator implements \Iterator {
    *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
   public function __construct($node, $aggregationKinds=array()) {
-    $this->_end = false;
-    $this->_nodeList = array();
-    $this->_processedOidList = array();
-    $this->_currentNode = $node;
-    $this->_startNode = $node;
-    $this->_aggregationKinds = $aggregationKinds;
+    $this->end = false;
+    $this->nodeList = array();
+    $this->processedOidList = array();
+    $this->currentNode = $node;
+    $this->startNode = $node;
+    $this->aggregationKinds = $aggregationKinds;
   }
 
   /**
@@ -62,7 +62,7 @@ class NodeIterator implements \Iterator {
    * @return Node instance
    */
   public function current() {
-    return $this->_currentNode;
+    return $this->currentNode;
   }
 
   /**
@@ -70,7 +70,7 @@ class NodeIterator implements \Iterator {
    * @return String, the serialized object id
    */
   public function key() {
-    return $this->_currentNode->getOID()->__toString();
+    return $this->currentNode->getOID()->__toString();
   }
 
   /**
@@ -78,17 +78,17 @@ class NodeIterator implements \Iterator {
    */
   public function next() {
     // the current node was processed
-    $this->_processedOidList[] = $this->_currentNode->getOID()->__toString();
+    $this->processedOidList[] = $this->currentNode->getOID()->__toString();
 
     // collect navigable children for the given aggregation kinds
     $childrenArray = array();
-    $mapper = $this->_currentNode->getMapper();
+    $mapper = $this->currentNode->getMapper();
     $relations = $mapper->getRelations('child');
-    $followAll = sizeof($this->_aggregationKinds) == 0;
+    $followAll = sizeof($this->aggregationKinds) == 0;
     foreach ($relations as $relation) {
       $aggregationKind = $relation->getOtherAggregationKind();
-      if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->_aggregationKinds))) {
-        $childValue = $this->_currentNode->getValue($relation->getOtherRole());
+      if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->aggregationKinds))) {
+        $childValue = $this->currentNode->getValue($relation->getOtherRole());
         if ($childValue != null) {
           $children = $relation->isMultiValued() ? $childValue : array($childValue);
           foreach ($children as $child) {
@@ -100,22 +100,22 @@ class NodeIterator implements \Iterator {
     $this->addToQueue($childrenArray);
 
     // set current node
-    if (sizeof($this->_nodeList) != 0) {
-      $node = array_pop($this->_nodeList);
+    if (sizeof($this->nodeList) != 0) {
+      $node = array_pop($this->nodeList);
       $oidStr = $node->getOID()->__toString();
       // not the last node -> search for unprocessed nodes
-      while (sizeof($this->_nodeList) > 0 && in_array($oidStr, $this->_processedOidList)) {
-        $node = array_pop($this->_nodeList);
+      while (sizeof($this->nodeList) > 0 && in_array($oidStr, $this->processedOidList)) {
+        $node = array_pop($this->nodeList);
         $oidStr = $node->getOID()->__toString();
       }
       // last node found, but it was processed already
-      if (sizeof($this->_nodeList) == 0 && in_array($oidStr, $this->_processedOidList)) {
-        $this->_end = true;
+      if (sizeof($this->nodeList) == 0 && in_array($oidStr, $this->processedOidList)) {
+        $this->end = true;
       }
-      $this->_currentNode = $node;
+      $this->currentNode = $node;
     }
     else {
-      $this->_end = true;
+      $this->end = true;
     }
     return $this;
   }
@@ -124,17 +124,17 @@ class NodeIterator implements \Iterator {
    * Rewind the Iterator to the first element
    */
   public function rewind() {
-    $this->_end = false;
-    $this->_nodeList = array();
-    $this->_processedOidList = array();
-    $this->_currentNode = $this->_startNode;
+    $this->end = false;
+    $this->nodeList = array();
+    $this->processedOidList = array();
+    $this->currentNode = $this->startNode;
   }
 
   /**
    * Checks if current position is valid
    */
   public function valid() {
-    return !$this->_end;
+    return !$this->end;
   }
 
   /**
@@ -144,7 +144,7 @@ class NodeIterator implements \Iterator {
   protected function addToQueue($nodeList) {
     for ($i=sizeof($nodeList)-1; $i>=0; $i--) {
       if ($nodeList[$i] instanceof Node) {
-        $this->_nodeList[] = $nodeList[$i];
+        $this->nodeList[] = $nodeList[$i];
       }
     }
   }

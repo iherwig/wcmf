@@ -27,16 +27,16 @@ class SoapServer extends \nusoap_server {
 
   const TNS = 'http://wcmf.sourceforge.net';
 
-  private $_application = null;
+  private $application = null;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
    */
   public function __construct() {
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
     $scriptURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $endpoint = dirname($scriptURL).'/soap';
@@ -80,9 +80,9 @@ class SoapServer extends \nusoap_server {
     );
 
     // initialize application
-    $this->_application = new Application();
+    $this->application = new Application();
     try {
-      $this->_application->initialize();
+      $this->application->initialize();
     }
     catch (\Exception $ex) {
       $this->handleException($ex);
@@ -93,8 +93,8 @@ class SoapServer extends \nusoap_server {
    * @see nusoap_server::service
    */
   public function service($data) {
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug($data);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug($data);
     }
     try {
       $oldErrorReporting = error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
@@ -122,9 +122,9 @@ class SoapServer extends \nusoap_server {
    * @return The Response instance from the executed Controller
    */
   public function doCall($action, $params) {
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug("SoapServer action: ".$action);
-      self::$_logger->debug($params);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("SoapServer action: ".$action);
+      self::$logger->debug($params);
     }
     $authHeader = $this->requestHeader['Security']['UsernameToken'];
 
@@ -155,7 +155,7 @@ class SoapServer extends \nusoap_server {
     $actionResponse = ObjectFactory::getInstance('response');
     $actionResponse->setFinal();
     try {
-      $response = $this->_application->run($request);
+      $response = $this->application->run($request);
       if ($response->hasErrors()) {
         $errors = $response->getErrors();
         $this->handleException(new ApplicationException($request, $response, $errors[0]));
@@ -170,8 +170,8 @@ class SoapServer extends \nusoap_server {
         $actionResponse->setValues($data);
         $formatter = ObjectFactory::getInstance('formatter');
         $formatter->serialize($actionResponse);
-        if (self::$_logger->isDebugEnabled()) {
-          self::$_logger->debug($actionResponse->__toString());
+        if (self::$logger->isDebugEnabled()) {
+          self::$logger->debug($actionResponse->__toString());
         }
       }
     }
@@ -186,7 +186,7 @@ class SoapServer extends \nusoap_server {
    * @param $ex
    */
   private function handleException($ex) {
-    self::$_logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
+    self::$logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
     $this->fault('SOAP-ENV:SERVER', $ex->getMessage(), '', '');
   }
 }

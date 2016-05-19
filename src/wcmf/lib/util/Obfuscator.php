@@ -25,14 +25,14 @@ class Obfuscator {
   // session name constants
   private static $VALUES_VARNAME = 'Obfuscator.values';
 
-  private $_session = null;
+  private $session = null;
 
   /**
    * Constructor
    * @param $session
    */
   public function __construct(Session $session) {
-    $this->_session = $session;
+    $this->session = $session;
   }
 
   /**
@@ -48,9 +48,9 @@ class Obfuscator {
 
     // create and store the value
     $obfuscated = md5($str);
-    $values = $this->_session->get(self::$VALUES_VARNAME);
+    $values = $this->session->get(self::$VALUES_VARNAME);
     $values[$obfuscated] = $str;
-    $this->_session->set(self::$VALUES_VARNAME, $values);
+    $this->session->set(self::$VALUES_VARNAME, $values);
 
     return $obfuscated;
   }
@@ -63,7 +63,7 @@ class Obfuscator {
   public function unveil($str) {
     $this->ensureStorage();
 
-    $values = $this->_session->get(self::$VALUES_VARNAME);
+    $values = $this->session->get(self::$VALUES_VARNAME);
     if (isset($values[$str])) {
       return $values[$str];
     }
@@ -76,9 +76,9 @@ class Obfuscator {
    * Ensure that the session storage for the values is initialized
    */
   private function ensureStorage() {
-    if (!$this->_session->exist(self::$VALUES_VARNAME)) {
+    if (!$this->session->exist(self::$VALUES_VARNAME)) {
       $values = array();
-      $this->_session->set(self::$VALUES_VARNAME, $values);
+      $this->session->set(self::$VALUES_VARNAME, $values);
     }
   }
 }

@@ -22,21 +22,21 @@ use wcmf\lib\presentation\Request;
  */
 class Application {
 
-  private $_startTime = null;
-  private $_request = null;
-  private $_response = null;
+  private $startTime = null;
+  private $request = null;
+  private $response = null;
 
-  private $_debug = true;
+  private $debug = true;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
    */
   public function __construct() {
-    $this->_startTime = microtime(true);
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    $this->startTime = microtime(true);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
     ob_start(array($this, "outputHandler"));
     new ErrorHandler();
@@ -47,16 +47,16 @@ class Application {
    */
   public function __destruct() {
     // log resource usage
-    if (self::$_logger->isDebugEnabled()) {
-      $timeDiff = microtime(true)-$this->_startTime;
+    if (self::$logger->isDebugEnabled()) {
+      $timeDiff = microtime(true)-$this->startTime;
       $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
       $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
-      if ($this->_request != null) {
-        $msg .= " Request[".$this->_request->getSender()."?".
-                $this->_request->getContext()."?".$this->_request->getAction()."]";
+      if ($this->request != null) {
+        $msg .= " Request[".$this->request->getSender()."?".
+                $this->request->getContext()."?".$this->request->getAction()."]";
       }
       $msg .= " URI[".$_SERVER['REQUEST_URI']."]";
-      self::$_logger->debug($msg);
+      self::$logger->debug($msg);
     }
     ob_end_flush();
   }
@@ -73,10 +73,10 @@ class Application {
     $config = ObjectFactory::getInstance('configuration');
 
     // create the Request and Response instances
-    $this->_request = ObjectFactory::getInstance('request');
-    $this->_response = ObjectFactory::getInstance('response');
+    $this->request = ObjectFactory::getInstance('request');
+    $this->response = ObjectFactory::getInstance('response');
 
-    $this->_request->initialize($this->_response,
+    $this->request->initialize($this->response,
             $defaultController, $defaultContext, $defaultAction);
 
     // initialize session
@@ -102,7 +102,7 @@ class Application {
     date_default_timezone_set($config->getValue('timezone', 'application'));
 
     // return the request
-    return $this->_request;
+    return $this->request;
   }
 
   /**
@@ -112,8 +112,8 @@ class Application {
    */
   public function run(Request $request) {
     // process the requested action
-    ObjectFactory::getInstance('actionMapper')->processAction($request, $this->_response);
-    return $this->_response;
+    ObjectFactory::getInstance('actionMapper')->processAction($request, $this->response);
+    return $this->response;
   }
 
   /**
@@ -122,7 +122,7 @@ class Application {
    * @param $exception The Exception instance
    */
   public function handleException(\Exception $exception) {
-    self::$_logger->error($exception->getMessage()."\n".$exception->getTraceAsString());
+    self::$logger->error($exception->getMessage()."\n".$exception->getTraceAsString());
 
     try {
       if (ObjectFactory::getInstance('configuration') != null) {
@@ -131,22 +131,22 @@ class Application {
         $persistenceFacade->getTransaction()->rollback();
 
         // redirect to failure action
-        if ($this->_request) {
+        if ($this->request) {
           $error = ApplicationError::fromException($exception);
-          $this->_request->addError($error);
-          $this->_response->addError($error);
-          $this->_request->setAction('failure');
-          $this->_response->setAction('failure');
-          $this->_response->setStatus($error->getStatusCode());
-          $this->_response->setFinal();
-          ObjectFactory::getInstance('actionMapper')->processAction($this->_request, $this->_response);
+          $this->request->addError($error);
+          $this->response->addError($error);
+          $this->request->setAction('failure');
+          $this->response->setAction('failure');
+          $this->response->setStatus($error->getStatusCode());
+          $this->response->setFinal();
+          ObjectFactory::getInstance('actionMapper')->processAction($this->request, $this->response);
           return;
         }
       }
       throw $exception;
     }
     catch (Exception $ex) {
-      self::$_logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
+      self::$logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
     }
   }
 
@@ -161,7 +161,7 @@ class Application {
     $error = error_get_last();
     if ($error !== null && ($error['type'] & ini_get('error_reporting'))) {
       // suppress error message in browser
-      if (!$this->_debug) {
+      if (!$this->debug) {
         header('HTTP/1.1 500 Internal Server Error');
         $buffer = '';
       }

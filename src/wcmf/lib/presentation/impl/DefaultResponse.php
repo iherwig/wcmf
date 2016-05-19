@@ -22,10 +22,10 @@ use wcmf\lib\presentation\Response;
  */
 class DefaultResponse extends AbstractControllerMessage implements Response {
 
-  private $_cacheId = null;
-  private $_status = 200;
-  private $_file = null;
-  private $_isFinal = false;
+  private $cacheId = null;
+  private $status = 200;
+  private $file = null;
+  private $isFinal = false;
 
   /**
    * Constructor
@@ -39,28 +39,28 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
    * @see Response::setCacheId()
    */
   public function setCacheId($cacheId) {
-    $this->_cacheId = $cacheId;
+    $this->cacheId = $cacheId;
   }
 
   /**
    * @see Response::getCacheId()
    */
   public function getCacheId() {
-    return $this->_cacheId;
+    return $this->cacheId;
   }
 
   /**
    * @see Response::setStatus()
    */
   public function setStatus($status) {
-    $this->_status = $status;
+    $this->status = $status;
   }
 
   /**
    * @see Response::getStatus()
    */
   public function getStatus() {
-    return $this->_status;
+    return $this->status;
   }
 
   /**
@@ -71,7 +71,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
       $content = file_get_contents($filename);
       $type = FileUtil::getMimeType($filename);
     }
-    $this->_file = array(
+    $this->file = array(
         'isDownload' => $isDownload,
         'filename' => $filename,
         'content' => $content,
@@ -84,21 +84,21 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
    * @see Response::getFile()
    */
   public function getFile() {
-    return $this->_file;
+    return $this->file;
   }
 
   /**
    * @see Response::setFinal()
    */
   public function setFinal() {
-    $this->_isFinal = true;
+    $this->isFinal = true;
   }
 
   /**
    * @see Response::isFinal()
    */
   public function isFinal() {
-    return $this->_isFinal;
+    return $this->isFinal;
   }
 }
 ?>

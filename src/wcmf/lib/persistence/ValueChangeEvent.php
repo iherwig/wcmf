@@ -23,10 +23,10 @@ class ValueChangeEvent extends Event {
 
   const NAME = __CLASS__;
 
-  private $_object = null;
-  private $_name = null;
-  private $_oldValue = null;
-  private $_newValue = null;
+  private $object = null;
+  private $name = null;
+  private $oldValue = null;
+  private $newValue = null;
 
   /**
    * Constructor.
@@ -36,10 +36,10 @@ class ValueChangeEvent extends Event {
    * @param $newValue The new value of the item that has changed.
    */
   public function __construct(PersistentObject $object, $name, $oldValue, $newValue) {
-    $this->_object = $object;
-    $this->_name = $name;
-    $this->_oldValue = $oldValue;
-    $this->_newValue = $newValue;
+    $this->object = $object;
+    $this->name = $name;
+    $this->oldValue = $oldValue;
+    $this->newValue = $newValue;
   }
 
   /**
@@ -47,7 +47,7 @@ class ValueChangeEvent extends Event {
    * @return PersistentObject instance
    */
   public function getObject() {
-    return $this->_object;
+    return $this->object;
   }
 
   /**
@@ -55,7 +55,7 @@ class ValueChangeEvent extends Event {
    * @return String
    */
   public function getValueName() {
-    return $this->_name;
+    return $this->name;
   }
 
   /**
@@ -63,7 +63,7 @@ class ValueChangeEvent extends Event {
    * @return Mixed
    */
   public function getOldValue() {
-    return $this->_oldValue;
+    return $this->oldValue;
   }
 
   /**
@@ -71,7 +71,7 @@ class ValueChangeEvent extends Event {
    * @return Mixed
    */
   public function getNewValue() {
-    return $this->_newValue;
+    return $this->newValue;
   }
 }
 ?>

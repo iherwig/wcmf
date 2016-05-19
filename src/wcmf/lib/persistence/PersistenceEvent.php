@@ -23,8 +23,8 @@ class PersistenceEvent extends Event {
 
   const NAME = __CLASS__;
 
-  private $_object = null;
-  private $_action = null;
+  private $object = null;
+  private $action = null;
 
   /**
    * Constructor.
@@ -32,8 +32,8 @@ class PersistenceEvent extends Event {
    * @param $action One of the PersistenceAction values.
    */
   public function __construct(PersistentObject $object, $action) {
-    $this->_object = $object;
-    $this->_action = $action;
+    $this->object = $object;
+    $this->action = $action;
   }
 
   /**
@@ -41,7 +41,7 @@ class PersistenceEvent extends Event {
    * @return PersistentObject instance
    */
   public function getObject() {
-    return $this->_object;
+    return $this->object;
   }
 
   /**
@@ -49,7 +49,7 @@ class PersistenceEvent extends Event {
    * @return PersistenceAction value
    */
   public function getAction() {
-    return $this->_action;
+    return $this->action;
   }
 }
 ?>

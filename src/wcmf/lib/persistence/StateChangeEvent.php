@@ -23,9 +23,9 @@ class StateChangeEvent extends Event {
 
   const NAME = __CLASS__;
 
-  private $_object = null;
-  private $_oldValue = null;
-  private $_newValue = null;
+  private $object = null;
+  private $oldValue = null;
+  private $newValue = null;
 
   /**
    * Constructor.
@@ -34,9 +34,9 @@ class StateChangeEvent extends Event {
    * @param $newValue The new value of the state.
    */
   public function __construct(PersistentObject $object, $oldValue, $newValue) {
-    $this->_object = $object;
-    $this->_oldValue = $oldValue;
-    $this->_newValue = $newValue;
+    $this->object = $object;
+    $this->oldValue = $oldValue;
+    $this->newValue = $newValue;
   }
 
   /**
@@ -44,7 +44,7 @@ class StateChangeEvent extends Event {
    * @return PersistentObject instance
    */
   public function getObject() {
-    return $this->_object;
+    return $this->object;
   }
 
   /**
@@ -52,7 +52,7 @@ class StateChangeEvent extends Event {
    * @return Mixed
    */
   public function getOldValue() {
-    return $this->_oldValue;
+    return $this->oldValue;
   }
 
   /**
@@ -60,7 +60,7 @@ class StateChangeEvent extends Event {
    * @return Mixed
    */
   public function getNewValue() {
-    return $this->_newValue;
+    return $this->newValue;
   }
 }
 ?>

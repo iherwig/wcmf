@@ -26,11 +26,11 @@ class RPCClient implements RemotingClient {
   // constants
   const SIDS_SESSION_VARNAME = 'RPCClient.sids';
 
-  private static $_logger = null;
+  private static $logger = null;
 
-  private $_serverCli = null;
-  private $_php = null;
-  private $_user = null;
+  private $serverCli = null;
+  private $php = null;
+  private $user = null;
 
   /**
    * Constructor
@@ -38,17 +38,17 @@ class RPCClient implements RemotingClient {
    * @param $user The remote user instance.
    */
   public function __construct($serverCli, $user) {
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
-    $this->_serverCli = realpath($serverCli);
-    if (!file_exists($this->_serverCli)) {
-      throw new \RuntimeException("Could not setup RPCClient: ".$this->_serverCli." not found.");
+    $this->serverCli = realpath($serverCli);
+    if (!file_exists($this->serverCli)) {
+      throw new \RuntimeException("Could not setup RPCClient: ".$this->serverCli." not found.");
     }
 
     // locate the php executable
     $config = ObjectFactory::getInstance('configuration');
-    $this->_php = $config->getValue('php', 'system');
+    $this->php = $config->getValue('php', 'system');
 
     // initialize the session variable for storing session
     $session = ObjectFactory::getInstance('session');
@@ -56,7 +56,7 @@ class RPCClient implements RemotingClient {
       $var = array();
       $session->set(self::SIDS_SESSION_VARNAME, $var);
     }
-    $this->_user = $user;
+    $this->user = $user;
   }
 
   /**
@@ -96,17 +96,17 @@ class RPCClient implements RemotingClient {
       $sessionId
     );
     $currentDir = getcwd();
-    chdir(dirname($this->_serverCli));
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug("Do remote call to: ".$this->_serverCli);
-      self::$_logger->debug("Request:\n".$request->toString());
+    chdir(dirname($this->serverCli));
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Do remote call to: ".$this->serverCli);
+      self::$logger->debug("Request:\n".$request->toString());
     }
     // store and reopen the session (see http://bugs.php.net/bug.php?id=44942)
     session_write_close();
-    exec($this->_php.' '.$this->_serverCli.' '.join(' ', $arguments), $jsonResponse, $returnValue);
+    exec($this->php.' '.$this->serverCli.' '.join(' ', $arguments), $jsonResponse, $returnValue);
     session_start();
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug("Response [JSON]:\n".$jsonResponse[0]);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Response [JSON]:\n".$jsonResponse[0]);
     }
     chdir($currentDir);
 
@@ -116,8 +116,8 @@ class RPCClient implements RemotingClient {
     $response->setFormat('json');
     $formatter = ObjectFactory::getInstance('formatter');
     $formatter->deserialize($response);
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug("Response:\n".$response->toString());
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Response:\n".$response->toString());
     }
 
     if (!$response->getValue('success')) {
@@ -138,13 +138,13 @@ class RPCClient implements RemotingClient {
    * @return True on success
    */
   protected function doLogin() {
-    if ($this->_user) {
+    if ($this->user) {
       $request = ObjectFactory::getInstance('request');
       $request->setAction('login');
       $request->setValues(
         array(
-          'login' => $this->_user['login'],
-          'password' => $this->_user['password']
+          'login' => $this->user['login'],
+          'password' => $this->user['password']
         )
       );
       $response = $this->doRemoteCall($request, true);
@@ -166,7 +166,7 @@ class RPCClient implements RemotingClient {
   protected function setSessionId($sessionId) {
     $session = ObjectFactory::getInstance('session');
     $sids = $session->get(self::SIDS_SESSION_VARNAME);
-    $sids[$this->_serverCli] = $sessionId;
+    $sids[$this->serverCli] = $sessionId;
     $session->set(self::SIDS_SESSION_VARNAME, $sids);
   }
 
@@ -178,8 +178,8 @@ class RPCClient implements RemotingClient {
     // check if we already have a session with the server
     $session = ObjectFactory::getInstance('session');
     $sids = $session->get(self::SIDS_SESSION_VARNAME);
-    if (isset($sids[$this->_serverCli])) {
-      return $sids[$this->_serverCli];
+    if (isset($sids[$this->serverCli])) {
+      return $sids[$this->serverCli];
     }
     return null;
   }
@@ -190,8 +190,8 @@ class RPCClient implements RemotingClient {
    */
   protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');
-    self::$_logger->error("Error in remote call to ".$this->_serverCli.": ".$errorMsg."\n".$response->toString());
-    throw new \RuntimeException("Error in remote call to ".$this->_serverCli.": ".$errorMsg);
+    self::$logger->error("Error in remote call to ".$this->serverCli.": ".$errorMsg."\n".$response->toString());
+    throw new \RuntimeException("Error in remote call to ".$this->serverCli.": ".$errorMsg);
   }
 }
 ?>

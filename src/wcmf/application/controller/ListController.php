@@ -143,7 +143,7 @@ class ListController extends Controller {
     if ($this->isLocalizedRequest()) {
       $localization = $this->getLocalization();
       for ($i=0,$count=sizeof($nodes); $i<$count; $i++) {
-        $nodes[$i] = $localization->loadTranslation($nodes[$i], $this->_request->getValue('language'), true, true);
+        $nodes[$i] = $localization->loadTranslation($nodes[$i], $request->getValue('language'), true, true);
       }
     }
 

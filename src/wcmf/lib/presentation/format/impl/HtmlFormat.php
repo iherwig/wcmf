@@ -35,7 +35,7 @@ use wcmf\lib\util\StringUtil;
  */
 class HtmlFormat extends AbstractFormat {
 
-  private static $_inputFieldNameDelimiter = '-';
+  private static $inputFieldNameDelimiter = '-';
 
   /**
    * @see Format::getMimeType()
@@ -115,7 +115,7 @@ class HtmlFormat extends AbstractFormat {
       return null;
     }
     $def = array();
-    $fieldDelimiter = StringUtil::escapeForRegex(self::$_inputFieldNameDelimiter);
+    $fieldDelimiter = StringUtil::escapeForRegex(self::$inputFieldNameDelimiter);
     $pieces = preg_split('/'.$fieldDelimiter.'/', $name);
     if (sizeof($pieces) != 3) {
       return null;

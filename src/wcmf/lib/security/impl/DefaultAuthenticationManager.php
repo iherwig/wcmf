@@ -22,14 +22,14 @@ use wcmf\lib\security\principal\PrincipalFactory;
  */
 class DefaultAuthenticationManager implements AuthenticationManager {
 
-  private $_principalFactory = null;
+  private $principalFactory = null;
 
   /**
    * Constructor
    * @param $principalFactory PrincipalFactory instance
    */
   public function __construct(PrincipalFactory $principalFactory) {
-    $this->_principalFactory = $principalFactory;
+    $this->principalFactory = $principalFactory;
   }
 
   /**
@@ -39,7 +39,7 @@ class DefaultAuthenticationManager implements AuthenticationManager {
     $config = ObjectFactory::getInstance('configuration');
 
     // try to receive the user with given credentials
-    $user = $this->_principalFactory->getUser($login, true);
+    $user = $this->principalFactory->getUser($login, true);
 
     // check if user exists
     $loginOk = false;

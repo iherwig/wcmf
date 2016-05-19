@@ -43,7 +43,7 @@ class NodeComparator {
   const ATTRIB_OID = -3;  // sort by oid
   const ATTRIB_TYPE = -4; // sort by type
 
-  private $_sortCriteria;
+  private $sortCriteria;
 
   /**
    * Constructor
@@ -53,7 +53,7 @@ class NodeComparator {
    *        @note If criteria is only a string we will sort by this criteria with NodeComparator::SORTTYPE_ASC
    */
   public function __construct(array $sortCriteria) {
-    $this->_sortCriteria = $sortCriteria;
+    $this->sortCriteria = $sortCriteria;
   }
 
   /**
@@ -68,9 +68,9 @@ class NodeComparator {
     // afterwards we compare the sums and return -1,0,1 appropriate
     $sumA = 0;
     $sumB = 0;
-    $maxWeight = sizeOf($this->_sortCriteria);
+    $maxWeight = sizeOf($this->sortCriteria);
     $i = 0;
-    foreach ($this->_sortCriteria as $criteria => $sortType) {
+    foreach ($this->sortCriteria as $criteria => $sortType) {
       $weightedValue = ($maxWeight-$i)*($maxWeight-$i);
       $AGreaterB = 0;
       // sort by id

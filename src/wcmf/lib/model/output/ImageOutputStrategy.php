@@ -23,23 +23,24 @@ use wcmf\lib\persistence\PersistentObject;
 class ImageOutputStrategy implements OutputStrategy {
 
   const LINETYPE_DIRECT = 0;
-  const LINETYPE_ROUTED = 0;
+  const LINETYPE_ROUTED = 1;
 
-  protected $_format = null;
-  protected $_file = '';
-  protected $_map = null;
-  protected $_img = null;
-  protected $_width = 0;
-  protected $_height = 0;
-  protected $_xscale = 0;
-  protected $_yscale = 0;
-  protected $_border = 0;
-  protected $_bgColor = null;
-  protected $_txtColor = null;
-  protected $_lineColor = null;
-  protected $_labelDim = null;
-  protected $_textPos = null;
-  protected $_usemap = '';
+  protected $format = null;
+  protected $file = '';
+  protected $map = null;
+  protected $img = null;
+  protected $width = 0;
+  protected $height = 0;
+  protected $xscale = 0;
+  protected $yscale = 0;
+  protected $border = 0;
+  protected $bgColor = null;
+  protected $txtColor = null;
+  protected $lineColor = null;
+  protected $lineType = null;
+  protected $labelDim = null;
+  protected $textPos = null;
+  protected $usemap = '';
 
   /**
    * Constructor.
@@ -61,22 +62,22 @@ class ImageOutputStrategy implements OutputStrategy {
     if (!is_array($map)) {
       IllegalArgumentException("Parameter map is no array.");
     }
-    $this->_format = $format;
-    $this->_file = $file;
-    $this->_map = $map;
-    $this->_lineType = $lineType;
-    $this->_xscale = $scale;
-    $this->_yscale = $scale/$aspect;
-    $this->_border = $border;
-    $this->_usemap = $usemap;
+    $this->format = $format;
+    $this->file = $file;
+    $this->map = $map;
+    $this->lineType = $lineType;
+    $this->xscale = $scale;
+    $this->yscale = $scale/$aspect;
+    $this->border = $border;
+    $this->usemap = $usemap;
     // define label dimensions relative to connector position
-    $this->_labelDim['left'] = -10;
-    $this->_labelDim['top'] = -10;
-    $this->_labelDim['right'] = 80;
-    $this->_labelDim['bottom'] = 20;
+    $this->labelDim['left'] = -10;
+    $this->labelDim['top'] = -10;
+    $this->labelDim['right'] = 80;
+    $this->labelDim['bottom'] = 20;
     // define text position relative to connector position
-    $this->_textPos['left'] = -5;
-    $this->_textPos['top'] = -8;
+    $this->textPos['left'] = -5;
+    $this->textPos['top'] = -8;
   }
 
   /**
@@ -84,24 +85,24 @@ class ImageOutputStrategy implements OutputStrategy {
    */
   public function writeHeader() {
     // calculate bounding box
-    while (list ($key, $val) = each ($this->_map)) {
-      if($val->x >= $this->_width) {
-        $this->_width = $val->x;
+    while (list ($key, $val) = each ($this->map)) {
+      if($val->x >= $this->width) {
+        $this->width = $val->x;
       }
-      if($val->y >= $this->_height) {
-        $this->_height = $val->y;
+      if($val->y >= $this->height) {
+        $this->height = $val->y;
       }
     }
-    $this->_width = $this->_width * $this->_xscale + $this->_labelDim['right'] - $this->_labelDim['left'] + 2*$this->_border;
-    $this->_height = $this->_height * $this->_yscale + $this->_labelDim['bottom'] - $this->_labelDim['top'] + 2*$this->_border;
-    $this->_img = ImageCreate($this->_width,$this->_height);
-    $this->_bgColor = ImageColorAllocate($this->_img, 255, 255, 255);
-    $this->_txtColor = ImageColorAllocate($this->_img, 0, 128, 192);
-    $this->_lineColor = $this->_txtColor;
-    ImageFilledRectangle($this->_img, 0, 0, $this->_width,$this->_height,$this->_bgColor);
+    $this->width = $this->width * $this->xscale + $this->labelDim['right'] - $this->labelDim['left'] + 2*$this->border;
+    $this->height = $this->height * $this->yscale + $this->labelDim['bottom'] - $this->labelDim['top'] + 2*$this->border;
+    $this->img = ImageCreate($this->width,$this->height);
+    $this->bgColor = ImageColorAllocate($this->img, 255, 255, 255);
+    $this->txtColor = ImageColorAllocate($this->img, 0, 128, 192);
+    $this->lineColor = $this->txtColor;
+    ImageFilledRectangle($this->img, 0, 0, $this->width,$this->height,$this->bgColor);
 
-    if ($this->_usemap != '') {
-      echo "\n".'<map name="'.$this->_usemap.'">'."\n";
+    if ($this->usemap != '') {
+      echo "\n".'<map name="'.$this->usemap.'">'."\n";
     }
   }
 
@@ -109,20 +110,20 @@ class ImageOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
-    ImageString($this->_img, 1, $this->_width-350, $this->_height-10, 'wemove digital solutions. '.date ("l dS of F Y h:i:s A"), $this->_txtColor);
-    if ($this->_format & IMG_GIF) {
-      ImageGIF($this->_img, $this->_file);
+    ImageString($this->img, 1, $this->width-350, $this->height-10, 'wemove digital solutions. '.date ("l dS of F Y h:i:s A"), $this->txtColor);
+    if ($this->format & IMG_GIF) {
+      ImageGIF($this->img, $this->file);
     }
-    if ($this->_format & IMG_PNG) {
-      ImagePNG($this->_img, $this->_file);
+    if ($this->format & IMG_PNG) {
+      ImagePNG($this->img, $this->file);
     }
-    if ($this->_format & IMG_JPEG) {
-      ImageJPEG($this->_img, $this->_file);
+    if ($this->format & IMG_JPEG) {
+      ImageJPEG($this->img, $this->file);
     }
-    if ($this->_format & IMG_WBMP) {
-      ImageWBMP($this->_img, $this->_file);
+    if ($this->format & IMG_WBMP) {
+      ImageWBMP($this->img, $this->file);
     }
-    if ($this->_usemap != '') {
+    if ($this->usemap != '') {
       echo "\n".'</map>'."\n";
     }
   }
@@ -132,8 +133,8 @@ class ImageOutputStrategy implements OutputStrategy {
    */
   public function writeObject(PersistentObject $obj) {
     $oid = $obj->getOID();
-    $x = $this->_map[$oid]->x * $this->_xscale - $this->_labelDim['left'] + $this->_border;
-    $y = $this->_map[$oid]->y * $this->_yscale - $this->_labelDim['top'] + $this->_border;
+    $x = $this->map[$oid]->x * $this->xscale - $this->labelDim['left'] + $this->border;
+    $y = $this->map[$oid]->y * $this->yscale - $this->labelDim['top'] + $this->border;
 
     $statusStr = '';
     if ($obj->getState() == PersistentObject::STATE_DIRTY) {
@@ -147,29 +148,29 @@ class ImageOutputStrategy implements OutputStrategy {
     }
 
     // print label
-    ImageRectangle($this->_img,
-      $x + $this->_labelDim['left'],
-      $y + $this->_labelDim['top'],
-      $x + $this->_labelDim['right'],
-      $y + $this->_labelDim['bottom'],
-      $this->_txtColor);
+    ImageRectangle($this->img,
+      $x + $this->labelDim['left'],
+      $y + $this->labelDim['top'],
+      $x + $this->labelDim['right'],
+      $y + $this->labelDim['bottom'],
+      $this->txtColor);
     // write text
-    ImageString($this->_img, 1,
-      $x + $this->_textPos['left'],
-      $y + $this->_textPos['top'],
+    ImageString($this->img, 1,
+      $x + $this->textPos['left'],
+      $y + $this->textPos['top'],
       $obj->getType(),
-      $this->_txtColor);
+      $this->txtColor);
     if (strlen($oid) > 7) {
       $idStr = "...".subStr($oid, strlen($oid)-4, 4);
     }
     else {
       $idStr = $oid;
     }
-    ImageString($this->_img, 5,
-      $x + $this->_textPos['left'],
-      $y + $this->_textPos['top']+14,
+    ImageString($this->img, 5,
+      $x + $this->textPos['left'],
+      $y + $this->textPos['top']+14,
       $idStr.' '.$statusStr,
-      $this->_txtColor);
+      $this->txtColor);
 
     // draw line
     $parent = $obj->getParent();
@@ -177,13 +178,13 @@ class ImageOutputStrategy implements OutputStrategy {
       $this->drawConnectionLine($parent->getOID(), $oid);
     }
     // print map
-    if ($this->_usemap != '')
+    if ($this->usemap != '')
     {
       echo '<area shape="rect" coords="'.
-        ($x + $this->_labelDim['left']).','.
-        ($y + $this->_labelDim['top']).','.
-        ($x + $this->_labelDim['right']).','.
-        ($y + $this->_labelDim['bottom'] + 8*$this->_map[$oid]->z).
+        ($x + $this->labelDim['left']).','.
+        ($y + $this->labelDim['top']).','.
+        ($x + $this->labelDim['right']).','.
+        ($y + $this->labelDim['bottom'] + 8*$this->map[$oid]->z).
         '" onclick="javascript:if (nodeClicked) nodeClicked(\''.$obj->getOID().'\')" alt="'.$obj->getOID().'">'."\n";
     }
   }
@@ -195,10 +196,10 @@ class ImageOutputStrategy implements OutputStrategy {
    */
   protected function drawConnectionLine($poid, $oid) {
     list($start, $end) = $this->calculateEndPoints($poid, $oid);
-    if($this->_lineType == self::LINETYPE_DIRECT) {
+    if($this->lineType == self::LINETYPE_DIRECT) {
       $this->drawDirectLine($start, $end);
     }
-    else if($this->_lineType == self::LINETYPE_ROUTED) {
+    else if($this->lineType == self::LINETYPE_ROUTED) {
       $this->drawRoutedLine($start, $end);
     }
   }
@@ -209,12 +210,12 @@ class ImageOutputStrategy implements OutputStrategy {
    * @param $end The end point (Position).
    */
   protected function drawDirectLine($start, $end) {
-    ImageLine($this->_img,
+    ImageLine($this->img,
       $start->x,
       $start->y,
       $end->x,
       $end->y,
-      $this->_lineColor);
+      $this->lineColor);
   }
 
   /**
@@ -223,45 +224,45 @@ class ImageOutputStrategy implements OutputStrategy {
    * @param $end The end point (Position).
    */
   protected function drawRoutedLine($start, $end) {
-    if ($this->_map["type"] == MAPTYPE_HORIZONTAL) {
-      ImageLine($this->_img,
+    if ($this->map["type"] == MAPTYPE_HORIZONTAL) {
+      ImageLine($this->img,
         $start->x,
         $start->y,
         $start->x,
         $start->y-($start->y-$end->y)/2,
-        $this->_lineColor);
-      ImageLine($this->_img,
+        $this->lineColor);
+      ImageLine($this->img,
         $start->x,
         $start->y-($start->y-$end->y)/2,
         $end->x,
         $start->y-($start->y-$end->y)/2,
-        $this->_lineColor);
-      ImageLine($this->_img,
+        $this->lineColor);
+      ImageLine($this->img,
         $end->x,
         $start->y-($start->y-$end->y)/2,
         $end->x,
         $end->y,
-        $this->_lineColor);
+        $this->lineColor);
     }
     else {
-      ImageLine($this->_img,
+      ImageLine($this->img,
         $start->x,
         $start->y,
         $start->x+($end->x-$start->x)/2,
         $start->y,
-        $this->_lineColor);
-      ImageLine($this->_img,
+        $this->lineColor);
+      ImageLine($this->img,
         $start->x+($end->x-$start->x)/2,
         $start->y,
         $start->x+($end->x-$start->x)/2,
         $end->y,
-        $this->_lineColor);
-      ImageLine($this->_img,
+        $this->lineColor);
+      ImageLine($this->img,
         $start->x+($end->x-$start->x)/2,
         $end->y,
         $end->x,
         $end->y,
-        $this->_lineColor);
+        $this->lineColor);
     }
   }
 
@@ -273,26 +274,26 @@ class ImageOutputStrategy implements OutputStrategy {
    */
   private function calculateEndPoints($poid, $oid) {
     // from child...
-    if ($this->_map["type"] == MAPTYPE_HORIZONTAL) {
+    if ($this->map["type"] == MAPTYPE_HORIZONTAL) {
       // connect from mid top...
-      $x1 = $this->_map[$oid]->x * $this->_xscale + ($this->_labelDim['right'] - $this->_labelDim['left'])/2 + $this->_border;
-      $y1 = $this->_map[$oid]->y * $this->_yscale + $this->_border - 1;
+      $x1 = $this->map[$oid]->x * $this->xscale + ($this->labelDim['right'] - $this->labelDim['left'])/2 + $this->border;
+      $y1 = $this->map[$oid]->y * $this->yscale + $this->border - 1;
     }
     else {
       // connect from mid left...
-      $x1 = $this->_map[$oid]->x * $this->_xscale + $this->_border - 1;
-      $y1 = $this->_map[$oid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top'])/2 + $this->_border;
+      $x1 = $this->map[$oid]->x * $this->xscale + $this->border - 1;
+      $y1 = $this->map[$oid]->y * $this->yscale + ($this->labelDim['bottom'] - $this->labelDim['top'])/2 + $this->border;
     }
     // ...to parent
-    if ($this->_map["type"] == MAPTYPE_HORIZONTAL) {
+    if ($this->map["type"] == MAPTYPE_HORIZONTAL) {
       // ...to mid bottom
-      $x2 = $this->_map[$poid]->x * $this->_xscale + ($this->_labelDim['right'] - $this->_labelDim['left'])/2 + $this->_border;
-      $y2 = $this->_map[$poid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top']) + $this->_border + 1;
+      $x2 = $this->map[$poid]->x * $this->xscale + ($this->labelDim['right'] - $this->labelDim['left'])/2 + $this->border;
+      $y2 = $this->map[$poid]->y * $this->yscale + ($this->labelDim['bottom'] - $this->labelDim['top']) + $this->border + 1;
     }
     else {
       // ...to mid right
-      $x2 = $this->_map[$poid]->x * $this->_xscale + $this->_labelDim['right'] - $this->_labelDim['left'] + $this->_border + 1;
-      $y2 = $this->_map[$poid]->y * $this->_yscale + ($this->_labelDim['bottom'] - $this->_labelDim['top'])/2 + $this->_border;
+      $x2 = $this->map[$poid]->x * $this->xscale + $this->labelDim['right'] - $this->labelDim['left'] + $this->border + 1;
+      $y2 = $this->map[$poid]->y * $this->yscale + ($this->labelDim['bottom'] - $this->labelDim['top'])/2 + $this->border;
     }
     return array(new Position($x1, $y1, 0), new Position($x2, $y2, 0));
   }

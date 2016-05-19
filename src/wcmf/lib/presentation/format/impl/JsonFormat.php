@@ -30,31 +30,31 @@ use wcmf\lib\presentation\format\impl\HierarchicalFormat;
  */
 class JsonFormat extends HierarchicalFormat {
 
-  private static $_jsonData = array();
-  private static $_jsonUsed = false;
-  private static $_logger = null;
+  private static $jsonData = array();
+  private static $jsonUsed = false;
+  private static $logger = null;
 
-  protected $_serializer = null;
+  protected $serializer = null;
 
   /**
    * Constructor
    * @param $serializer NodeSerializer instance
    */
   public function __construct(NodeSerializer $serializer) {
-    $this->_serializer = $serializer;
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    $this->serializer = $serializer;
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
   }
 
   public static function printJSONResult() {
-    if (self::$_jsonUsed) {
-      $data = self::$_jsonData;
+    if (self::$jsonUsed) {
+      $data = self::$jsonData;
       if ($data !== null) {
         $encoded = json_encode($data);
-        if (self::$_logger->isDebugEnabled(__CLASS__)) {
-          self::$_logger->debug($data);
-          self::$_logger->debug($encoded);
+        if (self::$logger->isDebugEnabled(__CLASS__)) {
+          self::$logger->debug($data);
+          self::$logger->debug($encoded);
         }
         print($encoded);
       }
@@ -76,10 +76,10 @@ class JsonFormat extends HierarchicalFormat {
     /*
     // merge data into global data array
     // new values override old
-    self::$_jsonData = array_merge(self::$_jsonData, $data);
+    self::$jsonData = array_merge(self::$jsonData, $data);
      */
-    self::$_jsonData = $values;
-    self::$_jsonUsed = true;
+    self::$jsonData = $values;
+    self::$jsonUsed = true;
     return $values;
   }
 
@@ -87,14 +87,14 @@ class JsonFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::isSerializedNode()
    */
   protected function isSerializedNode($value) {
-    return $this->_serializer->isSerializedNode($value);
+    return $this->serializer->isSerializedNode($value);
   }
 
   /**
    * @see HierarchicalFormat::serializeNode()
    */
   protected function serializeNode($value) {
-    $node = $this->_serializer->serializeNode($value);
+    $node = $this->serializer->serializeNode($value);
     return $node;
   }
 
@@ -102,7 +102,7 @@ class JsonFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::deserializeNode()
    */
   protected function deserializeNode($value) {
-    $result = $this->_serializer->deserializeNode($value);
+    $result = $this->serializer->deserializeNode($value);
     return $result;
   }
 }

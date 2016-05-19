@@ -36,12 +36,13 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   const PROXY_OBJECTS_SESSION_VARNAME = 'RemoteCapablePersistenceFacadeImpl.proxyObjects';
   const REMOTE_OBJECTS_SESSION_VARNAME = 'RemoteCapablePersistenceFacadeImpl.remoteObjects';
 
-  private $_isResolvingProxies = true;
-  private $_isTranslatingValues = true;
+  private $isResolvingProxies = true;
+  private $isTranslatingValues = true;
 
-  private $_remotingServer = null;
+  private $session = null;
+  private $remotingServer = null;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
@@ -53,20 +54,20 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
           OutputStrategy $logStrategy,
           Session $session) {
     parent::__construct($eventManager, $logStrategy);
-    $this->_session = $session;
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    $this->session = $session;
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
     // initialize session variables
-    if (!$this->_session->exist(self::PROXY_OBJECTS_SESSION_VARNAME)) {
+    if (!$this->session->exist(self::PROXY_OBJECTS_SESSION_VARNAME)) {
       $proxies = array();
-      $this->_session->set(self::PROXY_OBJECTS_SESSION_VARNAME, $proxies);
+      $this->session->set(self::PROXY_OBJECTS_SESSION_VARNAME, $proxies);
     }
-    if (!$this->_session->exist(self::REMOTE_OBJECTS_SESSION_VARNAME)) {
+    if (!$this->session->exist(self::REMOTE_OBJECTS_SESSION_VARNAME)) {
       $objs = array();
-      $this->_session->set(self::REMOTE_OBJECTS_SESSION_VARNAME, $objs);
+      $this->session->set(self::REMOTE_OBJECTS_SESSION_VARNAME, $objs);
     }
-    $this->_remotingServer = new RemotingServer();
+    $this->remotingServer = new RemotingServer();
     parent::__construct();
   }
 
@@ -75,7 +76,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @param $isResolvingProxies Boolean whether proxies should be resolved or not
    */
   public function setResolveProxies($isResolvingProxies) {
-    $this->_isResolvingProxies = $isResolvingProxies;
+    $this->isResolvingProxies = $isResolvingProxies;
   }
 
   /**
@@ -83,7 +84,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @return Boolean whether proxies are resolved or not
    */
   public function isResolvingProxies() {
-    return $this->_isResolvingProxies;
+    return $this->isResolvingProxies;
   }
 
   /**
@@ -91,7 +92,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @param $isTranslatingValues Boolean whether values should be translated or not
    */
   public function setTranslatingValues($isTranslatingValues) {
-    $this->_isTranslatingValues = $isTranslatingValues;
+    $this->isTranslatingValues = $isTranslatingValues;
   }
 
   /**
@@ -99,7 +100,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @return Boolean whether values are tanslated or not
    */
   public function isTranslatingValues() {
-    return $this->_isTranslatingValues;
+    return $this->isTranslatingValues;
   }
 
   /**
@@ -169,7 +170,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @return The proxy object.
    */
   protected function getProxyObject(ObjectId $umi, $buildDepth) {
-    self::$_logger->debug("Get proxy object for: ".$umi);
+    self::$logger->debug("Get proxy object for: ".$umi);
 
     // local objects don't have a proxy
     if (strlen($umi->getPrefix()) == 0) {
@@ -194,14 +195,14 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       }
       if (!$proxy) {
         // the proxy has to be created
-        self::$_logger->debug("Creating...");
+        self::$logger->debug("Creating...");
         $proxy = $persistenceFacade->create($umi->getType(), BuildDepth::SINGLE);
         $proxy->setValue('umi', $umi);
         $proxy->save();
       }
       $this->registerProxyObject($umi, $proxy, $buildDepth);
     }
-    self::$_logger->debug("Proxy oid: ".$proxy->getOID());
+    self::$logger->debug("Proxy oid: ".$proxy->getOID());
     return $proxy;
   }
 
@@ -211,14 +212,14 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @param $buildDepth buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build (except BuildDepth::REQUIRED)
    */
   protected function loadRemoteObject(ObjectId $umi, $buildDepth) {
-    self::$_logger->debug("Resolve proxy object for: ".$umi);
+    self::$logger->debug("Resolve proxy object for: ".$umi);
 
     // check if the remote object was loaded already
     $obj = $this->getRegisteredRemoteObject($umi, $buildDepth);
 
     // resolve the object if requested for the first time
     if (!$obj) {
-      self::$_logger->debug("Retrieving...");
+      self::$logger->debug("Retrieving...");
 
       // determine remote oid
       $oid = new ObjectId($umi->getType(), $umi->getId());
@@ -232,13 +233,13 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
           'oid' => $oid->toString(),
           'depth' => "".$buildDepth,
           'omitMetaData' => true,
-          'translateValues' => $this->_isTranslatingValues
+          'translateValues' => $this->isTranslatingValues
         )
       );
-      self::$_logger->debug("Request:\n".$request->toString());
+      self::$logger->debug("Request:\n".$request->toString());
 
       // do the remote call
-      $response = $this->_remotingServer->doCall($serverKey, $request);
+      $response = $this->remotingServer->doCall($serverKey, $request);
       $obj = $response->getValue('node');
       if ($obj) {
         // set umis instead of oids
@@ -260,7 +261,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
         if ($proxy) {
           $proxyOID = $proxy->getOID();
           if (strlen($proxyOID->getPrefix()) > 0) {
-            self::$_logger->debug("NOT A PROXY");
+            self::$logger->debug("NOT A PROXY");
           }
           $obj->setValue('_proxyOid', $proxyOID);
 
@@ -278,12 +279,12 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       }
     }
 
-    if (self::$_logger->isDebugEnabled()) {
+    if (self::$logger->isDebugEnabled()) {
       if ($obj) {
-        self::$_logger->debug("Resolved to: ".$obj->toString());
+        self::$logger->debug("Resolved to: ".$obj->toString());
       }
       else {
-        self::$_logger->debug("Could not resolve: ".$umi);
+        self::$logger->debug("Could not resolve: ".$umi);
       }
     }
     return $obj;
@@ -298,7 +299,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   protected function registerProxyObject(ObjectID $umi, PersistentObject $obj, $buildDepth) {
     $oid = $obj->getOID();
     if (strlen($oid->getPrefix()) > 0) {
-      self::$_logger->debug("NOT A PROXY");
+      self::$logger->debug("NOT A PROXY");
       return;
     }
     $this->registerObject($umi, $obj, $buildDepth, self::PROXY_OBJECTS_SESSION_VARNAME);
@@ -330,12 +331,12 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
     }
     // save the object in the session
     $umiStr = $umi->toString();
-    $objects = $this->_session->get($varName);
+    $objects = $this->session->get($varName);
     if (!isset($objects[$umiStr])) {
       $objects[$umiStr] = array();
     }
     $objects[$umiStr][$buildDepth] = $obj;
-    $this->_session->set($varName, $objects);
+    $this->session->set($varName, $objects);
   }
 
   /**
@@ -372,7 +373,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       $buildDepth=BuildDepth::SINGLE;
     }
     $umiStr = $umi->toString();
-    $objects = $this->_session->get($varName);
+    $objects = $this->session->get($varName);
     if (isset($objects[$umiStr]) && isset($objects[$umiStr][$buildDepth])) {
       return $objects[$umiStr][$buildDepth];
     }

@@ -38,14 +38,14 @@ class Node extends DefaultPersistentObject {
   const RELATION_STATE_INITIALIZED = -3;
   const RELATION_STATE_LOADED = -4;
 
-  private $_relationStates = array();
+  private $relationStates = array();
 
-  private $_addedNodes = array();
-  private $_deletedNodes = array();
-  private $_orderedNodes = array();
+  private $addedNodes = array();
+  private $deletedNodes = array();
+  private $orderedNodes = array();
 
-  private static $_parentGetValueMethod = null;
-  private static $_logger = null;
+  private static $parentGetValueMethod = null;
+  private static $logger = null;
 
   /**
    * Constructor
@@ -53,13 +53,13 @@ class Node extends DefaultPersistentObject {
   public function __construct(ObjectId $oid=null) {
     parent::__construct($oid);
     // get parent::getValue method by reflection
-    if (self::$_parentGetValueMethod == null) {
+    if (self::$parentGetValueMethod == null) {
       $reflector = new \ReflectionClass(__CLASS__);
       $parent = $reflector->getParentClass();
-      self::$_parentGetValueMethod = $parent->getMethod('getValue');
+      self::$parentGetValueMethod = $parent->getMethod('getValue');
     }
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -91,10 +91,10 @@ class Node extends DefaultPersistentObject {
   public function getValue($name) {
     // initialize a relation value, if not done before
     $value = parent::getValue($name);
-    if (isset($this->_relationStates[$name]) &&
-            $this->_relationStates[$name] == Node::RELATION_STATE_UNINITIALIZED) {
+    if (isset($this->relationStates[$name]) &&
+            $this->relationStates[$name] == Node::RELATION_STATE_UNINITIALIZED) {
 
-      $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZING;
+      $this->relationStates[$name] = Node::RELATION_STATE_INITIALIZING;
       $mapper = $this->getMapper();
       $allRelatives = $mapper->loadRelation(array($this), $name, BuildDepth::PROXIES_ONLY);
       $oidStr = $this->getOID()->__toString();
@@ -108,7 +108,7 @@ class Node extends DefaultPersistentObject {
         $value = $relatives != null ? $relatives[0] : null;
       }
       $this->setValueInternal($name, $value);
-      $this->_relationStates[$name] = Node::RELATION_STATE_INITIALIZED;
+      $this->relationStates[$name] = Node::RELATION_STATE_INITIALIZED;
     }
     return $value;
   }
@@ -210,7 +210,7 @@ class Node extends DefaultPersistentObject {
         }
       }
       else {
-        self::$_logger->warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".ErrorHandler::getStackTrace(),
+        self::$logger->warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".ErrorHandler::getStackTrace(),
           __CLASS__);
       }
     }
@@ -227,8 +227,8 @@ class Node extends DefaultPersistentObject {
     foreach ($mapper->getRelations() as $curRelationDesc) {
       $valueName = $curRelationDesc->getOtherRole();
       // use parent getters to avoid loading relations
-      $existingValue = self::$_parentGetValueMethod->invokeArgs($this, array($valueName));
-      $newValue = self::$_parentGetValueMethod->invokeArgs($object, array($valueName));
+      $existingValue = self::$parentGetValueMethod->invokeArgs($this, array($valueName));
+      $newValue = self::$parentGetValueMethod->invokeArgs($object, array($valueName));
       if ($newValue != null) {
         if ($curRelationDesc->isMultiValued()) {
           $mergeResult = self::mergeObjectLists($existingValue, $newValue);
@@ -327,10 +327,10 @@ class Node extends DefaultPersistentObject {
 
     // remember the addition
     if (sizeof($addedNodes) > 0) {
-      if (!isset($this->_addedNodes[$role])) {
-        $this->_addedNodes[$role] = array();
+      if (!isset($this->addedNodes[$role])) {
+        $this->addedNodes[$role] = array();
       }
-      $this->_addedNodes[$role][] = $other;
+      $this->addedNodes[$role][] = $other;
     }
 
     // propagate add action to the other object
@@ -349,7 +349,7 @@ class Node extends DefaultPersistentObject {
    *  as values
    */
   public function getAddedNodes() {
-    return $this->_addedNodes;
+    return $this->addedNodes;
   }
 
   /**
@@ -398,10 +398,10 @@ class Node extends DefaultPersistentObject {
     parent::setValue($role, $nodes);
 
     // remember the deletion
-    if (!isset($this->_deletedNodes[$role])) {
-      $this->_deletedNodes[$role] = array();
+    if (!isset($this->deletedNodes[$role])) {
+      $this->deletedNodes[$role] = array();
     }
-    $this->_deletedNodes[$role][] = $other->getOID();
+    $this->deletedNodes[$role][] = $other->getOID();
     $this->setState(PersistentOBject::STATE_DIRTY);
 
     // propagate add action to the other object
@@ -418,7 +418,7 @@ class Node extends DefaultPersistentObject {
    *  as values
    */
   public function getDeletedNodes() {
-    return $this->_deletedNodes;
+    return $this->deletedNodes;
   }
 
   /**
@@ -431,7 +431,7 @@ class Node extends DefaultPersistentObject {
    * @param $nodeList Array of sorted Node instances
    */
   public function setNodeOrder(array $nodeList) {
-    $this->_orderedNodes = $nodeList;
+    $this->orderedNodes = $nodeList;
     $this->setState(PersistentOBject::STATE_DIRTY);
   }
 
@@ -441,7 +441,7 @@ class Node extends DefaultPersistentObject {
    * @return Array of sorted Node instances
    */
   public function getNodeOrder() {
-    return $this->_orderedNodes;
+    return $this->orderedNodes;
   }
 
   /**
@@ -701,12 +701,12 @@ class Node extends DefaultPersistentObject {
   protected function loadRelations(array $roles, $buildDepth=BuildDepth::SINGLE) {
     $oldState = $this->getState();
     foreach ($roles as $curRole) {
-      if (isset($this->_relationStates[$curRole]) &&
-              $this->_relationStates[$curRole] != Node::RELATION_STATE_LOADED) {
+      if (isset($this->relationStates[$curRole]) &&
+              $this->relationStates[$curRole] != Node::RELATION_STATE_LOADED) {
         $relatives = array();
 
         // resolve proxies if the relation is already initialized
-        if ($this->_relationStates[$curRole] == Node::RELATION_STATE_INITIALIZED) {
+        if ($this->relationStates[$curRole] == Node::RELATION_STATE_INITIALIZED) {
           $proxies = $this->getValue($curRole);
           if (is_array($proxies)) {
             foreach ($proxies as $curRelative) {
@@ -733,7 +733,7 @@ class Node extends DefaultPersistentObject {
           }
         }
         $this->setValueInternal($curRole, $relatives);
-        $this->_relationStates[$curRole] = Node::RELATION_STATE_LOADED;
+        $this->relationStates[$curRole] = Node::RELATION_STATE_LOADED;
       }
     }
     $this->setState($oldState);
@@ -810,7 +810,7 @@ class Node extends DefaultPersistentObject {
    */
   public function addRelation($name) {
     if (!$this->hasValue($name)) {
-      $this->_relationStates[$name] = Node::RELATION_STATE_UNINITIALIZED;
+      $this->relationStates[$name] = Node::RELATION_STATE_UNINITIALIZED;
       $this->setValueInternal($name, null);
     }
   }

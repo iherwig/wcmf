@@ -126,8 +126,8 @@ class SaveControllerTest extends ControllerTestCase {
     $response = $this->runRequest('create', $data);
 
     // test
-    $this->_insertOID = $response->getValue('oid');
-    $obj = $persistenceFacade->load($this->_insertOID, BuildDepth::SINGLE);
+    $insertOID = $response->getValue('oid');
+    $obj = $persistenceFacade->load($insertOID, BuildDepth::SINGLE);
     $this->assertNotNull($obj);
     $this->assertEquals('user', $obj->getValue('login'));
 

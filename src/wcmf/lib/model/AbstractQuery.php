@@ -26,7 +26,7 @@ use wcmf\lib\persistence\PersistenceMapper;
  */
 abstract class AbstractQuery {
 
-  private $_selectStmt = null;
+  private $selectStmt = null;
 
   /**
    * Get the name of the type that should be queried
@@ -44,9 +44,9 @@ abstract class AbstractQuery {
    */
   public function execute($buildDepth, $orderby=null, $pagingInfo=null) {
     // build the query
-    $this->_selectStmt = $this->buildQuery($buildDepth, $orderby, $pagingInfo);
+    $this->selectStmt = $this->buildQuery($buildDepth, $orderby, $pagingInfo);
 
-    return $this->executeInternal($this->_selectStmt, $buildDepth, $pagingInfo);
+    return $this->executeInternal($this->selectStmt, $buildDepth, $pagingInfo);
   }
 
   /**
@@ -72,8 +72,8 @@ abstract class AbstractQuery {
    * @return String
    */
   public function getLastQueryString() {
-    if ($this->_selectStmt != null) {
-      return $this->_selectStmt->__toString();
+    if ($this->selectStmt != null) {
+      return $this->selectStmt->__toString();
     }
     return "";
   }

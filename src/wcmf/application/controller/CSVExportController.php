@@ -49,8 +49,8 @@ use wcmf\lib\util\Obfuscator;
 class CSVExportController extends BatchController {
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $_DOCFILE = "export.csv";
-  private $_NODES_PER_CALL = 50;
+  private $DOCFILE = "export.csv";
+  private $NODES_PER_CALL = 50;
 
   /**
    * @see Controller::initialize()
@@ -60,10 +60,10 @@ class CSVExportController extends BatchController {
     if ($request->getAction() != 'continue') {
       // set defaults (will be stored with first request)
       if (!$request->hasValue('docFile')) {
-        $request->setValue('docFile', $this->_DOCFILE);
+        $request->setValue('docFile', $this->DOCFILE);
       }
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
+        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
       }
     }
     // initialize parent controller after default request values are set

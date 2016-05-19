@@ -17,7 +17,7 @@ namespace wcmf\lib\core;
  */
 class ClassLoader {
 
-  private $_baseDir = '';
+  private $baseDir = '';
 
   /**
    * Constructor.
@@ -29,7 +29,7 @@ class ClassLoader {
       throw new \Exception("Base dir '".$baseDir."' is not a directory.");
     }
     $baseDir = preg_replace('/\/\/$/', '/', $baseDir.'/');
-    $this->_baseDir = $baseDir;
+    $this->baseDir = $baseDir;
     spl_autoload_register(array($this, 'load'), true, true);
   }
 
@@ -39,7 +39,7 @@ class ClassLoader {
    */
   private function load($className) {
     // search under baseDir assuming that namespaces match directories
-    $filename = $this->_baseDir.str_replace("\\", "/", $className).'.php';
+    $filename = $this->baseDir.str_replace("\\", "/", $className).'.php';
     if (file_exists($filename)) {
       include($filename);
     }

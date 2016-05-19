@@ -40,7 +40,7 @@ use wcmf\lib\security\principal\User;
  */
 class UserController extends Controller {
 
-  private $_principalFactory = null;
+  private $principalFactory = null;
 
   /**
    * Constructor
@@ -63,7 +63,7 @@ class UserController extends Controller {
           PrincipalFactory $principalFactory) {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
-    $this->_principalFactory = $principalFactory;
+    $this->principalFactory = $principalFactory;
   }
 
   /**
@@ -79,7 +79,7 @@ class UserController extends Controller {
     // change password
 
     // load model
-    $authUser = $this->_principalFactory->getUser($session->getAuthUser());
+    $authUser = $this->principalFactory->getUser($session->getAuthUser());
     if ($authUser) {
       // add permissions for this operation
       $oidStr = $authUser->getOID()->__toString();

@@ -28,11 +28,11 @@ use wcmf\lib\util\TestUtil;
  */
 class PersistentObjectTest extends DatabaseTestCase {
 
-  private $_numChapters = 100;
+  private $numChapters = 100;
 
   protected function getDataSet() {
     $chapters = array();
-    for ($i=0; $i<$this->_numChapters; $i++) {
+    for ($i=0; $i<$this->numChapters; $i++) {
       $chapters[] = array('id' => $i, 'sortkey' => $i);
     }
 
@@ -140,7 +140,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     // out of bounds 2
     $pagingInfo5 = new PagingInfo(100000000);
     $chapters5 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo5);
-    $this->assertEquals($this->_numChapters, sizeof($chapters5));
+    $this->assertEquals($this->numChapters, sizeof($chapters5));
 
     TestUtil::endSession();
   }

@@ -39,8 +39,8 @@ use wcmf\lib\service\impl\RPCClient;
  */
 class RemotingServer {
 
-  private $_clients = array();
-  private $_users = array();
+  private $clients = array();
+  private $users = array();
 
   /**
    * Send a request to the server identified by serverKey.
@@ -63,7 +63,7 @@ class RemotingServer {
    * @return A client instance or null
    */
   private function getClient($serverKey) {
-    if (!isset($this->_clients[$serverKey])) {
+    if (!isset($this->clients[$serverKey])) {
       $config = ObjectFactory::getInstance('configuration');
       $serverDef = $config->getValue($serverKey, 'remoteserver');
       // get remote the user
@@ -76,9 +76,9 @@ class RemotingServer {
       else {
         $client = new RPCClient($serverDef, $user);
       }
-      $this->_clients[$serverKey] = $client;
+      $this->clients[$serverKey] = $client;
     }
-    return $this->_clients[$serverKey];
+    return $this->clients[$serverKey];
   }
 
   /**
@@ -87,11 +87,11 @@ class RemotingServer {
    * @return Array with keys 'login', 'password'
    */
   private function getRemoteUser($serverKey) {
-    if (!isset($this->_users[$serverKey])) {
+    if (!isset($this->users[$serverKey])) {
       $config = ObjectFactory::getInstance('configuration');
       $remoteUser = $config->getValue($serverKey, 'remoteuser');
       if (is_array($remoteUser) && sizeof($remoteUser) == 2) {
-        $this->_users[$serverKey] = array(
+        $this->users[$serverKey] = array(
           'login' => $remoteUser[0],
           'password' => $remoteUser[1]
         );
@@ -103,7 +103,7 @@ class RemotingServer {
         );
       }
     }
-    return $this->_users[$serverKey];
+    return $this->users[$serverKey];
   }
 }
 ?>

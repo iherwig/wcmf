@@ -25,10 +25,10 @@ class SelectStatement extends Zend_Db_Select {
   const NO_CACHE = 'no_cache';
   const CACHE_KEY = 'select';
 
-  protected $_id = null;
-  protected $_type = null;
-  protected $_meta = array();
-  protected $_cachedSql = array();
+  protected $id = null;
+  protected $type = null;
+  protected $meta = array();
+  protected $cachedSql = array();
 
   /**
    * Get the SelectStatement instance with the given id.
@@ -57,8 +57,8 @@ class SelectStatement extends Zend_Db_Select {
    */
   public function __construct(RDBMapper $mapper, $id=self::NO_CACHE) {
     parent::__construct($mapper->getConnection());
-    $this->_id = $id;
-    $this->_type = $mapper->getType();
+    $this->id = $id;
+    $this->type = $mapper->getType();
   }
 
   /**
@@ -66,7 +66,7 @@ class SelectStatement extends Zend_Db_Select {
    * @return String
    */
   public function getType() {
-    return $this->_type;
+    return $this->type;
   }
 
   /**
@@ -75,8 +75,8 @@ class SelectStatement extends Zend_Db_Select {
    */
   public function isCached() {
     $cache = ObjectFactory::getInstance('cache');
-    return $this->_id == self::NO_CACHE ? false :
-            $cache->exists(self::getCacheSection($this->_type), self::getCacheId($this->_id));
+    return $this->id == self::NO_CACHE ? false :
+            $cache->exists(self::getCacheSection($this->type), self::getCacheId($this->id));
   }
 
   /**
@@ -85,7 +85,7 @@ class SelectStatement extends Zend_Db_Select {
    * @param $value
    */
   public function setMeta($key, $value) {
-    $this->_meta[$key] = $value;
+    $this->meta[$key] = $value;
   }
 
   /**
@@ -94,8 +94,8 @@ class SelectStatement extends Zend_Db_Select {
    * @return Mixed
    */
   public function getMeta($key) {
-    if (isset($this->_meta[$key])) {
-      return $this->_meta[$key];
+    if (isset($this->meta[$key])) {
+      return $this->meta[$key];
     }
     return null;
   }
@@ -135,9 +135,9 @@ class SelectStatement extends Zend_Db_Select {
    * Put the statement into the cache
    */
   public function save() {
-    if ($this->_id != self::NO_CACHE) {
+    if ($this->id != self::NO_CACHE) {
       $cache = ObjectFactory::getInstance('cache');
-      $cache->put(self::getCacheSection($this->_type), self::getCacheId($this->_id), $this);
+      $cache->put(self::getCacheSection($this->type), self::getCacheId($this->id), $this);
     }
   }
 
@@ -145,11 +145,11 @@ class SelectStatement extends Zend_Db_Select {
    * @see Select::assemble()
    */
   public function assemble($cacheKey=null) {
-    if (!isset($this->_cachedSql[$cacheKey])) {
+    if (!isset($this->cachedSql[$cacheKey])) {
       $sql = parent::assemble();
-      $this->_cachedSql[$cacheKey] = $sql;
+      $this->cachedSql[$cacheKey] = $sql;
     }
-    return $this->_cachedSql[$cacheKey];
+    return $this->cachedSql[$cacheKey];
   }
 
   /**
@@ -184,12 +184,12 @@ class SelectStatement extends Zend_Db_Select {
    */
 
   public function __sleep() {
-    return array('_id', '_type', '_meta', '_cachedSql', '_parts');
+    return array('id', 'type', 'meta', 'cachedSql', '_parts');
   }
 
   public function __wakeup() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $mapper = $persistenceFacade->getMapper($this->_type);
+    $mapper = $persistenceFacade->getMapper($this->type);
     $this->_adapter = $mapper->getConnection();
   }
 }

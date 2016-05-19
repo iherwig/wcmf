@@ -25,7 +25,7 @@ class ValueListProvider {
   /**
    * Array of known list strategy instances
    */
-  private static $_listStrategies = null;
+  private static $listStrategies = null;
 
   /**
    * Get a list of key/value pairs defined by the given configuration.
@@ -119,15 +119,15 @@ class ValueListProvider {
    */
   protected static function getListStrategy($listType) {
     // get list strategies
-    if (self::$_listStrategies == null) {
-      self::$_listStrategies = ObjectFactory::getInstance('listStrategies');
+    if (self::$listStrategies == null) {
+      self::$listStrategies = ObjectFactory::getInstance('listStrategies');
     }
 
     $strategy = null;
 
     // search strategy
-    if (isset(self::$_listStrategies[$listType])) {
-      $strategy = self::$_listStrategies[$listType];
+    if (isset(self::$listStrategies[$listType])) {
+      $strategy = self::$listStrategies[$listType];
     }
     else {
       throw new ConfigurationException('No ListStrategy implementation registered for '.$listType);

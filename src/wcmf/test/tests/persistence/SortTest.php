@@ -25,8 +25,8 @@ use wcmf\lib\util\TestUtil;
  */
 class SortTest extends DatabaseTestCase {
 
-  private $_chapterOidStr = 'Chapter:12345';
-  private $_publisherOidStr = 'Publisher:12345';
+  private $chapterOidStr = 'Chapter:12345';
+  private $publisherOidStr = 'Publisher:12345';
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
@@ -86,7 +86,7 @@ class SortTest extends DatabaseTestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     // get the existing order
-    $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_chapterOidStr));
+    $chapter1 = $persistenceFacade->load(ObjectId::parse($this->chapterOidStr));
     $subChapters1 = $chapter1->getValue("SubChapter");
     $chapterOids = array();
     for ($i=0, $count=sizeof($subChapters1); $i<$count; $i++) {
@@ -100,7 +100,7 @@ class SortTest extends DatabaseTestCase {
 
     // reload
     $transaction->begin();
-    $chapter2 = $persistenceFacade->load(ObjectId::parse($this->_chapterOidStr), 1);
+    $chapter2 = $persistenceFacade->load(ObjectId::parse($this->chapterOidStr), 1);
     $subChapters2 = $chapter2->getChildrenEx(null, "SubChapter");
     $this->assertEquals($chapterOids[0], $subChapters2[1]->getOID()->__toString());
     $this->assertEquals($chapterOids[1], $subChapters2[2]->getOID()->__toString());
@@ -117,7 +117,7 @@ class SortTest extends DatabaseTestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     // get the existing order
-    $publisher1 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr));
+    $publisher1 = $persistenceFacade->load(ObjectId::parse($this->publisherOidStr));
     $authors1 = $publisher1->getValue("Author");
     $authorOids = array();
     for ($i=0, $count=sizeof($authors1); $i<$count; $i++) {
@@ -131,7 +131,7 @@ class SortTest extends DatabaseTestCase {
 
     // reload
     $transaction->begin();
-    $publisher2 = $persistenceFacade->load(ObjectId::parse($this->_publisherOidStr), 1);
+    $publisher2 = $persistenceFacade->load(ObjectId::parse($this->publisherOidStr), 1);
     $authors2 = $publisher2->getChildrenEx(null, "Author");
     $this->assertEquals($authorOids[0], $authors2[1]->getOID()->__toString());
     $this->assertEquals($authorOids[1], $authors2[2]->getOID()->__toString());
@@ -148,7 +148,7 @@ class SortTest extends DatabaseTestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
 
-    $chapter1 = $persistenceFacade->load(ObjectId::parse($this->_chapterOidStr), 1);
+    $chapter1 = $persistenceFacade->load(ObjectId::parse($this->chapterOidStr), 1);
     $children1 = $chapter1->getChildren();
     // get the existing order
     $childOids = array();
@@ -163,7 +163,7 @@ class SortTest extends DatabaseTestCase {
 
     // reload
     $transaction->begin();
-    $chapter2 = $persistenceFacade->load(ObjectId::parse($this->_chapterOidStr), 1);
+    $chapter2 = $persistenceFacade->load(ObjectId::parse($this->chapterOidStr), 1);
     $children2 = $chapter2->getChildren();
     $comparator = new NodeSortkeyComparator($chapter2, $children2);
     usort($children2, array($comparator, 'compare'));

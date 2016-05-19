@@ -27,15 +27,15 @@ use wcmf\lib\persistence\PersistenceFacade;
  */
 class SoapNodeSerializer extends AbstractNodeSerializer {
 
-  private $_serializedOIDs = array();
-  private $_persistenceFacade = null;
+  private $serializedOIDs = array();
+  private $persistenceFacade = null;
 
   /**
    * Constructor
    * @param $persistenceFacade
    */
   public function __construct(PersistenceFacade $persistenceFacade) {
-    $this->_persistenceFacade = $persistenceFacade;
+    $this->persistenceFacade = $persistenceFacade;
   }
 
   /**
@@ -67,7 +67,7 @@ class SoapNodeSerializer extends AbstractNodeSerializer {
 
     // don't create all values by default (-> don't use PersistenceFacade::create() directly,
     // just for determining the class)
-    $class = get_class($this->_persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
+    $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
 
     $remainingData = array();
@@ -112,8 +112,8 @@ class SoapNodeSerializer extends AbstractNodeSerializer {
     $oidStr = $node->getOID()->__toString();
     $curResult['oid'] = $oidStr;
 
-    if (!in_array($oidStr, $this->_serializedOIDs)) {
-      $this->_serializedOIDs[] = $oidStr;
+    if (!in_array($oidStr, $this->serializedOIDs)) {
+      $this->serializedOIDs[] = $oidStr;
 
       // serialize attributes
       // use NodeValueIterator to iterate over all Node values

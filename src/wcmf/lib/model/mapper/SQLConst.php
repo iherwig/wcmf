@@ -19,18 +19,18 @@ use \Zend_Db_Expr;
  */
 class SQLConst {
 
-  private static $_null = null;
-  private static $_count = null;
+  private static $null = null;
+  private static $count = null;
 
   /**
    * Get the NULL expression
    * @return Zend_Db_Expr
    */
   public static function NULL() {
-    if (self::$_null == null) {
-      self::$_null = new Zend_Db_Expr('NULL');
+    if (self::$null == null) {
+      self::$null = new Zend_Db_Expr('NULL');
     }
-    return self::$_null;
+    return self::$null;
   }
 
   /**
@@ -38,10 +38,10 @@ class SQLConst {
    * @return Zend_Db_Expr
    */
   public static function COUNT() {
-    if (self::$_count == null) {
-      self::$_count = new Zend_Db_Expr('COUNT(*)');
+    if (self::$count == null) {
+      self::$count = new Zend_Db_Expr('COUNT(*)');
     }
-    return self::$_count;
+    return self::$count;
   }
 }
 ?>

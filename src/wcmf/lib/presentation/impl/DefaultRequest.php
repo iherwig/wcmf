@@ -41,14 +41,14 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * The format of the response (used for de-, serialization).
    */
-  private $_responseFormat = null;
+  private $responseFormat = null;
 
   /**
    * The HTTP method of the request
    */
-  private $_method = null;
+  private $method = null;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
@@ -56,8 +56,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   public function __construct(Formatter $formatter) {
     parent::__construct($formatter);
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
 
     // add header values to request
@@ -80,7 +80,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       $_POST = json_decode($requestBody, true);
     }
 
-    $this->_method = isset($_SERVER['REQUEST_METHOD']) ?
+    $this->method = isset($_SERVER['REQUEST_METHOD']) ?
             strtoupper($_SERVER['REQUEST_METHOD']) : '';
   }
 
@@ -105,8 +105,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     $basePath = preg_replace('/\/?[^\/]*$/', '', $_SERVER['SCRIPT_NAME']);
     $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
     $requestPath = preg_replace('/^'.StringUtil::escapeForRegex($basePath).'/', '', $requestUri);
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug("Request path: ".$requestPath);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Request path: ".$requestPath);
     }
     $config = ObjectFactory::getInstance('configuration');
 
@@ -144,13 +144,13 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         $routePattern = str_replace(array('*', '/'), array('.*', '\/'), $routePattern);
 
         // try to match the current request path
-        if (self::$_logger->isDebugEnabled()) {
-          self::$_logger->debug("Check path: ".$route." -> ".$routePattern);
+        if (self::$logger->isDebugEnabled()) {
+          self::$logger->debug("Check path: ".$route." -> ".$routePattern);
         }
         $matches = array();
         if (preg_match('/^'.$routePattern.'\/?$/', $requestPath, $matches)) {
-          if (self::$_logger->isDebugEnabled()) {
-            self::$_logger->debug("Match");
+          if (self::$logger->isDebugEnabled()) {
+            self::$logger->debug("Match");
           }
           // set parameters from request path
           for ($i=0, $count=sizeof($params); $i<$count; $i++) {
@@ -219,24 +219,24 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * @see Request::getMethod()
    */
   public function getMethod() {
-    return $this->_method;
+    return $this->method;
   }
 
   /**
    * @see Request::setResponseFormat()
    */
   public function setResponseFormat($format) {
-    $this->_responseFormat = $format;
+    $this->responseFormat = $format;
   }
 
   /**
    * @see Request::getResponseFormat()
    */
   public function getResponseFormat() {
-    if ($this->_responseFormat == null) {
-      $this->_responseFormat = $this->getFormatter()->getFormatFromMimeType($this->getHeader('Accept'));
+    if ($this->responseFormat == null) {
+      $this->responseFormat = $this->getFormatter()->getFormatFromMimeType($this->getHeader('Accept'));
     }
-    return $this->_responseFormat;
+    return $this->responseFormat;
   }
 
   /**
@@ -244,8 +244,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * @return The string
    */
   public function __toString() {
-    $str = 'method='.$this->_method.', ';
-    $str .= 'responseformat='.$this->_responseFormat.', ';
+    $str = 'method='.$this->method.', ';
+    $str .= 'responseformat='.$this->responseFormat.', ';
     $str .= parent::__toString();
     return $str;
   }

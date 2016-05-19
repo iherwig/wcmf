@@ -25,9 +25,9 @@ use wcmf\lib\security\principal\User;
  */
 abstract class AbstractUser extends Node implements User {
 
-  private $_roles = null;
+  private $roles = null;
 
-  private static $_roleConfig = null;
+  private static $roleConfig = null;
 
   /**
    * @see User::setLogin()
@@ -95,11 +95,11 @@ abstract class AbstractUser extends Node implements User {
    * @see User::getRoles()
    */
   public function getRoles() {
-    if (!$this->_roles) {
+    if (!$this->roles) {
       $principalFactory = ObjectFactory::getInstance('principalFactory');
-      $this->_roles = $principalFactory->getUserRoles($this, true);
+      $this->roles = $principalFactory->getUserRoles($this, true);
     }
-    return $this->_roles;
+    return $this->roles;
   }
 
   /**
@@ -198,14 +198,14 @@ abstract class AbstractUser extends Node implements User {
    * @return Array with role names as keys and config file names as values
    */
   protected static function getRoleConfigs() {
-    if (self::$_roleConfig == null) {
+    if (self::$roleConfig == null) {
       // load role config if existing
       $config = ObjectFactory::getInstance('configuration');
       if (($roleConfig = $config->getSection('roleconfig')) !== false) {
-        self::$_roleConfig = $roleConfig;
+        self::$roleConfig = $roleConfig;
       }
     }
-    return self::$_roleConfig;
+    return self::$roleConfig;
   }
 }
 ?>

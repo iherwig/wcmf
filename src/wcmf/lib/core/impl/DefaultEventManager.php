@@ -20,31 +20,31 @@ use wcmf\lib\core\EventManager;
  */
 class DefaultEventManager implements EventManager {
 
-  private $_listeners = array();
+  private $listeners = array();
 
   /**
    * @see EventManager::addListener()
    */
   public function addListener($eventName, $callback) {
-    if (!isset($this->_listeners[$eventName])) {
-      $this->_listeners[$eventName] = array();
+    if (!isset($this->listeners[$eventName])) {
+      $this->listeners[$eventName] = array();
     }
-    $this->_listeners[$eventName][] = $callback;
+    $this->listeners[$eventName][] = $callback;
   }
 
   /**
    * @see EventManager::removeListener()
    */
   public function removeListener($eventName, $callback) {
-    if (isset($this->_listeners[$eventName])) {
+    if (isset($this->listeners[$eventName])) {
       $listeners = array();
-      for ($i=0, $count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
-        $curCallback = $this->_listeners[$eventName][$i];
+      for ($i=0, $count=sizeof($this->listeners[$eventName]); $i<$count; $i++) {
+        $curCallback = $this->listeners[$eventName][$i];
         if ($curCallback != $callback) {
           $listeners[] = $curCallback;
         }
       }
-      $this->_listeners[$eventName] = $listeners;
+      $this->listeners[$eventName] = $listeners;
     }
   }
 
@@ -52,9 +52,9 @@ class DefaultEventManager implements EventManager {
    * @see EventManager::dispatch()
    */
   public function dispatch($eventName, Event $event) {
-    if (isset($this->_listeners[$eventName])) {
-      for ($i=0, $count=sizeof($this->_listeners[$eventName]); $i<$count; $i++) {
-        $curCallback = $this->_listeners[$eventName][$i];
+    if (isset($this->listeners[$eventName])) {
+      for ($i=0, $count=sizeof($this->listeners[$eventName]); $i<$count; $i++) {
+        $curCallback = $this->listeners[$eventName][$i];
         call_user_func($curCallback, $event);
         if ($event->isStopped()) {
           break;

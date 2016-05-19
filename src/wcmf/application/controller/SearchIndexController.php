@@ -43,10 +43,10 @@ use wcmf\lib\security\PermissionManager;
  */
 class SearchIndexController extends BatchController {
 
-  private $_search = null;
+  private $search = null;
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $_NODES_PER_CALL = 10;
+  private $NODES_PER_CALL = 10;
 
   /**
    * Constructor
@@ -69,7 +69,7 @@ class SearchIndexController extends BatchController {
           Search $search) {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
-    $this->_search = $search;
+    $this->search = $search;
   }
 
   /**
@@ -80,7 +80,7 @@ class SearchIndexController extends BatchController {
     if ($request->getAction() != 'continue') {
       // set defaults (will be stored with first request)
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
+        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
       }
     }
     // initialize parent controller after default request values are set
@@ -92,17 +92,17 @@ class SearchIndexController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      if ($this->_search instanceof IndexedSearch) {
+      if ($this->search instanceof IndexedSearch) {
         // get all types to index
         $types = array();
         $persistenceFacade = $this->getPersistenceFacade();
         foreach ($persistenceFacade->getKnownTypes() as $type) {
           $tpl = $persistenceFacade->create($type);
-          if ($this->_search->isSearchable($tpl)) {
+          if ($this->search->isSearchable($tpl)) {
             $types[] = $type;
           }
         }
-        $this->_search->resetIndex();
+        $this->search->resetIndex();
         return array('name' => $this->getMessage()->getText('Collect objects'),
             'size' => 1, 'oids' => $types, 'callback' => 'collect');
       }
@@ -141,10 +141,10 @@ class SearchIndexController extends BatchController {
     foreach($oids as $oid) {
       if (ObjectId::isValid($oid)) {
         $obj = $persistenceFacade->load($oid);
-        $this->_search->addToIndex($obj);
+        $this->search->addToIndex($obj);
       }
     }
-    $this->_search->commitIndex(false);
+    $this->search->commitIndex(false);
 
     if ($this->getStepNumber() == $this->getNumberOfSteps()) {
       $this->addWorkPackage($this->getMessage()->getText('Optimizing index'),
@@ -158,7 +158,7 @@ class SearchIndexController extends BatchController {
    * @note This is a callback method called on a matching work package @see BatchController::addWorkPackage()
    */
   protected function optimize($oids) {
-    $this->_search->optimizeIndex();
+    $this->search->optimizeIndex();
   }
   // PROTECTED REGION END
 }

@@ -30,7 +30,7 @@ class NullNode extends Node {
    * @see PersistentObject::getOID()
    */
   public function getOID() {
-    return new ObjectId($this->_type, null);
+    return new ObjectId($this->getType(), null);
   }
 }
 ?>

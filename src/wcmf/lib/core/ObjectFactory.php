@@ -23,14 +23,14 @@ use wcmf\lib\config\ConfigurationException;
  */
 class ObjectFactory {
 
-  private static $_factory = null;
+  private static $factory = null;
 
   /**
    * Configure the factory.
    * @param $factory Factory instance that actually does the instantiation.
    */
   public static function configure(Factory $factory) {
-    self::$_factory = $factory;
+    self::$factory = $factory;
   }
 
   /**
@@ -38,7 +38,7 @@ class ObjectFactory {
    */
   public static function getInstance($name, $dynamicConfiguration=array()) {
     self::checkConfig();
-    return self::$_factory->getInstance($name, $dynamicConfiguration);
+    return self::$factory->getInstance($name, $dynamicConfiguration);
   }
 
   /**
@@ -46,7 +46,7 @@ class ObjectFactory {
    */
   public static function getClassInstance($class, $dynamicConfiguration=array()) {
     self::checkConfig();
-    return self::$_factory->getClassInstance($class, $dynamicConfiguration);
+    return self::$factory->getClassInstance($class, $dynamicConfiguration);
   }
 
   /**
@@ -54,7 +54,7 @@ class ObjectFactory {
    */
   public static function registerInstance($name, $instance) {
     self::checkConfig();
-    self::$_factory->registerInstance($name, $instance);
+    self::$factory->registerInstance($name, $instance);
   }
 
   /**
@@ -62,7 +62,7 @@ class ObjectFactory {
    */
   public function addInterfaces($interfaces) {
     self::checkConfig();
-    self::$_factory->addInterfaces($interfaces);
+    self::$factory->addInterfaces($interfaces);
   }
 
   /**
@@ -70,14 +70,14 @@ class ObjectFactory {
    */
   public static function clear() {
     self::checkConfig();
-    self::$_factory->clear();
+    self::$factory->clear();
   }
 
   /**
    * Check if the configuration is valid.
    */
   private static function checkConfig() {
-    if (self::$_factory == null) {
+    if (self::$factory == null) {
       throw new ConfigurationException('No Factory instance provided. Do this by calling the configure() method.');
     }
   }

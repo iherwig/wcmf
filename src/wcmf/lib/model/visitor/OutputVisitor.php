@@ -23,7 +23,7 @@ use wcmf\lib\model\visitor\Visitor;
  */
 class OutputVisitor extends Visitor {
 
-  private $_outputStrategy = null;
+  private $outputStrategy = null;
 
   /**
    * Constructor.
@@ -31,10 +31,10 @@ class OutputVisitor extends Visitor {
    */
   public function __construct($outputStrategy=null) {
     if (get_class($outputStrategy) != '') {
-      $this->_outputStrategy = $outputStrategy;
+      $this->outputStrategy = $outputStrategy;
     }
     else {
-      $this->_outputStrategy = new DefaultOutputStrategy();
+      $this->outputStrategy = new DefaultOutputStrategy();
     }
   }
 
@@ -43,7 +43,7 @@ class OutputVisitor extends Visitor {
    * @param $strategy A reference to an OutputStrategy to use.
    */
   public function setOutputStrategy($strategy) {
-    $this->_outputStrategy = $strategy;
+    $this->outputStrategy = $strategy;
   }
 
   /**
@@ -52,21 +52,21 @@ class OutputVisitor extends Visitor {
    * @param $obj A reference to the current object.
    */
   public function visit($obj) {
-    $this->_outputStrategy->writeObject($obj);
+    $this->outputStrategy->writeObject($obj);
   }
 
   /**
    * Output the document header.
    */
   public function doPreVisit() {
-    $this->_outputStrategy->writeHeader();
+    $this->outputStrategy->writeHeader();
   }
 
   /**
    * Output the document footer.
    */
   public function doPostVisit() {
-    $this->_outputStrategy->writeFooter();
+    $this->outputStrategy->writeFooter();
   }
 }
 ?>

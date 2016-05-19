@@ -47,8 +47,8 @@ use wcmf\lib\security\PermissionManager;
  */
 class SearchController extends ListController {
 
-  private $_hits = array();
-  private $_search = null;
+  private $hits = array();
+  private $search = null;
 
   /**
    * Constructor
@@ -71,7 +71,7 @@ class SearchController extends ListController {
           Search $search) {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
-    $this->_search = $search;
+    $this->search = $search;
   }
 
   /**
@@ -89,10 +89,10 @@ class SearchController extends ListController {
     $permissionManager = $this->getPermissionManager();
 
     // search with searchterm (even if empty) if no query is given
-    $this->_hits = $this->_search->find($queryCondition, $pagingInfo);
+    $this->hits = $this->search->find($queryCondition, $pagingInfo);
 
     $oids = array();
-    foreach ($this->_hits as $hit) {
+    foreach ($this->hits as $hit) {
       $oids[] = ObjectId::parse($hit['oid']);
     }
 
@@ -118,7 +118,7 @@ class SearchController extends ListController {
     $persistenceFacade = $this->getPersistenceFacade();
     for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
       $curNode = $nodes[$i];
-      $hit = $this->_hits[$curNode->getOID()->__toString()];
+      $hit = $this->hits[$curNode->getOID()->__toString()];
       $curNode->setValue('_displayValue', $curNode->getDisplayValue(), true);
       $curNode->setValue('_summary', "... ".$hit['summary']." ...", true);
       $curNode->setValue('_type', $persistenceFacade->getSimpleType($curNode->getType()), true);

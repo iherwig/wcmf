@@ -45,17 +45,17 @@ use wcmf\lib\presentation\Controller;
  */
 class SaveController extends Controller {
 
-  private $_fileUtil = null;
+  private $fileUtil = null;
 
   /**
    * Get the FileUtil instance
    * @return FileUtil
    */
   protected function getFileUtil() {
-    if ($this->_fileUtil == null) {
-      $this->_fileUtil = new FileUtil();
+    if ($this->fileUtil == null) {
+      $this->fileUtil = new FileUtil();
     }
-    return $this->_fileUtil;
+    return $this->fileUtil;
   }
 
   /**

@@ -62,7 +62,7 @@ use wcmf\lib\security\PermissionManager;
  */
 class ConcurrencyController extends Controller {
 
-  private $_concurrencyManager = null;
+  private $concurrencyManager = null;
 
   /**
    * Constructor
@@ -85,7 +85,7 @@ class ConcurrencyController extends Controller {
           ConcurrencyManager $concurrencyManager) {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
-    $this->_concurrencyManager = $concurrencyManager;
+    $this->concurrencyManager = $concurrencyManager;
   }
 
   /**
@@ -120,12 +120,12 @@ class ConcurrencyController extends Controller {
     // process actions
     try {
       if ($request->getAction() == 'lock') {
-        $this->_concurrencyManager->aquireLock($oid, $lockType);
-        $lock = $this->_concurrencyManager->getLock($oid);
+        $this->concurrencyManager->aquireLock($oid, $lockType);
+        $lock = $this->concurrencyManager->getLock($oid);
         $response->setValue('type', $lock->getType());
       }
       elseif ($request->getAction() == 'unlock') {
-        $this->_concurrencyManager->releaseLock($oid, $lockType);
+        $this->concurrencyManager->releaseLock($oid, $lockType);
       }
     }
     catch (PessimisticLockException $ex) {

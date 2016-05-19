@@ -37,18 +37,18 @@ use wcmf\lib\security\PermissionManager;
  */
 abstract class AbstractMapper implements PersistenceMapper {
 
-  private $_logStrategy = null;
+  private $logStrategy = null;
 
-  private $_attributeNames = array();
-  private $_relationNames = array();
+  private $attributeNames = array();
+  private $relationNames = array();
 
-  private static $_logger = null;
+  private static $logger = null;
 
-  protected $_persistenceFacade = null;
-  protected $_permissionManager = null;
-  protected $_concurrencyManager = null;
-  protected $_eventManager = null;
-  protected $_message = null;
+  protected $persistenceFacade = null;
+  protected $permissionManager = null;
+  protected $concurrencyManager = null;
+  protected $eventManager = null;
+  protected $message = null;
 
   /**
    * Constructor
@@ -63,14 +63,14 @@ abstract class AbstractMapper implements PersistenceMapper {
           ConcurrencyManager $concurrencyManager,
           EventManager $eventManager,
           Message $message) {
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
-    $this->_persistenceFacade = $persistenceFacade;
-    $this->_permissionManager = $permissionManager;
-    $this->_concurrencyManager = $concurrencyManager;
-    $this->_eventManager = $eventManager;
-    $this->_message = $message;
+    $this->persistenceFacade = $persistenceFacade;
+    $this->permissionManager = $permissionManager;
+    $this->concurrencyManager = $concurrencyManager;
+    $this->eventManager = $eventManager;
+    $this->message = $message;
   }
 
   /**
@@ -78,20 +78,20 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @param $logStrategy
    */
   public function setLogStrategy(OutputStrategy $logStrategy) {
-    $this->_logStrategy = $logStrategy;
+    $this->logStrategy = $logStrategy;
   }
 
   /**
    * @see PersistenceMapper::hasRelation()
    */
   public function hasRelation($roleName) {
-    if (isset($this->_relationNames[$roleName])) {
+    if (isset($this->relationNames[$roleName])) {
       return true;
     }
     $relations = $this->getRelations();
     foreach ($relations as $relation) {
       if ($relation->getOtherRole() == $roleName) {
-        $this->_relationNames[$roleName] = true;
+        $this->relationNames[$roleName] = true;
         return true;
       }
     }
@@ -102,13 +102,13 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @see PersistenceMapper::hasAttribute()
    */
   public function hasAttribute($name) {
-    if (isset($this->_attributeNames[$name])) {
+    if (isset($this->attributeNames[$name])) {
       return true;
     }
     $attributes = $this->getAttributes();
     foreach ($attributes as $attribute) {
       if ($attribute->getName() == $name) {
-        $this->_attributeNames[$name] = true;
+        $this->attributeNames[$name] = true;
         return true;
       }
     }
@@ -186,26 +186,26 @@ abstract class AbstractMapper implements PersistenceMapper {
     }
 
     // validate object
-    $object->validateValues($this->_message);
+    $object->validateValues($this->message);
 
     // check concurrency
-    $this->_concurrencyManager->checkPersist($object);
+    $this->concurrencyManager->checkPersist($object);
 
     // save object
     $this->saveImpl($object);
 
     // update lock
-    $this->_concurrencyManager->updateLock($oid, $object);
+    $this->concurrencyManager->updateLock($oid, $object);
 
     // call lifecycle callback
     if ($isDirty) {
       $object->afterUpdate();
-      $this->_eventManager->dispatch(PersistenceEvent::NAME,
+      $this->eventManager->dispatch(PersistenceEvent::NAME,
               new PersistenceEvent($object, PersistenceAction::UPDATE));
     }
     elseif ($isNew) {
       $object->afterInsert();
-      $this->_eventManager->dispatch(PersistenceEvent::NAME,
+      $this->eventManager->dispatch(PersistenceEvent::NAME,
               new PersistenceEvent($object, PersistenceAction::CREATE));
     }
   }
@@ -227,18 +227,18 @@ abstract class AbstractMapper implements PersistenceMapper {
     $object->beforeDelete();
 
     // check concurrency
-    $this->_concurrencyManager->checkPersist($object);
+    $this->concurrencyManager->checkPersist($object);
 
     // delete object
     $result = $this->deleteImpl($object);
     if ($result === true) {
       // call lifecycle callback
       $object->afterDelete();
-      $this->_eventManager->dispatch(PersistenceEvent::NAME,
+      $this->eventManager->dispatch(PersistenceEvent::NAME,
               new PersistenceEvent($object, PersistenceAction::DELETE));
 
       // release any locks on the object
-      $this->_concurrencyManager->releaseLocks($oid);
+      $this->concurrencyManager->releaseLocks($oid);
     }
     return $result;
   }
@@ -248,7 +248,7 @@ abstract class AbstractMapper implements PersistenceMapper {
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $oids = $this->getOIDsImpl($type, $criteria, $orderby, $pagingInfo);
-    $tx = $this->_persistenceFacade->getTransaction();
+    $tx = $this->persistenceFacade->getTransaction();
 
     // remove oids for which the user is not authorized
     $result = array();
@@ -270,7 +270,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null) {
     $objects = $this->loadObjectsImpl($type, $buildDepth, $criteria, $orderby, $pagingInfo);
-    $tx = $this->_persistenceFacade->getTransaction();
+    $tx = $this->persistenceFacade->getTransaction();
 
     // remove objects for which the user is not authorized
     $result = array();
@@ -296,7 +296,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   public function loadRelation(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null) {
     $relatedObjects = $this->loadRelationImpl($objects, $role, $buildDepth, $criteria, $orderby, $pagingInfo);
-    $tx = $this->_persistenceFacade->getTransaction();
+    $tx = $this->persistenceFacade->getTransaction();
 
     // remove objects for which the user is not authorized
     if ($relatedObjects != null) {
@@ -324,8 +324,8 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @param $obj PersistentObject instance
    */
   protected function logAction(PersistentObject $obj) {
-    if ($this->_logStrategy) {
-      $this->_logStrategy->writeObject($obj);
+    if ($this->logStrategy) {
+      $this->logStrategy->writeObject($obj);
     }
   }
 
@@ -336,7 +336,7 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @return Boolean depending on success of authorization
    */
   protected function checkAuthorization($resource, $action) {
-    return $this->_permissionManager->authorize($resource, '', $action);
+    return $this->permissionManager->authorize($resource, '', $action);
   }
 
   /**
@@ -347,9 +347,9 @@ abstract class AbstractMapper implements PersistenceMapper {
    */
   protected function authorizationFailedError($resource, $action) {
     // when reading only log the error to avoid errors on the display
-    $msg = $this->_message->getText("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
+    $msg = $this->message->getText("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
     if ($action == PersistenceAction::READ) {
-      self::$_logger->error($msg."\n".ErrorHandler::getStackTrace());
+      self::$logger->error($msg."\n".ErrorHandler::getStackTrace());
     }
     else {
       throw new AuthorizationException($msg);

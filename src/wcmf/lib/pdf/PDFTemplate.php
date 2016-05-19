@@ -41,11 +41,11 @@ use wcmf\lib\pdf\PDFPage;
  */
 class PDFTemplate {
 
-  var $_pdf = null;
-  var $_tpl = null;
-  var $_pages = array();
-  var $_cycle = false;
-  var $_data = null;
+  private $pdf = null;
+  private $tpl = null;
+  private $pages = array();
+  private $cycle = false;
+  private $data = null;
 
   /**
    * Constructor
@@ -53,10 +53,10 @@ class PDFTemplate {
    */
   public function __construct($pdf) {
     if (!isset($pdf) || (!($pdf instanceof PDF))) {
-      $this->_pdf = new PDF();
+      $this->pdf = new PDF();
     }
     else {
-      $this->_pdf = $pdf;
+      $this->pdf = $pdf;
     }
   }
 
@@ -65,7 +65,7 @@ class PDFTemplate {
    * @param $filename The name of the file
    */
   public function setTemplate($filename) {
-    $this->_tpl = $filename;
+    $this->tpl = $filename;
   }
 
   /**
@@ -79,9 +79,9 @@ class PDFTemplate {
    * @param $data An optional data object, that will passed to the PDFPage::render method (default: _null_)
    */
   public function setPages($pages, $cycle=false, $data=null) {
-    $this->_pages = $pages;
-    $this->_cycle = $cycle;
-    $this->_data = &$data;
+    $this->pages = $pages;
+    $this->cycle = $cycle;
+    $this->data = &$data;
   }
 
   /**
@@ -93,37 +93,37 @@ class PDFTemplate {
    */
   public function output($name='', $dest='') {
 
-    if ($this->_tpl == null) {
+    if ($this->tpl == null) {
       throw new \RuntimeException("No PDF template provided. Use PDFTemplate::setTemplate.");
     }
 
     $pageIndex = 0;
-    $numPages = $this->_pdf->setSourceFile($this->_tpl);
+    $numPages = $this->pdf->setSourceFile($this->tpl);
     for ($i=1; $i<=$numPages; $i++) {
       // add each page
-      $tplIndex = $this->_pdf->ImportPage($i);
-      $size = $this->_pdf->getTemplatesize($tplIndex);
-      $this->_pdf->AddPage($size['h'] > $size['w'] ? 'P' : 'L');
+      $tplIndex = $this->pdf->ImportPage($i);
+      $size = $this->pdf->getTemplatesize($tplIndex);
+      $this->pdf->AddPage($size['h'] > $size['w'] ? 'P' : 'L');
 
       // render the PDFPage onto the template page
-      if ($pageIndex < sizeof($this->_pages)) {
-        $curPage = $this->_pages[$pageIndex];
+      if ($pageIndex < sizeof($this->pages)) {
+        $curPage = $this->pages[$pageIndex];
         if ($curPage instanceof PDFPage) {
-          $this->_pdf->startPage();
-          $curPage->render($this->_pdf, $i, $this->_data);
-          $this->_pdf->endPage();
+          $this->pdf->startPage();
+          $curPage->render($this->pdf, $i, $this->data);
+          $this->pdf->endPage();
         }
       }
       $pageIndex++;
 
       // cycle pages if required
-      if ($this->_cycle && $pageIndex == sizeof($this->_pages)) {
+      if ($this->cycle && $pageIndex == sizeof($this->pages)) {
         $pageIndex = 0;
       }
     }
 
     // output the pdf
-    return $this->_pdf->Output($name, $dest);
+    return $this->pdf->Output($name, $dest);
   }
 }
 ?>

@@ -32,13 +32,13 @@ use wcmf\lib\io\FileUtil;
  */
 class FileMessage implements Message {
 
-  private $_localeDir;
-  private $_language;
+  private $localeDir;
+  private $language;
 
   /**
    * Cache for loaded translations
    */
-  private $_translations = array();
+  private $translations = array();
 
   /**
    * Constructor
@@ -46,12 +46,12 @@ class FileMessage implements Message {
    * @param $language
    */
   public function __construct($localeDir, $language='') {
-    $this->_localeDir = FileUtil::realpath(WCMF_BASE.$localeDir).'/';
+    $this->localeDir = FileUtil::realpath(WCMF_BASE.$localeDir).'/';
     if (strlen($language) > 0) {
-      $this->_language = $language;
+      $this->language = $language;
     }
     else if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-      $this->_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+      $this->language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
     }
   }
 
@@ -60,7 +60,7 @@ class FileMessage implements Message {
    */
   public function getText($message, $parameters=null, $lang='') {
     // get the translations
-    $lang = strlen($lang) == 0 ? $this->_language : $lang;
+    $lang = strlen($lang) == 0 ? $this->language : $lang;
     $translations = $this->getTranslations($lang);
     $localizedMessage = $message;
     if (isset($translations[$message]) && strlen($translations[$message]) > 0) {
@@ -95,18 +95,18 @@ class FileMessage implements Message {
    * @return The translations as associative array
    */
   private function getTranslations($lang) {
-    if (!isset($this->_translations[$lang])) {
-      $messageFile = $this->_localeDir."/messages_".$lang.".php";
+    if (!isset($this->translations[$lang])) {
+      $messageFile = $this->localeDir."/messages_".$lang.".php";
       if (file_exists($messageFile)) {
         require_once($messageFile);
         // store for later reference
-        $this->_translations[$lang] = ${"messages_$lang"};
+        $this->translations[$lang] = ${"messages_$lang"};
       }
       else {
-        $this->_translations[$lang] = array();
+        $this->translations[$lang] = array();
       }
     }
-    return $this->_translations[$lang];
+    return $this->translations[$lang];
   }
 }
 ?>

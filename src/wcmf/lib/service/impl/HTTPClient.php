@@ -34,10 +34,12 @@ if (!class_exists('Zend_Http_Client')) {
  */
 class HTTPClient implements RemotingClient {
 
-  private static $_logger = null;
+  private static $logger = null;
 
-  private $_client = null;
-  private $_user = null;
+  private $client = null;
+  private $user = null;
+  private $sessionId = null;
+  private $serverUrl = null;
 
   /**
    * Constructor
@@ -45,17 +47,18 @@ class HTTPClient implements RemotingClient {
    * @param $user The remote user instance.
    */
   public function __construct($serverUrl, $user) {
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
-    $this->_client = new Zend_Http_Client($serverUrl, array(
+    $this->serverUrl = $serverUrl;
+    $this->client = new Zend_Http_Client($this->serverUrl, array(
         'keepalive' => true,
         'timeout' => 3600
       )
     );
-    $this->_client->setMethod(Zend_Http_Client::POST);
-    $this->_client->setCookieJar();
-    $this->_user = $user;
+    $this->client->setMethod(Zend_Http_Client::POST);
+    $this->client->setCookieJar();
+    $this->user = $user;
   }
 
   /**
@@ -76,25 +79,25 @@ class HTTPClient implements RemotingClient {
    */
   protected function doRemoteCall(Request $request, $isLogin) {
     // initially login, if no cookie is set
-    $cookyJar = $this->_client->getCookieJar();
+    $cookyJar = $this->client->getCookieJar();
     if (!$isLogin && sizeof($cookyJar->getAllCookies()) == 0) {
       $response = $this->doLogin();
     }
 
     // do the request
     $request->setResponseFormat('json');
-    $this->_client->resetParameters();
-    $this->_client->setParameterPost('controller', $request->getSender());
-    $this->_client->setParameterPost('context', $request->getContext());
-    $this->_client->setParameterPost('action', $request->getAction());
-    $this->_client->setParameterPost('request_format', $request->getFormat());
-    $this->_client->setParameterPost('response_format', $request->getResponseFormat());
-    $this->_client->setParameterPost($request->getValues());
+    $this->client->resetParameters();
+    $this->client->setParameterPost('controller', $request->getSender());
+    $this->client->setParameterPost('context', $request->getContext());
+    $this->client->setParameterPost('action', $request->getAction());
+    $this->client->setParameterPost('request_format', $request->getFormat());
+    $this->client->setParameterPost('response_format', $request->getResponseFormat());
+    $this->client->setParameterPost($request->getValues());
     try {
-      $httpResponse = $this->_client->request();
+      $httpResponse = $this->client->request();
     }
     catch (\Exception $ex) {
-      self::$_logger->error("Error in remote call to ".$url.":\n".$ex, __FILE__);
+      self::$logger->error("Error in remote call to ".$url.":\n".$ex, __FILE__);
       throw new \RuntimeException("Error in remote call to ".$url.": ".$ex->getMessage());
     }
 
@@ -113,8 +116,8 @@ class HTTPClient implements RemotingClient {
       if (strpos('Authorization failed', $errorMsg) === 0 && !$isLogin) {
         $this->doLogin();
       }
-      $url = $this->_client->getUri();
-      self::$_logger->error("Error in remote call to ".$url.": ".$errorMsg."\n".$response->toString(), __FILE__);
+      $url = $this->client->getUri();
+      self::$logger->error("Error in remote call to ".$url.": ".$errorMsg."\n".$response->toString(), __FILE__);
       throw new \RuntimeException("Error in remote call: $errorMsg");
     }
     return $response;
@@ -126,18 +129,18 @@ class HTTPClient implements RemotingClient {
    * @return True on success
    */
   protected function doLogin() {
-    if ($this->_user) {
+    if ($this->user) {
       $request = ObjectFactory::getInstance('request');
       $request->setAction('login');
       $request->setValues(
         array(
-          'login' => $this->_user['login'],
-          'password' => $this->_user['password']
+          'login' => $this->user['login'],
+          'password' => $this->user['password']
         )
       );
       $response = $this->doRemoteCall($request, true);
       if ($response->getValue('success')) {
-        $this->_sessionId = $response->getValue('sid');
+        $this->sessionId = $response->getValue('sid');
         return true;
       }
     }
@@ -152,8 +155,8 @@ class HTTPClient implements RemotingClient {
    */
   protected function handleError($response) {
     $errorMsg = $response->getValue('errorMsg');
-    self::$_logger->error("Error in remote call to ".$this->_serverBase.": ".$errorMsg."\n".$response->toString(), __FILE__);
-    throw new \RuntimeException("Error in remote call to ".$this->_serverBase.": ".$errorMsg);
+    self::$logger->error("Error in remote call to ".$this->serverUrl.": ".$errorMsg."\n".$response->toString(), __FILE__);
+    throw new \RuntimeException("Error in remote call to ".$this->serverUrl.": ".$errorMsg);
   }
 }
 ?>

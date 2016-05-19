@@ -24,15 +24,15 @@ use wcmf\lib\io\FileUtil;
  */
 class FileCache implements Cache {
 
-  private $_cacheDir = null;
-  private $_cache = null;
-  private $_fileUtil = null;
+  private $cacheDir = null;
+  private $cache = null;
+  private $fileUtil = null;
 
   /**
    * Constructor
    */
   public function __construct() {
-    $this->_fileUtil = new FileUtil();
+    $this->fileUtil = new FileUtil();
   }
 
   /**
@@ -41,7 +41,7 @@ class FileCache implements Cache {
    * @param $cacheDir String
    */
   public function setCacheDir($cacheDir) {
-    $this->_cacheDir = WCMF_BASE.$cacheDir;
+    $this->cacheDir = WCMF_BASE.$cacheDir;
   }
 
   /**
@@ -49,7 +49,7 @@ class FileCache implements Cache {
    */
   public function exists($section, $key) {
     $this->initializeCache($section);
-    return isset($this->_cache[$section][$key]);
+    return isset($this->cache[$section][$key]);
   }
 
   /**
@@ -57,8 +57,8 @@ class FileCache implements Cache {
    */
   public function get($section, $key) {
     $this->initializeCache($section);
-    if (isset($this->_cache[$section][$key])) {
-      return $this->_cache[$section][$key];
+    if (isset($this->cache[$section][$key])) {
+      return $this->cache[$section][$key];
     }
     return null;
   }
@@ -68,7 +68,7 @@ class FileCache implements Cache {
    */
   public function put($section, $key, $value) {
     $this->initializeCache($section);
-    $this->_cache[$section][$key] = $value;
+    $this->cache[$section][$key] = $value;
     $this->saveCache($section);
   }
 
@@ -82,11 +82,11 @@ class FileCache implements Cache {
       $directory = $cachBaseDir.dirname($section);
       if (is_dir($directory)) {
         $pattern = '/^'.preg_replace('/\*$/', '', basename($section)).'/';
-        $files = $this->_fileUtil->getFiles($directory, $pattern, true, true);
+        $files = $this->fileUtil->getFiles($directory, $pattern, true, true);
         foreach ($files as $file) {
           $this->clear(str_replace($cachBaseDir, '', $file));
         }
-        $directories = $this->_fileUtil->getDirectories($directory, $pattern, true, true);
+        $directories = $this->fileUtil->getDirectories($directory, $pattern, true, true);
         foreach ($directories as $directory) {
           $this->clear(str_replace($cachBaseDir, '', $directory).'/*');
           @rmdir($directory);
@@ -96,7 +96,7 @@ class FileCache implements Cache {
     else {
       $file = $this->getCacheFile($section);
       @unlink($file);
-      unset($this->_cache[$section]);
+      unset($this->cache[$section]);
     }
   }
 
@@ -106,9 +106,9 @@ class FileCache implements Cache {
   public function clearAll() {
     $cacheDir = $this->getCacheDir();
     if (is_dir($cacheDir)) {
-      $this->_fileUtil->emptyDir($cacheDir);
+      $this->fileUtil->emptyDir($cacheDir);
     }
-    $this->_cache = null;
+    $this->cache = null;
   }
 
   /**
@@ -116,13 +116,13 @@ class FileCache implements Cache {
    * @param $section The caching section
    */
   private function initializeCache($section) {
-    if (!isset($this->_cache[$section])) {
+    if (!isset($this->cache[$section])) {
       $file = $this->getCacheFile($section);
       if (file_exists($file)) {
-        $this->_cache[$section] = unserialize(file_get_contents($file));
+        $this->cache[$section] = unserialize(file_get_contents($file));
       }
       else {
-        $this->_cache[$section] = array();
+        $this->cache[$section] = array();
       }
     }
   }
@@ -132,9 +132,9 @@ class FileCache implements Cache {
    * @param $section The caching section
    */
   private function saveCache($section) {
-    $content = serialize($this->_cache[$section]);
+    $content = serialize($this->cache[$section]);
     $file = $this->getCacheFile($section);
-    $this->_fileUtil->mkdirRec(dirname($file));
+    $this->fileUtil->mkdirRec(dirname($file));
     $fh = fopen($file, "w");
     if ($fh !== false) {
       fwrite($fh, $content);
@@ -150,10 +150,10 @@ class FileCache implements Cache {
    * @return String
    */
   private function getCacheDir() {
-    if ($this->_cacheDir == null) {
-      $this->_cacheDir = session_save_path().DIRECTORY_SEPARATOR;
+    if ($this->cacheDir == null) {
+      $this->cacheDir = session_save_path().DIRECTORY_SEPARATOR;
     }
-    return $this->_cacheDir;
+    return $this->cacheDir;
   }
 
   /**

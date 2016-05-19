@@ -20,10 +20,11 @@ class Lock implements \Serializable {
   const TYPE_OPTIMISTIC = 'optimistic';
   const TYPE_PESSIMISTIC = 'pessimistic'; // pessimistic write lock
 
-  private $_objectId = null;
-  private $_login = "";
-  private $_created = "";
-  private $_currentState = null;
+  private $type = null;
+  private $objectId = null;
+  private $login = "";
+  private $created = "";
+  private $currentState = null;
 
   /**
    * Creates a lock on a given object.
@@ -33,14 +34,14 @@ class Lock implements \Serializable {
    * @param $created Creation date of the lock. If omitted the current date will be taken.
    */
   public function __construct($type, $oid, $login, $created='') {
-    $this->_type = $type;
-    $this->_objectId = $oid;
-    $this->_login = $login;
+    $this->type = $type;
+    $this->objectId = $oid;
+    $this->login = $login;
     if ($created == '') {
-      $this->_created = date("Y-m-d H:i:s");
+      $this->created = date("Y-m-d H:i:s");
     }
     else {
-      $this->_created = $created;
+      $this->created = $created;
     }
   }
 
@@ -49,7 +50,7 @@ class Lock implements \Serializable {
    * @return One of the Lock::Type constants.
    */
   public function getType() {
-    return $this->_type;
+    return $this->type;
   }
 
   /**
@@ -57,7 +58,7 @@ class Lock implements \Serializable {
    * @return ObjectId of the locked object.
    */
   public function getObjectId() {
-    return $this->_objectId;
+    return $this->objectId;
   }
 
   /**
@@ -65,7 +66,7 @@ class Lock implements \Serializable {
    * @return The login of the user.
    */
   public function getLogin() {
-    return $this->_login;
+    return $this->login;
   }
 
   /**
@@ -73,7 +74,7 @@ class Lock implements \Serializable {
    * @return The creation date/time of the lock.
    */
   public function getCreated() {
-    return $this->_created;
+    return $this->created;
   }
 
   /**
@@ -82,7 +83,7 @@ class Lock implements \Serializable {
    * @param $currentState PersistentObject instance or null
    */
   public function setCurrentState($currentState) {
-    $this->_currentState = serialize($currentState);
+    $this->currentState = serialize($currentState);
   }
 
   /**
@@ -91,20 +92,20 @@ class Lock implements \Serializable {
    * @return PersistentObject instance or null
    */
   public function getCurrentState() {
-    return unserialize($this->_currentState);
+    return unserialize($this->currentState);
   }
 
   public function serialize() {
-    return serialize(array(serialize($this->_objectId),
-        $this->_login, $this->_created, serialize($this->_currentState)));
+    return serialize(array(serialize($this->objectId),
+        $this->login, $this->created, serialize($this->currentState)));
   }
 
   public function unserialize($data) {
     $parts = unserialize($data);
-    $this->_objectId = unserialize($parts[0]);
-    $this->_login = $parts[1];
-    $this->_created = $parts[2];
-    $this->_currentState = unserialize($parts[3]);
+    $this->objectId = unserialize($parts[0]);
+    $this->login = $parts[1];
+    $this->created = $parts[2];
+    $this->currentState = unserialize($parts[3]);
   }
 }
 ?>

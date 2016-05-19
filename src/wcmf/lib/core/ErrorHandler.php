@@ -20,15 +20,15 @@ class ErrorHandler {
 
   private static $FATAL_ERRORS = array(E_USER_ERROR => '', E_RECOVERABLE_ERROR => '');
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor.
    */
   public function __construct() {
     set_error_handler(array($this, 'handleError'));
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -68,7 +68,7 @@ class ErrorHandler {
     // -- NON-FATAL ERROR/WARNING/NOTICE
     else if($errorIsEnabled) {
       $info = $errstr." in ".$errfile." on line ".$errline;
-      self::$_logger->logByErrorType($errno, $info);
+      self::$logger->logByErrorType($errno, $info);
     }
   }
 }

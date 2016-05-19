@@ -22,14 +22,14 @@ use wcmf\lib\persistence\PersistentObject;
  */
 class DefaultOutputStrategy implements OutputStrategy {
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
    */
   public function __construct() {
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -37,8 +37,8 @@ class DefaultOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
-    if (self::$_logger->isInfoEnabled()) {
-      self::$_logger->info("DOCUMENT START.");
+    if (self::$logger->isInfoEnabled()) {
+      self::$logger->info("DOCUMENT START.");
     }
   }
 
@@ -46,8 +46,8 @@ class DefaultOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
-    if (self::$_logger->isInfoEnabled()) {
-      self::$_logger->info("DOCUMENT END.");
+    if (self::$logger->isInfoEnabled()) {
+      self::$logger->info("DOCUMENT END.");
     }
   }
 
@@ -55,8 +55,8 @@ class DefaultOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    if (self::$_logger->isInfoEnabled()) {
-      self::$_logger->info($obj->toString());
+    if (self::$logger->isInfoEnabled()) {
+      self::$logger->info($obj->toString());
     }
   }
 }

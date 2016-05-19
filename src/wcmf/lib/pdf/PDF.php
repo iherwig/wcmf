@@ -28,8 +28,8 @@ if (!class_exists('FPDI')) {
  */
 class PDF extends FPDI {
 
-  var $_pageStarted = false;
-  var $_pageEnded = false;
+  private $pageStarted = false;
+  private $pageEnded = false;
 
   /**
    * Overridden to set the template on the page
@@ -43,16 +43,16 @@ class PDF extends FPDI {
    * Call this method when rendering a new page
    */
   public function startPage() {
-    $this->_pageStarted = true;
-    $this->_pageEnded = false;
+    $this->pageStarted = true;
+    $this->pageEnded = false;
   }
 
   /**
    * Call this method when rendering a page finished
    */
   public function endPage() {
-    $this->_pageEnded = true;
-    $this->_pageStarted = false;
+    $this->pageEnded = true;
+    $this->pageStarted = false;
   }
 
   /**
@@ -60,7 +60,7 @@ class PDF extends FPDI {
    * @return Boolean
    */
   public function isPageStarted() {
-    return $this->_pageStarted;
+    return $this->pageStarted;
   }
 
   /**
@@ -68,7 +68,7 @@ class PDF extends FPDI {
    * @return Boolean
    */
   public function isPageEnded() {
-    return $this->_pageEnded;
+    return $this->pageEnded;
   }
 
   /**

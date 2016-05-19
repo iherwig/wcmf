@@ -32,11 +32,11 @@ use wcmf\lib\persistence\ReferenceDescription;
  */
 class DefaultConcurrencyManager implements ConcurrencyManager {
 
-  private $_persistenceFacade = null;
-  private $_lockHandler = null;
-  private $_session = null;
+  private $persistenceFacade = null;
+  private $lockHandler = null;
+  private $session = null;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
@@ -47,11 +47,11 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
   public function __construct(PersistenceFacade $persistenceFacade,
           LockHandler $lockHandler,
           Session $session) {
-    $this->_persistenceFacade = $persistenceFacade;
-    $this->_lockHandler = $lockHandler;
-    $this->_session = $session;
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    $this->persistenceFacade = $persistenceFacade;
+    $this->lockHandler = $lockHandler;
+    $this->session = $session;
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -66,10 +66,10 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
 
     // load the current state if not provided
     if ($type == Lock::TYPE_OPTIMISTIC && $currentState == null) {
-      $currentState = $this->_persistenceFacade->load($oid, BuildDepth::SINGLE);
+      $currentState = $this->persistenceFacade->load($oid, BuildDepth::SINGLE);
     }
 
-    $this->_lockHandler->aquireLock($oid, $type, $currentState);
+    $this->lockHandler->aquireLock($oid, $type, $currentState);
   }
 
   /**
@@ -79,7 +79,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
     if (!ObjectId::isValid($oid)) {
       throw new IllegalArgumentException("Invalid object id given");
     }
-    $this->_lockHandler->releaseLock($oid, $type);
+    $this->lockHandler->releaseLock($oid, $type);
   }
 
   /**
@@ -89,21 +89,21 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
     if (!ObjectId::isValid($oid)) {
       throw new IllegalArgumentException("Invalid object id given");
     }
-    $this->_lockHandler->releaseLocks($oid);
+    $this->lockHandler->releaseLocks($oid);
   }
 
   /**
    * @see ConcurrencyManager::releaseAllLocks()
    */
   public function releaseAllLocks() {
-    $this->_lockHandler->releaseAllLocks();
+    $this->lockHandler->releaseAllLocks();
   }
 
   /**
    * @see ConcurrencyManager::getLock()
    */
   public function getLock(ObjectId $oid) {
-    return $this->_lockHandler->getLock($oid);
+    return $this->lockHandler->getLock($oid);
   }
 
   /**
@@ -111,14 +111,14 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
    */
   public function checkPersist(PersistentObject $object) {
     $oid = $object->getOID();
-    $lock = $this->_lockHandler->getLock($oid);
+    $lock = $this->lockHandler->getLock($oid);
     if ($lock != null) {
       $type = $lock->getType();
 
       // if there is a pessimistic lock on the object and it's not
       // owned by the current user, throw a PessimisticLockException
       if ($type == Lock::TYPE_PESSIMISTIC) {
-        $authUserLogin = $this->_session->getAuthUser();
+        $authUserLogin = $this->session->getAuthUser();
         if ($lock->getLogin() != $authUserLogin) {
             throw new PessimisticLockException($lock);
         }
@@ -130,15 +130,15 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
         $originalState = $lock->getCurrentState();
         // temporarily detach the object from the transaction in order to get
         // the latest version from the store
-        $transaction = $this->_persistenceFacade->getTransaction();
+        $transaction = $this->persistenceFacade->getTransaction();
         $transaction->detach($object->getOID());
-        $currentState = $this->_persistenceFacade->load($oid, BuildDepth::SINGLE);
+        $currentState = $this->persistenceFacade->load($oid, BuildDepth::SINGLE);
         // check for deletion
         if ($currentState == null) {
           throw new OptimisticLockException(null);
         }
         // check for modifications
-        $mapper = $this->_persistenceFacade->getMapper($object->getType());
+        $mapper = $this->persistenceFacade->getMapper($object->getType());
         $it = new NodeValueIterator($originalState, false);
         foreach($it as $valueName => $originalValue) {
           $attribute = $mapper->getAttribute($valueName);
@@ -146,8 +146,8 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
           if (!($attribute instanceof ReferenceDescription)) {
             $currentValue = $currentState->getValue($valueName);
             if (strval($currentValue) != strval($originalValue)) {
-              if (self::$_logger->isDebugEnabled()) {
-                self::$_logger->debug("Current state is different to original state: ".$object->getOID()."-".$valueName.": current[".
+              if (self::$logger->isDebugEnabled()) {
+                self::$logger->debug("Current state is different to original state: ".$object->getOID()."-".$valueName.": current[".
                         serialize($currentValue)."], original[".serialize($originalValue)."]");
               }
               throw new OptimisticLockException($currentState);
@@ -170,7 +170,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
    * @see ConcurrencyManager::updateLock()
    */
   public function updateLock(ObjectId $oid, PersistentObject $object) {
-    return $this->_lockHandler->updateLock($oid, $object);
+    return $this->lockHandler->updateLock($oid, $object);
   }
 }
 ?>

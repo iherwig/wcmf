@@ -55,7 +55,7 @@ class BatchDisplayController extends BatchController {
   const ITERATOR_ID_VAR = 'BatchDisplayController.iteratorid';
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $_NODES_PER_CALL = 50;
+  private $NODES_PER_CALL = 50;
 
   /**
    * @see Controller::initialize()
@@ -67,7 +67,7 @@ class BatchDisplayController extends BatchController {
 
       // set defaults (will be stored with first request)
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
+        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
       }
       if (!$request->hasValue('translateValues')) {
         $request->setValue('translateValues', true);

@@ -31,10 +31,10 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
 
   const AUTHORIZATION_SECTION = 'authorization';
 
-  private $_configuration = null;
-  private $_actionKeyProvider = null;
+  private $configuration = null;
+  private $actionKeyProvider = null;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
@@ -46,11 +46,11 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
           Session $session,
           Configuration $configuration) {
     parent::__construct($persistenceFacade, $session);
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
-    $this->_configuration = $configuration;
-    $this->_actionKeyProvider = new ConfigActionKeyProvider($this->_configuration,
+    $this->configuration = $configuration;
+    $this->actionKeyProvider = new ConfigActionKeyProvider($this->configuration,
             self::AUTHORIZATION_SECTION);
   }
 
@@ -59,12 +59,12 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
    */
   public function getPermissions($resource, $context, $action) {
     $result = null;
-    $actionKey = ActionKey::getBestMatch($this->_actionKeyProvider, $resource, $context, $action);
+    $actionKey = ActionKey::getBestMatch($this->actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
-      $result = $this->deserializePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
+      $result = $this->deserializePermissions($this->actionKeyProvider->getKeyValue($actionKey));
     }
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)));
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)));
     }
     return $result;
   }
@@ -156,7 +156,7 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
    */
   protected function getConfigurationInstance() {
     // get config file to modify
-    $configFiles = $this->_configuration->getConfigurations();
+    $configFiles = $this->configuration->getConfigurations();
     if (sizeof($configFiles) == 0) {
       return false;
     }

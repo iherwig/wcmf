@@ -30,12 +30,12 @@ use wcmf\lib\persistence\StateChangeEvent;
  */
 class DefaultPersistenceFacade implements PersistenceFacade {
 
-  private $_mappers = array();
-  private $_simpleToFqNames = array();
-  private $_createdOIDs = array();
-  private $_eventManager = null;
-  private $_currentTransaction = null;
-  private $_logStrategy = null;
+  private $mappers = array();
+  private $simpleToFqNames = array();
+  private $createdOIDs = array();
+  private $eventManager = null;
+  private $currentTransaction = null;
+  private $logStrategy = null;
 
   /**
    * Constructor
@@ -44,10 +44,10 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function __construct(EventManager $eventManager,
           OutputStrategy $logStrategy) {
-    $this->_eventManager = $eventManager;
-    $this->_logStrategy = $logStrategy;
+    $this->eventManager = $eventManager;
+    $this->logStrategy = $logStrategy;
     // register as change listener to track the created oids, after save
-    $this->_eventManager->addListener(StateChangeEvent::NAME,
+    $this->eventManager->addListener(StateChangeEvent::NAME,
             array($this, 'stateChanged'));
   }
 
@@ -55,7 +55,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * Destructor
    */
   public function __destruct() {
-    $this->_eventManager->removeListener(StateChangeEvent::NAME,
+    $this->eventManager->removeListener(StateChangeEvent::NAME,
             array($this, 'stateChanged'));
   }
 
@@ -65,16 +65,16 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    *   mapped class names as keys and the mapper instances as values
    */
   public function setMappers($mappers) {
-    $this->_mappers = $mappers;
+    $this->mappers = $mappers;
     foreach ($mappers as $fqName => $mapper) {
       // register simple type names
       $name = $this->getSimpleType($fqName);
-      if (!isset($this->_mappers[$name])) {
-        $this->_mappers[$name] = $mapper;
-        $this->_simpleToFqNames[$name] = $fqName;
+      if (!isset($this->mappers[$name])) {
+        $this->mappers[$name] = $mapper;
+        $this->simpleToFqNames[$name] = $fqName;
       }
       // set logging strategy
-      $mapper->setLogStrategy($this->_logStrategy);
+      $mapper->setLogStrategy($this->logStrategy);
     }
   }
 
@@ -82,22 +82,22 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::getKnownTypes()
    */
   public function getKnownTypes() {
-    return array_values($this->_simpleToFqNames);
+    return array_values($this->simpleToFqNames);
   }
 
   /**
    * @see PersistenceFacade::isKnownType()
    */
   public function isKnownType($type) {
-    return (isset($this->_mappers[$type]));
+    return (isset($this->mappers[$type]));
   }
 
   /**
    * @see PersistenceFacade::getFullyQualifiedType()
    */
   public function getFullyQualifiedType($type) {
-    if (isset($this->_simpleToFqNames[$type])) {
-      return $this->_simpleToFqNames[$type];
+    if (isset($this->simpleToFqNames[$type])) {
+      return $this->simpleToFqNames[$type];
     }
     if ($this->isKnownType($type)) {
       return $type;
@@ -160,8 +160,8 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function getLastCreatedOID($type) {
     $fqType = $this->getFullyQualifiedType($type);
-    if (isset($this->_createdOIDs[$fqType]) && sizeof($this->_createdOIDs[$fqType]) > 0) {
-      return $this->_createdOIDs[$fqType][sizeof($this->_createdOIDs[$fqType])-1];
+    if (isset($this->createdOIDs[$fqType]) && sizeof($this->createdOIDs[$fqType]) > 0) {
+      return $this->createdOIDs[$fqType][sizeof($this->createdOIDs[$fqType])-1];
     }
     return null;
   }
@@ -226,10 +226,10 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::getTransaction()
    */
   public function getTransaction() {
-    if ($this->_currentTransaction == null) {
-      $this->_currentTransaction = ObjectFactory::getInstance('transaction');
+    if ($this->currentTransaction == null) {
+      $this->currentTransaction = ObjectFactory::getInstance('transaction');
     }
-    return $this->_currentTransaction;
+    return $this->currentTransaction;
   }
 
   /**
@@ -237,7 +237,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function getMapper($type) {
     if ($this->isKnownType($type)) {
-      $mapper = $this->_mappers[$type];
+      $mapper = $this->mappers[$type];
       return $mapper;
     }
     else {
@@ -249,7 +249,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::setMapper()
    */
   public function setMapper($type, PersistenceMapper $mapper) {
-    $this->_mappers[$type] = $mapper;
+    $this->mappers[$type] = $mapper;
   }
 
   /**
@@ -288,10 +288,10 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     if ($oldState == PersistentObject::STATE_NEW && $newState == PersistentObject::STATE_CLEAN) {
       $object = $event->getObject();
       $type = $object->getType();
-      if (!array_key_exists($type, $this->_createdOIDs)) {
-        $this->_createdOIDs[$type] = array();
+      if (!array_key_exists($type, $this->createdOIDs)) {
+        $this->createdOIDs[$type] = array();
       }
-      $this->_createdOIDs[$type][] = $object->getOID();
+      $this->createdOIDs[$type][] = $object->getOID();
     }
   }
 }

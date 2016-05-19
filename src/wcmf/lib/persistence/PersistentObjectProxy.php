@@ -24,15 +24,15 @@ use wcmf\lib\persistence\PersistentObject;
  */
 class PersistentObjectProxy implements PersistentObject {
 
-  protected $_oid = null;                // object identifier
-  protected $_realSubject = null;        // the PersistentObject instance
+  protected $oid = null;                // object identifier
+  protected $realSubject = null;        // the PersistentObject instance
 
   /**
    * Constructor.
    * @param $oid The object id of the PersistentObject instance.
    */
   public function __construct(ObjectId $oid) {
-    $this->_oid = $oid;
+    $this->oid = $oid;
   }
 
   /**
@@ -48,7 +48,7 @@ class PersistentObjectProxy implements PersistentObject {
     }
     else if ($object instanceof PersistentObject) {
       $proxy = new PersistentObjectProxy($object->getOID());
-      $proxy->_realSubject = $object;
+      $proxy->realSubject = $object;
       return $proxy;
     }
     else {
@@ -61,20 +61,20 @@ class PersistentObjectProxy implements PersistentObject {
    * @return PersistentObject
    */
   public function getRealSubject() {
-    if ($this->_realSubject == null) {
+    if ($this->realSubject == null) {
       $this->resolve();
     }
-    return $this->_realSubject;
+    return $this->realSubject;
   }
 
   /**
    * Delegate method call to the instance.
    */
   public function __call($name, array $arguments) {
-    if ($this->_realSubject == null) {
+    if ($this->realSubject == null) {
       $this->resolve();
     }
-    return call_user_func_array(array($this->_realSubject, $name), $arguments);
+    return call_user_func_array(array($this->realSubject, $name), $arguments);
   }
 
   /**
@@ -84,9 +84,9 @@ class PersistentObjectProxy implements PersistentObject {
    *        (default: _BuildDepth::SINGLE_)
    */
   public function resolve($buildDepth=BuildDepth::SINGLE) {
-    $this->_realSubject = ObjectFactory::getInstance('persistenceFacade')->load($this->_oid, $buildDepth);
-    if ($this->_realSubject == null) {
-      throw new PersistenceException("Could not resolve oid: ".$this->_oid);
+    $this->realSubject = ObjectFactory::getInstance('persistenceFacade')->load($this->oid, $buildDepth);
+    if ($this->realSubject == null) {
+      throw new PersistenceException("Could not resolve oid: ".$this->oid);
     }
   }
 
@@ -102,7 +102,7 @@ class PersistentObjectProxy implements PersistentObject {
    * @return String
    */
   public function getType() {
-    return $this->_oid->getType();
+    return $this->oid->getType();
   }
 
   /**
@@ -117,7 +117,7 @@ class PersistentObjectProxy implements PersistentObject {
    * @return ObjectId
    */
   public function getOID() {
-    return $this->_oid;
+    return $this->oid;
   }
 
   /**
@@ -243,7 +243,7 @@ class PersistentObjectProxy implements PersistentObject {
     $pkNames = $mapper->getPkNames();
     for ($i=0, $count=sizeof($pkNames); $i<$count; $i++) {
       if ($name == $pkNames[$i]) {
-        $ids = $this->_oid->getId();
+        $ids = $this->oid->getId();
         return $ids[$i];
       }
     }
@@ -375,7 +375,7 @@ class PersistentObjectProxy implements PersistentObject {
    * @return String
    */
   public function __toString() {
-    return 'Proxy_'.$this->_oid->__toString();
+    return 'Proxy_'.$this->oid->__toString();
   }
 }
 ?>

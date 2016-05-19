@@ -21,14 +21,14 @@ use wcmf\lib\presentation\format\impl\HierarchicalFormat;
  */
 class SoapFormat extends HierarchicalFormat {
 
-  protected $_serializer = null;
+  protected $serializer = null;
 
   /**
    * Constructor
    * @param $serializer NodeSerializer instance
    */
   public function __construct(NodeSerializer $serializer) {
-    $this->_serializer = $serializer;
+    $this->serializer = $serializer;
   }
 
   /**
@@ -43,21 +43,21 @@ class SoapFormat extends HierarchicalFormat {
    * @param $serializer NodeSerializer
    */
   public function setSerializer(NodeSerializer $serializer) {
-    $this->_serializer = $serializer;
+    $this->serializer = $serializer;
   }
 
   /**
    * @see HierarchicalFormat::isSerializedNode()
    */
   protected function isSerializedNode($value) {
-    return $this->_serializer->isSerializedNode($value);
+    return $this->serializer->isSerializedNode($value);
   }
 
   /**
    * @see HierarchicalFormat::serializeNode()
    */
   protected function serializeNode($value) {
-    $node = $this->_serializer->serializeNode($value);
+    $node = $this->serializer->serializeNode($value);
     return $node;
   }
 
@@ -65,7 +65,7 @@ class SoapFormat extends HierarchicalFormat {
    * @see HierarchicalFormat::deserializeNode()
    */
   protected function deserializeNode($value) {
-    $result = $this->_serializer->deserializeNode($value);
+    $result = $this->serializer->deserializeNode($value);
     return $result;
   }
 }

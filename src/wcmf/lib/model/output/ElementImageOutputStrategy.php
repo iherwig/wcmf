@@ -39,13 +39,13 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
 
     parent::__construct($format, $file, $map, $lineType, $scale, $aspect, $border, $usemap);
     // define label dimensions relative to node connector position
-    $this->_labelDim['left'] = -10;
-    $this->_labelDim['top'] = -10;
-    $this->_labelDim['right'] = 80;
-    $this->_labelDim['bottom'] = 45;
+    $this->labelDim['left'] = -10;
+    $this->labelDim['top'] = -10;
+    $this->labelDim['right'] = 80;
+    $this->labelDim['bottom'] = 45;
     // define text position relative to node connector position
-    $this->_textPos['left'] = -5;
-    $this->_textPos['top'] = -8;
+    $this->textPos['left'] = -5;
+    $this->textPos['top'] = -8;
   }
 
   /**
@@ -54,20 +54,20 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
   public function writeHeader() {
     parent::writeHeader();
     // print legend
-    $color = ImageColorAllocate($this->_img, 0, 150, 0);
-    $this->writeFilledBorderedRect(new Position($this->_border, $this->_border, 0),
-                                   new Position($this->_border+10, $this->_border+10, 0), $this->_bgColor, $color);
-    ImageString($this->_img, 1, $this->_border+20, $this->_border+2, "optional", $color);
-    $color = $this->_txtColor;
-    $this->writeFilledBorderedRect(new Position($this->_border, $this->_border+20, 0),
-                                   new Position($this->_border+10, $this->_border+30, 0), $this->_bgColor, $color);
-    ImageString($this->_img, 1, $this->_border+20, $this->_border+22, "required", $color);
-    $color = ImageColorAllocate($this->_img, 150, 150, 150);
+    $color = ImageColorAllocate($this->img, 0, 150, 0);
+    $this->writeFilledBorderedRect(new Position($this->border, $this->border, 0),
+                                   new Position($this->border+10, $this->border+10, 0), $this->bgColor, $color);
+    ImageString($this->img, 1, $this->border+20, $this->border+2, "optional", $color);
+    $color = $this->txtColor;
+    $this->writeFilledBorderedRect(new Position($this->border, $this->border+20, 0),
+                                   new Position($this->border+10, $this->border+30, 0), $this->bgColor, $color);
+    ImageString($this->img, 1, $this->border+20, $this->border+22, "required", $color);
+    $color = ImageColorAllocate($this->img, 150, 150, 150);
     for($i=2; $i>=0; $i--) {
-      $this->writeFilledBorderedRect(new Position($this->_border+2*$i, $this->_border+40+2*$i, 0),
-                                     new Position($this->_border+10+2*$i, $this->_border+50+2*$i, 0), $this->_bgColor, $color);
+      $this->writeFilledBorderedRect(new Position($this->border+2*$i, $this->border+40+2*$i, 0),
+                                     new Position($this->border+10+2*$i, $this->border+50+2*$i, 0), $this->bgColor, $color);
     }
-    ImageString($this->_img, 1, $this->_border+20, $this->_border+42, "repetitive", $color);
+    ImageString($this->img, 1, $this->border+20, $this->border+42, "repetitive", $color);
   }
 
   /**
@@ -78,43 +78,43 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
     if (!strstr($obj->getType(), '->')) {
       $smallText = $obj->getType();
       $bigText = $properties['oid'];
-      $color = $this->_txtColor;
+      $color = $this->txtColor;
     }
     else {
       $smallText = substr ($obj->getType(), 0, strrpos ($obj->getType(), ":"));
       $bigText = substr (strrchr ($obj->getType(), ":"), 1);
-      $color = ImageColorAllocate($this->_img, 150, 150, 150);
+      $color = ImageColorAllocate($this->img, 150, 150, 150);
     }
 
     $oid = $obj->getOID();
-    $x = $this->_map[$oid]->x * $this->_xscale - $this->_labelDim['left'] + $this->_border;
-    $y = $this->_map[$oid]->y * $this->_yscale - $this->_labelDim['top'] + $this->_border;
+    $x = $this->map[$oid]->x * $this->xscale - $this->labelDim['left'] + $this->border;
+    $y = $this->map[$oid]->y * $this->yscale - $this->labelDim['top'] + $this->border;
 
     if ($obj->getProperty('minOccurs') == 0) { // optional
-      $color = ImageColorAllocate($this->_img, 0, 150, 0);
+      $color = ImageColorAllocate($this->img, 0, 150, 0);
     }
 
     // print box
     if ($obj->getProperty('maxOccurs') == 'unbounded' || $obj->getProperty('maxOccurs') > 1) {
       for($i=3; $i>=1; $i--) {
-        $this->writeFilledBorderedRect(new Position($x + $this->_labelDim['left']+5*$i, $y + $this->_labelDim['top']+5*$i, 0),
-                                new Position($x + $this->_labelDim['right']+5*$i, $y + $this->_labelDim['bottom']+5*$i, 0),
-                                $this->_bgColor, $color);
+        $this->writeFilledBorderedRect(new Position($x + $this->labelDim['left']+5*$i, $y + $this->labelDim['top']+5*$i, 0),
+                                new Position($x + $this->labelDim['right']+5*$i, $y + $this->labelDim['bottom']+5*$i, 0),
+                                $this->bgColor, $color);
       }
     }
     // print label
-    $this->writeFilledBorderedRect(new Position($x + $this->_labelDim['left'], $y + $this->_labelDim['top'], 0),
-                            new Position($x + $this->_labelDim['right'], $y + $this->_labelDim['bottom'], 0),
-                            $this->_bgColor, $color);
+    $this->writeFilledBorderedRect(new Position($x + $this->labelDim['left'], $y + $this->labelDim['top'], 0),
+                            new Position($x + $this->labelDim['right'], $y + $this->labelDim['bottom'], 0),
+                            $this->bgColor, $color);
     // write text
-    ImageString($this->_img, 2,
-                $x + $this->_textPos['left'],
-                $y + $this->_textPos['top'],
+    ImageString($this->img, 2,
+                $x + $this->textPos['left'],
+                $y + $this->textPos['top'],
                 $smallText,
                 $color);
-    ImageString($this->_img, 1,
-                $x + $this->_textPos['left'],
-                $y + $this->_textPos['top']+15,
+    ImageString($this->img, 1,
+                $x + $this->textPos['left'],
+                $y + $this->textPos['top']+15,
                 "E: ".$properties['data_type'],
                 $color);
     // write attribs
@@ -122,17 +122,17 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
     $i = 0;
     if (is_array($attribs)) {
       foreach ($attribs as $attrib) {
-        ImageString($this->_img, 1,
-              $x + $this->_textPos['left'],
-              $y + $this->_textPos['top']+25+10*$i,
+        ImageString($this->img, 1,
+              $x + $this->textPos['left'],
+              $y + $this->textPos['top']+25+10*$i,
               "A: ".$attrib,
               $color);
         $i++;
       }
     }
-    ImageString($this->_img, 45,
-                $x + $this->_textPos['left']+65,
-                $y + $this->_textPos['top']+37,
+    ImageString($this->img, 45,
+                $x + $this->textPos['left']+65,
+                $y + $this->textPos['top']+37,
                 $bigText,
                 $color);
 
@@ -142,19 +142,19 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
       $this->drawConnectionLine($parent->getOID(), $oid);
     }
     // print map
-    if ($this->_usemap != '') {
+    if ($this->usemap != '') {
       echo '<area shape="rect" coords="'.
-        ($x + $this->_labelDim['left']).','.
-        ($y + $this->_labelDim['top']).','.
-        ($x + $this->_labelDim['right']).','.
-        ($y + $this->_labelDim['bottom'] + 8*$this->_map[$oid]->z).
+        ($x + $this->labelDim['left']).','.
+        ($y + $this->labelDim['top']).','.
+        ($x + $this->labelDim['right']).','.
+        ($y + $this->labelDim['bottom'] + 8*$this->map[$oid]->z).
         '" onclick="javascript:alert(\'Node OID: '.$obj->getOID().'\')" alt="'.$obj->getOID().'">'."\n";
     }
   }
 
   private function writeFilledBorderedRect($topleft, $bottomright, $bgcolor, $bordercolor) {
-    ImageFilledRectangle($this->_img, $topleft->x, $topleft->y, $bottomright->x, $bottomright->y, $bgcolor);
-    ImageRectangle($this->_img, $topleft->x, $topleft->y, $bottomright->x, $bottomright->y, $bordercolor);
+    ImageFilledRectangle($this->img, $topleft->x, $topleft->y, $bottomright->x, $bottomright->y, $bgcolor);
+    ImageRectangle($this->img, $topleft->x, $topleft->y, $bottomright->x, $bottomright->y, $bordercolor);
   }
 }
 ?>

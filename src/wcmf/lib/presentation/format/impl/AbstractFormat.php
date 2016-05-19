@@ -26,15 +26,15 @@ use wcmf\lib\presentation\Response;
  */
 abstract class AbstractFormat implements Format {
 
-  private $_deserializedNodes = array();
-  private $_request = null;
-  private $_response = null;
+  private $deserializedNodes = array();
+  private $request = null;
+  private $response = null;
 
   /**
    * @see Format::deserialize()
    */
   public function deserialize(Request $request) {
-    $this->_request = $request;
+    $this->request = $request;
     $values = $request->getValues();
     $values = $this->beforeDeserialize($values);
     $values = $this->deserializeValues($values);
@@ -46,7 +46,7 @@ abstract class AbstractFormat implements Format {
    * @see Format::serialize()
    */
   public function serialize(Response $response) {
-    $this->_response = $response;
+    $this->response = $response;
     $values = $response->getValues();
     $values = $this->beforeSerialize($values);
     $values = $this->serializeValues($values);
@@ -59,7 +59,7 @@ abstract class AbstractFormat implements Format {
    * @return Request
    */
   protected function getRequest() {
-    return $this->_request;
+    return $this->request;
   }
 
   /**
@@ -67,7 +67,7 @@ abstract class AbstractFormat implements Format {
    * @return Response
    */
   protected function getResponse() {
-    return $this->_response;
+    return $this->response;
   }
 
   /**
@@ -136,7 +136,7 @@ abstract class AbstractFormat implements Format {
    */
   protected function getNode(ObjectId $oid) {
     $oidStr = $oid->__toString();
-    if (!isset($this->_deserializedNodes[$oidStr])) {
+    if (!isset($this->deserializedNodes[$oidStr])) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $type = $oid->getType();
       if ($persistenceFacade->isKnownType($type)) {
@@ -148,9 +148,9 @@ abstract class AbstractFormat implements Format {
         $node = new Node($type);
       }
       $node->setOID($oid);
-      $this->_deserializedNodes[$oidStr] = $node;
+      $this->deserializedNodes[$oidStr] = $node;
     }
-    return $this->_deserializedNodes[$oidStr];
+    return $this->deserializedNodes[$oidStr];
   }
 
   protected function filterValue($value, AttributeDescription $attribute) {

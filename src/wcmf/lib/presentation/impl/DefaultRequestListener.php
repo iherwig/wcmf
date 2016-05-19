@@ -15,24 +15,24 @@ use wcmf\lib\presentation\ApplicationEvent;
  */
 class DefaultRequestListener {
 
-  private $_eventManager = null;
-  private $_persistenceFacade = null;
+  private $eventManager = null;
+  private $persistenceFacade = null;
 
   /**
    * Constructor
    */
   public function __construct(EventManager $eventManager, PersistenceFacade $persistenceFacade) {
-    $this->_eventManager = $eventManager;
-    $this->_eventManager->addListener(ApplicationEvent::NAME,
+    $this->eventManager = $eventManager;
+    $this->eventManager->addListener(ApplicationEvent::NAME,
       array($this, 'listen'));
-    $this->_persistenceFacade = $persistenceFacade;
+    $this->persistenceFacade = $persistenceFacade;
   }
 
   /**
    * Destructor
    */
   public function __destruct() {
-    $this->_eventManager->removeListener(ApplicationEvent::NAME,
+    $this->eventManager->removeListener(ApplicationEvent::NAME,
       array($this, 'listen'));
   }
 
@@ -143,7 +143,7 @@ class DefaultRequestListener {
    * @return String
    */
   protected function getRelatedType(ObjectId $sourceOid, $role) {
-    $sourceMapper = $this->_persistenceFacade->getMapper($sourceOid->getType());
+    $sourceMapper = $this->persistenceFacade->getMapper($sourceOid->getType());
     $relation = $sourceMapper->getRelation($role);
     return $relation->getOtherType();
   }

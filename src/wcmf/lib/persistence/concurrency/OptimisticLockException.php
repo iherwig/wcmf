@@ -18,7 +18,7 @@ namespace wcmf\lib\persistence\concurrency;
  */
 class OptimisticLockException extends \Exception {
 
-  private $_currentState = null;
+  private $currentState = null;
 
   /**
    * Constructor
@@ -26,7 +26,7 @@ class OptimisticLockException extends \Exception {
    *    or null, if the object is deleted
    */
   public function __construct($currentState) {
-    $this->_currentState = $currentState;
+    $this->currentState = $currentState;
 
     $msg = '';
     if ($currentState == null) {
@@ -43,7 +43,7 @@ class OptimisticLockException extends \Exception {
    * @return PersistentObject instance
    */
   public function getCurrentState() {
-    return $this->_currentState;
+    return $this->currentState;
   }
 }
 ?>

@@ -20,14 +20,14 @@ use wcmf\lib\persistence\output\OutputStrategy;
  */
 class ArrayOutputStrategy implements OutputStrategy {
 
-  var $_writeValueProperties = false;
+  private $writeValueProperties = false;
 
   /**
    * Constructor
    * @param $writeValueProperties Boolean whether to write value properties or not (default: _false_)
    */
   public function __construct($writeValueProperties=false) {
-    $this->_writeValueProperties = $writeValueProperties;
+    $this->writeValueProperties = $writeValueProperties;
   }
 
   /**
@@ -60,7 +60,7 @@ class ArrayOutputStrategy implements OutputStrategy {
       $content['values'][$name] = array();
       $value = $this->writeValue($obj->getValue($name));
       $content['values'][$name]['value'] = $value;
-      if ($this->_writeValueProperties) {
+      if ($this->writeValueProperties) {
         $content['values'][$name]['properties'] = array();
         foreach($obj->getValuePropertyNames($name) as $propertyName) {
           $content['values'][$name]['properties'][$propertyName] = $this->writeValue($obj->getValueProperty($name, $propertyname));

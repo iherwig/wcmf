@@ -29,14 +29,14 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  */
 class DojoNodeSerializer extends AbstractNodeSerializer {
 
-  private $_persistenceFacade = null;
+  private $persistenceFacade = null;
 
   /**
    * Constructor
    * @param $persistenceFacade
    */
   public function __construct(PersistenceFacade $persistenceFacade) {
-    $this->_persistenceFacade = $persistenceFacade;
+    $this->persistenceFacade = $persistenceFacade;
   }
 
   /**
@@ -68,7 +68,7 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
 
     // don't create all values by default (-> don't use PersistenceFacade::create() directly,
     // just for determining the class)
-    $class = get_class($this->_persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
+    $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
 
     $remainingData = array();

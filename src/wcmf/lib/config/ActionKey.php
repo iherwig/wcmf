@@ -21,7 +21,7 @@ use wcmf\lib\config\ActionKeyProvider;
  */
 class ActionKey {
 
-  private static $_actionDelimiter = '?';
+  private static $actionDelimiter = '?';
 
   /**
    * Create an action key from the given values
@@ -31,7 +31,7 @@ class ActionKey {
    * @return String
    */
   public static function createKey($resource, $context, $action) {
-    return $resource.self::$_actionDelimiter.$context.self::$_actionDelimiter.$action;
+    return $resource.self::$actionDelimiter.$context.self::$actionDelimiter.$action;
   }
 
   /**
@@ -40,7 +40,7 @@ class ActionKey {
    * @return Associative array with keys 'resouce', 'context', 'action'
    */
   public static function parseKey($actionKey) {
-    list($resource, $context, $action) = explode(self::$_actionDelimiter, $actionKey);
+    list($resource, $context, $action) = explode(self::$actionDelimiter, $actionKey);
     return array('resource' => $resource, 'context' => $context, 'action' => $action);
   }
 

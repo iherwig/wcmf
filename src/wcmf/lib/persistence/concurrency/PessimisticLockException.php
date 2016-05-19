@@ -20,14 +20,14 @@ use wcmf\lib\persistence\concurrency\Lock;
  */
 class PessimisticLockException extends \Exception {
 
-  private $_lock = null;
+  private $lock = null;
 
   /**
    * Constructor
    * @param $lock Lock instance that cause the exception
    */
   public function __construct(Lock $lock) {
-    $this->_lock = $lock;
+    $this->lock = $lock;
 
     parent::__construct("The object is currently locked by another user.");
   }
@@ -37,7 +37,7 @@ class PessimisticLockException extends \Exception {
    * @return Lock instance
    */
   public function getLock() {
-    return $this->_lock;
+    return $this->lock;
   }
 }
 ?>

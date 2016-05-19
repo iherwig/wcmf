@@ -35,36 +35,36 @@ if (!class_exists('Smarty')) {
  */
 class SmartyView implements View {
 
-  private static $_sharedView = null;
-  private static $_actionKeyProvider = null;
-  private static $_logger = null;
+  private static $sharedView = null;
+  private static $actionKeyProvider = null;
+  private static $logger = null;
 
-  protected $_view = null;
+  protected $view = null;
 
   /**
    * Constructor
    */
   public function __construct() {
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
-    $this->_view = new \Smarty();
-    $this->_view->error_reporting = E_ALL;
+    $this->view = new \Smarty();
+    $this->view->error_reporting = E_ALL;
 
     // set plugins directories
-    $this->_view->addPluginsDir(
+    $this->view->addPluginsDir(
       dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/application/views/plugins/'
     );
 
     // load filter
-    $this->_view->loadFilter('pre', 'removeprids');
-    $this->_view->loadFilter('output', 'trimwhitespace');
+    $this->view->loadFilter('pre', 'removeprids');
+    $this->view->loadFilter('output', 'trimwhitespace');
 
     // setup default smarty directories
-    $this->_view->setTemplateDir(WCMF_BASE);
+    $this->view->setTemplateDir(WCMF_BASE);
     $cacheDir = session_save_path().DIRECTORY_SEPARATOR;
-    $this->_view->setCompileDir($cacheDir.'templates_c/');
-    $this->_view->setCacheDir($cacheDir.'cache/');
+    $this->view->setCompileDir($cacheDir.'templates_c/');
+    $this->view->setCacheDir($cacheDir.'cache/');
   }
 
   /**
@@ -73,7 +73,7 @@ class SmartyView implements View {
    * @param $compileCheck Boolean
    */
   public function setCompileCheck($compileCheck) {
-    $this->_view->compile_check = $compileCheck;
+    $this->view->compile_check = $compileCheck;
   }
 
   /**
@@ -81,7 +81,7 @@ class SmartyView implements View {
    * @param $caching Boolean
    */
   public function setCaching($caching) {
-    $this->_view->caching = $caching;
+    $this->view->caching = $caching;
   }
 
   /**
@@ -89,7 +89,7 @@ class SmartyView implements View {
    * @param $cacheLifeTime Integer (seconds)
    */
   public function setCacheLifetime($cacheLifeTime) {
-    $this->_view->cache_lifetime = $cacheLifeTime;
+    $this->view->cache_lifetime = $cacheLifeTime;
   }
 
   /**
@@ -98,12 +98,12 @@ class SmartyView implements View {
    * @param $cacheDir String
    */
   public function setCacheDir($cacheDir) {
-    $this->_view->setCompileDir(WCMF_BASE.$cacheDir.'templates_c/');
-    $this->_view->setCacheDir(WCMF_BASE.$cacheDir.'cache/');
+    $this->view->setCompileDir(WCMF_BASE.$cacheDir.'templates_c/');
+    $this->view->setCacheDir(WCMF_BASE.$cacheDir.'cache/');
 
     $fileUtil = new FileUtil();
-    $fileUtil->mkdirRec($this->_view->getCompileDir());
-    $fileUtil->mkdirRec($this->_view->getCacheDir());
+    $fileUtil->mkdirRec($this->view->getCompileDir());
+    $fileUtil->mkdirRec($this->view->getCacheDir());
   }
 
   /**
@@ -111,7 +111,7 @@ class SmartyView implements View {
    * @param $pluginsDir Directory relative to WCMF_BASE
    */
   public function setPluginsDir($pluginsDir) {
-    $this->_view->addPluginsDir(WCMF_BASE.$pluginsDir);
+    $this->view->addPluginsDir(WCMF_BASE.$pluginsDir);
   }
 
   /**
@@ -120,7 +120,7 @@ class SmartyView implements View {
    */
   public function setOutputFilter($outputFilter) {
     foreach ($outputFilter as $filter) {
-      $this->_view->loadFilter('output', $filter);
+      $this->view->loadFilter('output', $filter);
     }
   }
 
@@ -128,28 +128,28 @@ class SmartyView implements View {
    * @see View::setValue()
    */
   public function setValue($name, $value) {
-    $this->_view->assign($name, $value);
+    $this->view->assign($name, $value);
   }
 
   /**
    * @see View::getValue()
    */
   public function getValue($name) {
-    return $this->_view->getTemplateVars($name);
+    return $this->view->getTemplateVars($name);
   }
 
   /**
    * @see View::getValues()
    */
   public function getValues() {
-    return $this->_view->getTemplateVars();
+    return $this->view->getTemplateVars();
   }
 
   /**
    * @see View::clearAllValues()
    */
   public function clearAllValues() {
-    $this->_view->clearAllAssign();
+    $this->view->clearAllAssign();
   }
 
   /**
@@ -157,10 +157,10 @@ class SmartyView implements View {
    */
   public function render($tplFile, $cacheId=null, $display=true) {
     if ($display) {
-      $this->_view->display($tplFile, $cacheId);
+      $this->view->display($tplFile, $cacheId);
     }
     else {
-      return $this->_view->fetch($tplFile, $cacheId);
+      return $this->view->fetch($tplFile, $cacheId);
     }
   }
 
@@ -168,10 +168,10 @@ class SmartyView implements View {
    * @see View::clearCache()
    */
   public static function clearCache() {
-    if (self::$_sharedView == null) {
-      self::$_sharedView = ObjectFactory::getInstance('view');
+    if (self::$sharedView == null) {
+      self::$sharedView = ObjectFactory::getInstance('view');
     }
-    return self::$_sharedView->_view->clearAllCache();
+    return self::$sharedView->view->clearAllCache();
   }
 
   /**
@@ -180,10 +180,10 @@ class SmartyView implements View {
    * views get regenerated every time when expected.
    */
   public static function isCached($tplFile, $cacheId=null) {
-    if (self::$_sharedView == null) {
-      self::$_sharedView = ObjectFactory::getInstance('view');
+    if (self::$sharedView == null) {
+      self::$sharedView = ObjectFactory::getInstance('view');
     }
-    return (self::$_sharedView->_view->caching && self::$_sharedView->_view->isCached($tplFile, $cacheId));
+    return (self::$sharedView->view->caching && self::$sharedView->view->isCached($tplFile, $cacheId));
   }
 
   /**
@@ -191,13 +191,13 @@ class SmartyView implements View {
    */
   public static function getTemplate($controller, $context, $action) {
     $config = ObjectFactory::getInstance('configuration');
-    if (self::$_actionKeyProvider == null) {
-      self::$_actionKeyProvider = new ConfigActionKeyProvider($config, 'views');
+    if (self::$actionKeyProvider == null) {
+      self::$actionKeyProvider = new ConfigActionKeyProvider($config, 'views');
     }
 
-    $actionKey = ActionKey::getBestMatch(self::$_actionKeyProvider, $controller, $context, $action);
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug('SmartyView::getTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey);
+    $actionKey = ActionKey::getBestMatch(self::$actionKeyProvider, $controller, $context, $action);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug('SmartyView::getTemplate: '.$controller."?".$context."?".$action.' -> '.$actionKey);
     }
     // get corresponding view
     try {

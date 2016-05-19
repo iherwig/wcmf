@@ -44,15 +44,15 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
       'lastChange',
       'attributes'
   );
-  private $_serializedOIDs = array();
-  private $_persistenceFacade = null;
+  private $serializedOIDs = array();
+  private $persistenceFacade = null;
 
   /**
    * Constructor
    * @param $persistenceFacade
    */
   public function __construct(PersistenceFacade $persistenceFacade) {
-    $this->_persistenceFacade = $persistenceFacade;
+    $this->persistenceFacade = $persistenceFacade;
   }
 
   /**
@@ -93,7 +93,7 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
 
     // don't create all values by default (-> don't use PersistenceFacade::create() directly,
     // just for determining the class)
-    $class = get_class($this->_persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
+    $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
     $node->setOID($oid);
 
@@ -134,14 +134,14 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
     $curResult['lastChange'] = strtotime($node->getValue('modified'));
 
     $oidStr = $node->getOID()->__toString();
-    if (in_array($oidStr, $this->_serializedOIDs)) {
+    if (in_array($oidStr, $this->serializedOIDs)) {
       // the node is serialized already
       $curResult['isReference'] = true;
     }
     else {
       // the node is not serialized yet
       $curResult['isReference'] = false;
-      $this->_serializedOIDs[] = $oidStr;
+      $this->serializedOIDs[] = $oidStr;
 
       // serialize attributes
       // use NodeValueIterator to iterate over all Node values

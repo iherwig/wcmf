@@ -80,8 +80,8 @@ abstract class BatchController extends Controller {
   const DOWNLOAD_STEP_VAR = 'downloadStep'; // signals that the next continue action triggers the download
   const PACKAGES_VAR = 'packages';
 
-  private $_curStep = 1;
-  private $_workPackages = array();
+  private $curStep = 1;
+  private $workPackages = array();
 
   /**
    * @see Controller::initialize()
@@ -94,14 +94,14 @@ abstract class BatchController extends Controller {
       $sessionData = $session->get(self::SESSION_VARNAME);
       // get step for current call from session
       if (isset($sessionData[self::STEP_VAR])) {
-        $this->_curStep = $sessionData[self::STEP_VAR];
+        $this->curStep = $sessionData[self::STEP_VAR];
       }
       else {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("Current step undefined."));
       }
       // get workpackage definition for current call from session
       if (isset($sessionData[self::PACKAGES_VAR])) {
-        $this->_workPackages = $sessionData[self::PACKAGES_VAR];
+        $this->workPackages = $sessionData[self::PACKAGES_VAR];
       }
       else {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("Work packages undefined."));
@@ -109,14 +109,14 @@ abstract class BatchController extends Controller {
     }
     else {
       // first call
-      $this->_curStep = 1;
+      $this->curStep = 1;
 
       // initialize session variables
       $sessionData = array(
         self::ONE_CALL_VAR => $request->getBooleanValue('oneCall', false),
         self::REQUEST_VAR => $request->getValues(),
         self::PACKAGES_VAR => array(),
-        self::STEP_VAR => $this->_curStep,
+        self::STEP_VAR => $this->curStep,
         self::NUM_STEPS_VAR => 0,
         self::DOWNLOAD_STEP_VAR => false
       );
@@ -212,7 +212,7 @@ abstract class BatchController extends Controller {
   protected function getStepNumber() {
     // since we actally call processPart() in the second step,
     // return the real step number reduced by one
-    return $this->_curStep;
+    return $this->curStep;
   }
 
   /**
@@ -266,7 +266,7 @@ abstract class BatchController extends Controller {
       $workPackages[] = $curWorkPackage;
       $counter += $size;
     }
-    $this->_workPackages = $workPackages;
+    $this->workPackages = $workPackages;
 
     // update session
     $sessionData[self::PACKAGES_VAR] = $workPackages;
@@ -278,7 +278,7 @@ abstract class BatchController extends Controller {
    * Process the next step.
    */
   protected function processPart() {
-    $curWorkPackageDef = $this->_workPackages[$this->getStepNumber()-1];
+    $curWorkPackageDef = $this->workPackages[$this->getStepNumber()-1];
     $request = $this->getRequest();
     $response = $this->getResponse();
     if (strlen($curWorkPackageDef['callback']) == 0) {
@@ -324,7 +324,7 @@ abstract class BatchController extends Controller {
    * @param $step The step number
    */
   protected function getDisplayText($step) {
-    return $this->getMessage()->getText("Processing")." ".$this->_workPackages[$step-1]['name']." ...";
+    return $this->getMessage()->getText("Processing")." ".$this->workPackages[$step-1]['name']." ...";
   }
 
   /**

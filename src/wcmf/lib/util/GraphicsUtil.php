@@ -33,14 +33,14 @@ if (!class_exists('PHPImageWorkshop\ImageWorkshop') ||
  */
 class GraphicsUtil {
 
-  private $_errorMsg = '';
+  private $errorMsg = '';
 
   /**
    * Get last error message.
    * @return The error string
    */
   public function getErrorMsg() {
-    return $this->_errorMsg;
+    return $this->errorMsg;
   }
 
   /**
@@ -90,9 +90,9 @@ class GraphicsUtil {
     if (!$dimOk) {
       $message = ObjectFactory::getInstance('message');
       $constraint = $exact ? $message->getText("exactly") : $message->getText("smaller than");
-      $this->_errorMsg = $message->getText("Wrong image width. Image width must be %1% %2%px - actual image width is %3%px.",
+      $this->errorMsg = $message->getText("Wrong image width. Image width must be %1% %2%px - actual image width is %3%px.",
         array($constraint, $width, $imgWitdh));
-      $this->_errorMsg .= "\n";
+      $this->errorMsg .= "\n";
     }
     return $dimOk;
   }
@@ -116,9 +116,9 @@ class GraphicsUtil {
     if (!$dimOk) {
       $message = ObjectFactory::getInstance('message');
       $constraint = $exact ? $message->getText("exactly") : $message->getText("smaller than");
-      $this->_errorMsg .= $message->getText("Wrong image height. Image height must be %1% %2%px - actual image height is %3%px.",
+      $this->errorMsg .= $message->getText("Wrong image height. Image height must be %1% %2%px - actual image height is %3%px.",
         array($constraint, $height, $imgHeight));
-      $this->_errorMsg .= "\n";
+      $this->errorMsg .= "\n";
     }
     return $dimOk;
   }
@@ -149,7 +149,7 @@ class GraphicsUtil {
       }
       return array($width, $height);
     } catch (\Exception $ex) {
-      $this->_errorMsg = $ex->getMessage();
+      $this->errorMsg = $ex->getMessage();
       return null;
     }
   }
@@ -170,7 +170,7 @@ class GraphicsUtil {
       $this->processImageFunction($srcName, $destName, "resizeInPixel", array($width, $height, $keepAspect));
       return true;
     } catch (\Exception $ex) {
-      $this->_errorMsg = $ex->getMessage();
+      $this->errorMsg = $ex->getMessage();
       return false;
     }
   }
@@ -198,7 +198,7 @@ class GraphicsUtil {
       $this->processImageFunction($srcName, $destName, "cropInPixel", array($width, $height, $x, $y, 'LT'));
       return true;
     } catch (\Exception $ex) {
-      $this->_errorMsg = $ex->getMessage();
+      $this->errorMsg = $ex->getMessage();
       return false;
     }
   }
@@ -213,7 +213,7 @@ class GraphicsUtil {
       $this->processImageFunction($srcName, $destName, "applyFilter", array(IMG_FILTER_GRAYSCALE));
       return true;
     } catch (\Exception $ex) {
-      $this->_errorMsg = $ex->getMessage();
+      $this->errorMsg = $ex->getMessage();
       return false;
     }
   }
@@ -356,7 +356,7 @@ class GraphicsUtil {
       chmod($filename, 0644);
       return true;
     } catch (\Exception $ex) {
-      $this->_errorMsg = $ex->getMessage();
+      $this->errorMsg = $ex->getMessage();
       return false;
     }
   }

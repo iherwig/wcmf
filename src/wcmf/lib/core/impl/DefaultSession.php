@@ -37,13 +37,13 @@ class DefaultSession implements Session {
 
   private static $ERROR_VARNAME = 'Session.errors';
 
-  private $_authUserVarName = null;
+  private $authUserVarName = null;
 
   /**
    * Constructor
    */
   public function __construct() {
-    $this->_authUserVarName = 'auth_user';
+    $this->authUserVarName = 'auth_user';
 
     $sessionName = 'wcmf'.md5(__FILE__);
     session_name($sessionName);
@@ -116,7 +116,7 @@ class DefaultSession implements Session {
    * @see Session::setAuthUser()
    */
   public function setAuthUser($login) {
-    $this->set($this->_authUserVarName, $login);
+    $this->set($this->authUserVarName, $login);
     // NOTE: prevent "headers already sent" errors in phpunit tests
     if (!headers_sent()) {
       session_regenerate_id(true);
@@ -129,8 +129,8 @@ class DefaultSession implements Session {
   public function getAuthUser() {
     $login = AnonymousUser::USER_GROUP_NAME;
     // check for auth user in session
-    if ($this->exist($this->_authUserVarName)) {
-      $login = $this->get($this->_authUserVarName);
+    if ($this->exist($this->authUserVarName)) {
+      $login = $this->get($this->authUserVarName);
     }
     return $login;
   }

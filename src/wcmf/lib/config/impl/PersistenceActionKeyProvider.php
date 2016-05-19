@@ -27,13 +27,13 @@ use wcmf\lib\persistence\PersistenceEvent;
  */
 class PersistenceActionKeyProvider implements ActionKeyProvider {
 
-  private static $_cacheKey = 'keys';
+  private static $cacheKey = 'keys';
 
-  private $_entityType = null;
-  private $_valueMap = array();
-  private $_id = null;
+  private $entityType = null;
+  private $valueMap = array();
+  private $id = null;
 
-  private $_isLoadingKeys = false;
+  private $isLoadingKeys = false;
 
   /**
    * Constructor.
@@ -56,8 +56,8 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    * @param $entityType String
    */
   public function setEntityType($entityType) {
-    $this->_entityType = $entityType;
-    $this->_id = null;
+    $this->entityType = $entityType;
+    $this->id = null;
   }
 
   /**
@@ -66,7 +66,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    *    to value names of the entity type.
    */
   public function setValueMap($valueMap) {
-    $this->_valueMap = $valueMap;
+    $this->valueMap = $valueMap;
   }
 
   /**
@@ -80,17 +80,17 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    * @see ActionKeyProvider::getKeyValue()
    */
   public function getKeyValue($actionKey) {
-    if ($this->_isLoadingKeys) {
+    if ($this->isLoadingKeys) {
       return null;
     }
     $cache = ObjectFactory::getInstance('cache');
     $cacheSection = $this->getId();
-    if (!$cache->exists($cacheSection, self::$_cacheKey)) {
+    if (!$cache->exists($cacheSection, self::$cacheKey)) {
       $keys = $this->getAllKeyValues();
-      $cache->put($cacheSection, self::$_cacheKey, $keys);
+      $cache->put($cacheSection, self::$cacheKey, $keys);
     }
     else {
-      $keys = $cache->get($cacheSection, self::$_cacheKey);
+      $keys = $cache->get($cacheSection, self::$cacheKey);
     }
     return isset($keys[$actionKey]) ? $keys[$actionKey] : null;
   }
@@ -99,10 +99,10 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    * @see ActionKeyProvider::getId()
    */
   public function getId() {
-    if ($this->_id == null) {
-      $this->_id = str_replace('\\', '.', __CLASS__).'.'.$this->_entityType;
+    if ($this->id == null) {
+      $this->id = str_replace('\\', '.', __CLASS__).'.'.$this->entityType;
     }
-    return $this->_id;
+    return $this->id;
   }
 
   /**
@@ -112,20 +112,20 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
   protected function getAllKeyValues() {
     $keys = array();
     // add temporary permission to allow to read entitys
-    $this->_isLoadingKeys = true;
+    $this->isLoadingKeys = true;
     $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $tmpPerm = $permissionManager->addTempPermission($this->_entityType, '', PersistenceAction::READ);
+    $tmpPerm = $permissionManager->addTempPermission($this->entityType, '', PersistenceAction::READ);
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $objects = $persistenceFacade->loadObjects($this->_entityType, BuildDepth::SINGLE);
+    $objects = $persistenceFacade->loadObjects($this->entityType, BuildDepth::SINGLE);
     $permissionManager->removeTempPermission($tmpPerm);
-    $this->_isLoadingKeys = false;
+    $this->isLoadingKeys = false;
     foreach ($objects as $object) {
       $key = ActionKey::createKey(
-              $object->getValue($this->_valueMap['resource']),
-              $object->getValue($this->_valueMap['context']),
-              $object->getValue($this->_valueMap['action'])
+              $object->getValue($this->valueMap['resource']),
+              $object->getValue($this->valueMap['context']),
+              $object->getValue($this->valueMap['action'])
             );
-      $keys[$key] = $object->getValue($this->_valueMap['value']);
+      $keys[$key] = $object->getValue($this->valueMap['value']);
     }
     return $keys;
   }
@@ -136,15 +136,15 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    * @return String
    */
   protected function getSingleKeyValue($actionKey) {
-    $query = new ObjectQuery($this->_entityType, __CLASS__.__METHOD__);
-    $tpl = $query->getObjectTemplate($this->_entityType);
+    $query = new ObjectQuery($this->entityType, __CLASS__.__METHOD__);
+    $tpl = $query->getObjectTemplate($this->entityType);
     $actionKeyParams = ActionKey::parseKey($actionKey);
-    $tpl->setValue($this->_valueMap['resource'], Criteria::asValue('=', $actionKeyParams['resource']));
-    $tpl->setValue($this->_valueMap['context'], Criteria::asValue('=', $actionKeyParams['context']));
-    $tpl->setValue($this->_valueMap['action'], Criteria::asValue('=', $actionKeyParams['action']));
+    $tpl->setValue($this->valueMap['resource'], Criteria::asValue('=', $actionKeyParams['resource']));
+    $tpl->setValue($this->valueMap['context'], Criteria::asValue('=', $actionKeyParams['context']));
+    $tpl->setValue($this->valueMap['action'], Criteria::asValue('=', $actionKeyParams['action']));
     $keys = $query->execute(BuildDepth::SINGLE);
     if (sizeof($keys) > 0) {
-      return $keys[0]->getValue($this->_valueMap['value']);
+      return $keys[0]->getValue($this->valueMap['value']);
     }
     return null;
   }
@@ -155,7 +155,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    */
   public function keyChanged(PersistenceEvent $event) {
     $object = $event->getObject();
-    if ($object->getType() == $this->_entityType) {
+    if ($object->getType() == $this->entityType) {
       $cache = ObjectFactory::getInstance('cache');
       $cache->clear($this->getId());
     }

@@ -21,10 +21,10 @@ class SoapClient extends \SoapClient {
 
   const OASIS = "http://docs.oasis-open.org/wss/2004/01";
 
-  private $_user;
-  private $_password;
+  private $user;
+  private $password;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
@@ -35,11 +35,11 @@ class SoapClient extends \SoapClient {
    */
   public function __construct($wsdl, $user, $password, $options) {
     parent::__construct($wsdl, $options);
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
-    $this->_user = $user;
-    $this->_password = $password;
+    $this->user = $user;
+    $this->password = $password;
   }
 
   /**
@@ -48,7 +48,7 @@ class SoapClient extends \SoapClient {
    * @param $params (optional, default: empty array)
    */
   public function call($method, $params=array()) {
-    $header = $this->generateWSSecurityHeader($this->_user, $this->_password);
+    $header = $this->generateWSSecurityHeader($this->user, $this->password);
     $response = $this->__soapCall($method, sizeof($params) > 0 ? array($params) : array(), null, $header);
     // in document/literal style the "return" parameter holds the result
     return property_exists($response, 'return') ? $response->return : $response;
@@ -59,15 +59,15 @@ class SoapClient extends \SoapClient {
    * @see SoapClient::__doRequest
    */
   public function __doRequest($request, $location, $action, $version, $oneway=0){
-      if (self::$_logger->isDebugEnabled()) {
-        self::$_logger->debug("Request:");
-        self::$_logger->debug($request);
+      if (self::$logger->isDebugEnabled()) {
+        self::$logger->debug("Request:");
+        self::$logger->debug($request);
       }
       $response = trim(parent::__doRequest($request, $location, $action, $version, $oneway));
-      if (self::$_logger->isDebugEnabled()) {
-        self::$_logger->debug("Response:");
-        self::$_logger->debug($response);
-        self::$_logger->debug($this->getDebugInfos());
+      if (self::$logger->isDebugEnabled()) {
+        self::$logger->debug("Response:");
+        self::$logger->debug($response);
+        self::$logger->debug($this->getDebugInfos());
       }
       $parsedResponse = preg_replace('/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFE\xFF|\xFF\xFE|\xEF\xBB\xBF)/', "", $response);
       // fix missing last e> caused by php's built-in webserver

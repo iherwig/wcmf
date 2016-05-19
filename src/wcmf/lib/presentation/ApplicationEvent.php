@@ -55,10 +55,10 @@ class ApplicationEvent extends Event {
    */
   const AFTER_EXECUTE_CONTROLLER = 'AFTER_EXECUTE_CONTROLLER';
 
-  private $_stage = null;
-  private $_request = null;
-  private $_response = null;
-  private $_controller = null;
+  private $stage = null;
+  private $request = null;
+  private $response = null;
+  private $controller = null;
 
   /**
    * Constructor.
@@ -68,10 +68,10 @@ class ApplicationEvent extends Event {
    * @param $controller The controller instance (optional).
    */
   public function __construct($stage, Request $request, Response $response=null, Controller $controller=null) {
-    $this->_stage = $stage;
-    $this->_request = $request;
-    $this->_response = $response;
-    $this->_controller = $controller;
+    $this->stage = $stage;
+    $this->request = $request;
+    $this->response = $response;
+    $this->controller = $controller;
   }
 
   /**
@@ -79,14 +79,14 @@ class ApplicationEvent extends Event {
    * @return String
    */
   public function getStage() {
-    return $this->_stage;
+    return $this->stage;
   }
   /**
    * Get the request.
    * @return Request instance
    */
   public function getRequest() {
-    return $this->_request;
+    return $this->request;
   }
 
   /**
@@ -94,7 +94,7 @@ class ApplicationEvent extends Event {
    * @return Response instance
    */
   public function getResponse() {
-    return $this->_response;
+    return $this->response;
   }
 
   /**
@@ -102,7 +102,7 @@ class ApplicationEvent extends Event {
    * @return Controller instance
    */
   public function getController() {
-    return $this->_controller;
+    return $this->controller;
   }
 }
 ?>

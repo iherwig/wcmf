@@ -25,7 +25,7 @@ use wcmf\lib\util\TestUtil;
  */
 class PersistentObjectProxyTest extends DatabaseTestCase {
 
-  private $_chapter1OidStr = 'Chapter:123451';
+  private $chapter1OidStr = 'Chapter:123451';
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
@@ -50,7 +50,7 @@ class PersistentObjectProxyTest extends DatabaseTestCase {
 
   public function testLoadSimple() {
     TestUtil::startSession('admin', 'admin');
-    $proxy1 = new PersistentObjectProxy(ObjectId::parse($this->_chapter1OidStr));
+    $proxy1 = new PersistentObjectProxy(ObjectId::parse($this->chapter1OidStr));
     $this->assertEquals("Chapter1", $proxy1->getValue('name'));
     $this->assertEquals(123451, $proxy1->getValue('sortkey'));
     $this->assertTrue($proxy1->getRealSubject() instanceof PersistentObject, "Real subject is PersistentObject instance");
@@ -64,7 +64,7 @@ class PersistentObjectProxyTest extends DatabaseTestCase {
 
   public function testLoadRelation() {
     TestUtil::startSession('admin', 'admin');
-    $proxy = new PersistentObjectProxy(ObjectId::parse($this->_chapter1OidStr));
+    $proxy = new PersistentObjectProxy(ObjectId::parse($this->chapter1OidStr));
     $chapter1 = $proxy->getRealSubject();
     $this->assertEquals("Chapter1", $proxy->getValue('name'));
     $this->assertEquals(123451, $proxy->getValue('sortkey'));

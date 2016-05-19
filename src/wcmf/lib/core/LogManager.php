@@ -17,14 +17,14 @@ namespace wcmf\lib\core;
  */
 class LogManager {
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Configure the manager.
    * @param $logger Logger instance
    */
   public static function configure(Logger $logger) {
-    self::$_logger = $logger;
+    self::$logger = $logger;
   }
 
   /**
@@ -33,7 +33,7 @@ class LogManager {
    * @return Logger
    */
   public static function getLogger($name) {
-    return self::$_logger->getLogger($name);
+    return self::$logger->getLogger($name);
   }
 }
 ?>

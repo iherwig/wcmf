@@ -17,11 +17,11 @@ namespace wcmf\lib\persistence;
  */
 class PagingInfo {
 
-  private $_pageSize = 10;
-  private $_page = 0;
-  private $_offset = 0;
-  private $_totalCount = 0;
-  private $_ignoreTotalCount = false;
+  private $pageSize = 10;
+  private $page = 0;
+  private $offset = 0;
+  private $totalCount = 0;
+  private $ignoreTotalCount = false;
 
   /**
    * Creates a PagingInfo object. The ignoreTotalCount parameter may be
@@ -32,8 +32,8 @@ class PagingInfo {
    *    total count or not (optional, default: _false_)
    */
   public function __construct($pageSize, $ignoreTotalCount=false) {
-    $this->_pageSize = intval($pageSize);
-    $this->_ignoreTotalCount = $ignoreTotalCount;
+    $this->pageSize = intval($pageSize);
+    $this->ignoreTotalCount = $ignoreTotalCount;
   }
 
   /**
@@ -41,7 +41,7 @@ class PagingInfo {
    * @param $totalCount The number of list items.
    */
   public function setTotalCount($totalCount) {
-    $this->_totalCount = intval($totalCount);
+    $this->totalCount = intval($totalCount);
   }
 
   /**
@@ -49,7 +49,7 @@ class PagingInfo {
    * @return Number
    */
   public function getTotalCount() {
-    return $this->_totalCount;
+    return $this->totalCount;
   }
 
   /**
@@ -57,8 +57,8 @@ class PagingInfo {
    * @param $page The current page.
    */
   public function setPage($page) {
-    $this->_page = intval($page);
-    $this->_offset = ($page - 1) * $this->_pageSize;
+    $this->page = intval($page);
+    $this->offset = ($page - 1) * $this->pageSize;
   }
 
   /**
@@ -66,7 +66,7 @@ class PagingInfo {
    * @return Number
    */
   public function getPage() {
-    return $this->_page;
+    return $this->page;
   }
 
   /**
@@ -74,7 +74,7 @@ class PagingInfo {
    * @return Number
    */
   public function getPageSize() {
-    return $this->_pageSize;
+    return $this->pageSize;
   }
 
   /**
@@ -82,7 +82,7 @@ class PagingInfo {
    * @return Number
    */
   public function getPageCount() {
-    return ceil($this->_totalCount / $this->_pageSize);
+    return ceil($this->totalCount / $this->pageSize);
   }
 
   /**
@@ -90,8 +90,8 @@ class PagingInfo {
    * @param $offset The current list offset.
    */
   public function setOffset($offset) {
-    $this->_offset = $offset;
-    $this->_page = ceil(intval($offset) / $this->_pageSize) + 1;
+    $this->offset = $offset;
+    $this->page = ceil(intval($offset) / $this->pageSize) + 1;
   }
 
   /**
@@ -99,7 +99,7 @@ class PagingInfo {
    * @return Number
    */
   public function getOffset() {
-    return $this->_offset;
+    return $this->offset;
   }
 
   /**
@@ -107,7 +107,7 @@ class PagingInfo {
    * @return Boolean
    */
   public function isOnFirstPage() {
-    return $this->_page == 1;
+    return $this->page == 1;
   }
 
   /**
@@ -115,7 +115,7 @@ class PagingInfo {
    * @return Boolean
    */
   public function isOnLastPage() {
-    return $this->_page == $this->getPageCount;
+    return $this->page == $this->getPageCount;
   }
 
   /**
@@ -123,7 +123,7 @@ class PagingInfo {
    * @return Boolean
    */
   public function isIgnoringTotalCount() {
-    return $this->_ignoreTotalCount;
+    return $this->ignoreTotalCount;
   }
 }
 ?>

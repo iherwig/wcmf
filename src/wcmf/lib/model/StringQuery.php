@@ -39,7 +39,7 @@ use wcmf\lib\util\StringUtil;
  */
 class StringQuery extends ObjectQuery {
 
-  private $_condition = '';
+  private $condition = '';
 
   /**
    * Create a query instance from the given query parts encoded in RQL (https://github.com/persvr/rql), e.g.
@@ -79,7 +79,7 @@ class StringQuery extends ObjectQuery {
    * @param $condition The query definition string
    */
   public function setConditionString($condition) {
-    $this->_condition = $condition;
+    $this->condition = $condition;
   }
 
   /**
@@ -101,7 +101,7 @@ class StringQuery extends ObjectQuery {
       $quoteIdentifierSymbol = $mapper->getQuoteIdentifierSymbol();
       // get all referenced types/roles from the condition and translate
       // attributes to column names
-      $conditionString = $this->_condition;
+      $conditionString = $this->condition;
       $otherRoles = array();
       $tokens = StringUtil::splitQuoted($conditionString, "/[\s=<>()!]+/", "'", true);
       $operators = array('and', 'or', 'not', 'like', 'regexp', 'is', 'null', 'in');

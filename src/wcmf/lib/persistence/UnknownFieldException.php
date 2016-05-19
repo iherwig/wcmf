@@ -17,7 +17,7 @@ namespace wcmf\lib\persistence;
  */
 class UnknownFieldException extends \Exception {
 
-  private $_field = '';
+  private $field = '';
 
   /**
    * Constructor
@@ -28,7 +28,7 @@ class UnknownFieldException extends \Exception {
    */
   public function __construct($field, $message="", $code=0, \Exception $previous=null) {
     parent::__construct($message, $code, $previous);
-    $this->_field = $field;
+    $this->field = $field;
   }
 
   /**
@@ -36,7 +36,7 @@ class UnknownFieldException extends \Exception {
    * @return String
    */
   public function getField() {
-    return $this->_field;
+    return $this->field;
   }
 }
 ?>

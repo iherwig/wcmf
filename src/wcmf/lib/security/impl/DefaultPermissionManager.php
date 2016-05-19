@@ -31,10 +31,10 @@ use wcmf\lib\util\StringUtil;
  */
 class DefaultPermissionManager extends AbstractPermissionManager implements PermissionManager {
 
-  private $_permissionType = null;
-  private $_actionKeyProvider = null;
+  private $permissionType = null;
+  private $actionKeyProvider = null;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
@@ -44,11 +44,11 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
   public function __construct(PersistenceFacade $persistenceFacade,
           Session $session) {
     parent::__construct($persistenceFacade, $session);
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
-    $this->_actionKeyProvider = new PersistenceActionKeyProvider();
-    $this->_actionKeyProvider->setValueMap(array(
+    $this->actionKeyProvider = new PersistenceActionKeyProvider();
+    $this->actionKeyProvider->setValueMap(array(
         'resource' => 'resource',
         'context' => 'context',
         'action' => 'action',
@@ -61,8 +61,8 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    * @param $permissionType String
    */
   public function setPermissionType($permissionType) {
-    $this->_permissionType = $permissionType;
-    $this->_actionKeyProvider->setEntityType($this->_permissionType);
+    $this->permissionType = $permissionType;
+    $this->actionKeyProvider->setEntityType($this->permissionType);
   }
 
   /**
@@ -70,12 +70,12 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    */
   public function getPermissions($resource, $context, $action) {
     $result = null;
-    $actionKey = ActionKey::getBestMatch($this->_actionKeyProvider, $resource, $context, $action);
+    $actionKey = ActionKey::getBestMatch($this->actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
-      $result = $this->deserializePermissions($this->_actionKeyProvider->getKeyValue($actionKey));
+      $result = $this->deserializePermissions($this->actionKeyProvider->getKeyValue($actionKey));
     }
-    if (self::$_logger->isDebugEnabled()) {
-      self::$_logger->debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)));
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)));
     }
     return $result;
   }
@@ -166,8 +166,8 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    * @return Instance of _permissionType or null
    */
   protected function getPermissionInstance($resource, $context, $action) {
-    $query = new ObjectQuery($this->_permissionType, __CLASS__.__METHOD__);
-    $tpl = $query->getObjectTemplate($this->_permissionType);
+    $query = new ObjectQuery($this->permissionType, __CLASS__.__METHOD__);
+    $tpl = $query->getObjectTemplate($this->permissionType);
     $tpl->setValue('resource', Criteria::asValue('=', $resource));
     $tpl->setValue('context', Criteria::asValue('=', $context));
     $tpl->setValue('action', Criteria::asValue('=', $action));
@@ -184,7 +184,7 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
    * @return Instance of _permissionType
    */
   protected function createPermissionObject($resource, $context, $action, $roles) {
-    $permission = $this->_persistenceFacade->create($this->_permissionType);
+    $permission = $this->persistenceFacade->create($this->permissionType);
     $permission->setValue('resource', $resource);
     $permission->setValue('context', $context);
     $permission->setValue('action', $action);

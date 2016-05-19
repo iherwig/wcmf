@@ -22,16 +22,16 @@ use wcmf\lib\presentation\Response;
  */
 class DefaultFormatter implements Formatter {
 
-  private static $_headersSent = false;
+  private static $headersSent = false;
 
-  private $_formats = array();
+  private $formats = array();
 
   /**
    * Constructor
    * @param $formats Array of Format instances to use
    */
   public function __construct(array $formats) {
-    $this->_formats = $formats;
+    $this->formats = $formats;
   }
 
   /**
@@ -39,7 +39,7 @@ class DefaultFormatter implements Formatter {
    */
   public function getFormatFromMimeType($mimeType) {
     $firstFormat = null;
-    foreach ($this->_formats as $name => $instance) {
+    foreach ($this->formats as $name => $instance) {
       $firstFormat = $firstFormat == null ? $name : $firstFormat;
       if (strpos($mimeType, $instance->getMimeType()) !== false) {
         return $name;
@@ -69,7 +69,7 @@ class DefaultFormatter implements Formatter {
    * @see Formatter::serialize()
    */
   public function serialize(Response $response) {
-    self::$_headersSent = headers_sent();
+    self::$headersSent = headers_sent();
     http_response_code($response->getStatus());
 
     // if the response has a file, we send it and return
@@ -104,7 +104,7 @@ class DefaultFormatter implements Formatter {
    * @param $header
    */
   protected function sendHeader($header) {
-    if (!self::$_headersSent) {
+    if (!self::$headersSent) {
       header($header);
     }
   }
@@ -115,8 +115,8 @@ class DefaultFormatter implements Formatter {
    * @return Format
    */
   protected function getFormat($name) {
-    if (isset($this->_formats[$name])) {
-      return $this->_formats[$name];
+    if (isset($this->formats[$name])) {
+      return $this->formats[$name];
     }
     throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition with name: ".$name);
   }

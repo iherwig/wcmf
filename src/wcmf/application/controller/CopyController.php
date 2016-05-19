@@ -65,10 +65,10 @@ class CopyController extends BatchController {
   // persistent iterator id
   const ITERATOR_ID_VAR = 'CopyController.iteratorid';
 
-  private $_targetNode = null;
+  private $targetNode = null;
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $_NODES_PER_CALL = 50;
+  private $NODES_PER_CALL = 50;
 
   /**
    * @see Controller::initialize()
@@ -80,7 +80,7 @@ class CopyController extends BatchController {
 
       // set defaults (will be stored with first request)
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->_NODES_PER_CALL);
+        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
       }
       if (!$request->hasValue('recursive')) {
         $request->setValue('recursive', true);
@@ -389,13 +389,13 @@ class CopyController extends BatchController {
    * @return Node instance
    */
   protected function getTargetNode(ObjectId $targetOID) {
-    if ($this->_targetNode == null) {
+    if ($this->targetNode == null) {
       // load parent node
       $persistenceFacade = $this->getPersistenceFacade();
       $targetNode = $persistenceFacade->load($targetOID);
-      $this->_targetNode = $targetNode;
+      $this->targetNode = $targetNode;
     }
-    return $this->_targetNode;
+    return $this->targetNode;
   }
 
   /**

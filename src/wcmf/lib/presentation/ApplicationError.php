@@ -46,11 +46,11 @@ class ApplicationError {
 
   const DEFAULT_ERROR_STATUS = 500;
 
-  private $_code = null;
-  private $_level = null;
-  private $_statusCode = self::DEFAULT_ERROR_STATUS;
-  private $_message = null;
-  private $_data = null;
+  private $code = null;
+  private $level = null;
+  private $statusCode = self::DEFAULT_ERROR_STATUS;
+  private $message = null;
+  private $data = null;
 
   /**
    * Constructor
@@ -62,11 +62,11 @@ class ApplicationError {
    *             to the client (optional, default: _null_)
    */
   private function __construct($code, $level, $statusCode, $message, $data=null) {
-    $this->_code = $code;
-    $this->_level = $level;
-    $this->_statusCode = $statusCode;
-    $this->_message = $message;
-    $this->_data = $data;
+    $this->code = $code;
+    $this->level = $level;
+    $this->statusCode = $statusCode;
+    $this->message = $message;
+    $this->data = $data;
   }
 
   /**
@@ -74,7 +74,7 @@ class ApplicationError {
    * @return String
    */
   public function getCode() {
-    return $this->_code;
+    return $this->code;
   }
 
   /**
@@ -82,7 +82,7 @@ class ApplicationError {
    * @return String
    */
   public function getLevel() {
-    return $this->_level;
+    return $this->level;
   }
 
   /**
@@ -90,7 +90,7 @@ class ApplicationError {
    * @return Integer
    */
   public function getStatusCode() {
-    return $this->_statusCode;
+    return $this->statusCode;
   }
 
   /**
@@ -98,7 +98,7 @@ class ApplicationError {
    * @return String
    */
   public function getMessage() {
-    return $this->_message;
+    return $this->message;
   }
 
   /**
@@ -107,7 +107,7 @@ class ApplicationError {
    *   further information to the client
    */
   public function setData($data) {
-    $this->_data = $data;
+    $this->data = $data;
   }
 
   /**
@@ -115,7 +115,7 @@ class ApplicationError {
    * @return Mixed
    */
   public function getData() {
-    return $this->_data;
+    return $this->data;
   }
 
   /**
@@ -123,10 +123,10 @@ class ApplicationError {
    * @return String
    */
   public function __toString() {
-    $str = strtoupper($this->_level).": ".$this->_code." (".$this->_statusCode.
-            "): ".$this->_message;
-    if ($this->_data) {
-      $str .= " Data: ".StringUtil::getDump($this->_data);
+    $str = strtoupper($this->level).": ".$this->code." (".$this->statusCode.
+            "): ".$this->message;
+    if ($this->data) {
+      $str .= " Data: ".StringUtil::getDump($this->data);
     }
     return $str;
   }

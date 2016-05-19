@@ -18,7 +18,7 @@ namespace wcmf\lib\util;
  */
 class CSVUtil {
 
-  var $_fields = array();
+  private $fields = array();
 
   /**
    * Read a CSV file into an array
@@ -33,8 +33,8 @@ class CSVUtil {
     $csv = fopen($filename, 'r');
 
     // get field definitions
-    $this->_fields = self::getValues(fgets($csv, 4096), $separator, $fielddelimiter);
-    $result['fields'] = $this->_fields;
+    $this->fields = self::getValues(fgets($csv, 4096), $separator, $fielddelimiter);
+    $result['fields'] = $this->fields;
     $result['values'] = array();
 
     // get values
@@ -57,8 +57,8 @@ class CSVUtil {
    * @return The value or false if not existing
    */
   private static function getFieldValue($line, $fieldName) {
-    if (in_array($fieldName, $this->_fields)) {
-      return $line[array_search($fieldName, $this->_fields)];
+    if (in_array($fieldName, $this->fields)) {
+      return $line[array_search($fieldName, $this->fields)];
     }
     else {
       return false;

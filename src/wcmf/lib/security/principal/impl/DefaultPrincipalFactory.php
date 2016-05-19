@@ -26,13 +26,13 @@ use wcmf\lib\security\principal\User;
  */
 class DefaultPrincipalFactory implements PrincipalFactory {
 
-  private $_persistenceFacade = null;
-  private $_permissionManager = null;
-  private $_userType = null;
-  private $_roleType = null;
-  private $_users = array();
+  private $persistenceFacade = null;
+  private $permissionManager = null;
+  private $userType = null;
+  private $roleType = null;
+  private $users = array();
 
-  private $_roleRelationNames = null;
+  private $roleRelationNames = null;
 
   /**
    * Constructor
@@ -43,31 +43,31 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager, $userType, $roleType) {
-    $this->_persistenceFacade = $persistenceFacade;
-    $this->_permissionManager = $permissionManager;
-    $this->_userType = $userType;
-    $this->_roleType = $roleType;
+    $this->persistenceFacade = $persistenceFacade;
+    $this->permissionManager = $permissionManager;
+    $this->userType = $userType;
+    $this->roleType = $roleType;
   }
 
   /**
    * @see PrincipalFactory::getUser()
    */
   public function getUser($login, $useTempPermission=false) {
-    if (!isset($this->_users[$login])) {
+    if (!isset($this->users[$login])) {
       // load user if not done before
       if ($useTempPermission) {
-        $tmpPerm = $this->_permissionManager->addTempPermission($this->_userType, '', PersistenceAction::READ);
+        $tmpPerm = $this->permissionManager->addTempPermission($this->userType, '', PersistenceAction::READ);
       }
-      $user = $this->_persistenceFacade->loadFirstObject($this->_userType, BuildDepth::SINGLE,
+      $user = $this->persistenceFacade->loadFirstObject($this->userType, BuildDepth::SINGLE,
                   array(
-                      new Criteria($this->_userType, 'login', '=', $login)
+                      new Criteria($this->userType, 'login', '=', $login)
                   ), null);
-      $this->_users[$login] = $user;
+      $this->users[$login] = $user;
       if ($useTempPermission) {
-        $this->_permissionManager->removeTempPermission($tmpPerm);
+        $this->permissionManager->removeTempPermission($tmpPerm);
       }
     }
-    return $this->_users[$login];
+    return $this->users[$login];
   }
 
   /**
@@ -75,29 +75,29 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    */
   public function getUserRoles(User $user, $useTempPermission=false) {
     if ($useTempPermission) {
-      $tmpPerm = $this->_permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $tmpPerm = $this->permissionManager->addTempPermission($this->roleType, '', PersistenceAction::READ);
     }
 
     // initialize role relation definition
-    if ($this->_roleRelationNames == null) {
-      $this->_roleRelationNames = array();
+    if ($this->roleRelationNames == null) {
+      $this->roleRelationNames = array();
       $mapper = $user->getMapper();
-      foreach ($mapper->getRelationsByType($this->_roleType) as $relation) {
-        $this->_roleRelationNames[] = $relation->getOtherRole();
+      foreach ($mapper->getRelationsByType($this->roleType) as $relation) {
+        $this->roleRelationNames[] = $relation->getOtherRole();
       }
     }
 
-    foreach ($this->_roleRelationNames as $roleName) {
+    foreach ($this->roleRelationNames as $roleName) {
       $user->loadChildren($roleName);
     }
 
     if ($useTempPermission) {
-      $this->_permissionManager->removeTempPermission($tmpPerm);
+      $this->permissionManager->removeTempPermission($tmpPerm);
     }
 
     // TODO add role nodes from addedNodes array
     // use getChildrenEx, because we are interessted in the type
-    return $user->getChildrenEx(null, null, $this->_roleType, null);
+    return $user->getChildrenEx(null, null, $this->roleType, null);
   }
 
   /**
@@ -105,16 +105,16 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    */
   public function getRole($name, $useTempPermission=false) {
     if ($useTempPermission) {
-      $tmpPerm = $this->_permissionManager->addTempPermission($this->_roleType, '', PersistenceAction::READ);
+      $tmpPerm = $this->permissionManager->addTempPermission($this->roleType, '', PersistenceAction::READ);
     }
 
-    $role = $this->_persistenceFacade->loadFirstObject($this->_roleType, BuildDepth::SINGLE,
+    $role = $this->persistenceFacade->loadFirstObject($this->roleType, BuildDepth::SINGLE,
                 array(
-                    new Criteria($this->_roleType, 'name', '=', $name)
+                    new Criteria($this->roleType, 'name', '=', $name)
                 ), null);
 
     if ($useTempPermission) {
-      $this->_permissionManager->removeTempPermission($tmpPerm);
+      $this->permissionManager->removeTempPermission($tmpPerm);
     }
     return $role;
   }

@@ -44,19 +44,19 @@ use ZendSearch\Lucene\Search\Weight\Boolean;
  */
 class LuceneSearch implements IndexedSearch {
 
-  private $_indexPath = '';
-  private $_liveUpdate = true;
-  private $_index;
-  private $_indexIsDirty = false;
+  private $indexPath = '';
+  private $liveUpdate = true;
+  private $index;
+  private $indexIsDirty = false;
 
-  private static $_logger = null;
+  private static $logger = null;
 
   /**
    * Constructor
    */
   public function __construct() {
-    if (self::$_logger == null) {
-      self::$_logger = LogManager::getLogger(__CLASS__);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
     }
     // listen to object change events
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
@@ -78,12 +78,12 @@ class LuceneSearch implements IndexedSearch {
    */
   public function setIndexPath($indexPath) {
     $fileUtil = new FileUtil();
-    $this->_indexPath = $fileUtil->realpath(WCMF_BASE.$indexPath).'/';
-    $fileUtil->mkdirRec($this->_indexPath);
-    if (!is_writeable($this->_indexPath)) {
+    $this->indexPath = $fileUtil->realpath(WCMF_BASE.$indexPath).'/';
+    $fileUtil->mkdirRec($this->indexPath);
+    if (!is_writeable($this->indexPath)) {
       throw new ConfigurationException("Index path '".$indexPath."' is not writeable.");
     }
-    self::$_logger->debug("Lucene index location: ".$this->_indexPath);
+    self::$logger->debug("Lucene index location: ".$this->indexPath);
   }
 
   /**
@@ -91,7 +91,7 @@ class LuceneSearch implements IndexedSearch {
    * @return String
    */
   public function getIndexPath() {
-    return $this->_indexPath;
+    return $this->indexPath;
   }
 
   /**
@@ -100,7 +100,7 @@ class LuceneSearch implements IndexedSearch {
    * @param $liveUpdate Boolean
    */
   public function setLiveUpdate($liveUpdate) {
-    $this->_liveUpdate = $liveUpdate;
+    $this->liveUpdate = $liveUpdate;
   }
 
   /**
@@ -109,7 +109,7 @@ class LuceneSearch implements IndexedSearch {
    * @return Boolean
    */
   public function getLiveUpdate() {
-    return $this->_liveUpdate;
+    return $this->liveUpdate;
   }
 
   /**
@@ -205,8 +205,8 @@ class LuceneSearch implements IndexedSearch {
    * @see IndexedSearch::commitIndex()
    */
   public function commitIndex($optimize = true) {
-    self::$_logger->debug("Commit index");
-    if ($this->_indexIsDirty) {
+    self::$logger->debug("Commit index");
+    if ($this->indexIsDirty) {
       $index = $this->getIndex(false);
       $index->commit();
       if ($optimize) {
@@ -237,8 +237,8 @@ class LuceneSearch implements IndexedSearch {
         // load translation
         $indexObj = $localization->loadTranslation($obj, $language, false);
 
-        if (self::$_logger->isDebugEnabled()) {
-          self::$_logger->debug("Add/Update index for: ".$oidStr." language:".$language);
+        if (self::$logger->isDebugEnabled()) {
+          self::$logger->debug("Add/Update index for: ".$oidStr." language:".$language);
         }
 
         // create the document
@@ -281,7 +281,7 @@ class LuceneSearch implements IndexedSearch {
 
         $index->addDocument($doc);
       }
-      $this->_indexIsDirty = true;
+      $this->indexIsDirty = true;
     }
   }
 
@@ -290,8 +290,8 @@ class LuceneSearch implements IndexedSearch {
    */
   public function deleteFromIndex(PersistentObject $obj) {
     if ($this->isSearchable($obj)) {
-      if (self::$_logger->isDebugEnabled()) {
-        self::$_logger->debug("Delete from index: ".$obj->getOID());
+      if (self::$logger->isDebugEnabled()) {
+        self::$logger->debug("Delete from index: ".$obj->getOID());
       }
       $index = $this->getIndex();
 
@@ -300,7 +300,7 @@ class LuceneSearch implements IndexedSearch {
       foreach ($docIds as $id) {
         $index->delete($id);
       }
-      $this->_indexIsDirty = true;
+      $this->indexIsDirty = true;
     }
   }
 
@@ -309,7 +309,7 @@ class LuceneSearch implements IndexedSearch {
    * @param $event StateChangeEvent instance
    */
   public function stateChanged(StateChangeEvent $event) {
-    if ($this->_liveUpdate) {
+    if ($this->liveUpdate) {
       $object = $event->getObject();
       $oldState = $event->getOldValue();
       $newState = $event->getNewValue();
@@ -329,7 +329,7 @@ class LuceneSearch implements IndexedSearch {
    * @return An instance of ZendSearch/SearchIndexInterface or null
    */
   private function getIndex($create = true) {
-    if (!$this->_index || $create) {
+    if (!$this->index || $create) {
       $indexPath = $this->getIndexPath();
 
       $analyzer = new Utf8Analyzer();
@@ -345,15 +345,15 @@ class LuceneSearch implements IndexedSearch {
       QueryParser::setDefaultOperator(QueryParser::B_AND);
 
       try {
-        $this->_index = Lucene::open($indexPath);
-        //$this->_index->setMaxMergeDocs(5);
-        //$this->_index->setMergeFactor(5);
+        $this->index = Lucene::open($indexPath);
+        //$this->index->setMaxMergeDocs(5);
+        //$this->index->setMergeFactor(5);
       }
       catch (\Exception $ex) {
-        $this->_index = $this->resetIndex();
+        $this->index = $this->resetIndex();
       }
     }
-    return $this->_index;
+    return $this->index;
   }
 
   /**
