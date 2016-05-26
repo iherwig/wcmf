@@ -215,48 +215,29 @@ class SortController extends Controller {
         'containerOid' => $containerObject);
     if ($this->checkObjects($objectMap)) {
       $role = $request->getValue('role');
-      $children = $containerObject->getValue($role);
+      $originalChildren = $containerObject->getValue($role);
       // add the new node to the container, if it is not yet
-      $nodeExists = sizeof(Node::filter($children, $insertOid)) == 1;
+      $nodeExists = sizeof(Node::filter($originalChildren, $insertOid)) == 1;
       if (!$nodeExists) {
         $containerObject->addNode($insertObject, $role);
       }
-
-      // determine the sort key
-      $containerMapper = $persistenceFacade->getMapper($containerOid->getType());
-      $relationDesc = $containerMapper->getRelation($request->getValue('role'));
-      $containerRole = $relationDesc->getThisRole();
-      $mapper = $insertObject->getMapper();
-      $sortkeyDef = $mapper->getSortkey($containerRole);
-      $sortkey = $sortkeyDef['sortFieldName'];
-      $sortdir = $sortkeyDef['sortDirection'];
+      // reorder the children list
+      $orderedChildren = array();
+      foreach ($originalChildren as $curChild) {
+        $oid = $curChild->getOID();
+        if ($oid == $referenceOid) {
+          $orderedChildren[] = $insertObject;
+        }
+        if ($oid != $insertOid) {
+          $orderedChildren[] = $curChild;
+        }
+      }
 
       // get the sortkey values of the objects before and after the insert position
       if ($isOrderBottom) {
-        $lastObject = $sortdir == 'ASC' ? $children[sizeof($children)-1] : $children[0];
-        $prevValue = $lastObject != null ? $this->getSortkeyValue($lastObject, $sortkey) : 1;
-        $nextValue = ceil($prevValue+1);
+        $orderedChildren[] = $insertObject;
       }
-      else {
-        for ($i=0, $count=sizeof($children); $i<$count; $i++) {
-          $curChild = $children[$i];
-          if ($curChild->getOID() == $referenceOid) {
-            if ($sortdir == 'ASC') {
-              $prevObject = $i>0 ? $children[$i-1] : null;
-            }
-            else {
-              $prevObject = $i<$count-1 ? $children[$i+1] : null;
-            }
-            break;
-          }
-        }
-        $nextValue = $this->getSortkeyValue($referenceObject, $sortkey);
-        $prevValue = $prevObject != null ? $this->getSortkeyValue($prevObject, $sortkey) :
-          ceil($nextValue-1);
-      }
-
-      // set the sortkey value to the average
-      $insertObject->setValue($sortkey, ($nextValue+$prevValue)/2);
+      $containerObject->setNodeOrder($orderedChildren, array($insertObject), $role);
     }
   }
 

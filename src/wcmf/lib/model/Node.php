@@ -42,7 +42,7 @@ class Node extends DefaultPersistentObject {
 
   private $addedNodes = array();
   private $deletedNodes = array();
-  private $orderedNodes = array();
+  private $orderedNodes = null;
 
   private static $parentGetValueMethod = null;
   private static $logger = null;
@@ -428,17 +428,23 @@ class Node extends DefaultPersistentObject {
    * (@see PersistenceMapper::getDefaultOrder()) will be ignored. If a given
    * Node instance is not related to this Node yet, an exception will be thrown.
    * Any not persisted definition of a previous call will be overwritten
-   * @param $nodeList Array of sorted Node instances
+   * @param $orderedList Array of ordered Node instances
+   * @param $movedList Array of repositioned Node instances (optional, improves performance)
+   * @param $role Role name of the Node instances (optional)
    */
-  public function setNodeOrder(array $nodeList) {
-    $this->orderedNodes = $nodeList;
+  public function setNodeOrder(array $orderedList, array $movedList=null, $role=null) {
+    $this->orderedNodes = array(
+        'ordered' => $orderedList,
+        'moved' => $movedList,
+        'role' => $role
+    );
     $this->setState(PersistentOBject::STATE_DIRTY);
   }
 
   /**
    * Get the order of related Node instances, if it was defined using
    * the Node::setNodeOrder() method.
-   * @return Array of sorted Node instances
+   * @return Associative array of with keys 'ordered', 'moved', 'role' or null
    */
   public function getNodeOrder() {
     return $this->orderedNodes;

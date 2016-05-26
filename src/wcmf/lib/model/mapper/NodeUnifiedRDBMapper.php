@@ -157,44 +157,66 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
 
       // changed order
-      $orderedNodes = $object->getNodeOrder();
-      // order changes only make sense for arrays with more than one element
-      if (sizeof($orderedNodes) > 1) {
-        $relatives = array();
-        $sortkeyValues = array();
-        $orderDirection = null;
-        foreach ($orderedNodes as $curNode) {
-          // find the role of the node
-          $curRelationDesc = $object->getNodeRelation($curNode);
-          if ($curRelationDesc != null) {
-            // find the sortkey
-            $otherMapper = $curRelationDesc->getOtherMapper();
-            $sortkeyDef = $otherMapper->getSortkey($curRelationDesc->getThisRole());
-            if ($sortkeyDef != null) {
-              $sortkeyName = $sortkeyDef['sortFieldName'];
-              // take the order direction from the first node
-              // (different order directions do not make sense)
-              $orderDirection = $orderDirection == null ? $sortkeyDef['sortDirection'] : $orderDirection;
-              // in a many to many relation, we have to modify the order of the relation objects
-              if ($curRelationDesc instanceof RDBManyToManyRelationDescription) {
-                  $nmObjects = $this->loadRelationObjects(PersistentObjectProxy::fromObject($object),
-                        PersistentObjectProxy::fromObject($curNode), $curRelationDesc);
-                  $curNode = $nmObjects[0];
-              }
-              // collect the objects and sortkey definitions
-              $relatives[] = array('object' => $curNode, 'sortFieldName' => $sortkeyName);
-              // collect the sortkey values
-              $sortkeyValues[] = $curNode->getValue($sortkeyName);
+      $nodeOrder = $object->getNodeOrder();
+      if ($nodeOrder != null) {
+        $containerMapper = $object->getMapper();
+        $orderedList = $nodeOrder['ordered'];
+        $movedList = $nodeOrder['moved'];
+        $movedLookup = $movedList != null ? array_reduce($movedList, function($result, $item) {
+          $result[$item->getOID()->__toString()] = true;
+          return $result;
+        }, array()) : array();
+        $role = $nodeOrder['role'];
+        $defaultRelationDesc = $role != null ? $containerMapper->getRelation($role) : null;
+        for ($i=0, $count=sizeof($orderedList); $i<$count; $i++) {
+          $orderedNode = $orderedList[$i];
+
+          // check if node is repositioned
+          if ($movedList == null || isset($movedLookup[$orderedNode->getOID()->__toString()])) {
+
+            // determine the sortkey regarding the container object
+            $relationDesc = $defaultRelationDesc != null ? $defaultRelationDesc :
+                $object->getNodeRelation($orderedNode);
+            $sortkeyDef = $orderedNode->getMapper()->getSortkey($relationDesc->getThisRole());
+            $sortkey = $sortkeyDef['sortFieldName'];
+            $sortNode = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
+                    PersistentObjectProxy::fromObject($orderedNode), $relationDesc);
+
+            // get previous sortkey value
+            $prevValue = null;
+            if ($i > 0) {
+              $prevNode = $orderedList[$i-1];
+              $relationDescPrev = $defaultRelationDesc != null ? $defaultRelationDesc :
+                  $object->getNodeRelation($prevNode);
+              $sortkeyDefPrev = $prevNode->getMapper()->getSortkey($relationDescPrev->getThisRole());
+              $prevSortNode = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
+                    PersistentObjectProxy::fromObject($prevNode), $relationDesc);
+              $prevValue = $prevSortNode->getValue($sortkeyDefPrev['sortFieldName']);
             }
+
+            // get next sortkey value
+            $nextValue = null;
+            if ($i < $count-1) {
+              $nextNode = $orderedList[$i+1];
+              $relationDescNext = $defaultRelationDesc != null ? $defaultRelationDesc :
+                  $object->getNodeRelation($nextNode);
+              $sortkeyDefNext = $nextNode->getMapper()->getSortkey($relationDescNext->getThisRole());
+              $nextSortNode = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
+                    PersistentObjectProxy::fromObject($nextNode), $relationDesc);
+              $nextValue = $nextSortNode->getValue($sortkeyDefNext['sortFieldName']);
+            }
+
+            // set edge values
+            if ($prevValue == null) {
+              $prevValue = ceil($nextValue-1);
+            }
+            if ($nextValue == null) {
+              $nextValue = ceil($prevValue+1);
+            }
+
+            // set the sortkey value to the average
+            $sortNode->setValue($sortkey, ($nextValue+$prevValue)/2);
           }
-        }
-        // sort the values
-        $sortFuntion = $orderDirection == 'DESC' ? 'rsort' : 'sort';
-        $sortFuntion($sortkeyValues);
-        // set the values on the objects
-        for ($i=0, $count=sizeof($relatives); $i<$count; $i++) {
-          $curRelative = $relatives[$i];
-          $curRelative['object']->setValue($curRelative['sortFieldName'], $sortkeyValues[$i]);
         }
       }
     }
@@ -691,6 +713,24 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
     }
     return $values;
+  }
+
+  /**
+   * Get the object which carries the sortkey in the relation of the given object
+   * and relative.
+   * @param PersistentObjectProxy $objectProxy
+   * @param PersistentObjectProxy $relativeProxy
+   * @param RelationDescription $relationDesc The relation description
+   * @return PersistentObjectProxy
+   */
+  protected function getSortableObject(PersistentObjectProxy $objectProxy,
+          PersistentObjectProxy $relativeProxy, RelationDescription $relationDesc) {
+    // in a many to many relation, we have to modify the order of the relation objects
+    if ($relationDesc instanceof RDBManyToManyRelationDescription) {
+        $nmObjects = $this->loadRelationObjects($objectProxy, $relativeProxy, $relationDesc);
+        return $nmObjects[0];
+    }
+    return $relativeProxy;
   }
 
   /**
