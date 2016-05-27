@@ -82,9 +82,6 @@ class Application {
     // initialize session
     $session = ObjectFactory::getInstance('session');
 
-    // clear errors
-    $session->clearErrors();
-
     // load user configuration
     $principalFactory = ObjectFactory::getInstance('principalFactory');
     $authUser = $principalFactory->getUser($session->getAuthUser(), true);

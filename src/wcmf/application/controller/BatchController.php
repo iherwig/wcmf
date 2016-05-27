@@ -72,7 +72,6 @@ use wcmf\lib\presentation\Response;
 abstract class BatchController extends Controller {
 
   // session name constants
-  const SESSION_VARNAME = __CLASS__;
   const REQUEST_VAR = 'request';
   const ONE_CALL_VAR = 'oneCall';
   const STEP_VAR = 'step';
@@ -89,38 +88,26 @@ abstract class BatchController extends Controller {
   public function initialize(Request $request, Response $response) {
     parent::initialize($request, $response);
 
-    $session = $this->getSession();
     if ($request->getAction() == 'continue') {
-      $sessionData = $session->get(self::SESSION_VARNAME);
       // get step for current call from session
-      if (isset($sessionData[self::STEP_VAR])) {
-        $this->curStep = $sessionData[self::STEP_VAR];
-      }
-      else {
+      $this->curStep = $this->getLocalSessionValue(self::STEP_VAR);
+      if ($this->curStep == null) {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("Current step undefined."));
       }
       // get workpackage definition for current call from session
-      if (isset($sessionData[self::PACKAGES_VAR])) {
-        $this->workPackages = $sessionData[self::PACKAGES_VAR];
-      }
-      else {
+      $this->workPackages = $this->getLocalSessionValue(self::PACKAGES_VAR);
+      if ($this->workPackages == null) {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("Work packages undefined."));
       }
     }
     else {
-      // first call
-      $this->curStep = 1;
-
       // initialize session variables
-      $sessionData = array(
-        self::ONE_CALL_VAR => $request->getBooleanValue('oneCall', false),
-        self::REQUEST_VAR => $request->getValues(),
-        self::PACKAGES_VAR => array(),
-        self::STEP_VAR => $this->curStep,
-        self::NUM_STEPS_VAR => 0,
-        self::DOWNLOAD_STEP_VAR => false
-      );
-      $session->set(self::SESSION_VARNAME, $sessionData);
+      $this->setLocalSessionValue(self::ONE_CALL_VAR, $request->getBooleanValue('oneCall', false));
+      $this->setLocalSessionValue(self::REQUEST_VAR, $request->getValues());
+      $this->setLocalSessionValue(self::PACKAGES_VAR, array());
+      $this->setLocalSessionValue(self::STEP_VAR, 0);
+      $this->setLocalSessionValue(self::NUM_STEPS_VAR, 0);
+      $this->setLocalSessionValue(self::DOWNLOAD_STEP_VAR, false);
 
       // define work packages
       $number = 0;
@@ -140,26 +127,19 @@ abstract class BatchController extends Controller {
       }
     }
 
-    // get updated session data
-    $sessionData = $session->get(self::SESSION_VARNAME);
-
     // next step
-    $sessionData[self::STEP_VAR]++;
-
-    // update session
-    $session->set(self::SESSION_VARNAME, $sessionData);
+    $this->curStep = $this->getLocalSessionValue(self::STEP_VAR);
+    $this->setLocalSessionValue(self::STEP_VAR, ++$this->curStep);
   }
 
   /**
    * @see Controller::doExecute()
    */
   protected function doExecute() {
-    $session = $this->getSession();
     $response = $this->getResponse();
-    $sessionData = $session->get(self::SESSION_VARNAME);
 
     // check if a download was triggered in the last step
-    if ($sessionData[self::DOWNLOAD_STEP_VAR] == true) {
+    if ($this->getLocalSessionValue(self::DOWNLOAD_STEP_VAR) == true) {
       $file = $this->getDownloadFile();
       $response->setFile($file, true);
       $this->cleanup();
@@ -174,7 +154,6 @@ abstract class BatchController extends Controller {
 
       // update local variables after processing
       $numberOfSteps = $this->getNumberOfSteps();
-      $sessionData = $session->get(self::SESSION_VARNAME);
 
       // set response data
       $response->setValue('stepNumber', $curStep);
@@ -183,12 +162,12 @@ abstract class BatchController extends Controller {
     }
 
     // check if we are finished or should continue
-    if ($curStep >= $numberOfSteps || $sessionData[self::ONE_CALL_VAR] == true) {
+    if ($curStep >= $numberOfSteps || $this->getLocalSessionValue(self::ONE_CALL_VAR) == true) {
       // finished -> check for download
       $file = $this->getDownloadFile();
       if ($file) {
         $response->setAction('download');
-        $sessionData[self::DOWNLOAD_STEP_VAR] = true;
+        $this->setLocalSessionValue(self::DOWNLOAD_STEP_VAR, true);
       }
       else {
         $response->setAction('done');
@@ -200,9 +179,6 @@ abstract class BatchController extends Controller {
       $response->setAction('progress');
     }
     $response->setValue('status', $response->getAction());
-
-    // update session
-    $session->set(self::SESSION_VARNAME, $sessionData);
   }
 
   /**
@@ -234,10 +210,7 @@ abstract class BatchController extends Controller {
               ApplicationError::getGeneral("Wrong work package description '".$name."': No callback given."));
     }
 
-    $session = $this->getSession();
-    $sessionData = $session->get(self::SESSION_VARNAME);
-
-    $workPackages = $sessionData[self::PACKAGES_VAR];
+    $workPackages = $this->getLocalSessionValue(self::PACKAGES_VAR);
     $counter = 1;
     $total = sizeof($oids);
     while(sizeof($oids) > 0) {
@@ -269,9 +242,8 @@ abstract class BatchController extends Controller {
     $this->workPackages = $workPackages;
 
     // update session
-    $sessionData[self::PACKAGES_VAR] = $workPackages;
-    $sessionData[self::NUM_STEPS_VAR] = sizeof($workPackages);
-    $session->set(self::SESSION_VARNAME, $sessionData);
+    $this->setLocalSessionValue(self::PACKAGES_VAR, $workPackages);
+    $this->setLocalSessionValue(self::NUM_STEPS_VAR, sizeof($workPackages));
   }
 
   /**
@@ -303,9 +275,7 @@ abstract class BatchController extends Controller {
    * @return Mixed
    */
   protected function getRequestValue($name) {
-    $session = $this->getSession();
-    $sessionData = $session->get(self::SESSION_VARNAME);
-    $requestValues = $sessionData[self::REQUEST_VAR];
+    $requestValues = $this->getLocalSessionValue(self::REQUEST_VAR);
     return isset($requestValues[$name]) ? $requestValues[$name] : null;
   }
 
@@ -314,9 +284,7 @@ abstract class BatchController extends Controller {
    * @return Integer
    */
   protected function getNumberOfSteps() {
-    $session = $this->getSession();
-    $sessionData = $session->get(self::SESSION_VARNAME);
-    return $sessionData[self::NUM_STEPS_VAR];
+    return $this->getLocalSessionValue(self::NUM_STEPS_VAR);
   }
 
   /**
@@ -324,7 +292,7 @@ abstract class BatchController extends Controller {
    * @param $step The step number
    */
   protected function getDisplayText($step) {
-    return $this->getMessage()->getText("Processing")." ".$this->workPackages[$step-1]['name']." ...";
+    return $this->workPackages[$step-1]['name']." ...";
   }
 
   /**
@@ -351,8 +319,7 @@ abstract class BatchController extends Controller {
    * @note Suclasses may override this to do custom clean up, but should call the parent method.
    */
   protected function cleanup() {
-    $session = $this->getSession();
-    $session->set(self::SESSION_VARNAME, null);
+    $this->clearLocalSessionValues();
   }
 }
 ?>

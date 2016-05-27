@@ -394,5 +394,42 @@ class Controller {
     $token = $this->getRequest()->getValue(self::CSRF_TOKEN_PARAM);
     return $token === $storedToken;
   }
+
+  /**
+   * Set the value of a local session variable.
+   * @param $key The key (name) of the session vaiable.
+   * @param $default The default value if the key is not defined (optional, default: _null_)
+   * @return The session var or null if it doesn't exist.
+   */
+  protected function getLocalSessionValue($key, $default=null) {
+    $sessionVarname = get_class($this);
+    $localValues = $this->session->get($sessionVarname, null);
+    return array_key_exists($key, $localValues) ? $localValues[$key] : $default;
+  }
+
+  /**
+   * Get the value of a local session variable.
+   * @param $key The key (name) of the session vaiable.
+   * @param $value The value of the session variable.
+   */
+  protected function setLocalSessionValue($key, $value) {
+    $sessionVarname = get_class($this);
+    $localValues = $this->session->get($sessionVarname, null);
+    if ($localValues == null) {
+      $localValues = array();
+    }
+    $localValues[$key] = $value;
+    $this->session->set($sessionVarname, $localValues);
+  }
+
+  /**
+   * Remove all local session values.
+   * @param $key The key (name) of the session vaiable.
+   * @param $value The value of the session variable.
+   */
+  protected function clearLocalSessionValues() {
+    $sessionVarname = get_class($this);
+    $this->session->remove($sessionVarname);
+  }
 }
 ?>

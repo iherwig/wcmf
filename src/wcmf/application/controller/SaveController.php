@@ -39,8 +39,6 @@ use wcmf\lib\presentation\Controller;
  * </div>
  * </div>
  *
- * Errors concerning single input fields are added to the session (the keys are the input field names)
- *
  * @author ingo herwig <ingo@wemove.com>
  */
 class SaveController extends Controller {
@@ -74,7 +72,6 @@ class SaveController extends Controller {
    */
   protected function doExecute() {
     $persistenceFacade = $this->getPersistenceFacade();
-    $session = $this->getSession();
     $request = $this->getRequest();
     $response = $this->getResponse();
     $message = $this->getMessage();
@@ -199,8 +196,6 @@ class SaveController extends Controller {
               catch(ValidationException $ex) {
                 $invalidAttributeValues[] = array('oid' => $curOidStr,
                   'parameter' => $curValueName, 'message' => $ex->getMessage());
-                // add error to session
-                $session->addError($curOidStr, $ex->getMessage());
               }
             }
 

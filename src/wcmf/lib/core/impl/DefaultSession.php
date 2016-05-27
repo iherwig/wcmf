@@ -35,8 +35,6 @@ else {
  */
 class DefaultSession implements Session {
 
-  private static $ERROR_VARNAME = 'Session.errors';
-
   private $authUserVarName = null;
 
   /**
@@ -133,41 +131,5 @@ class DefaultSession implements Session {
       $login = $this->get($this->authUserVarName);
     }
     return $login;
-  }
-
-  /**
-   * @see Session::addError()
-   */
-  public function addError($key, $error) {
-    if (isset($_SESSION[self::$ERROR_VARNAME])) {
-      $_SESSION[self::$ERROR_VARNAME] = array();
-    }
-    $_SESSION[self::$ERROR_VARNAME][$key] = $error;
-  }
-
-  /**
-   * @see Session::getError()
-   */
-  public function getError($key) {
-    $error = null;
-    if (isset($_SESSION[self::$ERROR_VARNAME])) {
-      $error = $_SESSION[self::$ERROR_VARNAME][$key];
-    }
-    return $error;
-  }
-
-  /**
-   * @see Session::getErrors()
-   */
-  public function getErrors() {
-    $errors = $_SESSION[self::$ERROR_VARNAME];
-    return $errors;
-  }
-
-  /**
-   * @see Session::clearErrors()
-   */
-  public function clearErrors() {
-    unset($_SESSION[self::$ERROR_VARNAME]);
   }
 }

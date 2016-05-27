@@ -48,7 +48,6 @@ use wcmf\lib\presentation\Response;
 class BatchDisplayController extends BatchController {
 
   // session name constants
-  const SESSION_VARNAME = __CLASS__;
   const REGISTRY_VAR = 'registry';
 
   // persistent iterator id
@@ -74,10 +73,7 @@ class BatchDisplayController extends BatchController {
       }
 
       // initialize session variables
-      $sessionData = array(
-        self::REGISTRY_VAR => array()
-      );
-      $session->set(self::SESSION_VARNAME, $sessionData);
+      $this->setLocalSessionValue(self::REGISTRY_VAR, array());
 
       // reset iterator
       PersistentIterator::reset(self::ITERATOR_ID_VAR, $session);
@@ -201,11 +197,7 @@ class BatchDisplayController extends BatchController {
    * Finish the process and set the result
    */
   protected function endProcess() {
-    $session = $this->getSession();
-
-    // clear session variables
-    $tmp = null;
-    $session->set(self::SESSION_VARNAME, $tmp);
+    // nothing to do, nodes are added to response during the process already
   }
 
   /**
@@ -265,10 +257,9 @@ class BatchDisplayController extends BatchController {
    * @param $oid The object id to register
    */
   protected function register(ObjectId $oid) {
-    $session = $this->getSession();
-    $sessionData = $session->get(self::SESSION_VARNAME);
-    $sessionData[self::REGISTRY_VAR][] = $oid;
-    $session->set(self::SESSION_VARNAME, $sessionData);
+    $registry = $this->getLocalSessionValue(self::REGISTRY_VAR);
+    $registry[] = $oid->__toString();
+    $this->setLocalSessionValue(self::REGISTRY_VAR, $registry);
   }
 
   /**
@@ -277,10 +268,8 @@ class BatchDisplayController extends BatchController {
    * @return Boolean whether the object id is registered or not
    */
   protected function isRegistered(ObjectId $oid) {
-    $session = $this->getSession();
-    $sessionData = $session->get(self::SESSION_VARNAME);
-
-    return in_array($oid, $sessionData[self::REGISTRY_VAR]);
+    $registry = $this->getLocalSessionValue(self::REGISTRY_VAR);
+    return in_array($oid->__toString(), $registry);
   }
 
   /**

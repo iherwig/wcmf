@@ -58,9 +58,11 @@ class XMLExportController extends BatchController {
   const CACHE_KEY_EXPORTED_OIDS = 'exportedOids';
 
   // session name constants
-  const SESSION_VARNAME = __CLASS__;
   const LAST_INDENT_VAR = 'lastIndent';
   const TAGS_TO_CLOSE_VAR = 'tagsToClose';
+
+  // persistent iterator id
+  const ITERATOR_ID_VAR = 'XMLExportController.iteratorid';
 
   // default values, maybe overriden by corresponding request values (see above)
   private $DOCFILE = "export.xml";
@@ -131,14 +133,11 @@ class XMLExportController extends BatchController {
       }
 
       // initialize session variables
-      $sessionData = array(
-        self::LAST_INDENT_VAR => 0,
-        self::TAGS_TO_CLOSE_VAR => array()
-      );
-      $session->set(self::SESSION_VARNAME, $sessionData);
+      $this->setLocalSessionValue(self::LAST_INDENT_VAR, 0);
+      $this->setLocalSessionValue(self::TAGS_TO_CLOSE_VAR, array());
 
       // reset iterator
-      PersistentIterator::reset($this->ITERATOR_ID, $session);
+      PersistentIterator::reset($this->ITERATOR_ID_VAR, $session);
     }
     // initialize parent controller after default request values are set
     parent::initialize($request, $response);
@@ -240,10 +239,10 @@ class XMLExportController extends BatchController {
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
 
     // check for iterator in session
-    $iterator = PersistentIterator::load($this->ITERATOR_ID, $persistenceFacade, $session);
+    $iterator = PersistentIterator::load($this->ITERATOR_ID_VAR, $persistenceFacade, $session);
     // no iterator but oid given, start with new root oid
     if ($iterator == null && sizeof($oids) > 0 && $oids[0] != null) {
-      $iterator = new PersistentIterator($this->ITERATOR_ID, $persistenceFacade, $session, $oids[0]);
+      $iterator = new PersistentIterator($this->ITERATOR_ID_VAR, $persistenceFacade, $session, $oids[0]);
     }
     // no iterator, no oid, finish
     if ($iterator == null) {
@@ -271,7 +270,7 @@ class XMLExportController extends BatchController {
       // store remaining root oids in session
       $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
       // delete iterator to start with new root oid
-      PersistentIterator::reset($this->ITERATOR_ID, $session);
+      PersistentIterator::reset($this->ITERATOR_ID_VAR, $session);
 
       $name = $message->getText('Exporting tree: start with %0%', array($nextOID));
       $this->addWorkPackage($name, 1, array($nextOID), 'exportNodes');
@@ -295,8 +294,6 @@ class XMLExportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function finishExport($oids) {
-    $session = $this->getSession();
-
     // get document definition
     $docFile = $this->getDownloadFile();
     $docRootElement = $this->getRequestValue('docRootElement');
@@ -308,10 +305,9 @@ class XMLExportController extends BatchController {
     $this->fileUtil->fputsUnicode($fileHandle, '</'.$docRootElement.'>'.$docLinebreak);
     fclose($fileHandle);
 
-    // clear session variables
+    // clear cache
     $tmp = null;
     $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $tmp);
-    $session->set(self::SESSION_VARNAME, $tmp);
   }
 
   /**
@@ -320,16 +316,13 @@ class XMLExportController extends BatchController {
    * @param $curIndent The depth of the node in the tree
    */
   protected function endTags($fileHandle, $curIndent) {
-    $session = $this->getSession();
-
     // get document definition
     $docIndent = $this->getRequestValue('docIndent');
     $docLinebreak = $this->getRequestValue('docLinebreak');
 
     // get document state from session
-    $sessionData = $session->get(self::SESSION_VARNAME);
-    $lastIndent = $sessionData[self::LAST_INDENT_VAR];
-    $tagsToClose = $sessionData[self::TAGS_TO_CLOSE_VAR];
+    $lastIndent = $this->getLocalSessionValue(self::LAST_INDENT_VAR);
+    $tagsToClose = $this->getLocalSessionValue(self::TAGS_TO_CLOSE_VAR);
 
     // write last opened and not closed tags
     if ($curIndent < $lastIndent) {
@@ -342,9 +335,8 @@ class XMLExportController extends BatchController {
     }
 
     // update document state in session
-    $sessionData[self::LAST_INDENT_VAR] = $lastIndent;
-    $sessionData[self::TAGS_TO_CLOSE_VAR] = $tagsToClose;
-    $session->set(self::SESSION_VARNAME, $sessionData);
+    $this->setLocalSessionValue(self::LAST_INDENT_VAR, $lastIndent);
+    $this->setLocalSessionValue(self::TAGS_TO_CLOSE_VAR, $tagsToClose);
   }
 
   /**
@@ -355,16 +347,14 @@ class XMLExportController extends BatchController {
    */
   protected function writeNode($fileHandle, ObjectId $oid, $depth) {
     $persistenceFacade = $this->getPersistenceFacade();
-    $session = $this->getSession();
 
     // get document definition
     $docIndent = $this->getRequestValue('docIndent');
     $docLinebreak = $this->getRequestValue('docLinebreak');
 
     // get document state from session
-    $sessionData = $session->get(self::SESSION_VARNAME);
-    $lastIndent = $sessionData[self::LAST_INDENT_VAR];
-    $tagsToClose = $sessionData[self::TAGS_TO_CLOSE_VAR];
+    $lastIndent = $this->getLocalSessionValue(self::LAST_INDENT_VAR);
+    $tagsToClose = $this->getLocalSessionValue(self::TAGS_TO_CLOSE_VAR);
 
     // load node and get element name
     $node = $persistenceFacade->load($oid);
@@ -414,9 +404,8 @@ class XMLExportController extends BatchController {
     }
 
     // update document state in session
-    $sessionData[self::LAST_INDENT_VAR] = $lastIndent;
-    $sessionData[self::TAGS_TO_CLOSE_VAR] = $tagsToClose;
-    $session->set(self::SESSION_VARNAME, $sessionData);
+    $this->setLocalSessionValue(self::LAST_INDENT_VAR, $lastIndent);
+    $this->setLocalSessionValue(self::TAGS_TO_CLOSE_VAR, $tagsToClose);
   }
 
   /**

@@ -25,7 +25,7 @@ interface Session {
   public function getID();
 
   /**
-   * Returns the value of an session variable
+   * Returns the value of a session variable
    * @param $key The key (name) of the session vaiable.
    * @param $default The default value if the key is not defined (optional, default: _null_)
    * @return The session var or null if it doesn't exist.
@@ -33,7 +33,7 @@ interface Session {
   public function get($key, $default=null);
 
   /**
-   * Sets the value of an session variable.
+   * Sets the value of a session variable.
    * @param $key The key (name) of the session vaiable.
    * @param $value The value of the session variable.
    */
@@ -73,29 +73,4 @@ interface Session {
    * @return String
    */
   public function getAuthUser();
-
-  /**
-   * Add an error to the session data.
-   * @param $key The identifier of the error
-   * @param $error The error message
-   */
-  public function addError($key, $error);
-
-  /**
-   * Get an error stored in the session data.
-   * @param $key The identifier of the error
-   * @return The error message
-   */
-  public function getError($key);
-
-  /**
-   * Get all errors stored in the session data.
-   * @return The error message
-   */
-  public function getErrors();
-
-  /**
-   * Clear the session error data.
-   */
-  public function clearErrors();
 }
