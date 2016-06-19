@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!-- see http://www.phpunit.de/wiki/Documentation -->
 <phpunit bootstrap="bootstrap.php"
+         processIsolation="true"
          verbose="true">
   <testsuites>
     <testsuite name="Controller">
