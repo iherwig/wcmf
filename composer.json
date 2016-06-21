@@ -30,7 +30,7 @@
         "monolog/monolog": "~1.17",
         "zf1/zend-db": "~1.12",
         "zendframework/zendsearch": "^2.0@rc",
-        "fergusean/nusoap": "~0.9"
+        "codecasts/nusoap-php7": "~0.9"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.4",
