@@ -83,6 +83,7 @@ class SoapTest extends DatabaseTestCase {
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $result = $client->call("getAuthorList");
+    var_dump($result);
     $this->assertFalse($result instanceof \SoapFault);
     $list = $result->list;
     $this->assertEquals(1, $result->totalCount);
