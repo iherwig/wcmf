@@ -14,13 +14,14 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
+use wcmf\test\lib\BaseTestCase;
 
 /**
  * RelationDescriptionTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RelationDescriptionTest extends \PHPUnit_Framework_TestCase {
+class RelationDescriptionTest extends BaseTestCase {
 
   public function testMapper() {
     $rel1 = new RDBOneToManyRelationDescription('Chapter', 'ParentChapter', 'Chapter', 'SubChapter',

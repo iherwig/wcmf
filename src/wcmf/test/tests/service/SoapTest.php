@@ -10,10 +10,10 @@
  */
 namespace wcmf\test\tests\service;
 
+use wcmf\lib\service\SoapClient;
+use wcmf\lib\util\TestUtil;
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
-
-use wcmf\lib\service\SoapClient;
 
 /**
  * SoapTest.
@@ -50,6 +50,20 @@ class SoapTest extends DatabaseTestCase {
         array('id' => 202, 'name' => 'Test Author'),
       )
     ));
+  }
+
+  protected function setUp() {
+    parent::setUp();
+    TestUtil::startServer(WCMF_BASE.'app/public', 'router.php');
+
+    // log wsdl
+    $wsdlUrl = self::getEndPoint().'?wsdl';
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $wsdlUrl);
+    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+    $wsdl = curl_exec($ch);
+    curl_close($ch);
+    $this->getLogger(__CLASS__)->info($wsdl);
   }
 
   public function testSearch() {

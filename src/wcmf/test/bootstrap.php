@@ -4,11 +4,9 @@ require_once(dirname(WCMF_BASE)."/vendor/autoload.php");
 
 use wcmf\lib\core\ClassLoader;
 use wcmf\lib\io\FileUtil;
-use wcmf\lib\util\TestUtil;
 new ClassLoader(WCMF_BASE);
 
 setup();
-TestUtil::startServer(WCMF_BASE.'app/public', 'router.php');
 register_shutdown_function("cleanup");
 
 /**

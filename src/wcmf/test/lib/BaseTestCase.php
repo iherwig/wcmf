@@ -29,6 +29,15 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Get the logger for the given category
+   * @param $category
+   * @return Logger
+   */
+  protected function getLogger($category) {
+    return LogManager::getLogger($category);
+  }
+
+  /**
    * Replace backticks in the given sql string by the actual quote char
    * used in the connection
    * @param $sql

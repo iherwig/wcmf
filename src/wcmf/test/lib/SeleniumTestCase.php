@@ -119,5 +119,14 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
     $btn = $this->byXPath("//span[contains(text(),'Sign in')]");
     $btn->click();
   }
+
+  /**
+   * Get the logger for the given category
+   * @param $category
+   * @return Logger
+   */
+  protected function getLogger($category) {
+    return LogManager::getLogger($category);
+  }
 }
 ?>

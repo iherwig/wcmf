@@ -49,5 +49,14 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
   protected function tearDown() {
     self::$frameworkReady = false;
   }
+
+  /**
+   * Get the logger for the given category
+   * @param $category
+   * @return Logger
+   */
+  protected function getLogger($category) {
+    return LogManager::getLogger($category);
+  }
 }
 ?>

@@ -84,8 +84,9 @@ class TestUtil {
    * Start the built-in webserver
    * @param $documentRoot Document root directory
    * @param $router Router script filename (optional)
+   * @param $killOnExit Boolean, whether to kill the server process after script execution or not (optional, default: false)
    */
-  public static function startServer($documentRoot, $router='') {
+  public static function startServer($documentRoot, $router='', $killOnExit=false) {
     if (!is_dir($documentRoot)) {
       throw new \Exception('Document root '.$documentRoot.' does not exist');
     }
@@ -109,21 +110,23 @@ class TestUtil {
       throw new \Exception("Failed to execute ".$cmd);
     }
 
-    // kill the web server when the process ends
-    register_shutdown_function(function() use ($resource) {
-      $status = proc_get_status($resource);
-      $pid = $status['pid'];
-      if (TestUtil::isWindows()) {
-        $output = array_filter(explode(" ", shell_exec("wmic process get parentprocessid,processid | find \"$pid\"")));
-        array_pop($output);
-        $pid = end($output);
-        exec("taskkill /F /T /PID $pid");
-      }
-      else {
-        $pid = $pid+1;
-        exec("kill -9 $pid");
-      }
-    });
+    if ($killOnExit) {
+      // kill the web server when the process ends
+      register_shutdown_function(function() use ($resource) {
+        $status = proc_get_status($resource);
+        $pid = $status['pid'];
+        if (self::isWindows()) {
+          $output = array_filter(explode(" ", shell_exec("wmic process get parentprocessid,processid | find \"$pid\"")));
+          array_pop($output);
+          $pid = end($output);
+          exec("taskkill /F /T /PID $pid");
+        }
+        else {
+          $pid = $pid+1;
+          exec("kill -9 $pid");
+        }
+      });
+    }
   }
 
   /**

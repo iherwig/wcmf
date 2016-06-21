@@ -15,7 +15,6 @@ use wcmf\test\lib\BaseTestCase;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\util\TestUtil;
 
 /**
  * NodeTest.
@@ -25,7 +24,6 @@ use wcmf\lib\util\TestUtil;
 class NodeTest extends BaseTestCase {
 
   public function testBuildDepth() {
-    TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
@@ -97,7 +95,6 @@ class NodeTest extends BaseTestCase {
     }
 
     $transaction->rollback();
-    TestUtil::endSession();
   }
 }
 ?>

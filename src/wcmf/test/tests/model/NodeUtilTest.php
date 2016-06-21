@@ -16,7 +16,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\util\TestUtil;
 
 /**
  * NodeUtilTest.
@@ -26,8 +25,6 @@ use wcmf\lib\util\TestUtil;
 class NodeUtilTest extends BaseTestCase {
 
   public function testGetConnection() {
-    TestUtil::startSession('admin', 'admin');
-
     $paths1 = NodeUtil::getConnections('Author', null, 'Image', 'child');
     $this->assertEquals(2, sizeof($paths1));
     $endRoles1 = array($paths1[0]->getEndRole(), $paths1[1]->getEndRole());
@@ -78,13 +75,9 @@ class NodeUtilTest extends BaseTestCase {
     $paths11 = NodeUtil::getConnections('Author', null, 'Publisher', 'child');
     $this->assertEquals(1, sizeof($paths11));
     $this->assertEquals('Publisher', $paths11[0]->getEndRole());
-
-    TestUtil::endSession();
   }
 
   public function testGetQueryCondition() {
-    TestUtil::startSession('admin', 'admin');
-
     // Chapter -> NormalImage
     $node1 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
     $node1->setOID(new ObjectId('Chapter', 10));
@@ -131,8 +124,6 @@ class NodeUtilTest extends BaseTestCase {
       "INNER JOIN `Chapter` AS `ParentChapter` ON `Chapter`.`fk_chapter_id` = `ParentChapter`.`id` ".
       "WHERE ((`ParentChapter`.`id` = 10)) ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected3, 'Chapter'), str_replace("\n", "", $sql3));
-
-    TestUtil::endSession();
   }
 }
 ?>
