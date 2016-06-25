@@ -62,6 +62,12 @@
       <group>performance</group>
     </exclude>
   </groups>
+  <filter>
+    <whitelist processUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">../application</directory>
+      <directory suffix=".php">../lib</directory>
+    </whitelist>
+  </filter>
   <logging>
     <log type="testdox-text" target="log/testdox.txt"/>
   </logging>
