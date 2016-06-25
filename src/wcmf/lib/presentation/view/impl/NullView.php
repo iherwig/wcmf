@@ -69,6 +69,8 @@ class NullView implements View {
   /**
    * @see View::getTemplate()
    */
-  public static function getTemplate($controller, $context, $action);
+  public static function getTemplate($controller, $context, $action) {
+    return null;
+  }
 }
 ?>
