@@ -68,6 +68,11 @@
       <directory suffix=".php">../lib</directory>
       <exclude>
         <file>../application/controller/MediaController.php</file>
+        <file>../application/views/plugins/block.assetic.php</file>
+        <file>../lib/pdf/PDF.php</file>
+        <file>../lib/presentation/view/impl/SmartyView.php</file>
+        <file>../lib/service/impl/HTTPClient.php</file>
+        <file>../lib/util/GraphicsUtil.php</file>
       </exclude>
     </whitelist>
   </filter>

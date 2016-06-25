@@ -18,6 +18,8 @@ use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ActionMapper;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 use wcmf\lib\search\IndexedSearch;
 use wcmf\lib\search\Search;
 use wcmf\lib\security\PermissionManager;
