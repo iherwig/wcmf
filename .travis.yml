@@ -27,4 +27,4 @@ script:
 - cd $TEST_DIR && phpunit --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
 
 after_script:
-- php vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml
+  - php $TRAVIS_BUILD_DIR/vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml
