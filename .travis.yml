@@ -14,6 +14,7 @@ env:
   global:
     - JAVA_HOME=/usr/lib/jvm/java-8-oracle
     - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
+  secure: "UDb0OKAsUKRRrkubVgvtTyeLECsvvUfqqOk3wiBxp3S+KKF1ge839xpBMtH7rj+YsNisS4lruG9QvlASAf+IAhBE8K6PNvCb1/johO5Jri5Vd3ZOM7C2uFXuX3Aeq8x/YSTRePqGgYqSqif2isaOGc00BLSKwp/s5dHIHaswW3E="
 
 before_script:
   - composer self-update
@@ -23,4 +24,7 @@ before_script:
   - cd $TEST_DIR/model && ant
 
 script:
-  - cd $TEST_DIR && phpunit --coverage-clover build/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
+  - cd $TEST_DIR && phpunit --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
+  
+after_script:
+  - php vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml
