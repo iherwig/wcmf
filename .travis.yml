@@ -23,4 +23,4 @@ before_script:
   - cd $TEST_DIR/model && ant
 
 script:
-  - cd $TEST_DIR && phpunit --verbose --bootstrap bootstrap.php -c configuration.xml
+  - cd $TEST_DIR && phpunit --coverage-clover build/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
