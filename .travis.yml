@@ -1,30 +1,30 @@
 sudo: false
+
 addons:
   apt:
     packages:
-      - oracle-java8-installer
+    - oracle-java8-installer
 
 language: php
 
 php:
-  - 5.6
-  - 7.0
+- 5.6
+- 7.0
 
 env:
   global:
-    - JAVA_HOME=/usr/lib/jvm/java-8-oracle
-    - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
-  secure: "UDb0OKAsUKRRrkubVgvtTyeLECsvvUfqqOk3wiBxp3S+KKF1ge839xpBMtH7rj+YsNisS4lruG9QvlASAf+IAhBE8K6PNvCb1/johO5Jri5Vd3ZOM7C2uFXuX3Aeq8x/YSTRePqGgYqSqif2isaOGc00BLSKwp/s5dHIHaswW3E="
+  - JAVA_HOME=/usr/lib/jvm/java-8-oracle
+  - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
+  - secure: CzS6tWrXhO+YYC3eN2yeB4+BgmA3G62drxgj+XIzu0LdZTjbaafvDQCkNUQ6SUaMguS/WTDr9XcqA5MZy4J5QqucWkidcvGnaH4iBJLdYLQ5aIxZqK75zzf2K9vfgh/Zy2JQh07OKBz4ViCZumY8RdW6jxv3lq68Az5yQ31iG/M=
 
 before_script:
-  - composer self-update
-  - composer install
-
-  - mkdir $WCMF_BASE_DIR/app && mkdir $WCMF_BASE_DIR/install
-  - cd $TEST_DIR/model && ant
+- composer self-update
+- composer install
+- mkdir $WCMF_BASE_DIR/app && mkdir $WCMF_BASE_DIR/install
+- cd $TEST_DIR/model && ant
 
 script:
-  - cd $TEST_DIR && phpunit --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
-  
+- cd $TEST_DIR && phpunit --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
+
 after_script:
-  - php vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml
+- php vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml
