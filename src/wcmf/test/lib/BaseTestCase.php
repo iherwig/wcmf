@@ -46,8 +46,8 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
    */
   protected function fixQueryQuotes($sql, $type) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $connection = $persistenceFacade->getMapper($type)->getConnection();
-    return str_replace('`', $connection->getQuoteIdentifierSymbol(), $sql);
+    $mapper = $persistenceFacade->getMapper($type);
+    return str_replace('`', $mapper->getQuoteIdentifierSymbol(), $sql);
   }
 }
 ?>

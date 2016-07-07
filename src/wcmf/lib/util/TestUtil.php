@@ -16,7 +16,6 @@ use wcmf\lib\core\impl\DefaultFactory;
 use wcmf\lib\core\impl\MonologFileLogger;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\mapper\RDBMapper;
 
 /**
  * TestUtil provides helper methods for testing wCMF functionality.
@@ -65,7 +64,7 @@ class TestUtil {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $types = $persistenceFacade->getKnownTypes();
     $mapper = $persistenceFacade->getMapper($types[0]);
-    $pdo = $mapper->getConnection()->getConnection();
+    $pdo = $mapper->getConnection();
 
     // create sqlite db
     $params = $mapper->getConnectionParams();
@@ -209,49 +208,6 @@ class TestUtil {
       $startMemory = memory_get_usage();
       $var = unserialize(serialize($var));
       return memory_get_usage() - $startMemory - PHP_INT_SIZE * 8;
-  }
-
-  /**
-   * Enable the Zend_Db_Profiler for a given entity type.
-   * @param $type The entity type
-   */
-  public static function enableProfiler($type) {
-    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($type);
-    if ($mapper instanceof RDBMapper) {
-      $mapper->enableProfiler();
-    }
-  }
-
-  /**
-   * Print the profile of the operations on a given entity type.
-   * The profiler must have been enabled first
-   * @param $type The entity type
-   */
-  public static function printProfile($type) {
-    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($type);
-    $profiler = $mapper->getProfiler();
-
-    echo "\n";
-    foreach ($profiler->getQueryProfiles() as $query) {
-      echo $query->getElapsedSecs()."s: ".$query->getQuery()."\n";
-    }
-
-    $totalTime = $profiler->getTotalElapsedSecs();
-    $queryCount = $profiler->getTotalNumQueries();
-    $longestTime = 0;
-    $longestQuery = null;
-    foreach ($profiler->getQueryProfiles() as $query) {
-      if ($query->getElapsedSecs() > $longestTime) {
-        $longestTime  = $query->getElapsedSecs();
-        $longestQuery = $query->getQuery();
-      }
-    }
-    echo "\n";
-    echo 'Executed '.$queryCount.' queries in '.$totalTime.' seconds'."\n";
-    echo 'Average query length: '.$totalTime/$queryCount.' seconds'."\n";
-    echo 'Queries per second: '.$queryCount/$totalTime."\n";
-    echo 'Longest query length: '.$longestTime."\n";
-    echo "Longest query: \n".$longestQuery."\n";
   }
 
   public static function isWindows() {

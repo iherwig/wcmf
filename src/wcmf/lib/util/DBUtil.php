@@ -44,8 +44,7 @@ class DBUtil {
           'username' => $connectionParams['dbUserName'],
           'password' => $connectionParams['dbPassword'],
           'dbname' => $connectionParams['dbName'],
-          'driver_options' => $pdoParams,
-          'profiler' => false
+          'driver_options' => $pdoParams
         );
         if (!empty($connectionParams['dbPort'])) {
           $params['port'] = $connectionParams['dbPort'];

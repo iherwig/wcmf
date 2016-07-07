@@ -118,7 +118,7 @@ class ObjectQuery extends AbstractQuery {
   private $involvedTypes = array();
   private $aliasCounter = 1;
   private $observedObjects = array();
-  private $bindOrder = array();
+  private $parameterOrder = array();
 
   /**
    * Constructor.
@@ -280,7 +280,7 @@ class ObjectQuery extends AbstractQuery {
     $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], $attributes, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
       // initialize the statement
-      $selectStmt->distinct(true);
+      $selectStmt->quantifier(SelectStatement::QUANTIFIER_DISTINCT);
 
       // process all root nodes except for grouped nodes
       foreach ($this->rootNodes as $curNode) {
@@ -298,33 +298,27 @@ class ObjectQuery extends AbstractQuery {
           $tpl = $group['tpls'][$j];
           $this->processObjectTemplate($tpl, $tmpSelectStmt);
         }
+        $where = $tmpSelectStmt->getRawState(SelectStatement::WHERE);
+        $combineOperator = $group[self::PROPERTY_COMBINE_OPERATOR];
         $condition = '';
-        $wherePart = $tmpSelectStmt->getPart(SelectStatement::WHERE);
-        foreach($wherePart as $where) {
-          $condition .= " ".$where;
+        foreach ($where->getExpressionData() as $expressionData) {
+          $expression = is_array($expressionData) ? $expressionData[0] : $expressionData;
+          $condition .= $expression;
         }
-        $condition = trim($condition);
-        if (strlen($condition) > 0) {
-          $combineOperator = $group[self::PROPERTY_COMBINE_OPERATOR];
-          if ($combineOperator == Criteria::OPERATOR_OR) {
-            $selectStmt->orWhere($condition);
-          }
-          else {
-            $selectStmt->where($condition);
-          }
-        }
+        $selectStmt->where('('.$condition.')', $combineOperator);
       }
 
       // set orderby after all involved tables are known in order to
       // prefix the correct table name
       $this->processOrderBy($orderby, $selectStmt);
 
-      // set bind order to be reused next time
-      $selectStmt->setMeta('bindOrder', $this->bindOrder);
+      // set parameter order to be reused next time
+      $selectStmt->setMeta('parameterOrder', $this->parameterOrder);
     }
 
     // set parameters
-    $selectStmt->bind($this->getBind($this->conditions, $selectStmt->getMeta('bindOrder')));
+    $selectStmt->setParameters($this->getParameters($this->conditions,
+            $selectStmt->getMeta('parameterOrder')));
 
     // reset internal variables
     $this->resetInternals();
@@ -363,21 +357,17 @@ class ObjectQuery extends AbstractQuery {
               $condition .= ' '.$criterion->getCombineOperator().' ';
             }
             // because the attributes are not selected with alias, the column name has to be used
-            $condition .= $mapper->renderCriteria($criterion, '?',
-                $tpl->getProperty(self::PROPERTY_TABLE_NAME), $attributeDesc->getColumn());
-            $this->bindOrder[] = $this->getBindPosition($criterion, $this->conditions);
+            $placeholder = ':'.$tableName['alias'].'_'.$attributeDesc->getColumn();
+            $condition .= $mapper->renderCriteria($criterion, $placeholder, $tableName['alias'],
+                    $attributeDesc->getColumn());
+            $this->parameterOrder[] = $this->getParameterPosition($criterion, $this->conditions);
           }
         }
       }
     }
     if (strlen($condition) > 0) {
       $combineOperator = $tpl->getProperty(self::PROPERTY_COMBINE_OPERATOR);
-      if ($combineOperator == Criteria::OPERATOR_OR) {
-        $selectStmt->orWhere($condition);
-      }
-      else {
-        $selectStmt->where($condition);
-      }
+      $selectStmt->where('('.$condition.')', $combineOperator);
     }
 
     // register the node as processed
@@ -400,28 +390,24 @@ class ObjectQuery extends AbstractQuery {
           if (!isset($this->processedNodes[$curChild->getOID()->__toString()])) {
             // don't join the tables twice
             $childTableName = self::processTableName($curChild);
-            $fromPart = $selectStmt->getPart(SelectStatement::FROM);
+            $fromPart = $selectStmt->getRawState(SelectStatement::TABLE);
             if (!isset($fromPart[$childTableName['alias']])) {
               $childMapper = self::getMapper($curChild->getType());
               if ($relationDescription instanceof RDBManyToOneRelationDescription) {
                 $idAttr = $childMapper->getAttribute($relationDescription->getIdName());
                 $fkAttr = $mapper->getAttribute($relationDescription->getFkName());
-                $joinCondition = $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).'.'.
-                        $mapper->quoteIdentifier($fkAttr->getColumn()).' = '.
-                        $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).'.'.
-                        $childMapper->quoteIdentifier($idAttr->getColumn());
+                $joinCondition = $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
+                        $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
 
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, '');
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, array());
               }
               elseif ($relationDescription instanceof RDBOneToManyRelationDescription) {
                 $idAttr = $mapper->getAttribute($relationDescription->getIdName());
                 $fkAttr = $childMapper->getAttribute($relationDescription->getFkName());
-                $joinCondition = $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).'.'.
-                        $childMapper->quoteIdentifier($fkAttr->getColumn()).' = '.
-                        $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).'.'.
-                        $mapper->quoteIdentifier($idAttr->getColumn());
+                $joinCondition = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
+                        $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
 
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, '');
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, array());
               }
               elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
                 $thisRelationDescription = $relationDescription->getThisEndRelation();
@@ -433,17 +419,14 @@ class ObjectQuery extends AbstractQuery {
                 $thisFkAttr = $nmMapper->getAttribute($thisRelationDescription->getFkName());
                 $thisIdAttr = $mapper->getAttribute($thisRelationDescription->getIdName());
 
-                $joinCondition1 = $nmMapper->quoteIdentifier($nmMapper->getRealTableName()).'.'.
-                        $nmMapper->quoteIdentifier($thisFkAttr->getColumn()).' = '.
-                        $mapper->quoteIdentifier($tpl->getProperty(self::PROPERTY_TABLE_NAME)).'.'.
-                        $mapper->quoteIdentifier($thisIdAttr->getColumn());
-                $joinCondition2 = $childMapper->quoteIdentifier($curChild->getProperty(self::PROPERTY_TABLE_NAME)).'.'.
-                        $childMapper->quoteIdentifier($otherIdAttr->getColumn()).' = '.
-                        $nmMapper->quoteIdentifier($nmMapper->getRealTableName()).'.'.
-                        $nmMapper->quoteIdentifier($otherFkAttr->getColumn());
+                $joinCondition1 = $nmMapper->getRealTableName().'.'.$thisFkAttr->getColumn().' = '.
+                        $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.
+                        $thisIdAttr->getColumn();
+                $joinCondition2 = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$otherIdAttr->getColumn().' = '.
+                        $nmMapper->getRealTableName().'.'.$otherFkAttr->getColumn();
 
-                $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, '');
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, '');
+                $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, array());
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, array());
 
                 // register the nm type
                 $this->involvedTypes[$nmMapper->getType()] = true;
@@ -515,13 +498,13 @@ class ObjectQuery extends AbstractQuery {
   }
 
   /**
-   * Get an array of values for bind
+   * Get an array of parameter values for the given criteria
    * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
-   * @param $bindOrder Array defining the order in which the conditions should be bind
+   * @param $parameterOrder Array defining the parameter order
    * @return Array
    */
-  protected function getBind($criteria, array $bindOrder) {
-    $bind = array();
+  protected function getParameters($criteria, array $parameterOrder) {
+    $parameters = array();
     // flatten conditions
     $criteriaFlat = array();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -537,14 +520,14 @@ class ObjectQuery extends AbstractQuery {
         }
       }
     }
-    // get bind values in order
-    foreach ($bindOrder as $index) {
-      $bind[] = $criteriaFlat[$index]->getValue();
+    // get parameters in order
+    foreach ($parameterOrder as $index) {
+      $parameters[] = $criteriaFlat[$index]->getValue();
     }
-    return $bind;
+    return $parameters;
   }
 
-  protected function getBindPosition($criterion, $criteria) {
+  protected function getParameterPosition($criterion, $criteria) {
     $i=0;
     foreach ($criteria as $key => $curCriteria) {
       foreach ($curCriteria as $curCriterion) {
@@ -563,7 +546,7 @@ class ObjectQuery extends AbstractQuery {
    */
   protected function resetInternals() {
     $this->processedNodes = array();
-    $this->bindOrder = array();
+    $this->parameterOrder = array();
     $this->involvedTypes = array();
     $this->aliasCounter = 1;
   }

@@ -273,12 +273,7 @@ class LuceneSearch implements IndexedSearch {
           }
         }
 
-        $term = new Term($oidStr, 'oid');
-        $docIds  = $index->termDocs($term);
-        foreach ($docIds as $id) {
-          $index->delete($id);
-        }
-
+        $this->deleteFromIndex($obj);
         $index->addDocument($doc);
       }
       $this->indexIsDirty = true;
@@ -296,7 +291,7 @@ class LuceneSearch implements IndexedSearch {
       $index = $this->getIndex();
 
       $term = new Term($obj->getOID()->__toString(), 'oid');
-      $docIds  = $index->termDocs($term);
+      $docIds = $index->termDocs($term);
       foreach ($docIds as $id) {
         $index->delete($id);
       }

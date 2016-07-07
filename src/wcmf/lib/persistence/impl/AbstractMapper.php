@@ -107,7 +107,7 @@ abstract class AbstractMapper implements PersistenceMapper {
     }
     $attributes = $this->getAttributes();
     foreach ($attributes as $attribute) {
-      if ($attribute->getName() == $name) {
+      if ($attribute->getName() === $name) {
         $this->attributeNames[$name] = true;
         return true;
       }

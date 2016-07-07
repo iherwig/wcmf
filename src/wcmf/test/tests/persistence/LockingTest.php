@@ -191,8 +191,8 @@ class LockingTest extends DatabaseTestCase {
 
     // simulate update by user 2
     $newTitle = time();
-    $connection = $object->getMapper()->getConnection();
-    $connection->exec("UPDATE Book SET title='".$newTitle."' WHERE id=777");
+    $mapper = $object->getMapper();
+    $mapper->executeSql("UPDATE Book SET title='".$newTitle."' WHERE id=777");
 
     try {
       // user 1 tries to commit
@@ -221,8 +221,8 @@ class LockingTest extends DatabaseTestCase {
     $object->setValue('title', $originalTitle.'modified');
 
     // simulate delete by user 2
-    $connection = $object->getMapper()->getConnection();
-    $connection->exec("DELETE FROM Book WHERE id=777");
+    $mapper = $object->getMapper();
+    $mapper->executeSql("DELETE FROM Book WHERE id=777");
 
     try {
       // user 1 tries to commit

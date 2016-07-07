@@ -10,30 +10,34 @@
  */
 namespace wcmf\lib\model\mapper;
 
-use \Zend_Db_Select;
-
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
+use Zend\Db\Adapter\AdapterInterface;
+use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Sql\Select;
 
 /**
  * Select statement
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SelectStatement extends Zend_Db_Select {
+class SelectStatement extends Select {
 
   const NO_CACHE = 'no_cache';
   const CACHE_KEY = 'select';
 
   protected $id = null;
   protected $type = null;
+  protected $parameters = array();
   protected $meta = array();
   protected $cachedSql = array();
+
+  private $adapter = null;
 
   /**
    * Get the SelectStatement instance with the given id.
    * If the id equals SelectStatement::NO_CACHE or is not cached, a new one will be created.
-   * @param $mapper RDBMapper instance used to retrieve the database connection
+   * @param $mapper RDBMapper instance used to retrieve the database adapter
    * @param $id The statement id (optional, default: _SelectStatement::NO_CACHE_)
    * @return SelectStatement
    */
@@ -56,9 +60,25 @@ class SelectStatement extends Zend_Db_Select {
    * @param $id The statement id (optional, default: _SelectStatement::NO_CACHE_)
    */
   public function __construct(RDBMapper $mapper, $id=self::NO_CACHE) {
-    parent::__construct($mapper->getConnection());
+    parent::__construct();
     $this->id = $id;
     $this->type = $mapper->getType();
+  }
+
+  /**
+   * Get the query string
+   * @return String
+   */
+  public function __toString() {
+    return $this->getSqlString($this->getAdapter()->getPlatform());
+  }
+
+  /**
+   * Get the id of the statement
+   * @return String
+   */
+  public function getId() {
+    return $this->id;
   }
 
   /**
@@ -91,7 +111,7 @@ class SelectStatement extends Zend_Db_Select {
   /**
    * Get customt meta value
    * @param $key
-   * @return Mixed
+   * @return Associative array
    */
   public function getMeta($key) {
     if (isset($this->meta[$key])) {
@@ -101,33 +121,33 @@ class SelectStatement extends Zend_Db_Select {
   }
 
   /**
+   * Set the parameter values to replace the placeholders with when doing the select
+   * @param $parameters Array
+   */
+  public function setParameters($parameters) {
+    $this->parameters = $parameters;
+  }
+
+  /**
+   * Get the select parameters
+   * @return Array
+   */
+  public function getParameters() {
+    return $this->parameters;
+  }
+
+  /**
    * Execute a count query and return the row count
    * @return Integer
    */
   public function getRowCount() {
-    // empty columns, order and limit
-    $columnPart = $this->_parts[self::COLUMNS];
-    $orderPart = $this->_parts[self::ORDER];
-    $limitCount = $this->_parts[self::LIMIT_COUNT];
-    $limitOffset = $this->_parts[self::LIMIT_OFFSET];
-    $this->_parts[self::COLUMNS] = self::$_partsInit[self::COLUMNS];
-    $this->_parts[self::ORDER] = self::$_partsInit[self::ORDER];
-    $this->_parts[self::LIMIT_COUNT] = self::$_partsInit[self::LIMIT_COUNT];
-    $this->_parts[self::LIMIT_OFFSET] = self::$_partsInit[self::LIMIT_OFFSET];
-
-    // do count query
-    $this->columns(array('nRows' => SQLConst::COUNT()));
-    $stmt = $this->getAdapter()->prepare($this->assemble('count'));
-    $stmt->execute($this->getBind());
-    $row = $stmt->fetch();
+    $adapter = $this->getAdapter();
+    $sql = preg_replace('/^SELECT (.+) FROM/i', 'SELECT COUNT(*) AS nRows FROM',
+            $this->getSqlString($adapter->getPlatform()));
+    $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
+    $result = $stmt->execute($this->getParameters())->getResource();
+    $row = $result->fetch();
     $nRows = $row['nRows'];
-
-    // reset columns and order
-    $this->_parts[self::COLUMNS] = $columnPart;
-    $this->_parts[self::ORDER] = $orderPart;
-    $this->_parts[self::LIMIT_COUNT] = $limitCount;
-    $this->_parts[self::LIMIT_OFFSET] = $limitOffset;
-
     return $nRows;
   }
 
@@ -141,24 +161,53 @@ class SelectStatement extends Zend_Db_Select {
     }
   }
 
+    /**
+   * @see Select::getSqlString()
+     */
+    public function join($name, $on, $columns = self::SQL_STAR, $type = self::JOIN_INNER) {
+      // prevent duplicate joins
+      foreach ($this->joins->getJoins() as $join) {
+        if ($join['name'] == $name) {
+          return $this;
+        }
+      }
+      return parent::join($name, $on, $columns, $type);
+    }
+
   /**
-   * @see Select::assemble()
+   * @see Select::getSqlString()
    */
-  public function assemble($cacheKey=null) {
+  public function getSqlString(PlatformInterface $adapterPlatform = null) {
+    $cacheKey = self::getCacheId($this->id);
     if (!isset($this->cachedSql[$cacheKey])) {
-      $sql = parent::assemble();
+      $sql = parent::getSqlString($adapterPlatform);
       $this->cachedSql[$cacheKey] = $sql;
     }
     return $this->cachedSql[$cacheKey];
   }
 
   /**
-   * @see Select::query()
+   * Execute the statement
+   * @return Zend\Db\Adapter\Driver\Pdo\Result
    */
-  public function query($fetchMode = null, $bind = array()) {
-    $stmt = $this->getAdapter()->prepare($this->assemble('select'));
-    $stmt->execute($this->getBind());
-    return $stmt;
+  public function query() {
+    $adapter = $this->getAdapter();
+    $sql = $this->getSqlString($adapter->getPlatform());
+    $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
+    return $stmt->execute($this->getParameters())->getResource();
+  }
+
+  /**
+   * Get the adapter corresponding to the statement's type
+   * @return AdapterInterface
+   */
+  protected function getAdapter() {
+    if ($this->adapter == null) {
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      $mapper = $persistenceFacade->getMapper($this->type);
+      $this->adapter = $mapper->getAdapter();
+    }
+    return $this->adapter;
   }
 
   /**
@@ -184,13 +233,10 @@ class SelectStatement extends Zend_Db_Select {
    */
 
   public function __sleep() {
-    return array('id', 'type', 'meta', 'cachedSql', '_parts');
+    return array('id', 'type', 'meta', 'cachedSql', 'specifications');
   }
 
   public function __wakeup() {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $mapper = $persistenceFacade->getMapper($this->type);
-    $this->_adapter = $mapper->getConnection();
   }
 }
 ?>

@@ -37,7 +37,8 @@ use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\security\PermissionManager;
-use Zend_Db;
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\TableGateway\TableGateway;
 
 /**
  * RDBMapper maps objects of one type to a relational database schema.
@@ -49,15 +50,15 @@ use Zend_Db;
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   private static $SEQUENCE_CLASS = 'DBSequence';
-  private static $connections = array();   // registry for connections, key: connId
+  private static $adapters = array();      // registry for adapters, key: connId
   private static $inTransaction = array(); // registry for transaction status (boolean), key: connId
   private static $isDebugEnabled = false;
   private static $logger = null;
 
   private $connectionParams = null; // database connection parameters
-  private $connId = null;     // a connection identifier composed of the connection parameters
-  private $conn = null;       // database connection
-  private $dbPrefix = '';     // database prefix (if given in the configuration file)
+  private $connId = null;  // a connection identifier composed of the connection parameters
+  private $adapter = null; // database adapter
+  private $dbPrefix = '';  // database prefix (if given in the configuration file)
 
   private $relations = null;
   private $attributes = null;
@@ -95,7 +96,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Select data to be stored in the session.
-   * PDO throws an excetption if tried to be (un-)serialized.
+   * PDO throws an exception if tried to be (un-)serialized.
    */
   public function __sleep() {
     return array('connectionParams', 'dbPrefix');
@@ -138,48 +139,52 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $this->connId = join(',', array($this->connectionParams['dbType'], $this->connectionParams['dbHostName'],
           $this->connectionParams['dbUserName'], $this->connectionParams['dbPassword'], $this->connectionParams['dbName']));
 
-      // reuse an existing connection if possible
-      if (isset(self::$connections[$this->connId])) {
-        $this->conn = self::$connections[$this->connId];
+      // reuse an existing adapter if possible
+      if (isset(self::$adapters[$this->connId])) {
+        $this->adapter = self::$adapters[$this->connId];
       }
       else {
         try {
+          $charSet = isset($this->connectionParams['dbCharSet']) ?
+                  $this->connectionParams['dbCharSet'] : 'utf8';
+          $dbType = strtolower($this->connectionParams['dbType']);
+
           // create new connection
           $pdoParams = array(
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
           );
-          // mysql specific
-          if (strtolower($this->connectionParams['dbType']) == 'mysql') {
-            $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
-            $charSet = isset($this->connectionParams['dbCharSet']) ?
-                    $this->connectionParams['dbCharSet'] : 'utf8';
-            $pdoParams[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES ".$charSet;
+          // driver specific
+          switch ($dbType) {
+            case 'mysql':
+              $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+              $pdoParams[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES ".$charSet;
+              break;
+            case 'sqlite':
+              if (strtolower($this->connectionParams['dbName']) == ':memory:') {
+                $pdoParams[PDO::ATTR_PERSISTENT] = true;
+              }
+              else {
+                $this->connectionParams['dbName'] = FileUtil::realpath(WCMF_BASE.$this->connectionParams['dbName']);
+              }
+              break;
           }
-          // sqlite specific
-          if (strtolower($this->connectionParams['dbType']) == 'sqlite') {
-            if (strtolower($this->connectionParams['dbName']) == ':memory:') {
-              $pdoParams[PDO::ATTR_PERSISTENT] = true;
-            }
-            else {
-              $this->connectionParams['dbName'] = FileUtil::realpath(WCMF_BASE.$this->connectionParams['dbName']);
-            }
-          }
+
           $params = array(
-            'host' => $this->connectionParams['dbHostName'],
+            'hostname' => $this->connectionParams['dbHostName'],
             'username' => $this->connectionParams['dbUserName'],
             'password' => $this->connectionParams['dbPassword'],
-            'dbname' => $this->connectionParams['dbName'],
-            'driver_options' => $pdoParams,
-            'profiler' => false
+            'database' => $this->connectionParams['dbName'],
+            'driver' => 'Pdo_'.ucfirst($this->connectionParams['dbType']),
+            'driver_options' => $pdoParams
           );
+
           if (!empty($this->connectionParams['dbPort'])) {
             $params['port'] = $this->connectionParams['dbPort'];
           }
-          $this->conn = Zend_Db::factory('Pdo_'.ucfirst($this->connectionParams['dbType']), $params);
-          $this->conn->setFetchMode(Zend_Db::FETCH_ASSOC);
+          $this->adapter = new Adapter($params);
 
           // store the connection for reuse
-          self::$connections[$this->connId] = $this->conn;
+          self::$adapters[$this->connId] = $this->adapter;
         }
         catch(\Exception $ex) {
           throw new PersistenceException("Connection to ".$this->connectionParams['dbHostName'].".".
@@ -197,37 +202,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * Enable profiling
-   */
-  public function enableProfiler() {
-    if ($this->conn == null) {
-      $this->connect();
-    }
-    $this->conn->getProfiler()->setEnabled(true);
-  }
-
-  /**
-   * Disable profiling
-   */
-  public function disableProfiler() {
-    if ($this->conn == null) {
-      $this->connect();
-    }
-    $this->conn->getProfiler()->setEnabled(false);
-  }
-
-  /**
-   * Get the profiler
-   * @return Zend_Db_Profiler
-   */
-  public function getProfiler() {
-    if ($this->conn == null) {
-      $this->connect();
-    }
-    return $this->conn->getProfiler();
-  }
-
-  /**
    * Get a new id for inserting into the database
    * @return An id value.
    */
@@ -238,9 +212,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       if (!($sequenceMapper instanceof RDBMapper)) {
         throw new PersistenceException(self::$SEQUENCE_CLASS." is not mapped by RDBMapper.");
       }
-      $sequenceTable = $sequenceMapper->getTableName();
+      $sequenceTable = $sequenceMapper->getRealTableName();
       $sequenceConn = $sequenceMapper->getConnection();
-      $tableName = strtolower($this->getTableName());
+      $tableName = strtolower($this->getRealTableName());
 
       if ($this->idSelectStmt == null) {
         $this->idSelectStmt = $sequenceConn->prepare("SELECT ".$this->quoteIdentifier("id").
@@ -281,30 +255,30 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see PersistenceMapper::getQuoteIdentifierSymbol
    */
   public function getQuoteIdentifierSymbol() {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
-    return $this->conn->getQuoteIdentifierSymbol();
+    return $this->adapter->getPlatform()->getQuoteIdentifierSymbol();
   }
 
   /**
    * @see PersistenceMapper::quoteIdentifier
    */
   public function quoteIdentifier($identifier) {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
-    return $this->conn->quoteIdentifier($identifier);
+    return $this->adapter->getPlatform()->quoteIdentifier($identifier);
   }
 
   /**
    * @see PersistenceMapper::quoteValue
    */
   public function quoteValue($value) {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
-    return $this->conn->quote($value);
+    return $this->adapter->getPlatform()->quoteValue($value);
   }
 
   /**
@@ -318,30 +292,29 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Execute a query on the connection.
    * @param $sql The SQL statement as string
-   * @param $isSelect Boolean whether the statement is a select statement (optional, default: _false_)
-   * @param $bindValues An array of data to bind to the placeholders (optional, default: empty array)
-   * @return If isSelect is true, an array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC),
+   * @param $parameters An array of values to replace the placeholders with (optional, default: empty array)
+   * @return If the query is a select, an array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC),
    * the number of affected rows else
    */
-  public function executeSql($sql, $isSelect=false, $bindValues=array()) {
-    if ($this->conn == null) {
+  public function executeSql($sql, $parameters=array()) {
+    if ($this->adapter == null) {
       $this->connect();
     }
     try {
-      if (sizeof($bindValues) > 0) {
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($bindValues);
-        if ($isSelect) {
-          $result = $stmt->fetchAll();
-          $stmt->closeCursor();
+      if (sizeof($parameters) > 0) {
+        $results = $this->adapter->query($sql, $parameters);
+        if ($results->isQueryResult()) {
+          $resource = $results->getResource();
+          $result = $resource->fetchAll();
+          $resource->closeCursor();
           return $result;
         }
         else {
-          return $stmt->rowCount();
+          return $results->getAffectedRows();
         }
       }
       else {
-        return $this->conn->exec($sql);
+        return $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
       }
     }
     catch (\Exception $ex) {
@@ -357,7 +330,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @return An array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC)
    */
   public function select(SelectStatement $selectStmt, PagingInfo $pagingInfo=null) {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
     try {
@@ -373,7 +346,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
       if (self::$isDebugEnabled) {
         self::$logger->debug("Execute statement: ".$selectStmt->__toString());
-        self::$logger->debug($selectStmt->getBind());
+        self::$logger->debug($selectStmt->getParameters());
       }
       $result = $selectStmt->query();
       // save statement on success
@@ -385,7 +358,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       return $rows;
     }
     catch (\Exception $ex) {
-      self::$logger->error("The query: ".$selectStmt."\ncaused the following exception:\n".$ex->getMessage());
+      self::$logger->error("The query: ".$selectStmt->__toString()."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
   }
@@ -398,7 +371,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       throw new IllegalArgumentException("Operation: ".$operation.
               " can't be executed by ".get_class($this));
     }
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
 
@@ -417,21 +390,22 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     // transform criteria
     $where = array();
     foreach ($operation->getCriteria() as $criterion) {
-      $condition = $this->renderCriteria($criterion, '?', $tableName);
-      $where[$condition] = $criterion->getValue();
+      $condition = $this->renderCriteria($criterion, null, $tableName);
+      $where[] = $condition;
     }
 
     // execute the statement
     $affectedRows = 0;
+    $table = new TableGateway($tableName, $this->adapter);
     try {
       if ($operation instanceof InsertOperation) {
-        $affectedRows = $this->conn->insert($tableName, $translatedValues);
+        $affectedRows = $table->insert($translatedValues);
       }
       elseif ($operation instanceof UpdateOperation) {
-        $affectedRows = $this->conn->update($tableName, $translatedValues, $where);
+        $affectedRows = $table->update($translatedValues, $where);
       }
       elseif ($operation instanceof DeleteOperation) {
-        $affectedRows = $this->conn->delete($tableName, $where);
+        $affectedRows = $table->delete($where);
       }
       else {
         throw new IllegalArgumentException("Unsupported Operation: ".$operation);
@@ -772,7 +746,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see AbstractMapper::saveImpl()
    */
   protected function saveImpl(PersistentObject $object) {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
 
@@ -816,7 +790,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @see AbstractMapper::deleteImpl()
    */
   protected function deleteImpl(PersistentObject $object) {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
 
@@ -874,13 +848,24 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Get the database connection.
-   * @return A reference to the PDOConnection object
+   * @return PDOConnection
    */
   public function getConnection() {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
-    return $this->conn;
+    return $this->adapter->getDriver()->getConnection()->getResource();
+  }
+
+  /**
+   * Get the database adapter.
+   * @return Zend\Db\Adapter\AdapterInterface
+   */
+  public function getAdapter() {
+    if ($this->adapter == null) {
+      $this->connect();
+    }
+    return $this->adapter;
   }
 
   /**
@@ -888,7 +873,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @note The type parameter is not used here because this class only constructs one type
    */
   protected function getOIDsImpl($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
     $oids = array();
@@ -949,7 +934,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @return Array of PersistentObject instances
    */
   public function loadObjectsFromSQL(SelectStatement $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null) {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
     $objects = array();
@@ -1017,7 +1002,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @note Subclasses must implement this method to define their object type.
    * @param $object A reference to the object created with createObject method to which the data should be applied
    * @param $objectData An associative array with the data returned by execution of the database select statement
-   * 			(given by getSelectSQL).
+   *          (given by getSelectSQL).
    */
   protected function applyDataOnLoad(PersistentObject $object, array $objectData) {
     // set object data
@@ -1174,11 +1159,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * for another instance.
    */
   public function beginTransaction() {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
     if (!$this->isInTransaction()) {
-      $this->conn->beginTransaction();
+      $this->getConnection()->beginTransaction();
       $this->setIsInTransaction(true);
     }
   }
@@ -1190,11 +1175,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * for another instance.
    */
   public function commitTransaction() {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
     if ($this->isInTransaction()) {
-      $this->conn->commit();
+      $this->getConnection()->commit();
       $this->setIsInTransaction(false);
     }
   }
@@ -1207,11 +1192,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * for another instance.
    */
   public function rollbackTransaction() {
-    if ($this->conn == null) {
+    if ($this->adapter == null) {
       $this->connect();
     }
     if ($this->isInTransaction()) {
-      $this->conn->rollBack();
+      $this->getConnection()->rollBack();
       $this->setIsInTransaction(false);
     }
   }

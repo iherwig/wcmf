@@ -10,38 +10,34 @@
  */
 namespace wcmf\lib\model\mapper;
 
-use \Zend_Db_Expr;
+use Zend\Db\Sql\Predicate\Expression;
 
 /**
  * Constant expression used in sql statements
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SQLConst {
+class SQLConst extends Expression {
 
   private static $null = null;
-  private static $count = null;
 
   /**
    * Get the NULL expression
-   * @return Zend_Db_Expr
+   * @return Expression
    */
   public static function NULL() {
     if (self::$null == null) {
-      self::$null = new Zend_Db_Expr('NULL');
+      self::$null = new SQLConst('NULL');
     }
     return self::$null;
   }
 
   /**
-   * Get the COUNT(*) expression
-   * @return Zend_Db_Expr
+   * Get the expression string
+   * @return String
    */
-  public static function COUNT() {
-    if (self::$count == null) {
-      self::$count = new Zend_Db_Expr('COUNT(*)');
-    }
-    return self::$count;
+  public function __toString() {
+    return $this->getExpression();
   }
 }
 ?>

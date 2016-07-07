@@ -278,7 +278,7 @@ class JsonFormatTest extends BaseTestCase {
     $this->assertEquals('app.src.model.Book:123', $data['oid']);
     $this->assertEquals('app.src.model.Book', $data['className']);
     $this->assertEquals(false, $data['isReference']);
-    $this->assertEquals(1317427261, $data['lastChange']);
+    $this->assertEquals(1317420061, $data['lastChange']);
 
     $attributes = $data['attributes'];
     $this->assertTrue(is_array($attributes));

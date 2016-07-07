@@ -13,6 +13,7 @@ namespace wcmf\lib\model;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
+use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\PagingInfo;
@@ -95,7 +96,7 @@ class StringQuery extends ObjectQuery {
     $selectStmt = $mapper->getSelectSQL(null, null, $attributes, null, $pagingInfo, $this->getId());
     if (!$selectStmt->isCached()) {
       // initialize the statement
-      $selectStmt->distinct(true);
+      $selectStmt->quantifier(SelectStatement::QUANTIFIER_DISTINCT);
 
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $quoteIdentifierSymbol = $mapper->getQuoteIdentifierSymbol();

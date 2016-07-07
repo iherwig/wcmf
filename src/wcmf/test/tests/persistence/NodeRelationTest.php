@@ -86,7 +86,6 @@ class NodeRelationTest extends DatabaseTestCase {
 
   public function testRelations() {
     TestUtil::startSession('admin', 'admin');
-    //$this->enableProfiler('Chapter');
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
@@ -141,7 +140,6 @@ class NodeRelationTest extends DatabaseTestCase {
 
   public function testDeleteNode() {
     TestUtil::startSession('admin', 'admin');
-    //$this->enableProfiler('Chapter');
 
     // delete all relations
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

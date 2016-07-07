@@ -248,24 +248,25 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $this->addColumns($selectStmt, $tableName, $attributes);
 
       // condition
-      $bind = $this->addCriteria($selectStmt, $criteria, $tableName);
+      $parameters = $this->addCriteria($selectStmt, $criteria, $tableName);
 
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder());
 
       // limit
       if ($pagingInfo != null) {
-        $selectStmt->limit($pagingInfo->getPageSize(), $pagingInfo->getOffset());
+        $selectStmt->limit($pagingInfo->getPageSize());
+        $selectStmt->offset($pagingInfo->getOffset());
       }
     }
     else {
-      // on used statements only set bind
+      // on used statements only set parameters
       $tableName = $alias != null ? $alias : $this->getRealTableName();
-      $bind = $this->getBind($criteria, $tableName);
+      $parameters = $this->getParameters($criteria, $tableName);
     }
 
     // set parameters
-    $selectStmt->bind($bind);
+    $selectStmt->setParameters($parameters);
     return $selectStmt;
   }
 
@@ -300,15 +301,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $thisAttr = $this->getAttribute($relationDescription->getFkName());
     $tableName = $this->getRealTableName();
 
-    // id bind parameters
-    $bind = array();
+    // id parameters
+    $parameters = array();
     $idPlaceholder = ':'.$tableName.'_'.$thisAttr->getName();
     for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
       $dbid = $otherObjectProxies[$i]->getValue($relationDescription->getIdName());
       if ($dbid === null) {
         $dbid = SQLConst::NULL();
       }
-      $bind[$idPlaceholder.$i] = $dbid;
+      $parameters[$idPlaceholder.$i] = $dbid;
     }
 
     // statement
@@ -320,23 +321,24 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).'.'.
-              $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($bind)).')');
+              $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
-      $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $tableName));
+      $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $tableName));
       // limit
       if ($pagingInfo != null) {
-        $selectStmt->limit($pagingInfo->getPageSize(), $pagingInfo->getOffset());
+        $selectStmt->limit($pagingInfo->getPageSize());
+        $selectStmt->offset($pagingInfo->getOffset());
       }
     }
     else {
-      // on used statements only set bind
-      $bind = array_merge($bind, $this->getBind($criteria, $tableName));
+      // on used statements only set parameters
+      $parameters = array_merge($parameters, $this->getParameters($criteria, $tableName));
     }
 
     // set parameters
-    $selectStmt->bind($bind);
+    $selectStmt->setParameters($parameters);
     return array($selectStmt, $relationDescription->getIdName(), $relationDescription->getFkName());
   }
 
@@ -350,15 +352,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $thisAttr = $this->getAttribute($relationDescription->getIdName());
     $tableName = $this->getRealTableName();
 
-    // id bind parameters
-    $bind = array();
+    // id parameters
+    $parameters = array();
     $idPlaceholder = ':'.$tableName.'_'.$thisAttr->getName();
     for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
       $fkValue = $otherObjectProxies[$i]->getValue($relationDescription->getFkName());
       if ($fkValue === null) {
         $fkValue = SQLConst::NULL();
       }
-       $bind[$idPlaceholder.$i] = $fkValue;
+       $parameters[$idPlaceholder.$i] = $fkValue;
     }
 
     // statement
@@ -370,23 +372,24 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).'.'.
-              $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($bind)).')');
+              $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
       // order
       $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
-      $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $tableName));
+      $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $tableName));
       // limit
       if ($pagingInfo != null) {
-        $selectStmt->limit($pagingInfo->getPageSize(), $pagingInfo->getOffset());
+        $selectStmt->limit($pagingInfo->getPageSize());
+        $selectStmt->offset($pagingInfo->getOffset());
       }
     }
     else {
-      // on used statements only set bind
-      $bind = array_merge($bind, $this->getBind($criteria, $tableName));
+      // on used statements only set parameters
+      $parameters = array_merge($parameters, $this->getParameters($criteria, $tableName));
     }
 
     // set parameters
-    $selectStmt->bind($bind);
+    $selectStmt->setParameters($parameters);
     return array($selectStmt, $relationDescription->getFkName(), $relationDescription->getIdName());
   }
 
@@ -403,15 +406,15 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
     $nmTablename = $nmMapper->getRealTableName();
 
-    // id bind parameters
-    $bind = array();
+    // id parameters
+    $parameters = array();
     $idPlaceholder = ':'.$nmTablename.'_'.$otherFkAttr->getName();
     for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
       $dbid = $otherObjectProxies[$i]->getValue($thisRelationDesc->getIdName());
       if ($dbid === null) {
         $dbid = SQLConst::NULL();
       }
-      $bind[$idPlaceholder.$i] = $dbid;
+      $parameters[$idPlaceholder.$i] = $dbid;
     }
 
     // statement
@@ -426,35 +429,35 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $tableName = $this->getRealTableName();
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
-      $joinCond = $this->quoteIdentifier($nmTablename).'.'.$this->quoteIdentifier($thisFkAttr->getName()).'='.
-              $this->quoteIdentifier($tableName).'.'.$this->quoteIdentifier($thisIdAttr->getName());
-      $selectStmt->join($nmTablename, $joinCond, array());
+      $joinCond = $nmTablename.'.'.$thisFkAttr->getName().'='.$tableName.'.'.$thisIdAttr->getName();
+      $joinColumns = array();
       $selectStmt->where($this->quoteIdentifier($nmTablename).'.'.
-              $this->quoteIdentifier($otherFkAttr->getName()).' IN('.join(',', array_keys($bind)).')');
+              $this->quoteIdentifier($otherFkAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
       // order (in this case we use the order of the many to many objects)
       $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);
       $this->addOrderBy($selectStmt, $orderby, $nmTablename, $nmSortDefs);
       foreach($nmSortDefs as $nmSortDef) {
         // add the sort attribute from the many to many object
         $nmSortAttributeDesc = $nmMapper->getAttribute($nmSortDef['sortFieldName']);
-        $selectStmt->columns(array($nmSortAttributeDesc->getName() => $nmSortAttributeDesc->getColumn()), $nmTablename);
+        $joinColumns[$nmSortAttributeDesc->getName()] = $nmSortAttributeDesc->getColumn();
       }
       // add proxy id
-      $selectStmt->columns(array(self::INTERNAL_VALUE_PREFIX.'id' => $otherFkAttr->getName()), $nmTablename);
+      $joinColumns[self::INTERNAL_VALUE_PREFIX.'id'] = $otherFkAttr->getName();
+      $selectStmt->join($nmTablename, $joinCond, $joinColumns);
       // additional conditions
-      $bind = array_merge($bind, $this->addCriteria($selectStmt, $criteria, $nmTablename));
+      $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $nmTablename));
       // limit
       if ($pagingInfo != null) {
         $selectStmt->limit($pagingInfo->getPageSize(), $pagingInfo->getOffset());
       }
     }
     else {
-      // on used statements only set bind
-      $bind = array_merge($bind, $this->getBind($criteria, $nmTablename));
+      // on used statements only set parameters
+      $parameters = array_merge($parameters, $this->getParameters($criteria, $nmTablename));
     }
 
     // set parameters
-    $selectStmt->bind($bind);
+    $selectStmt->setParameters($parameters);
     return array($selectStmt, $thisRelationDesc->getIdName(), self::INTERNAL_VALUE_PREFIX.'id');
   }
 
@@ -516,12 +519,14 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   protected function addColumns(SelectStatement $selectStmt, $tableName, $attributes=null) {
     // columns
     $attributeDescs = $this->getAttributes();
+    $columns = array();
     foreach($attributeDescs as $curAttributeDesc) {
       $name = $curAttributeDesc->getName();
       if (($attributes == null || in_array($name, $attributes)) && !($curAttributeDesc instanceof ReferenceDescription)) {
-        $selectStmt->columns(array($curAttributeDesc->getName() => $curAttributeDesc->getColumn()), $tableName);
+        $columns[$curAttributeDesc->getName()] = $curAttributeDesc->getColumn();
       }
     }
+    $selectStmt->columns($columns, true);
 
     // references
     $selectStmt = $this->addReferences($selectStmt, $tableName);
@@ -553,22 +558,22 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
             $references[$otherTable] = array();
             $references[$otherTable]['attributes'] = array();
 
-            $tableNameQ = $this->quoteIdentifier($tableName);
-            $otherTableQ = $this->quoteIdentifier($otherTable.'Ref');
+            $tableNameQ = $tableName;
+            $otherTableQ = $otherTable.'Ref';
 
             // determine the join condition
             if ($relationDesc instanceof RDBManyToOneRelationDescription) {
               // reference from parent
-              $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getFkName())->getColumn());
-              $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getIdName())->getColumn());
+              $thisAttrNameQ = $this->getAttribute($relationDesc->getFkName())->getColumn();
+              $otherAttrNameQ = $otherMapper->getAttribute($relationDesc->getIdName())->getColumn();
               $additionalCond = "";
             }
             else if ($relationDesc instanceof RDBOneToManyRelationDescription) {
               // reference from child
-              $thisAttrNameQ = $this->quoteIdentifier($this->getAttribute($relationDesc->getIdName())->getColumn());
-              $otherAttrNameQ = $this->quoteIdentifier($otherMapper->getAttribute($relationDesc->getFkName())->getColumn());
+              $thisAttrNameQ = $this->getAttribute($relationDesc->getIdName())->getColumn();
+              $otherAttrNameQ = $otherMapper->getAttribute($relationDesc->getFkName())->getColumn();
               $otherPkNames = $otherMapper->getPkNames();
-              $otherPkNameQ = $this->quoteIdentifier($otherMapper->getAttribute($otherPkNames[0])->getColumn());
+              $otherPkNameQ = $otherMapper->getAttribute($otherPkNames[0])->getColumn();
               $additionalCond = " AND ".$otherTableQ.".".$otherPkNameQ.
                       " = (SELECT MIN(".$otherTableQ.".".$otherPkNameQ.") FROM ".$otherTableQ.
                       " WHERE ".$otherTableQ.".".$otherAttrNameQ."=".$tableNameQ.".".$thisAttrNameQ.")";
@@ -587,7 +592,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
     // add references from each referenced table
     foreach($references as $otherTable => $curReference) {
-      $selectStmt->joinLeft(array($otherTable.'Ref' => $otherTable), $curReference['joinCond'], $curReference['attributes']);
+      $selectStmt->join(array($otherTable.'Ref' => $otherTable), $curReference['joinCond'],
+              $curReference['attributes'], SelectStatement::JOIN_LEFT);
     }
     return $selectStmt;
   }
@@ -597,29 +603,24 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @param $selectStmt The select statement (instance of SelectStatement)
    * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
    * @param $tableName The table name
-   * @return Array of placeholder value pairs for bind
+   * @return Array of placeholder/value pairs
    */
   protected function addCriteria(SelectStatement $selectStmt, $criteria, $tableName) {
-    $bind = array();
+    $parameters = array();
     if ($criteria != null) {
       foreach ($criteria as $criterion) {
         if ($criterion instanceof Criteria) {
           $placeholder = ':'.$tableName.'_'.$criterion->getAttribute();
           $condition = $this->renderCriteria($criterion, $placeholder, $tableName);
-          if ($criterion->getCombineOperator() == Criteria::OPERATOR_AND) {
-            $selectStmt->where($condition);
-          }
-          else {
-            $selectStmt->orWhere($condition);
-          }
-          $bind[$placeholder] = $criterion->getValue();
+          $selectStmt->where($condition, $criterion->getCombineOperator());
+          $parameters[$placeholder] = $criterion->getValue();
         }
         else {
           throw new IllegalArgumentException("The select condition must be an instance of Criteria");
         }
       }
     }
-    return $bind;
+    return $parameters;
   }
 
   /**
@@ -649,25 +650,25 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   }
 
   /**
-   * Get an array of placeholder value pairs for bind
+   * Get an array of placeholder/value pairs
    * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
    * @param $tableName The table name
-   * @return Array of placeholder value pairs for bind
+   * @return Array of placeholder/value pairs
    */
-  protected function getBind($criteria, $tableName) {
-    $bind = array();
+  protected function getParameters($criteria, $tableName) {
+    $parameters = array();
     if ($criteria != null) {
       foreach ($criteria as $criterion) {
         if ($criterion instanceof Criteria) {
           $placeholder = ':'.$tableName.'_'.$criterion->getAttribute();
-          $bind[$placeholder] = $criterion->getValue();
+          $parameters[$placeholder] = $criterion->getValue();
         }
         else {
           throw new IllegalArgumentException("The select condition must be an instance of Criteria");
         }
       }
     }
-    return $bind;
+    return $parameters;
   }
 
   /**
