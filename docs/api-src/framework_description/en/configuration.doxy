@@ -46,7 +46,10 @@ key3 = value3
 
 Additionally it defines __array values__ (enclosed in curly braces) and __inclusion__
 of additional files. Included files are defined in the `include` key of the `Config`
-section. Keys in the current file override keys from included files.
+section. If a configuration section exists in both files, the values are merged,
+whereby values in the current file override values from included files. This
+behavior is comparable to the concept of inheritance and can be disabled by
+adding the `__inherit` configuration key to the section and setting it to _false_.
 
 The following example shows how to include an array of additional configuration
 files to separate concerns:
@@ -173,6 +176,8 @@ instance can be retrieved by using the following code:
 ~~~~~~~~~~~~~{.php}
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 ~~~~~~~~~~~~~
+
+@note Instance names are treated case-insensitive.
 
 ### Shared and Non-Shared instances ### {#conf_shareddi}
 

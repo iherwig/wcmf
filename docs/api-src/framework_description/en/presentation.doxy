@@ -222,8 +222,9 @@ routing. The default mapping logic is implemented in the
 \link wcmf::lib::presentation::impl::DefaultRequest::initialize `DefaultRequest::initialize`\endlink
 method. The method matches the _path part_ of the request uri against the entries
 of the `Routes` configuration section to find an appropriate action key.
-Variables declared in path segments will be automatically passed as request parameters.
-_*_ is used as wildcard character.
+Variables declared in path segments will be automatically passed as request parameters,
+but may be overwritten by explicit request parameters. The character <em>*</em> is used
+as wildcard.
 
 The following example configuration taken from the \ref app "default application"
 illustrates the concept:
@@ -246,6 +247,10 @@ GET/* = action=cms
   expression constraint `[0-9]+`.
 - The last entry is matched by any GET request to a path that was not matched before.
   It is mapped to the _cms_ action - corresponding to the action key <em>??cms</em>.
+
+@note Any requests on routes that are __not__ defined in the `Routes` configuration
+section will cause an error. This is why this section is also considered the
+_public_ interface of the application.
 
 ##### HTTP methods #####
 
@@ -289,6 +294,15 @@ methods defined in this class, which are called by
   is called finally. This method accepts a parameter, that defines the actual
   method to be called on the subclass. If the parameter is omitted it defaults
   to `doExecute` which must then be defined in the subclass.
+
+Controllers can _redirect_ to other controllers by using the
+\link wcmf::lib::presentation::Controller::internalRedirect `Controller::internalRedirect`\endlink
+or \link wcmf::lib::presentation::Controller::externalRedirect `Controller::externalRedirect`\endlink
+methods.
+
+If variables need be shared between several requests to one controller they can
+be stored in _local session variables_ to avoid side effects (see
+\link wcmf::lib::presentation::Controller::setLocalSessionValue `Controller::setLocalSessionValue`\endlink).
 
 ### Error handling ### {#pres_errors}
 
@@ -344,6 +358,56 @@ is an example for a controller implementing a long running process. It is used
 to create a Lucene search index over all searchable entity objects. The process
 is split into collecting all object ids and then indexing them. In the final
 step the index is optimized.
+
+### CSRF protection ### {#pres_csrf}
+
+To avoid [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) vulnerabilities
+in a web application, forms are usually protected by using _CSRF tokens_. The
+\link wcmf::lib::presentation::Controller::generateCsrfToken `Controller::generateCsrfToken`\endlink
+method is used to generate a unique token value for each form display. The token is validated by using the
+\link wcmf::lib::presentation::Controller::validateCsrfToken `Controller::validateCsrfToken`\endlink
+method when the form is submitted. For proper identification, tokens are referenced by a
+name (e.g. the form's name) which is passed to these methods.
+
+The following example demonstrates the usage of these methods.
+
+A new token value is generated each time the form is displayed:
+
+~~~~~~~~~~~~~{.php}
+class UserController {
+
+  public function render() {
+
+    $this->generateCsrfToken('login');
+
+  }
+}
+~~~~~~~~~~~~~
+
+This creates the `csrf_token` response variable. The variable is used to add
+the token as a hidden field to the form:
+
+~~~~~~~~~~~~~{.php}
+<input type="hidden" name="csrf_token" value="{$csrf_token}">
+~~~~~~~~~~~~~
+
+After form submission the controller validates the token and acts appropriately:
+
+~~~~~~~~~~~~~{.php}
+class UserController {
+
+  public function login() {
+
+    if (!$this->validateCsrfToken('login')) {
+      // error
+    }
+    else {
+      // do login
+    }
+
+  }
+}
+~~~~~~~~~~~~~
 
 ## Views ## {#pres_views}
 
