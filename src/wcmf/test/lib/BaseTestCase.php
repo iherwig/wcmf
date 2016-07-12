@@ -11,7 +11,6 @@
 namespace wcmf\test\lib;
 
 use wcmf\lib\core\LogManager;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
 /**
@@ -20,34 +19,13 @@ use wcmf\lib\util\TestUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
+  use TestTrait;
 
   protected function setUp() {
     TestUtil::initFramework(WCMF_BASE.'app/config/');
     parent::setUp();
     $logger = LogManager::getLogger(__CLASS__);
     $logger->info("Running: ".get_class($this).".".$this->getName());
-  }
-
-  /**
-   * Get the logger for the given category
-   * @param $category
-   * @return Logger
-   */
-  protected function getLogger($category) {
-    return LogManager::getLogger($category);
-  }
-
-  /**
-   * Replace backticks in the given sql string by the actual quote char
-   * used in the connection
-   * @param $sql
-   * @param $type The type defining the connection parameters
-   * @return String
-   */
-  protected function fixQueryQuotes($sql, $type) {
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $mapper = $persistenceFacade->getMapper($type);
-    return str_replace('`', $mapper->getQuoteIdentifierSymbol(), $sql);
   }
 }
 ?>

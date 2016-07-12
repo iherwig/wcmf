@@ -10,16 +10,34 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\test\lib\BaseTestCase;
-
 use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\util\TestUtil;
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
 
 /**
  * StringQueryTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class StringQueryTest extends BaseTestCase {
+class StringQueryTest extends DatabaseTestCase {
+
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'DBSequence' => array(
+        array('table' => ''),
+      ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'Chapter' => array(
+        array('id' => 300, 'name' => 'Chapter A'),
+        array('id' => 301, 'name' => 'Chapter B'),
+        array('id' => 302, 'name' => 'Chapter C'),
+      ),
+    ));
+  }
 
   public function testSimple() {
     $queryStr = $this->fixQueryQuotes("`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%'", 'Author');
@@ -136,6 +154,17 @@ class StringQueryTest extends BaseTestCase {
       "`TitleImage`.`fk_titlechapter_id` = `Chapter`.`id` WHERE `Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
       "AND `TitleImage`.`file` = 'title_image.jpg' ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+  }
+
+  public function testWithDB() {
+    TestUtil::startSession('admin', 'admin');
+    $query = new StringQuery('Chapter', __CLASS__.__METHOD__."1");
+    $query->setConditionString($this->fixQueryQuotes("`Chapter`.`name` LIKE 'Chapter A'", 'Chapter'));
+    $chapterList = $query->execute(BuildDepth::SINGLE);
+
+    $this->assertEquals(1, sizeof($chapterList));
+    $this->assertEquals('Chapter A', $chapterList[0]->getValue('name'));
+    TestUtil::endSession();
   }
 }
 ?>

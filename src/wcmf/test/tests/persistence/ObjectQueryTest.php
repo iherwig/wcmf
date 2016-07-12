@@ -10,19 +10,36 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\test\lib\BaseTestCase;
-
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\util\TestUtil;
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
 
 /**
  * ObjectQueryTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ObjectQueryTest extends BaseTestCase {
+class ObjectQueryTest extends DatabaseTestCase {
+
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+      'DBSequence' => array(
+        array('table' => ''),
+      ),
+      'User' => array(
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
+      ),
+      'Chapter' => array(
+        array('id' => 300, 'name' => 'Chapter A'),
+        array('id' => 301, 'name' => 'Chapter B'),
+        array('id' => 302, 'name' => 'Chapter C'),
+      ),
+    ));
+  }
 
   public function testSimple() {
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
@@ -187,6 +204,18 @@ class ObjectQueryTest extends BaseTestCase {
       "AND (`Chapter`.`created` < '2005-01-01') OR (`Author`.`name` LIKE '%herwig%') AND ".
       "((`Chapter`.`name` LIKE 'Chapter 1%') OR (`Chapter`.`creator` = 'admin')) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+  }
+
+  public function testWithDB() {
+    TestUtil::startSession('admin', 'admin');
+    $query = new ObjectQuery('Chapter', __CLASS__.__METHOD__."1");
+    $chapter = $query->getObjectTemplate('Chapter');
+    $chapter->setValue('name', Criteria::asValue("LIKE", "Chapter A"));
+    $chapterList = $query->execute(BuildDepth::SINGLE);
+
+    $this->assertEquals(1, sizeof($chapterList));
+    $this->assertEquals('Chapter A', $chapterList[0]->getValue('name'));
+    TestUtil::endSession();
   }
 }
 ?>

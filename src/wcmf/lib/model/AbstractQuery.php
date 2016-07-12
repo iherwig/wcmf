@@ -61,8 +61,9 @@ abstract class AbstractQuery {
     $str = $selectStmt->__toString();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = $persistenceFacade->getMapper($selectStmt->getType());
-    foreach ($selectStmt->getParameters() as $value) {
-      $str = preg_replace('/\?|:[^ )]+/', $mapper->quoteValue($value), $str, 1);
+    foreach ($selectStmt->getParameters() as $key => $value) {
+      $value = is_string($value) ? $mapper->quoteValue($value) : $value;
+      $str = preg_replace('/'.$key.'/', $value, $str, 1);
     }
     return $str;
   }

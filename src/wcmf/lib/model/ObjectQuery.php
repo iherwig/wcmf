@@ -357,10 +357,11 @@ class ObjectQuery extends AbstractQuery {
               $condition .= ' '.$criterion->getCombineOperator().' ';
             }
             // because the attributes are not selected with alias, the column name has to be used
-            $placeholder = ':'.$tableName['alias'].'_'.$attributeDesc->getColumn();
+            $index = sizeof(array_keys($this->parameterOrder));
+            $placeholder = ':'.$tableName['alias'].'_'.$attributeDesc->getColumn().$index;
             $condition .= $mapper->renderCriteria($criterion, $placeholder, $tableName['alias'],
                     $attributeDesc->getColumn());
-            $this->parameterOrder[] = $this->getParameterPosition($criterion, $this->conditions);
+            $this->parameterOrder[$placeholder] = $this->getParameterPosition($criterion, $this->conditions);
           }
         }
       }
@@ -521,8 +522,8 @@ class ObjectQuery extends AbstractQuery {
       }
     }
     // get parameters in order
-    foreach ($parameterOrder as $index) {
-      $parameters[] = $criteriaFlat[$index]->getValue();
+    foreach ($parameterOrder as $placeholder => $index) {
+      $parameters[$placeholder] = $criteriaFlat[$index]->getValue();
     }
     return $parameters;
   }

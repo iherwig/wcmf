@@ -122,7 +122,7 @@ class SelectStatement extends Select {
 
   /**
    * Set the parameter values to replace the placeholders with when doing the select
-   * @param $parameters Array
+   * @param $parameters Associative array with placeholders as keys
    */
   public function setParameters($parameters) {
     $this->parameters = $parameters;
@@ -188,7 +188,7 @@ class SelectStatement extends Select {
 
   /**
    * Execute the statement
-   * @return Zend\Db\Adapter\Driver\Pdo\Result
+   * @return PDOStatement
    */
   public function query() {
     $adapter = $this->getAdapter();

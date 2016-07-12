@@ -19,6 +19,8 @@ use wcmf\lib\util\TestUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
+  use TestTrait;
+
   private static $frameworkReady = false;
 
   // only instantiate PHPUnit_Extensions_Database_DB_IDatabaseConnection once per test
@@ -48,15 +50,6 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
 
   protected function tearDown() {
     self::$frameworkReady = false;
-  }
-
-  /**
-   * Get the logger for the given category
-   * @param $category
-   * @return Logger
-   */
-  protected function getLogger($category) {
-    return LogManager::getLogger($category);
   }
 }
 ?>
