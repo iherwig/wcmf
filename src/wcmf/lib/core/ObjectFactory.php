@@ -34,6 +34,14 @@ class ObjectFactory {
   }
 
   /**
+   * Check if the factory is configured.
+   * @return Boolean
+   */
+  public static function isConfigured() {
+    return self::$factory != null;
+  }
+
+  /**
    * @see Factory::getInstance()
    */
   public static function getInstance($name, $dynamicConfiguration=array()) {

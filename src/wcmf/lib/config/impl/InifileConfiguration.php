@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\config\impl;
 
+use wcmf\lib\config\ConfigChangeEvent;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\WritableConfiguration;
@@ -38,7 +39,6 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   private $isModified = false;
   private $addedFiles = array(); // files added to the configuration
   private $containedFiles = array(); // all included files (also by config include)
-  private $useCache = true;
 
   private $configPath = null;
   private $configExtension = 'ini';
@@ -126,6 +126,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
         // serialize the parsed ini file sequence
         $this->serialize();
+
+        // notify configuration change listeners
+        $this->configChanged();
       }
       else {
         if (self::$logger->isDebugEnabled()) {
@@ -479,8 +482,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       throw new IOException('Can\'t write ini file \''.$filename.'\'!');
     }
     fclose($fh);
-    // clear the application cache, because it may become invalid
-    $this->clearAllCache();
+
+    // notify configuration change listeners
+    $this->configChanged();
     $this->isModified = false;
   }
 
@@ -631,7 +635,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Store the instance in the filesystem. If the instance is modified, this call is ignored.
    */
   protected function serialize() {
-    if ($this->useCache && !$this->isModified()) {
+    if (!$this->isModified()) {
       $cacheFile = $this->getSerializeFilename($this->addedFiles);
       if (self::$logger->isDebugEnabled()) {
         self::$logger->debug("Serialize configuration: ".join(',', $this->addedFiles)." to file: ".$cacheFile);
@@ -640,22 +644,20 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
         if (@fwrite($fh, serialize(get_object_vars($this)))) {
           @fclose($fh);
         }
-        // clear the application cache, because it may become invalid
-        $this->clearAllCache();
       }
     }
   }
 
   /**
    * Retrieve parsed ini data from the filesystem and update the current instance.
-   * If the current instance is modified or the last file given in parsedFiles
+   * If the current instance is modified or any file given in parsedFiles
    * is newer than the serialized data, this call is ignored.
    * If InifileConfiguration class changed, the call will be ignored as well.
    * @param $parsedFiles An array of ini filenames that must be contained in the data.
    * @return Boolean whether the data could be retrieved or not
    */
   protected function unserialize($parsedFiles) {
-    if ($this->useCache && !$this->isModified()) {
+    if (!$this->isModified()) {
       $cacheFile = $this->getSerializeFilename($parsedFiles);
       if (file_exists($cacheFile)) {
         $parsedFiles[] = __FILE__;
@@ -708,17 +710,16 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   }
 
   /**
-   * Clear application cache.
+   * Notify configuratin change listeners
    */
-  protected function clearAllCache() {
+  protected function configChanged() {
     if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Clear all caches");
+      self::$logger->debug("Configuration is changed");
     }
-    try {
-      $cache = ObjectFactory::getInstance('cache');
-      $cache->clearAll();
+    if (ObjectFactory::isConfigured()) {
+      ObjectFactory::getInstance('eventManager')->dispatch(ConfigChangeEvent::NAME,
+              new ConfigChangeEvent());
     }
-    catch (\Exception $e) {}
   }
 
   /**
