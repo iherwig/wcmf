@@ -13,8 +13,8 @@ namespace wcmf\lib\model\mapper;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
 use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
 
 /**
  * Select statement
@@ -70,7 +70,7 @@ class SelectStatement extends Select {
    * @return String
    */
   public function __toString() {
-    return $this->getSqlString($this->getAdapter()->getPlatform());
+    return $this->getSql();
   }
 
   /**
@@ -142,8 +142,7 @@ class SelectStatement extends Select {
    */
   public function getRowCount() {
     $adapter = $this->getAdapter();
-    $sql = preg_replace('/^SELECT (.+) FROM/i', 'SELECT COUNT(*) AS nRows FROM',
-            $this->getSqlString($adapter->getPlatform()));
+    $sql = preg_replace('/^SELECT (.+) FROM/i', 'SELECT COUNT(*) AS nRows FROM', $this->getSql());
     $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
     $result = $stmt->execute($this->getParameters())->getResource();
     $row = $result->fetch();
@@ -162,7 +161,7 @@ class SelectStatement extends Select {
   }
 
     /**
-   * @see Select::getSqlString()
+   * @see Select::join()
      */
     public function join($name, $on, $columns = self::SQL_STAR, $type = self::JOIN_INNER) {
       // prevent duplicate joins
@@ -175,12 +174,13 @@ class SelectStatement extends Select {
     }
 
   /**
-   * @see Select::getSqlString()
+   * Get the sql string for this statement
+   * @return String
    */
-  public function getSqlString(PlatformInterface $adapterPlatform = null) {
+  public function getSql() {
     $cacheKey = self::getCacheId($this->id);
     if (!isset($this->cachedSql[$cacheKey])) {
-      $sql = parent::getSqlString($adapterPlatform);
+      $sql = (new Sql($this->getAdapter()))->buildSqlString($this);
       $this->cachedSql[$cacheKey] = $sql;
     }
     return $this->cachedSql[$cacheKey];
@@ -192,7 +192,7 @@ class SelectStatement extends Select {
    */
   public function query() {
     $adapter = $this->getAdapter();
-    $sql = $this->getSqlString($adapter->getPlatform());
+    $sql = $this->getSql();
     $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
     return $stmt->execute($this->getParameters())->getResource();
   }
