@@ -140,6 +140,7 @@ class AbstractPermissionManager {
       $parentRelations = $mapper->getRelations('parent');
       if (sizeof($parentRelations) > 0) {
 
+        $oidObj = ObjectId::parse($oid);
         $tmpPerm = $this->addTempPermission($oidObj, $context, PersistenceAction::READ);
         $object = $this->persistenceFacade->load($oidObj);
         $this->removeTempPermission($tmpPerm);
