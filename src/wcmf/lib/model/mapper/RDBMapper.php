@@ -293,7 +293,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * Execute a query on the connection.
    * @param $sql The SQL statement as string
    * @param $parameters An array of values to replace the placeholders with (optional, default: empty array)
-   * @return If the query is a select, an array as the result of PDOStatement::fetchAll(PDO::FETCH_ASSOC),
+   * @return If the query is a select, an array of associative arrays containing the selected data,
    * the number of affected rows else
    */
   public function executeSql($sql, $parameters=array()) {
@@ -301,20 +301,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $this->connect();
     }
     try {
-      if (sizeof($parameters) > 0) {
-        $results = $this->adapter->query($sql, $parameters);
-        if ($results->isQueryResult()) {
-          $resource = $results->getResource();
-          $result = $resource->fetchAll();
-          $resource->closeCursor();
-          return $result;
-        }
-        else {
-          return $results->getAffectedRows();
-        }
+      $results = $this->adapter->query($sql, $parameters);
+      if ($results instanceof \Zend\Db\ResultSet\ResultSet) {
+        return $results->toArray();
       }
       else {
-        return $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        return $results->getAffectedRows();
       }
     }
     catch (\Exception $ex) {
