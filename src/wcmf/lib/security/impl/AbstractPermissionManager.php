@@ -81,38 +81,13 @@ class AbstractPermissionManager {
     // normalize resource to string
     $resourceStr = ($resource instanceof ObjectId) ? $resource->__toString() : $resource;
 
-    // determine the resource type and set entity type, oid and property if applying
-    $extensionRemoved = preg_replace('/\.[^\.]*?$/', '', $resourceStr);
-    $resourceType = null;
-    $oid = null;
-    $type = null;
-    $oidProperty = null;
-    $typeProperty = null;
-    if (($oidObj = ObjectId::parse($resourceStr)) !== null) {
-      $resourceType = self::RESOURCE_TYPE_ENTITY_INSTANCE;
-      $oid = $resourceStr;
-      $type = $oidObj->getType();
-    }
-    elseif (($oidObj = ObjectId::parse($extensionRemoved)) !== null) {
-      $resourceType = self::RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY;
-      $oid = $extensionRemoved;
-      $type = $oidObj->getType();
-      $oidProperty = $resourceStr;
-      $typeProperty = $type.substr($resourceStr, strlen($extensionRemoved));
-    }
-    elseif ($this->persistenceFacade->isKnownType($resourceStr)) {
-      $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE;
-      $type = $resourceStr;
-    }
-    elseif ($this->persistenceFacade->isKnownType($extensionRemoved)) {
-      $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY;
-      $type = $extensionRemoved;
-      $typeProperty = $resourceStr;
-    }
-    else {
-      // defaults to other
-      $resourceType = self::RESOURCE_TYPE_OTHER;
-    }
+    // determine the resource type and set entity type, oid and property if applicable
+    $resourceDesc = $this->parseResource($resourceStr);
+    $resourceType = $resourceDesc['resourceType'];
+    $oid = $resourceDesc['oid'];
+    $type = $resourceDesc['type'];
+    $oidProperty = $resourceDesc['oidProperty'];
+    $typeProperty = $resourceDesc['typeProperty'];
     if (self::$logger->isDebugEnabled()) {
       self::$logger->debug("Resource type: ".$resourceType);
     }
@@ -260,6 +235,57 @@ class AbstractPermissionManager {
   }
 
   /**
+   * Get the resource type and parameters (as applicable) from a resource
+   * @param $resourceStr The resource represented as string
+   * @return Associative array with keys
+   *   'resourceType' (one of the RESOURCE_TYPE_ constants),
+   *   'oid' (object id),
+   *   'type' (entity type),
+   *   'oidProperty' (object id with instance property),
+   *  'typeProperty' (type id with entity property)
+   */
+  protected function parseResource($resourceStr) {
+    $resourceType = null;
+    $oid = null;
+    $type = null;
+    $oidProperty = null;
+    $typeProperty = null;
+    $extensionRemoved = preg_replace('/\.[^\.]*?$/', '', $resourceStr);
+    if (($oidObj = ObjectId::parse($resourceStr)) !== null) {
+      $resourceType = self::RESOURCE_TYPE_ENTITY_INSTANCE;
+      $oid = $resourceStr;
+      $type = $oidObj->getType();
+    }
+    elseif (($oidObj = ObjectId::parse($extensionRemoved)) !== null) {
+      $resourceType = self::RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY;
+      $oid = $extensionRemoved;
+      $type = $oidObj->getType();
+      $oidProperty = $resourceStr;
+      $typeProperty = $type.substr($resourceStr, strlen($extensionRemoved));
+    }
+    elseif ($this->persistenceFacade->isKnownType($resourceStr)) {
+      $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE;
+      $type = $resourceStr;
+    }
+    elseif ($this->persistenceFacade->isKnownType($extensionRemoved)) {
+      $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY;
+      $type = $extensionRemoved;
+      $typeProperty = $resourceStr;
+    }
+    else {
+      // defaults to other
+      $resourceType = self::RESOURCE_TYPE_OTHER;
+    }
+    return array(
+      'resourceType' => $resourceType,
+      'oid' => $oid,
+      'type' => $type,
+      'oidProperty' => $oidProperty,
+      'typeProperty' => $typeProperty
+    );
+  }
+
+  /**
    * Parse a permissions string and return an associative array with the keys
    * 'default', 'allow', 'deny', where 'allow', 'deny' are arrays itselves holding roles
    * and 'default' is a boolean value derived from the wildcard policy (+* or -*).
@@ -402,8 +428,33 @@ class AbstractPermissionManager {
    * @see PermissionManager::hasTempPermission()
    */
   public function hasTempPermission($resource, $context, $action) {
+    if (sizeof($this->tempPermissions) == 0) {
+      return false;
+    }
+
+    // check if the resource has a direct permission
+    $permissions = array_flip($this->tempPermissions);
     $actionKey = ActionKey::createKey($resource, $context, $action);
-    return isset(array_flip($this->tempPermissions)[$actionKey]);
+    if (!isset($permissions[$actionKey])) {
+      // if not and the resource belongs to an entity instance,
+      // we might have a permission for the type
+      $resourceDesc = $this->parseResource($resource);
+      switch ($resourceDesc['resourceType']) {
+        case self::RESOURCE_TYPE_ENTITY_INSTANCE:
+          $typeResource = $resourceDesc['type'];
+          break;
+        case self::RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY:
+          $typeResource = $resourceDesc['typeProperty'];
+          break;
+        default:
+          $typeResource = null;
+      }
+      // set alternative action key
+      if ($typeResource != null) {
+        $actionKey = ActionKey::createKey($typeResource, $context, $action);
+      }
+    }
+    return isset($permissions[$actionKey]);
   }
 
   /**
