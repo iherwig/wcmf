@@ -81,7 +81,7 @@ class StringUtil {
     // Re-attach tags
     $output = $one . implode($tags[0]);
     // Added to remove unnecessary closure
-    $output = str_replace('','',$output);
+    $output = str_replace('', '', $output);
     return $output;
   }
 
@@ -175,7 +175,7 @@ class StringUtil {
     $p = 0;
     $l = strlen($string);
     while ($p < $l) {
-      while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) {
+      while (($p < $l) && (strpos(" \r\t\n", $string[$p]) !== false)) {
         $p++;
       }
       if ($string[$p] == '"') {
@@ -190,7 +190,7 @@ class StringUtil {
         }
         $r[] = stripslashes(substr($string, $q, $p-$q));
         $p++;
-        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) {
+        while (($p < $l) && (strpos(" \r\t\n", $string[$p]) !== false)) {
           $p++;
         }
         $p++;
@@ -207,18 +207,18 @@ class StringUtil {
         }
         $r[] = stripslashes(substr($string, $q, $p-$q));
         $p++;
-        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) {
+        while (($p < $l) && (strpos(" \r\t\n", $string[$p]) !== false)) {
           $p++;
         }
         $p++;
       }
       else {
         $q = $p;
-        while (($p < $l) && (strpos(",;",$string[$p]) === false)) {
+        while (($p < $l) && (strpos(",;", $string[$p]) === false)) {
           $p++;
         }
         $r[] = stripslashes(trim(substr($string, $q, $p-$q)));
-        while (($p < $l) && (strpos(" \r\t\n",$string[$p]) !== false)) {
+        while (($p < $l) && (strpos(" \r\t\n", $string[$p]) !== false)) {
           $p++;
         }
         $p++;

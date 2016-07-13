@@ -125,9 +125,9 @@ class URIUtil {
    * @return Boolean whether the url is available
    */
   public static function validateUrl($url, $timeout=5) {
-    $url_parts = @parse_url($url);
+    $urlParts = @parse_url($url);
     // check local relative url
-    if (empty($url_parts["host"])) {
+    if (empty($urlParts["host"])) {
       $fh = @fopen($url, "r");
       return ($fh !== false);
     }

@@ -95,11 +95,11 @@ class ImageOutputStrategy implements OutputStrategy {
     }
     $this->width = $this->width * $this->xscale + $this->labelDim['right'] - $this->labelDim['left'] + 2*$this->border;
     $this->height = $this->height * $this->yscale + $this->labelDim['bottom'] - $this->labelDim['top'] + 2*$this->border;
-    $this->img = ImageCreate($this->width,$this->height);
+    $this->img = ImageCreate($this->width, $this->height);
     $this->bgColor = ImageColorAllocate($this->img, 255, 255, 255);
     $this->txtColor = ImageColorAllocate($this->img, 0, 128, 192);
     $this->lineColor = $this->txtColor;
-    ImageFilledRectangle($this->img, 0, 0, $this->width,$this->height,$this->bgColor);
+    ImageFilledRectangle($this->img, 0, 0, $this->width, $this->height, $this->bgColor);
 
     if ($this->usemap != '') {
       echo "\n".'<map name="'.$this->usemap.'">'."\n";

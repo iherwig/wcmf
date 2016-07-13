@@ -72,17 +72,17 @@ class NodeComparator {
     $i = 0;
     foreach ($this->sortCriteria as $criteria => $sortType) {
       $weightedValue = ($maxWeight-$i)*($maxWeight-$i);
-      $AGreaterB = 0;
+      $aGreaterB = 0;
       // sort by id
       if ($criteria == self::ATTRIB_OID) {
         if ($a->getOID() != $b->getOID()) {
-          ($a->getOID() > $b->getOID()) ? $AGreaterB = 1 : $AGreaterB = -1;
+          ($a->getOID() > $b->getOID()) ? $aGreaterB = 1 : $aGreaterB = -1;
         }
       }
       // sort by type
       else if ($criteria == self::ATTRIB_TYPE) {
         if ($a->getType() != $b->getType()) {
-          ($a->getType() > $b->getType()) ? $AGreaterB = 1 : $AGreaterB = -1;
+          ($a->getType() > $b->getType()) ? $aGreaterB = 1 : $aGreaterB = -1;
         }
       }
       // sort by value
@@ -90,7 +90,7 @@ class NodeComparator {
         $aValue = strToLower($a->getValue($criteria));
         $bValue = strToLower($b->getValue($criteria));
         if ($aValue != $bValue) {
-          ($aValue > $bValue) ? $AGreaterB = 1 : $AGreaterB = -1;
+          ($aValue > $bValue) ? $aGreaterB = 1 : $aGreaterB = -1;
         }
       }
       // sort by property
@@ -98,17 +98,17 @@ class NodeComparator {
         $aProperty = strToLower($a->getProperty($criteria));
         $bProperty = strToLower($b->getProperty($criteria));
         if ($aProperty != $bProperty) {
-          ($aProperty > $bProperty) ? $AGreaterB = 1 : $AGreaterB = -1;
+          ($aProperty > $bProperty) ? $aGreaterB = 1 : $aGreaterB = -1;
         }
       }
       // calculate result of current criteria depending on current sorttype
       if ($sortType == self::SORTTYPE_ASC) {
-        if ($AGreaterB == 1) { $sumA += $weightedValue; }
-        else if ($AGreaterB == -1) { $sumB += $weightedValue; }
+        if ($aGreaterB == 1) { $sumA += $weightedValue; }
+        else if ($aGreaterB == -1) { $sumB += $weightedValue; }
       }
       else if ($sortType == self::SORTTYPE_DESC) {
-        if ($AGreaterB == 1) { $sumB += $weightedValue; }
-        else if ($AGreaterB == -1) { $sumA += $weightedValue; }
+        if ($aGreaterB == 1) { $sumB += $weightedValue; }
+        else if ($aGreaterB == -1) { $sumA += $weightedValue; }
       }
       else {
         throw new IllegalArgumentException("Unknown SORTTYPE.");

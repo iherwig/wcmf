@@ -10,16 +10,16 @@
  */
 namespace wcmf\test\tests\security;
 
-use wcmf\test\lib\ArrayDataSet;
-use wcmf\test\lib\DatabaseTestCase;
-
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\TestUtil;
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
 
 /**
  * PermissionsTest.
@@ -355,6 +355,26 @@ class PermissionsTest extends DatabaseTestCase {
     $this->assertNull($permission);
 
     TestUtil::endSession();
+  }
+
+  public function testTempPermissionInstance() {
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+
+    $oid = new ObjectId('Chapter', 200);
+    $this->assertFalse($permissionManager->authorize($oid, '', PersistenceAction::READ));
+
+    $permissionManager->addTempPermission($oid, '', PersistenceAction::READ);
+    $this->assertTrue($permissionManager->authorize($oid, '', PersistenceAction::READ));
+  }
+
+  public function testTempPermissionType() {
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+
+    $oid = new ObjectId('Chapter', 200);
+    $this->assertFalse($permissionManager->authorize($oid, '', PersistenceAction::READ));
+
+    $permissionManager->addTempPermission('app.src.model.Chapter', '', PersistenceAction::READ);
+    $this->assertTrue($permissionManager->authorize($oid, '', PersistenceAction::READ));
   }
 }
 ?>

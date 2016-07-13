@@ -20,9 +20,7 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\search\IndexedSearch;
 use wcmf\lib\util\StringUtil;
-
 use ZendSearch\Lucene\Analysis\Analyzer\Analyzer;
-use ZendSearch\Lucene\Analysis\Analyzer\Common\Utf8Num\CaseInsensitive;
 use ZendSearch\Lucene\Analysis\TokenFilter\StopWords;
 use ZendSearch\Lucene\Document;
 use ZendSearch\Lucene\Document\Field;
@@ -327,7 +325,7 @@ class LuceneSearch implements IndexedSearch {
     if (!$this->index || $create) {
       $indexPath = $this->getIndexPath();
 
-      $analyzer = new Utf8Analyzer();
+      $analyzer = new LuceneUtf8Analyzer();
 
       // add stop words filter
       $stopWords = $this->getStopWords();
@@ -370,15 +368,6 @@ class LuceneSearch implements IndexedSearch {
    */
   protected function getStopWords() {
     return explode("\n", $GLOBALS['STOP_WORDS']);
-  }
-}
-
-class Utf8Analyzer extends CaseInsensitive {
-  /**
-   * Override method to make sure we are using utf-8
-   */
-  public function setInput($data, $encoding = '') {
-    parent::setInput($data, 'UTF-8');
   }
 }
 
