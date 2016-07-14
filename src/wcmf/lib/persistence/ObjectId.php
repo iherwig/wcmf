@@ -45,29 +45,19 @@ class ObjectId implements \Serializable, \JsonSerializable {
    * @param $type The type name of the object (either fully qualified or simple, if not ambiguous)
    * @param $id Either a single value or an array of values (for compound primary keys) identifying
    * the object between others of the same type. If not given, a dummy id will be
-   * assigned (optional, default: _null_)
+   * assigned (optional, default: empty array)
    * @param $prefix A prefix for identifying a set of objects belonging to one storage in a
    * distributed environment (optional, default: _null_)
    * @note If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
    */
-  public function __construct($type, $id=null, $prefix=null) {
+  public function __construct($type, $id=array(), $prefix=null) {
     $this->prefix = $prefix;
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $this->fqType = $type != 'NULL' ? $persistenceFacade->getFullyQualifiedType($type) : 'NULL';
 
     // get given primary keys
-    if ($id != null) {
-      if (!is_array($id)) {
-        $this->id = array($id);
-      }
-      else {
-        $this->id = $id;
-      }
-    }
-    else {
-      $this->id = array();
-    }
+    $this->id = !is_array($id) ? array($id) : $id;
 
     // add dummy ids for missing primary key values
     $numPKs = self::getNumberOfPKs($type);

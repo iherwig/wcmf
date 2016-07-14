@@ -292,7 +292,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   }
 
   /**
-   * Get the statement for selecting a many to one relation
+   * Get the statement for selecting a many-to-one relation
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getManyToOneRelationSelectSQL(RelationDescription $relationDescription,
@@ -313,37 +313,13 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
 
     // statement
-    $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), null, $criteria, $orderby, $pagingInfo);
-    $selectStmt = SelectStatement::get($this, $queryId);
-    if (!$selectStmt->isCached()) {
-      // initialize the statement
-
-      $selectStmt->from($tableName, '');
-      $this->addColumns($selectStmt, $tableName);
-      $selectStmt->where($this->quoteIdentifier($tableName).'.'.
-              $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
-      // order
-      $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
-      // additional conditions
-      $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $tableName));
-      // limit
-      if ($pagingInfo != null) {
-        $selectStmt->limit($pagingInfo->getPageSize());
-        $selectStmt->offset($pagingInfo->getOffset());
-      }
-    }
-    else {
-      // on used statements only set parameters
-      $parameters = array_merge($parameters, $this->getParameters($criteria, $tableName));
-    }
-
-    // set parameters
-    $selectStmt->setParameters($parameters);
+    $selectStmt = $this->getRelationStatement($thisAttr, $parameters,
+          $otherObjectProxies, $otherRole, $criteria, $orderby, $pagingInfo);
     return array($selectStmt, $relationDescription->getIdName(), $relationDescription->getFkName());
   }
 
   /**
-   * Get the statement for selecting a one to many relation
+   * Get the statement for selecting a one-to-many relation
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getOneToManyRelationSelectSQL(RelationDescription $relationDescription,
@@ -364,11 +340,25 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
 
     // statement
+    $selectStmt = $this->getRelationStatement($thisAttr, $parameters,
+          $otherObjectProxies, $otherRole, $criteria, $orderby, $pagingInfo);
+    return array($selectStmt, $relationDescription->getFkName(), $relationDescription->getIdName());
+
+  }
+
+  /**
+   * Get the select statement for a many-to-one or one-to-many relation.
+   * This method is the commen part used in both relations.
+   * @see RDBMapper::getRelationSelectSQL()
+   */
+  protected function getRelationStatement($thisAttr, $parameters,
+          array $otherObjectProxies, $otherRole,
+          $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $queryId = $this->getCacheKey($otherRole.sizeof($otherObjectProxies), null, $criteria, $orderby, $pagingInfo);
+    $tableName = $this->getRealTableName();
     $selectStmt = SelectStatement::get($this, $queryId);
     if (!$selectStmt->isCached()) {
       // initialize the statement
-
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).'.'.
@@ -390,11 +380,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // set parameters
     $selectStmt->setParameters($parameters);
-    return array($selectStmt, $relationDescription->getFkName(), $relationDescription->getIdName());
+    return $selectStmt;
   }
 
   /**
-   * Get the statement for selecting a many to many relation
+   * Get the statement for selecting a many-to-many relation
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getManyToManyRelationSelectSQL(RelationDescription $relationDescription,

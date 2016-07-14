@@ -58,22 +58,14 @@ class Image implements ValidateType {
     }
 
     // check dimensions of the image
-    if ($imgWidth !== false) {
-      $checkWidth = $graphicsUtil->isValidImageWidth($value, $imgWidth[0], $imgWidth[1]);
-    }
-    else {
-      $checkWidth = true;
-    }
-    if ($imgHeight !== false) {
-      $checkHeight = $graphicsUtil->isValidImageHeight($value, $imgHeight[0], $imgHeight[1]);
-    }
-    else {
-      $checkHeight = true;
-    }
-    if(!($checkWidth && $checkHeight)) {
-      return false;
-    }
-    return true;
+    $widthOk = $imgWidth !== false ?
+            $graphicsUtil->isValidImageWidth($value, $imgWidth[0], $imgWidth[1]) :
+            true;
+    $heightOk = $imgHeight !== false ?
+            $graphicsUtil->isValidImageHeight($value, $imgHeight[0], $imgHeight[1]) :
+            true;
+
+    return $widthOk && $heightOk;
   }
 }
 ?>

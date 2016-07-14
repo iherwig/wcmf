@@ -103,41 +103,40 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       return;
     }
 
-    if (file_exists($filename)) {
+    if (!file_exists($filename)) {
+      throw new ConfigurationException('Configuration file '.$filename.' not found!');
+    }
+
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Adding...");
+    }
+    // try to unserialize an already parsed ini file sequence
+    $this->addedFiles[] = $filename;
+    if (!$this->unserialize($this->addedFiles)) {
       if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug("Adding...");
+        self::$logger->debug("Parse first time");
       }
-      // try to unserialize an already parsed ini file sequence
-      $this->addedFiles[] = $filename;
-      if (!$this->unserialize($this->addedFiles)) {
-        if (self::$logger->isDebugEnabled()) {
-          self::$logger->debug("Parse first time");
-        }
-        $result = $this->processFile($filename, $this->configArray, $this->containedFiles);
-        $this->configArray = $result['config'];
-        $this->containedFiles = array_unique($result['files']);
+      $result = $this->processFile($filename, $this->configArray, $this->containedFiles);
+      $this->configArray = $result['config'];
+      $this->containedFiles = array_unique($result['files']);
 
-        if ($processValues) {
-          $this->processValues();
-        }
-
-        // re-build lookup table
-        $this->buildLookupTable();
-
-        // serialize the parsed ini file sequence
-        $this->serialize();
-
-        // notify configuration change listeners
-        $this->configChanged();
+      if ($processValues) {
+        $this->processValues();
       }
-      else {
-        if (self::$logger->isDebugEnabled()) {
-          self::$logger->debug("Reuse from cache");
-        }
-      }
+
+      // re-build lookup table
+      $this->buildLookupTable();
+
+      // serialize the parsed ini file sequence
+      $this->serialize();
+
+      // notify configuration change listeners
+      $this->configChanged();
     }
     else {
-      throw new ConfigurationException('Configuration file '.$filename.' not found!');
+      if (self::$logger->isDebugEnabled()) {
+        self::$logger->debug("Reuse from cache");
+      }
     }
   }
 
