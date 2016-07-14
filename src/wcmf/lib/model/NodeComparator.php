@@ -25,6 +25,14 @@ use wcmf\lib\model\Node;
  * $comparator = new NodeComparator('creator');
  * usort($nodeList, array($comparator, 'compare'));
  *
+ * // sort by creator attribute with direction
+ * $comparator = new NodeComparator('creator DESC');
+ * usort($nodeList, array($comparator, 'compare'));
+ *
+ * // sort by multiple attributes with direction
+ * $comparator = new NodeComparator(array('creator DESC', 'created ASC'));
+ * usort($nodeList, array($comparator, 'compare'));
+ *
  * // more complex example with different attributes
  * $sortCriteria = array(
  *   NodeComparator::ATTRIB_TYPE => NodeComparator::SORTTYPE_ASC,
@@ -43,18 +51,28 @@ class NodeComparator {
   const ATTRIB_OID = -3;  // sort by oid
   const ATTRIB_TYPE = -4; // sort by type
 
-  private $sortCriteria;
+  private $sortCriteria = array();
 
   /**
    * Constructor
    * @param $sortCriteria An assoziative array of criteria - SORTTYPE constant pairs OR a single criteria string.
-   *        possible criteria: NodeComparator::OID, NodeComparator::TYPE or any value/property name
+   *        possible criteria: NodeComparator::OID, NodeComparator::TYPE or any value/property name with optionally ASC or DESC appended
    *        (e.g. array(NodeComparator::OID => NodeComparator::SORTTYPE_ASC, 'name' => NodeComparator::SORTTYPE_DESC) OR 'name')
    *        @note If criteria is only a string we will sort by this criteria with NodeComparator::SORTTYPE_ASC
    */
-  public function __construct(array $sortCriteria) {
-    // TODO build criteria array from string as well, resolve ASC, DESC in strings
-    $this->sortCriteria = $sortCriteria;
+  public function __construct($sortCriteria) {
+    // build criteria array
+    $criteria = !is_array($sortCriteria) ? array($sortCriteria) : $sortCriteria;
+    foreach ($criteria as $attribute => $direction) {
+      if (is_int($attribute) && $attribute >= 0) {
+        // indexed array of attributes
+        $attrDir = explode(' ', $direction);
+        $attribute = $attrDir[0];
+        $direction = sizeof($attrDir) == 1 ? self::SORTTYPE_ASC :
+          (strtoupper(trim($attrDir[1])) == 'DESC' ? self::SORTTYPE_DESC : self::SORTTYPE_ASC);
+      }
+      $this->sortCriteria[trim($attribute)] = $direction;
+    }
   }
 
   /**

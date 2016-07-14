@@ -25,7 +25,7 @@ use wcmf\lib\util\TestUtil;
  */
 class PersistentFacadeTest extends DatabaseTestCase {
 
-  private $numChapters = 1;
+  private $numChapters = 100;
 
   protected function getDataSet() {
     $chapters = array();
@@ -103,9 +103,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPagingMultipleTypes() {
-    $this->markTestIncomplete('This test is not ready to run yet.');
-
+  public function testPagingMultipleTypesAllPages() {
     TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $types = array('Publisher', 'Author');
@@ -115,37 +113,67 @@ class PersistentFacadeTest extends DatabaseTestCase {
     $pagingInfo->setPage(1);
     $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, array('created'), $pagingInfo);
     $this->assertEquals(5, sizeof($objects1));
-    $this->assertEquals('Publisher:1', $objects1[0]->getOID()->__toString());
-    $this->assertEquals('Publisher:2', $objects1[1]->getOID()->__toString());
-    $this->assertEquals('Publisher:3', $objects1[2]->getOID()->__toString());
-    $this->assertEquals('Author:1', $objects1[3]->getOID()->__toString());
-    $this->assertEquals('Author:2', $objects1[4]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:2', $objects1[1]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:3', $objects1[2]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:1', $objects1[3]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:2', $objects1[4]->getOID()->__toString());
 
     // 2. page
     $pagingInfo->setPage(2);
     $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, array('created'), $pagingInfo);
     $this->assertEquals(5, sizeof($objects2));
-    $this->assertEquals('Publisher:4', $objects2[0]->getOID()->__toString());
-    $this->assertEquals('Author:3', $objects2[1]->getOID()->__toString());
-    $this->assertEquals('Publisher:5', $objects2[2]->getOID()->__toString());
-    $this->assertEquals('Publisher:6', $objects2[3]->getOID()->__toString());
-    $this->assertEquals('Author:4', $objects2[4]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:4', $objects2[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:3', $objects2[1]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:5', $objects2[2]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:6', $objects2[3]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:4', $objects2[4]->getOID()->__toString());
 
     // 3. page
     $pagingInfo->setPage(3);
     $objects3 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, array('created'), $pagingInfo);
     $this->assertEquals(5, sizeof($objects3));
-    $this->assertEquals('Author:5', $objects3[0]->getOID()->__toString());
-    $this->assertEquals('Author:6', $objects3[1]->getOID()->__toString());
-    $this->assertEquals('Author:7', $objects3[2]->getOID()->__toString());
-    $this->assertEquals('Publisher:7', $objects3[3]->getOID()->__toString());
-    $this->assertEquals('Publisher:8', $objects3[4]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:5', $objects3[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:6', $objects3[1]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:7', $objects3[2]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:7', $objects3[3]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:8', $objects3[4]->getOID()->__toString());
 
     // 4. page
     $pagingInfo->setPage(4);
     $objects4 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, array('created'), $pagingInfo);
     $this->assertEquals(1, sizeof($objects4));
-    $this->assertEquals('Author:8', $objects4[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:8', $objects4[0]->getOID()->__toString());
+
+    TestUtil::endSession();
+  }
+
+
+  public function testPagingMultipleTypesNthPage() {
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $types = array('Publisher', 'Author');
+    $pagingInfo = new PagingInfo(5);
+
+    // 3. page
+    $pagingInfo->setPage(3);
+    $objects3 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, array('created'), $pagingInfo);
+    $this->assertEquals(5, sizeof($objects3));
+    $this->assertEquals('app.src.model.Author:5', $objects3[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:6', $objects3[1]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:7', $objects3[2]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:7', $objects3[3]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:8', $objects3[4]->getOID()->__toString());
+
+    // 2. page
+    $pagingInfo->setPage(2);
+    $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, array('created'), $pagingInfo);
+    $this->assertEquals(5, sizeof($objects2));
+    $this->assertEquals('app.src.model.Publisher:4', $objects2[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:3', $objects2[1]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:5', $objects2[2]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:6', $objects2[3]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:4', $objects2[4]->getOID()->__toString());
 
     TestUtil::endSession();
   }
