@@ -853,7 +853,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $result .= join(',', $orderArray);
     }
     if ($pagingInfo != null) {
-      $result .= $pagingInfo->getOffset().','.$pagingInfo->getPageSize();
+      $result .= ','.$pagingInfo->getOffset().','.$pagingInfo->getPageSize();
     }
     return $result;
   }

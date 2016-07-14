@@ -156,9 +156,7 @@ class Criteria {
    * @return String
    */
   public function __toString() {
-    $str = "[".$this->combineOperator."] ".$this->type.".".$this->attribute.
-            " ".$this->operator." ".$this->value;
-    return $str;
+    return $this->getId()." ".$this->value;
   }
 }
 ?>

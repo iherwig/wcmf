@@ -15,10 +15,7 @@ use app\src\model\Chapter;
 use wcmf\test\lib\ArrayDataSet;
 use wcmf\test\lib\DatabaseTestCase;
 
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\util\TestUtil;
 
 /**
@@ -28,14 +25,7 @@ use wcmf\lib\util\TestUtil;
  */
 class PersistentObjectTest extends DatabaseTestCase {
 
-  private $numChapters = 100;
-
   protected function getDataSet() {
-    $chapters = array();
-    for ($i=0; $i<$this->numChapters; $i++) {
-      $chapters[] = array('id' => $i, 'sortkey' => $i);
-    }
-
     return new ArrayDataSet(array(
       'DBSequence' => array(
         array('table' => ''),
@@ -49,7 +39,6 @@ class PersistentObjectTest extends DatabaseTestCase {
       'Role' => array(
         array('id' => 0, 'name' => 'administrators'),
       ),
-      'Chapter' => $chapters,
     ));
   }
 
@@ -109,38 +98,6 @@ class PersistentObjectTest extends DatabaseTestCase {
     $this->assertEquals('app.src.model.Chapter:12', $chapter1->getOID()->__toString());
     $this->assertEquals(null, $chapter1->getValue('name'));
     $this->assertEquals(null, $chapter1->getValue('created'));
-
-    TestUtil::endSession();
-  }
-
-  public function testLoadPaging() {
-    TestUtil::startSession('admin', 'admin');
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-
-    // lower bound 1
-    $pagingInfo1 = new PagingInfo(0);
-    $chapters1 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo1);
-    $this->assertEquals(0, sizeof($chapters1));
-
-    // lower bound 2
-    $pagingInfo2 = new PagingInfo(1);
-    $chapters2 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo2);
-    $this->assertEquals(1, sizeof($chapters2));
-
-    // simple
-    $pagingInfo3 = new PagingInfo(10);
-    $chapters3 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo3);
-    $this->assertEquals(10, sizeof($chapters3));
-
-    // out of bounds 1
-    $pagingInfo4 = new PagingInfo(-1);
-    $chapters4 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo4);
-    $this->assertEquals(0, sizeof($chapters4));
-
-    // out of bounds 2
-    $pagingInfo5 = new PagingInfo(100000000);
-    $chapters5 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo5);
-    $this->assertEquals($this->numChapters, sizeof($chapters5));
 
     TestUtil::endSession();
   }

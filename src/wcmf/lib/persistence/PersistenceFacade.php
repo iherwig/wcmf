@@ -104,7 +104,7 @@ interface PersistenceFacade {
 
   /**
    * Load the objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.
-   * @param $type The type of the object (either fully qualified or simple, if not ambiguous)
+   * @param $typeOrTypes The type or types array of objects (either fully qualified or simple, if not ambiguous)
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
    * @param $criteria An array of Criteria instances that define conditions on the object's attributes (optional, default: _null_)
@@ -112,11 +112,11 @@ interface PersistenceFacade {
    * @param $pagingInfo A reference PagingInfo instance (optional, default: _null_)
    * @return Array containing the PersistentObject instances
    */
-  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  public function loadObjects($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Load the first object matching a given condition. If a PagingInfo instance is passed it will be used and updated.
-   * @param $type The type of the object (either fully qualified or simple, if not ambiguous)
+   * @param $typeOrTypes The type or types array of objects (either fully qualified or simple, if not ambiguous)
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
    * @param $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
@@ -124,7 +124,7 @@ interface PersistenceFacade {
    * @param $pagingInfo A reference PagingInfo instance (default: _null_)
    * @return PersistentObject or null
    */
-  public function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  public function loadFirstObject($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
 
   /**
    * Get the current business transaction.

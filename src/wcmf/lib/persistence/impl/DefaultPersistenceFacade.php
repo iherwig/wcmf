@@ -14,7 +14,9 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\NodeComparator;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
@@ -173,7 +175,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
-    $mapper = $this->getMapper($type);
+        $mapper = $this->getMapper($type);
     $result = $mapper->getOIDs($type, $criteria, $orderby, $pagingInfo);
     return $result;
   }
@@ -197,23 +199,83 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  public function loadObjects($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
-    $mapper = $this->getMapper($type);
-    $result = $mapper->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
+    if (!is_array($typeOrTypes)) {
+      // single type
+      $mapper = $this->getMapper($typeOrTypes);
+      $result = $mapper->loadObjects($typeOrTypes, $buildDepth, $criteria, $orderby, $pagingInfo);
+    }
+    else {
+      // multiple types
+      $numTypes = sizeof($typeOrTypes);
+      $cache = ObjectFactory::getInstance('cache');
+
+      // TODO check if cache entry for previous page exists
+
+      // get cache key for stored offsets
+      $cacheKey = $this->getCacheKey($typeOrTypes, $buildDepth, $criteria, $orderby, $pagingInfo);
+      $offsets = $cache->exists(__CLASS__, $cacheKey) ? $cache->get(__CLASS__, $cacheKey) :
+        array_fill(0, $numTypes, 0);
+
+      $tmpResult = array();
+      for ($i=0, $countI=$numTypes; $i<$countI; $i++) {
+        // collect n objects from each type
+        $type = $typeOrTypes[$i];
+        $mapper = $this->getMapper($type);
+        $pkNames = $mapper->getPkNames();
+
+        // set offset condition
+        $pkOffsets = explode('|', $offsets[$i]);
+        for ($j=0, $countJ=sizeof($pkNames); $j<$countJ; $j++) {
+          $offset = isset($pkOffsets[$j]) ? $pkOffsets[$j] : 0;
+          $criteria[] = new Criteria($type, $pkNames[$j], '>', $offset);
+        }
+
+        $objects = $mapper->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
+        $tmpResult = array_merge($tmpResult, $objects);
+      }
+
+      // sort
+      $comparator = new NodeComparator($orderby);
+      usort($tmpResult, array($comparator, 'compare'));
+
+      // truncate
+      $result = array_slice($tmpResult, 0, $pagingInfo->getPageSize());
+
+      // update offsets
+      for ($i=0, $countI=$numTypes; $i<$countI; $i++) {
+        // find last object of type
+        $type = $this->getFullyQualifiedType($typeOrTypes[$i]);
+        for ($j=sizeof($result)-1; $j>=0; $j--) {
+          $object = $result[$j];
+          if ($object->getType() == $type) {
+            $mapper = $this->getMapper($type);
+            $pkNames = $mapper->getPkNames();
+            $newOffset = array();
+            foreach ($pkNames as $pkName) {
+              $newOffset[] = $object->getValue($pkName);
+            }
+            $offsets[$i] = join('|', $newOffset);
+            break;
+          }
+        }
+      }
+      $cache->put(__CLASS__, $cacheKey, $offsets);
+    }
     return $result;
   }
 
   /**
    * @see PersistenceFacade::loadFirstObject()
    */
-  public function loadFirstObject($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  public function loadFirstObject($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     if ($pagingInfo == null) {
       $pagingInfo = new PagingInfo(1);
     }
-    $objects = $this->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
+    $objects = $this->loadObjects($typeOrTypes, $buildDepth, $criteria, $orderby, $pagingInfo);
     if (sizeof($objects) > 0) {
       return $objects[0];
     }
@@ -293,6 +355,32 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       }
       $this->createdOIDs[$type][] = $object->getOID();
     }
+  }
+
+  /**
+   * Get a unique string for the given parameter values
+   * @param $typeOrTypes
+   * @param $buildDepth
+   * @param $criteriaArray
+   * @param $orderArray
+   * @param $pagingInfo
+   * @return String
+   */
+  protected function getCacheKey($typeOrTypes, $buildDepth, $criteriaArray=null, $orderArray=null, PagingInfo $pagingInfo=null) {
+    $result = is_array($typeOrTypes) ? join(',', $typeOrTypes) : $typeOrTypes;
+    $result .= ','.$buildDepth.',';
+    if ($criteriaArray != null) {
+      foreach ($criteriaArray as $c) {
+        $result .= $c->getId();
+      }
+    }
+    if ($orderArray != null) {
+      $result .= join(',', $orderArray);
+    }
+    if ($pagingInfo != null) {
+      $result .= ','.$pagingInfo->getOffset().','.$pagingInfo->getPageSize();
+    }
+    return $result;
   }
 }
 ?>

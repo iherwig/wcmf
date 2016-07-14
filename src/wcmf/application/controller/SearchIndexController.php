@@ -48,7 +48,7 @@ class SearchIndexController extends BatchController {
   private $search = null;
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $NODES_PER_CALL = 10;
+  private $NODES_PER_CALL = 1;
 
   /**
    * Constructor

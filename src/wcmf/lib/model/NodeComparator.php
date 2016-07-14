@@ -53,6 +53,7 @@ class NodeComparator {
    *        @note If criteria is only a string we will sort by this criteria with NodeComparator::SORTTYPE_ASC
    */
   public function __construct(array $sortCriteria) {
+    // TODO build criteria array from string as well, resolve ASC, DESC in strings
     $this->sortCriteria = $sortCriteria;
   }
 
