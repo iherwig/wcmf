@@ -189,6 +189,10 @@ The following sections show some basic examples for using the persistence layer.
 
 ### Loading objects ### {#pers_load}
 
+To load a __single object__, the
+\link wcmf::lib::persistence::PersistenceFacade::load `PersistenceFacade::load`\endlink
+method is used:
+
 ~~~~~~~~~~~~~{.php}
 $oid = new ObjectId('Author', 1);
 
@@ -202,6 +206,20 @@ if($author == null) {
 ~~~~~~~~~~~~~
 
 In the example the `Author` instance with id _1_ is loaded.
+
+A __list of objects__ is loaded using the
+\link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
+method:
+
+~~~~~~~~~~~~~{.php}
+// load all Author instances
+$authors = ObjectFactory::getInstance('persistenceFacade')->loadObjects('Author');
+~~~~~~~~~~~~~
+
+This \link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
+method provides several parameters that allow to specify which instances should
+be loaded and how the list should be ordered. The next sections explain these
+parameters.
 
 #### Build depth #### {#pers_builddepth}
 
