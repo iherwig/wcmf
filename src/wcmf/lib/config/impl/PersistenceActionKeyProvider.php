@@ -83,7 +83,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
     if ($this->isLoadingKeys) {
       return null;
     }
-    $cache = ObjectFactory::getInstance('cache');
+    $cache = ObjectFactory::getInstance('dynamicCache');
     $cacheSection = $this->getId();
     if (!$cache->exists($cacheSection, self::$cacheKey)) {
       $keys = $this->getAllKeyValues();
@@ -156,7 +156,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
   public function keyChanged(PersistenceEvent $event) {
     $object = $event->getObject();
     if ($object->getType() == $this->entityType) {
-      $cache = ObjectFactory::getInstance('cache');
+      $cache = ObjectFactory::getInstance('dynamicCache');
       $cache->clear($this->getId());
     }
   }

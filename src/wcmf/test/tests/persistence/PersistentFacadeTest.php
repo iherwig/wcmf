@@ -10,13 +10,13 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\test\lib\ArrayDataSet;
-use wcmf\test\lib\DatabaseTestCase;
-
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\util\TestUtil;
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
 
 /**
  * PersistentFacadeTest.
@@ -174,6 +174,25 @@ class PersistentFacadeTest extends DatabaseTestCase {
     $this->assertEquals('app.src.model.Publisher:5', $objects2[2]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:6', $objects2[3]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:4', $objects2[4]->getOID()->__toString());
+
+    TestUtil::endSession();
+  }
+
+  public function testPagingMultipleTypesCriteria() {
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $types = array('Publisher', 'Author');
+    $pagingInfo = new PagingInfo(5);
+
+    $criteria = array(new Criteria('Publisher', 'created', 'LIKE', '%0'),
+        new Criteria('Author', 'created', 'LIKE', '%0'));
+
+    // 1. page (created date only )
+    $pagingInfo->setPage(1);
+    $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, $criteria, array('created'), $pagingInfo);
+    $this->assertEquals(2, sizeof($objects1));
+    $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:5', $objects1[1]->getOID()->__toString());
 
     TestUtil::endSession();
   }

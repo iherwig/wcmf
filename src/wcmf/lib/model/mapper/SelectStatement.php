@@ -42,7 +42,7 @@ class SelectStatement extends Select {
    * @return SelectStatement
    */
   public static function get(RDBMapper $mapper, $id=self::NO_CACHE) {
-    $cache = ObjectFactory::getInstance('cache');
+    $cache = ObjectFactory::getInstance('staticCache');
     $cacheSection = self::getCacheSection($mapper->getType());
     $cacheId = self::getCacheId($id);
     if ($id == self::NO_CACHE || !$cache->exists($cacheSection, $cacheId)) {
@@ -94,7 +94,7 @@ class SelectStatement extends Select {
    * @return Boolean
    */
   public function isCached() {
-    $cache = ObjectFactory::getInstance('cache');
+    $cache = ObjectFactory::getInstance('staticCache');
     return $this->id == self::NO_CACHE ? false :
             $cache->exists(self::getCacheSection($this->type), self::getCacheId($this->id));
   }
@@ -155,7 +155,7 @@ class SelectStatement extends Select {
    */
   public function save() {
     if ($this->id != self::NO_CACHE) {
-      $cache = ObjectFactory::getInstance('cache');
+      $cache = ObjectFactory::getInstance('staticCache');
       $cache->put(self::getCacheSection($this->type), self::getCacheId($this->id), $this);
     }
   }

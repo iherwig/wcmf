@@ -250,14 +250,30 @@
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_gAIdwbLnEeWcwaDPJFy4ig" value="action=cms"/>
                 </ownedAttribute>
               </packagedElement>
-              <packagedElement xmi:type="uml:Class" xmi:id="_Un6u8FUxEeS4i-N-Z4Tllg" name="Cache">
+              <packagedElement xmi:type="uml:Class" xmi:id="_Un6u8FUxEeS4i-N-Z4Tllg" name="StaticCache">
+                <ownedComment xmi:type="uml:Comment" xmi:id="_wxzVQEpzEea8q88i0kauCw">
+                  <body>Static cache is used for data that do not change while the application is running, e.g. configuration data and model definitions.</body>
+                </ownedComment>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_Un6u8VUxEeS4i-N-Z4Tllg" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Un6u8lUxEeS4i-N-Z4Tllg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Un6u81UxEeS4i-N-Z4Tllg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_Un6u9FUxEeS4i-N-Z4Tllg" value="wcmf\lib\io\impl\FileCache"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_lEaWkFUxEeS4i-N-Z4Tllg" name="cacheDir" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_oaPp8FUxEeS4i-N-Z4Tllg" value="app/cache/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_oaPp8FUxEeS4i-N-Z4Tllg" value="app/cache/static/"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_E9tDUEpzEea8q88i0kauCw" name="DynamicCache">
+                <ownedComment xmi:type="uml:Comment" xmi:id="_5Nw08EpzEea8q88i0kauCw">
+                  <body>Dynamic cache is used for data that are changing while the application is running, e.g. database content.</body>
+                </ownedComment>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_E9tqYEpzEea8q88i0kauCw" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_E9tqYUpzEea8q88i0kauCw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_E9tqYkpzEea8q88i0kauCw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_E9tqY0pzEea8q88i0kauCw" value="wcmf\lib\io\impl\FileCache"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_E9tqZEpzEea8q88i0kauCw" name="cacheDir" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_E9tqZUpzEea8q88i0kauCw" value="app/cache/dynamic/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_QM0nECshEeWUuIR_KoweBQ" name="EventListener">
@@ -2192,4 +2208,5 @@
   <Chronos:ChiActionKey xmi:id="_gkYqABezEeaOuvFJPYmwBw" action="restReadInRelation" base_Association="_f3gV4BezEeaOuvFJPYmwBw"/>
   <Chronos:ChiActionKey xmi:id="_oPkNABezEeaOuvFJPYmwBw" action="restUpdateInRelation" base_Association="_kyN8YBezEeaOuvFJPYmwBw"/>
   <Chronos:ChiActionKey xmi:id="_rUsx8BezEeaOuvFJPYmwBw" action="restDeleteInRelation" base_Association="_qYav4BezEeaOuvFJPYmwBw"/>
+  <Chronos:ChiSystem xmi:id="_E9vfkEpzEea8q88i0kauCw" plattform="wcmf" base_Class="_E9tDUEpzEea8q88i0kauCw"/>
 </xmi:XMI>

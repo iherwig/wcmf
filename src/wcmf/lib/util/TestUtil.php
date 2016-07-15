@@ -51,7 +51,7 @@ class TestUtil {
     ObjectFactory::configure(new DefaultFactory($configuration));
     ObjectFactory::registerInstance('configuration', $configuration);
 
-    $cache = ObjectFactory::getInstance('cache');
+    $cache = ObjectFactory::getInstance('dynamicCache');
     $cache->clearAll();
   }
 

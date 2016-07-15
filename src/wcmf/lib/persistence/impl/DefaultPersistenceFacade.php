@@ -211,7 +211,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     else {
       // multiple types
       $numTypes = sizeof($typeOrTypes);
-      $cache = ObjectFactory::getInstance('cache');
+      $cache = ObjectFactory::getInstance('dynamicCache');
       $cacheSection = str_replace('\\', '.', __CLASS__);
 
       // get cache key for stored offsets of previous page
@@ -242,10 +242,17 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       $tmpResult = array();
       for ($i=0, $countI=$numTypes; $i<$countI; $i++) {
         // collect n objects from each type
-        $type = $typeOrTypes[$i];
+        $type = $this->getFullyQualifiedType($typeOrTypes[$i]);
         $mapper = $this->getMapper($type);
         $pkNames = $mapper->getPkNames();
-        $typeCriteria = $criteria;
+
+        // use type specific criteria
+        $typeCriteria = array();
+        foreach ($criteria as $criterion) {
+          if ($this->getFullyQualifiedType($criterion->getType()) == $type) {
+            $typeCriteria[] = $criterion;
+          }
+        }
 
         // set offset condition
         $pkOffsets = explode('|', $offsets[$i]);
