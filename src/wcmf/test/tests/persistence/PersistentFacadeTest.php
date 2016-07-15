@@ -196,5 +196,24 @@ class PersistentFacadeTest extends DatabaseTestCase {
 
     TestUtil::endSession();
   }
+
+  public function testPagingMultipleNoOrder() {
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $types = array('Publisher', 'Author');
+    $pagingInfo = new PagingInfo(5);
+
+    // 1. page
+    $pagingInfo->setPage(1);
+    $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, null, $pagingInfo);
+    $this->assertEquals(5, sizeof($objects1));
+    $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:2', $objects1[1]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:3', $objects1[2]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:4', $objects1[3]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:5', $objects1[4]->getOID()->__toString());
+
+    TestUtil::endSession();
+  }
 }
 ?>

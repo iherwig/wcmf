@@ -248,9 +248,11 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 
         // use type specific criteria
         $typeCriteria = array();
-        foreach ($criteria as $criterion) {
-          if ($this->getFullyQualifiedType($criterion->getType()) == $type) {
-            $typeCriteria[] = $criterion;
+        if ($criteria != null) {
+          foreach ($criteria as $criterion) {
+            if ($this->getFullyQualifiedType($criterion->getType()) == $type) {
+              $typeCriteria[] = $criterion;
+            }
           }
         }
 
@@ -269,8 +271,10 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       }
 
       // sort
-      $comparator = new NodeComparator($orderby);
-      usort($tmpResult, array($comparator, 'compare'));
+      if ($orderby != null) {
+        $comparator = new NodeComparator($orderby);
+        usort($tmpResult, array($comparator, 'compare'));
+      }
 
       // truncate
       $result = array_slice($tmpResult, 0, $pagingInfo->getPageSize());

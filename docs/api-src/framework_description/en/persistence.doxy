@@ -282,8 +282,21 @@ position _50_:
 $pagingInfo = new PagingInfo(25);
 $pagingInfo->setOffset(50);
 
-// load the Author instances
+// load Author instances
 $authors = ObjectFactory::getInstance('persistenceFacade')->loadObjects('Author', BuildDepth::SINGLE, null, null, $pagingInfo);
+~~~~~~~~~~~~~
+
+Pagination is also possible over __multiple entity types__:
+
+~~~~~~~~~~~~~{.php}
+// setup paging
+$pagingInfo = new PagingInfo(25);
+$pagingInfo->setOffset(50);
+
+// load Author and Publisher instances ordered by creation date
+$types = array('Author', 'Publisher');
+$order = array('created');
+$objects = ObjectFactory::getInstance('persistenceFacade')->loadObjects($types, BuildDepth::SINGLE, null, $order, $pagingInfo);
 ~~~~~~~~~~~~~
 
 ### Searching objects ### {#pers_search}
