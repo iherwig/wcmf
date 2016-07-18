@@ -148,7 +148,6 @@ class PersistentFacadeTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-
   public function testPagingMultipleTypesNthPage() {
     TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -174,6 +173,34 @@ class PersistentFacadeTest extends DatabaseTestCase {
     $this->assertEquals('app.src.model.Publisher:5', $objects2[2]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:6', $objects2[3]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:4', $objects2[4]->getOID()->__toString());
+
+    TestUtil::endSession();
+  }
+
+  public function testPaging1stPage() {
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $types = array('Publisher', 'Author');
+    $pagingInfo = new PagingInfo(5);
+
+    // 1. page
+    $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, array('created'), $pagingInfo);
+    $this->assertEquals(5, sizeof($objects1));
+    $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:2', $objects1[1]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:3', $objects1[2]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:1', $objects1[3]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:2', $objects1[4]->getOID()->__toString());
+
+    // 1. page
+    $pagingInfo->setPage(1);
+    $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, array('created'), $pagingInfo);
+    $this->assertEquals(5, sizeof($objects2));
+    $this->assertEquals('app.src.model.Publisher:1', $objects2[0]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:2', $objects2[1]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Publisher:3', $objects2[2]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:1', $objects2[3]->getOID()->__toString());
+    $this->assertEquals('app.src.model.Author:2', $objects2[4]->getOID()->__toString());
 
     TestUtil::endSession();
   }
