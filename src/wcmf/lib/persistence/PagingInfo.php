@@ -18,7 +18,7 @@ namespace wcmf\lib\persistence;
 class PagingInfo {
 
   private $pageSize = 10;
-  private $page = 0;
+  private $page = 1;
   private $offset = 0;
   private $totalCount = 0;
   private $ignoreTotalCount = false;

@@ -403,14 +403,12 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   protected function getCacheKey($typeOrTypes, $buildDepth, $criteriaArray=null, $orderArray=null, PagingInfo $pagingInfo=null) {
     $result = is_array($typeOrTypes) ? join(',', $typeOrTypes) : $typeOrTypes;
-    $result .= ','.$buildDepth.',';
+    $result .= ','.$buildDepth;
     if ($criteriaArray != null) {
-      foreach ($criteriaArray as $c) {
-        $result .= $c->getId();
-      }
+      $result .= ','.join(',', $criteriaArray);
     }
     if ($orderArray != null) {
-      $result .= join(',', $orderArray);
+      $result .= ','.join(',', $orderArray);
     }
     if ($pagingInfo != null) {
       $result .= ','.$pagingInfo->getOffset().','.$pagingInfo->getPageSize();
