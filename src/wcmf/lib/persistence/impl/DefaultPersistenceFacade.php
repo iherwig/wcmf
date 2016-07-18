@@ -221,9 +221,33 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       $prevPagingInfo->setPage($prevPage);
       $prevCacheKey = $this->getCacheKey($typeOrTypes, $buildDepth, $criteria, $orderby, $prevPagingInfo);
 
-      // get previous offsets
-      $offsets = array_fill(0, $numTypes, 0); // default
-      if ($page > 1) {
+      // get sort direction from first order parameter (defaults to ASC)
+      $sortDir = NodeComparator::SORTTYPE_ASC;
+      if (sizeof($orderby) > 0) {
+        $attrDir = explode(' ', $orderby[0]);
+        $sortDir = sizeof($attrDir) == 1 ? NodeComparator::SORTTYPE_ASC :
+          (strtoupper(trim($attrDir[1])) == 'DESC' ? NodeComparator::SORTTYPE_DESC : NodeComparator::SORTTYPE_ASC);
+      }
+
+      // get comparison operator
+      $pkOperator = $sortDir == NodeComparator::SORTTYPE_ASC ? '>' : '<';
+
+      // get offsets
+      if ($page == 1) {
+        $offsets = array();
+        $offsetPagingInfo = new PagingInfo(1, true);
+        for ($i=0, $count=$numTypes; $i<$count; $i++) {
+          // load first object from boundary
+          $obj = $this->getFirstOID($typeOrTypes[$i], $criteria, $orderby, $offsetPagingInfo);
+          $pkOffsets = array();
+          foreach ($obj->getId() as $id) {
+            // add offset depending on sort directory to be able to always use > or < instead of >= or <=
+            $pkOffsets[] = ($sortDir == NodeComparator::SORTTYPE_ASC) ? $id-1 : $id+1;
+          }
+          $offsets[$i] = $obj ? join('|', $pkOffsets) : 0;
+        }
+      }
+      else {
         if ($cache->exists($cacheSection, $prevCacheKey)) {
           $offsets = $cache->get($cacheSection, $prevCacheKey);
         }
@@ -262,7 +286,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
         $pkOffsets = explode('|', $offsets[$i]);
         for ($j=0, $countJ=sizeof($pkNames); $j<$countJ; $j++) {
           $offset = isset($pkOffsets[$j]) ? $pkOffsets[$j] : 0;
-          $typeCriteria[] = new Criteria($type, $pkNames[$j], '>', $offset);
+          $typeCriteria[] = new Criteria($type, $pkNames[$j], $pkOperator, $offset);
         }
 
         // always start from first page
