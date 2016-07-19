@@ -17,6 +17,7 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\security\principal\User;
+use wcmf\lib\security\principal\impl\AnonymousUser;
 
 /**
  * Default implementation of PrincipalFactory.
@@ -53,7 +54,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
    * @see PrincipalFactory::getUser()
    */
   public function getUser($login, $useTempPermission=false) {
-    if (!isset($this->users[$login])) {
+    if ($login != AnonymousUser::USER_GROUP_NAME && !isset($this->users[$login])) {
       // load user if not done before
       if ($useTempPermission) {
         $tmpPerm = $this->permissionManager->addTempPermission($this->userType, '', PersistenceAction::READ);
