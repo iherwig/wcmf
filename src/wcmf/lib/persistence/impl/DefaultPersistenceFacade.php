@@ -214,6 +214,11 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       $cache = ObjectFactory::getInstance('dynamicCache');
       $cacheSection = str_replace('\\', '.', __CLASS__);
 
+      // normalize types
+      for ($i=0, $count=$numTypes; $i<$count; $i++) {
+        $typeOrTypes[$i] = $this->getFullyQualifiedType($typeOrTypes[$i]);
+      }
+
       // get cache key for stored offsets of previous page
       $page = $pagingInfo->getPage();
       $prevPage = $page > 1 ? $page-1 : 1;
@@ -221,31 +226,9 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       $prevPagingInfo->setPage($prevPage);
       $prevCacheKey = $this->getCacheKey($typeOrTypes, $buildDepth, $criteria, $orderby, $prevPagingInfo);
 
-      // get sort direction from first order parameter (defaults to ASC)
-      $sortDir = NodeComparator::SORTTYPE_ASC;
-      if (sizeof($orderby) > 0) {
-        $attrDir = explode(' ', $orderby[0]);
-        $sortDir = sizeof($attrDir) == 1 ? NodeComparator::SORTTYPE_ASC :
-          (strtoupper(trim($attrDir[1])) == 'DESC' ? NodeComparator::SORTTYPE_DESC : NodeComparator::SORTTYPE_ASC);
-      }
-
-      // get comparison operator
-      $pkOperator = $sortDir == NodeComparator::SORTTYPE_ASC ? '>' : '<';
-
       // get offsets
       if ($page == 1) {
-        $offsets = array();
-        $offsetPagingInfo = new PagingInfo(1, true);
-        for ($i=0, $count=$numTypes; $i<$count; $i++) {
-          // load first object from boundary
-          $obj = $this->getFirstOID($typeOrTypes[$i], $criteria, $orderby, $offsetPagingInfo);
-          $pkOffsets = array();
-          foreach ($obj->getId() as $id) {
-            // add offset depending on sort directory to be able to always use > or < instead of >= or <=
-            $pkOffsets[] = ($sortDir == NodeComparator::SORTTYPE_ASC) ? $id-1 : $id+1;
-          }
-          $offsets[$i] = $obj ? join('|', $pkOffsets) : 0;
-        }
+        $offsets = array_fill(0, $numTypes, 0);
       }
       else {
         if ($cache->exists($cacheSection, $prevCacheKey)) {
@@ -268,9 +251,8 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       $tmpResult = array();
       for ($i=0, $countI=$numTypes; $i<$countI; $i++) {
         // collect n objects from each type
-        $type = $this->getFullyQualifiedType($typeOrTypes[$i]);
+        $type = $typeOrTypes[$i];
         $mapper = $this->getMapper($type);
-        $pkNames = $mapper->getPkNames();
 
         // use type specific criteria
         $typeCriteria = array();
@@ -282,15 +264,9 @@ class DefaultPersistenceFacade implements PersistenceFacade {
           }
         }
 
-        // set offset condition
-        $pkOffsets = explode('|', $offsets[$i]);
-        for ($j=0, $countJ=sizeof($pkNames); $j<$countJ; $j++) {
-          $offset = isset($pkOffsets[$j]) ? $pkOffsets[$j] : 0;
-          $typeCriteria[] = new Criteria($type, $pkNames[$j], $pkOperator, $offset);
-        }
-
-        // always start from first page
+        // set paging info
         $tmpPagingInfo = new PagingInfo($pagingInfo->getPageSize(), true);
+        $tmpPagingInfo->setOffset($offsets[$i]);
 
         $objects = $mapper->loadObjects($type, $buildDepth, $typeCriteria, $orderby, $tmpPagingInfo);
         $tmpResult = array_merge($tmpResult, $objects);
@@ -306,22 +282,12 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       $result = array_slice($tmpResult, 0, $pagingInfo->getPageSize());
 
       // update offsets
-      for ($i=0, $countI=$numTypes; $i<$countI; $i++) {
-        // find last object of type
-        $type = $this->getFullyQualifiedType($typeOrTypes[$i]);
-        for ($j=sizeof($result)-1; $j>=0; $j--) {
-          $object = $result[$j];
-          if ($object->getType() == $type) {
-            $mapper = $this->getMapper($type);
-            $pkNames = $mapper->getPkNames();
-            $newOffset = array();
-            foreach ($pkNames as $pkName) {
-              $newOffset[] = $object->getValue($pkName);
-            }
-            $offsets[$i] = join('|', $newOffset);
-            break;
-          }
-        }
+      $counts = array_fill_keys($typeOrTypes, 0);
+      for ($i=0, $count=sizeof($result); $i<$count; $i++) {
+        $counts[$result[$i]->getType()]++;
+      }
+      for ($i=0, $count=$numTypes; $i<$count; $i++) {
+        $offsets[$i] += $counts[$typeOrTypes[$i]];
       }
       $cacheKey = $this->getCacheKey($typeOrTypes, $buildDepth, $criteria, $orderby, $pagingInfo);
       $cache->put($cacheSection, $cacheKey, $offsets);
