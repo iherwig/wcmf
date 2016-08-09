@@ -517,7 +517,7 @@ validates against a regular expression (see [preg_match](http://php.net/manual/e
 e.g.
 ~~~~~~~~~~~~~{.php}
 // integer or empty
-regexp:^[0-9]*$
+regexp:{"pattern":"^[0-9]*$"}
 ~~~~~~~~~~~~~
 
 \note The validation type is derived from the part of the configuration string,
