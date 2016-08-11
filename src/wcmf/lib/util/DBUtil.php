@@ -16,7 +16,7 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\PersistenceException;
-use Zend_Db;
+use Zend\Db\Adapter\Adapter;
 
 /**
  * DBUtil provides database helper functions.
@@ -43,14 +43,15 @@ class DBUtil {
           'host' => $connectionParams['dbHostName'],
           'username' => $connectionParams['dbUserName'],
           'password' => $connectionParams['dbPassword'],
-          'dbname' => $connectionParams['dbName'],
+          'database' => $connectionParams['dbName'],
+          'driver' => 'Pdo_'.ucfirst($connectionParams['dbType']),
           'driver_options' => $pdoParams
         );
         if (!empty($connectionParams['dbPort'])) {
           $params['port'] = $connectionParams['dbPort'];
         }
-        $conn = Zend_Db::factory('Pdo_'.ucfirst($connectionParams['dbType']), $params);
-        $conn->setFetchMode(Zend_Db::FETCH_ASSOC);
+        $adapter = new Adapter($params);
+        $conn = $adapter->getDriver()->getConnection()->getResource();
         return $conn;
       }
       catch(\Exception $ex) {
@@ -113,7 +114,6 @@ class DBUtil {
         $conn->rollBack();
       }
       $logger->debug('Finished SQL script '.$file.'.');
-      $conn->closeConnection();
     }
     else {
       $logger->error('SQL script '.$file.' not found.');
