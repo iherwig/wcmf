@@ -38,6 +38,11 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
     return $this->conn;
   }
 
+  public function run(PHPUnit_Framework_TestResult $result=NULL) {
+    $this->setPreserveGlobalState(false);
+    return parent::run($result);
+  }
+
   protected function setUp() {
     if (!self::$frameworkReady) {
       TestUtil::initFramework(WCMF_BASE.'app/config/');
