@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <!-- see http://www.phpunit.de/wiki/Documentation -->
 <phpunit bootstrap="bootstrap.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
          processIsolation="true"
          verbose="true">
   <testsuites>
