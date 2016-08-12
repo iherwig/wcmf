@@ -38,7 +38,7 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
     return $this->conn;
   }
 
-  public function run(PHPUnit_Framework_TestResult $result=NULL) {
+  public function run(\PHPUnit_Framework_TestResult $result=null) {
     $this->setPreserveGlobalState(false);
     return parent::run($result);
   }
