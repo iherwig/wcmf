@@ -180,7 +180,7 @@ class SelectStatement extends Select {
   public function getSql() {
     $cacheKey = self::getCacheId($this->id);
     if (!isset($this->cachedSql[$cacheKey])) {
-      $sql = (new Sql($this->getAdapter()))->buildSqlString($this);
+      $sql = trim((new Sql($this->getAdapter()))->buildSqlString($this));
       $this->cachedSql[$cacheKey] = $sql;
     }
     return $this->cachedSql[$cacheKey];

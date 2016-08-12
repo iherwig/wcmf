@@ -113,7 +113,6 @@ class DBUtil {
         $logger->debug('Rolling back ...');
         $conn->rollBack();
       }
-      $conn = null;
       $logger->debug('Finished SQL script '.$file.'.');
     }
     else {
