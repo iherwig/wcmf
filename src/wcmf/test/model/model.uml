@@ -28,7 +28,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_FuLx0HSyEeSTpe7Uq_EO2A" name="color" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_FuLx0XSyEeSTpe7Uq_EO2A" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FuLx0nSyEeSTpe7Uq_EO2A" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_FuLx03SyEeSTpe7Uq_EO2A" value="#428BCA"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_FuLx03SyEeSTpe7Uq_EO2A" value="#333333"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_7TEQoLQ8EeOQ5oJFa1i8cg" name="rootTypes" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_H-uq8LQ9EeOQ5oJFa1i8cg" value="1"/>
@@ -1035,6 +1035,9 @@
                 <generalization xmi:type="uml:Generalization" xmi:id="_eMsH0LRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_j0i58HIBEeWqqJ8U6ttukA" name="failure" type="_dGbcIHIBEeWqqJ8U6ttukA" association="_j0gdsHIBEeWqqJ8U6ttukA"/>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_N8yIIGIiEead5JLiLC2fdQ" name="HistoryController">
+                <generalization xmi:type="uml:Generalization" xmi:id="_N8yIIWIiEead5JLiLC2fdQ" general="_gO4DALRnEeOfbtYsPp7Oyg"/>
+              </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_gO4DALRnEeOfbtYsPp7Oyg" name="ListController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_HIBSULRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
@@ -1236,6 +1239,12 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_grLgVbRuEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_grLgVrRuEeOfbtYsPp7Oyg" value="1"/>
                 </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_ebmrAGIiEead5JLiLC2fdQ" name="history" memberEnd="_ebrjgGIiEead5JLiLC2fdQ _ebxqIGIiEead5JLiLC2fdQ">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ebqVYGIiEead5JLiLC2fdQ" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_ebq8cGIiEead5JLiLC2fdQ" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_ebxqIGIiEead5JLiLC2fdQ" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_ebmrAGIiEead5JLiLC2fdQ"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_q7HfE7RuEeOfbtYsPp7Oyg" name="insertBefore" memberEnd="_q7HfFLRuEeOfbtYsPp7Oyg _q7HfELRuEeOfbtYsPp7Oyg">
                 <ownedEnd xmi:type="uml:Property" xmi:id="_q7HfFLRuEeOfbtYsPp7Oyg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_q7HfE7RuEeOfbtYsPp7Oyg">
@@ -1549,6 +1558,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_f3gV4xezEeaOuvFJPYmwBw" name="readInRelation" type="_giVKgLRnEeOfbtYsPp7Oyg" association="_f3gV4BezEeaOuvFJPYmwBw"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_kyOjchezEeaOuvFJPYmwBw" name="updateInRelation" type="_giVKgLRnEeOfbtYsPp7Oyg" association="_kyN8YBezEeaOuvFJPYmwBw"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_qYav4xezEeaOuvFJPYmwBw" name="deleteInRelation" type="_giVKgLRnEeOfbtYsPp7Oyg" association="_qYav4BezEeaOuvFJPYmwBw"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_ebrjgGIiEead5JLiLC2fdQ" name="historycontroller" type="_N8yIIGIiEead5JLiLC2fdQ" association="_ebmrAGIiEead5JLiLC2fdQ"/>
               </packagedElement>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_wtsc8LQGEeOIMOFxCilDfw" name="model">
@@ -2209,4 +2219,6 @@
   <Chronos:ChiActionKey xmi:id="_oPkNABezEeaOuvFJPYmwBw" action="restUpdateInRelation" base_Association="_kyN8YBezEeaOuvFJPYmwBw"/>
   <Chronos:ChiActionKey xmi:id="_rUsx8BezEeaOuvFJPYmwBw" action="restDeleteInRelation" base_Association="_qYav4BezEeaOuvFJPYmwBw"/>
   <Chronos:ChiSystem xmi:id="_E9vfkEpzEea8q88i0kauCw" plattform="wcmf" base_Class="_E9tDUEpzEea8q88i0kauCw"/>
+  <Chronos:ChiController xmi:id="_OBqoIGIiEead5JLiLC2fdQ" base_Class="_N8yIIGIiEead5JLiLC2fdQ"/>
+  <Chronos:ChiActionKey xmi:id="_hPWlAGIiEead5JLiLC2fdQ" action="history" base_Association="_ebmrAGIiEead5JLiLC2fdQ"/>
 </xmi:XMI>

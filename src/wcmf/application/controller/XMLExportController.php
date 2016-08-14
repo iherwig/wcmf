@@ -85,7 +85,7 @@ class XMLExportController extends BatchController {
    * @param $localization
    * @param $message
    * @param $configuration
-   * @param $cache
+   * @param $dynamicCache
    */
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
@@ -94,10 +94,10 @@ class XMLExportController extends BatchController {
           Localization $localization,
           Message $message,
           Configuration $configuration,
-          Cache $cache) {
+          Cache $dynamicCache) {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
-    $this->cache = $cache;
+    $this->cache = $dynamicCache;
     $this->fileUtil = new FileUtil();
   }
 

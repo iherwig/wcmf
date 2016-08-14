@@ -11,21 +11,12 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\ListController;
-use wcmf\lib\config\Configuration;
-use wcmf\lib\core\Session;
-use wcmf\lib\i18n\Localization;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeComparator;
-use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceAction;
-use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\presentation\ActionMapper;
-use wcmf\lib\search\Search;
-use wcmf\lib\security\PermissionManager;
 
 /**
- * SearchController executes a search and returns matching objects in a paged list.
- * Internally it uses Zend Lucene indexed search.
+ * HistoryController returns a list of last changed entity instances.
  *
  * The controller supports the following actions:
  *
@@ -35,7 +26,6 @@ use wcmf\lib\security\PermissionManager;
  * Search.
  * | Parameter              | Description
  * |------------------------|-------------------------
- * | _in_ / _out_ `query`   | The query string
  * | __Response Actions__   | |
  * | `ok`                   | In all cases
  * </div>
@@ -45,34 +35,7 @@ use wcmf\lib\security\PermissionManager;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class SearchController extends ListController {
-
-  private $hits = array();
-  private $search = null;
-
-  /**
-   * Constructor
-   * @param $session
-   * @param $persistenceFacade
-   * @param $permissionManager
-   * @param $actionMapper
-   * @param $localization
-   * @param $message
-   * @param $configuration
-   * @param $search
-   */
-  public function __construct(Session $session,
-          PersistenceFacade $persistenceFacade,
-          PermissionManager $permissionManager,
-          ActionMapper $actionMapper,
-          Localization $localization,
-          Message $message,
-          Configuration $configuration,
-          Search $search) {
-    parent::__construct($session, $persistenceFacade, $permissionManager,
-            $actionMapper, $localization, $message, $configuration);
-    $this->search = $search;
-  }
+class HistoryController extends ListController {
 
   /**
    * @see Controller::validate()
@@ -87,24 +50,37 @@ class SearchController extends ListController {
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
     $permissionManager = $this->getPermissionManager();
-
-    // search with searchterm (even if empty) if no query is given
-    $this->hits = $this->search->find($queryCondition, $pagingInfo);
-
-    $oids = array();
-    foreach ($this->hits as $hit) {
-      $oids[] = ObjectId::parse($hit['oid']);
-    }
-
-    // load the objects
     $persistenceFacade = $this->getPersistenceFacade();
-    $objects = array();
-    foreach($oids as $oid) {
-      if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
-        $obj = $persistenceFacade->load($oid);
-        $objects[] = $obj;
+
+    // find types with attributes created, creator, modified, last_editor
+    $requiredAttributes = array('created', 'creator', 'modified', 'last_editor');
+    $types = array();
+    foreach ($persistenceFacade->getKnownTypes() as $type) {
+      $mapper = $persistenceFacade->getMapper($type);
+      $matches = true;
+      foreach ($requiredAttributes as $attribute) {
+        if (!$mapper->hasAttribute($attribute)) {
+          $matches = false;
+          break;
+        }
+      }
+      if ($matches) {
+        $types[] = $type;
       }
     }
+
+    // load objects
+    // NOTE: we always get last changed objects and sort by requested value later
+    $historyItems = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE,
+            null, array('modified DESC'), $pagingInfo);
+
+    $objects = array();
+    foreach($historyItems as $historyItem) {
+      if ($permissionManager->authorize($historyItem->getOID(), '', PersistenceAction::READ)) {
+        $objects[] = $historyItem;
+      }
+    }
+    $pagingInfo->setTotalCount(sizeof($objects));
     return $objects;
   }
 
