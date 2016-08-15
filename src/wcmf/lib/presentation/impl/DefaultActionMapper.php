@@ -170,7 +170,9 @@ class DefaultActionMapper implements ActionMapper {
       }
       // stop processing
       $this->formatter->serialize($response);
-      $this->isFinished = true;
+      if ($response->isFinal()) {
+        $this->isFinished = true;
+      }
       return;
     }
 
