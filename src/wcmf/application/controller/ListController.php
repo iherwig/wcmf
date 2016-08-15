@@ -15,6 +15,7 @@ use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceAction;
+use wcmf\lib\persistence\UnknownFieldException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\Obfuscator;
@@ -70,11 +71,8 @@ class ListController extends Controller {
     if($request->hasValue('limit') && intval($request->getValue('limit')) < 0) {
       $this->getLogger()->warn(ApplicationError::get('LIMIT_NEGATIVE'));
     }
-    if ($request->hasValue('sortFieldName') &&
-      !$this->getPersistenceFacade()->getMapper($request->getValue('className'))->hasAttribute($request->hasValue('sortFieldName'))) {
-      $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));
-      return false;
-    }
+    // NOTE we can't check for sortFieldName here, because it might not belong to
+    // the main type, but to a related type.
     if($request->hasValue('sortDirection')) {
       $sortDirection = $request->getValue('sortDirection');
       if (strtolower($sortDirection) != 'asc' && strtolower($sortDirection) != 'desc') {
@@ -85,7 +83,7 @@ class ListController extends Controller {
     if (!$this->checkLanguageParameter()) {
       return false;
     }
-    // we can't check for offset out of bounds here
+    // NOTE we can't check for offset out of bounds here
     // do default validation
     return parent::validate();
   }
@@ -175,9 +173,18 @@ class ListController extends Controller {
       return array();
     }
 
+    $request = $this->getRequest();
+    $response = $this->getResponse();
     $query = new StringQuery($type);
     $query->setConditionString($queryCondition);
+    try {
     $objects = $query->execute(BuildDepth::SINGLE, $sortArray, $pagingInfo);
+    }
+    catch (UnknownFieldException $ex) {
+      if ($ex->getField() == $request->getValue('sortFieldName')) {
+        $response->addError(ApplicationError::get('SORT_FIELD_UNKNOWN'));
+      }
+    }
     if ($this->getLogger()->isDebugEnabled()) {
       $this->getLogger()->debug("Load objects with query: ".$query->getLastQueryString());
     }

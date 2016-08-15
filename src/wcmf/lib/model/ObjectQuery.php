@@ -493,7 +493,7 @@ class ObjectQuery extends AbstractQuery {
         }
       }
       if (!$ok) {
-        throw new UnknownFieldException($orderAttribute, "The sort field name '"+$orderAttribute+"' is unknown");
+        throw new UnknownFieldException($orderAttribute, "The sort field name '".$orderAttribute."' is unknown");
       }
     }
   }
