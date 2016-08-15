@@ -205,7 +205,7 @@ class Controller {
     $request->setContext($context);
     $request->setValues($data);
     $response = ObjectFactory::getInstance('response');
-    ObjectFactory::getInstance('actionMapper')->processAction($request, $response);
+    $this->actionMapper->processAction($request, $response);
   }
 
   /**

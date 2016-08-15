@@ -41,6 +41,7 @@ class DefaultActionMapper implements ActionMapper {
   private $eventManager = null;
   private $formatter = null;
   private $configuration = null;
+  private $isFinished = false;
 
   /**
    * Constructor
@@ -149,6 +150,11 @@ class DefaultActionMapper implements ActionMapper {
     $this->eventManager->dispatch(ApplicationEvent::NAME, new ApplicationEvent(
             ApplicationEvent::AFTER_EXECUTE_CONTROLLER, $request, $response, $controllerObj));
 
+    // return if we are finished
+    if ($this->isFinished) {
+      return;
+    }
+
     // check if an action key exists for the return action
     $nextActionKey = ActionKey::getBestMatch($actionKeyProvider, $controllerClass,
             $response->getContext(), $response->getAction());
@@ -164,6 +170,7 @@ class DefaultActionMapper implements ActionMapper {
       }
       // stop processing
       $this->formatter->serialize($response);
+      $this->isFinished = true;
       return;
     }
 

@@ -171,16 +171,21 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       }
     }
 
+    $userInfo = array('ip' => $_SERVER['REMOTE_ADDR'],
+        'agent' => $_SERVER['HTTP_USER_AGENT'],
+        'referrer' => $_SERVER['HTTP_REFERER']);
+
     if (!$routeFound) {
       throw new ApplicationException($this, $response,
-              ApplicationError::get('ROUTE_NOT_FOUND', array('route' => $requestPath)));
+              ApplicationError::get('ROUTE_NOT_FOUND', array_merge(
+                      $userInfo, array('route' => $requestPath))));
     }
 
     // check if method is allowed
     if (!$methodAllowed) {
       throw new ApplicationException($this, $response,
-              ApplicationError::get('METHOD_NOT_ALLOWED', array(
-                  'method' => $method, 'route' => $requestPath)));
+              ApplicationError::get('METHOD_NOT_ALLOWED', array_merge(
+                      $userInfo, array('method' => $method, 'route' => $requestPath))));
     }
 
     // get request data
