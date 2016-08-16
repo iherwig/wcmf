@@ -296,9 +296,8 @@ methods defined in this class, which are called by
   to `doExecute` which must then be defined in the subclass.
 
 Controllers can _redirect_ to other controllers by using the
-\link wcmf::lib::presentation::Controller::internalRedirect `Controller::internalRedirect`\endlink
-or \link wcmf::lib::presentation::Controller::externalRedirect `Controller::externalRedirect`\endlink
-methods.
+\link wcmf::lib::presentation::Controller::externalRedirect `Controller::externalRedirect`\endlink
+method.
 
 If variables need be shared between several requests to one controller they can
 be stored in _local session variables_ to avoid side effects (see

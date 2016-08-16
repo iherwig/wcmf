@@ -57,7 +57,7 @@ class ObjectFactoryTest extends BaseTestCase {
 
   public function testAlias() {
     $conf = ObjectFactory::getInstance('configuration');
-    $conf->addConfiguration('misc.ini', true);
+    $conf->addConfiguration('alias.ini', true);
 
     // get second time (same instance)
     $cache = ObjectFactory::getInstance('filecache');

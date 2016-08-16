@@ -190,8 +190,7 @@ class DefaultActionMapper implements ActionMapper {
     $nextRequest->setValues($response->getValues());
     $nextRequest->setErrors($response->getErrors());
     $nextRequest->setResponseFormat($request->getResponseFormat());
-    $nextResponse = ObjectFactory::getInstance('response');
-    $this->processAction($nextRequest, $nextResponse);
+    $this->processAction($nextRequest, $response);
   }
 }
 ?>

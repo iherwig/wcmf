@@ -191,24 +191,6 @@ class Controller {
   }
 
   /**
-   * Redirect to the given action with the given context and request data
-   * internally. The method will not return a result to the calling
-   * controller method. The calling method should return immediatly in order to
-   * avoid any side effects of code executed after the redirect.
-   * @param $action The name of the action to execute
-   * @param $context The context
-   * @param $data Associative array containing the request data
-   */
-  protected function internalRedirect($action, $context, $data) {
-    $request = ObjectFactory::getInstance('request');
-    $request->setAction($action);
-    $request->setContext($context);
-    $request->setValues($data);
-    $response = ObjectFactory::getInstance('response');
-    $this->actionMapper->processAction($request, $response);
-  }
-
-  /**
    * Redirect to the given location with the given request data externally
    * (HTTP status code 302). The method will not return a result to the calling
    * controller method. The calling method should return immediatly in order to

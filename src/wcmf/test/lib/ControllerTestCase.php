@@ -29,14 +29,17 @@ abstract class ControllerTestCase extends DatabaseTestCase {
    * back before the request is run in order to avoid side effects.
    * @param $action The action
    * @param $data An associative array with additional key/value pairs for the Request instance
+   * @parma $addActionKey Boolean, whether to add an action key for the given action to the configuration or not (optional, default: _true_)
    * @return Response instance
    */
-  protected function runRequest($action, $data) {
+  protected function runRequest($action, $data, $addActionKey=true) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $persistenceFacade->getTransaction()->rollback();
 
     // add action key
-    TestUtil::setConfigValue('??'.$action, $this->getControllerName(), 'actionmapping');
+    if ($addActionKey) {
+      TestUtil::setConfigValue('??'.$action, $this->getControllerName(), 'actionmapping');
+    }
 
     // make request
     $request = ObjectFactory::getInstance('request');
