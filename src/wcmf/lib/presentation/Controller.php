@@ -200,7 +200,7 @@ class Controller {
    * @param $key The key used as session variable name (optional)
    * @param $data The data to be stored in the session (optional)
    */
-  protected function externalRedirect($location, $key=null, $data=null) {
+  protected function redirect($location, $key=null, $data=null) {
     if (strlen($key) > 0 && $data != null) {
       $session = $this->getSession();
       $session->set($key, $data);
