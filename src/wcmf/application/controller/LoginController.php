@@ -127,8 +127,10 @@ class LoginController extends Controller {
     if ($request->getAction() == 'login') {
       // try to login
       try {
-        $authUser = $this->authenticationManager->login(
-                $request->getValue('user'), $request->getValue('password'));
+        $authUser = $this->authenticationManager->login(array(
+            'login' => $request->getValue('user'),
+            'password' => $request->getValue('password')
+        ));
       }
       catch (\Exception $ex) {
         $authUser = null;

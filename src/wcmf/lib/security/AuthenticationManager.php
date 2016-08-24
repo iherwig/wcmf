@@ -19,11 +19,10 @@ namespace wcmf\lib\security;
 interface AuthenticationManager {
 
   /**
-   * Create an authenticated user for the given credentials.
-   * @param $login The login to use
-   * @param $password The password to use
+   * Authenticate using the given credentials.
+   * @param $credentials Associative array with implementation specific keys
    * @return User instance if successfull, null else
    */
-  public function login($login, $password);
+  public function login($credentials);
 }
 ?>

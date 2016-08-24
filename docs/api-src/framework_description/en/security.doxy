@@ -47,7 +47,10 @@ $password = $request->getValue('password');
 
 try {
   // try to login using the credentials
-  $authUser = $this->_authenticationManager->login($login, $password);
+  $authUser = $this->_authenticationManager->login(array(
+    'login' => $login,
+    'password' => $password
+  ));
 }
 catch (Exception $ex) {
   Log::error("Could not log in: ".$ex, __CLASS__);
@@ -56,18 +59,15 @@ catch (Exception $ex) {
 // set the authenticated user in the session
 if ($authUser) {
   // login succeeded
-  $session->setAuthUser($authUser);
+  $session->setAuthUser($authUser->getLogin());
 }
 ~~~~~~~~~~~~~
 
-@note The user, that is associated with the current session - the _current user_ -
-is obtained using the
+@note The login of the user, that is associated with the current session -
+the _current user_ - is obtained using the
 \link wcmf::lib::core::Session::getAuthUser `Session::getAuthUser`\endlink
-method. Before successful authentication, this user is an instance of
-\link wcmf::lib::security::principal::impl::AnonymousUser `AnonymousUser`\endlink.
-It will be replaced by an instance of the application's
-\link wcmf::lib::security::principal::User `User`\endlink type after successful
-authentication.
+method. Before successful authentication, this login is
+\link wcmf::lib::security::principal::impl::AnonymousUser::USER_GROUP_NAME `AnonymousUser::USER_GROUP_NAME`\endlink.
 
 The configuration of the authentication process in the \ref app "default application"
 looks like the following:
