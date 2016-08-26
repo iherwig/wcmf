@@ -501,7 +501,7 @@ validates against a PHP filter (see [filter_var](http://php.net/manual/en/functi
 e.g.
 ~~~~~~~~~~~~~{.php}
 // FILTER_VALIDATE_INT with min_range option and FILTER_FLAG_ALLOW_HEX flag
-filter:int|{"options":{"min_range":0},"flags":2}
+filter:{"type":"int","options":{"options":{"min_range":0},"flags":2}}
 ~~~~~~~~~~~~~
 
 \link wcmf::lib::persistence::validator::impl::Image `Image`\endlink
