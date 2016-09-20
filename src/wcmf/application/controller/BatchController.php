@@ -58,7 +58,7 @@ use wcmf\lib\presentation\Response;
  * |-----------------------|-------------------------
  * | _out_ `stepNumber`    | The current step starting with 1, ending with _numberOfSteps_+1
  * | _out_ `numberOfSteps` | Total number of steps
- * | _out_ `displayText`   | The display text for the current step
+ * | _out_ `displayText`   | The display text for the next step (since the first request)
  * | _out_ `status`        | The value of the response action
  * | __Response Actions__  | |
  * | `progress`            | The process is not finished and `continue` should be called as next action
@@ -79,7 +79,7 @@ abstract class BatchController extends Controller {
   const DOWNLOAD_STEP_VAR = 'downloadStep'; // signals that the next continue action triggers the download
   const PACKAGES_VAR = 'packages';
 
-  private $curStep = 1;
+  private $curStep = null;
   private $workPackages = array();
 
   /**
@@ -91,12 +91,12 @@ abstract class BatchController extends Controller {
     if ($request->getAction() == 'continue') {
       // get step for current call from session
       $this->curStep = $this->getLocalSessionValue(self::STEP_VAR);
-      if ($this->curStep == null) {
+      if ($this->curStep === null) {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("Current step undefined."));
       }
       // get workpackage definition for current call from session
       $this->workPackages = $this->getLocalSessionValue(self::PACKAGES_VAR);
-      if ($this->workPackages == null) {
+      if ($this->workPackages === null) {
         throw new ApplicationException($request, $response, ApplicationError::getGeneral("Work packages undefined."));
       }
     }
@@ -129,7 +129,7 @@ abstract class BatchController extends Controller {
 
     // next step
     $this->curStep = $this->getLocalSessionValue(self::STEP_VAR);
-    $this->setLocalSessionValue(self::STEP_VAR, ++$this->curStep);
+    $this->setLocalSessionValue(self::STEP_VAR, ($this->curStep === null ? 0 : $this->curStep+1));
   }
 
   /**
@@ -142,41 +142,47 @@ abstract class BatchController extends Controller {
     if ($this->getLocalSessionValue(self::DOWNLOAD_STEP_VAR) == true) {
       $file = $this->getDownloadFile();
       $response->setFile($file, true);
+      $response->setAction('done');
       $this->cleanup();
-      return;
-    }
-
-    // continue processing
-    $curStep = $this->getStepNumber();
-    $numberOfSteps = $this->getNumberOfSteps();
-    if ($curStep <= $numberOfSteps) {
-      $this->processPart();
-
-      // update local variables after processing
-      $numberOfSteps = $this->getNumberOfSteps();
-
-      // set response data
-      $response->setValue('stepNumber', $curStep);
-      $response->setValue('numberOfSteps', $numberOfSteps);
-      $response->setValue('displayText', $this->getDisplayText($curStep));
-    }
-
-    // check if we are finished or should continue
-    if ($curStep >= $numberOfSteps || $this->getLocalSessionValue(self::ONE_CALL_VAR) == true) {
-      // finished -> check for download
-      $file = $this->getDownloadFile();
-      if ($file) {
-        $response->setAction('download');
-        $this->setLocalSessionValue(self::DOWNLOAD_STEP_VAR, true);
-      }
-      else {
-        $response->setAction('done');
-        $this->cleanup();
-      }
     }
     else {
-      // proceed
-      $response->setAction('progress');
+      // continue processing
+      $oneStep = $this->getLocalSessionValue(self::ONE_CALL_VAR);
+
+      $curStep = $oneStep ? 1 : $this->getStepNumber();
+      $numberOfSteps = $this->getNumberOfSteps();
+      if ($curStep <= $numberOfSteps) {
+        // step 0 only returns the process information
+        if ($curStep > 0 || $oneStep) {
+          $this->processPart($curStep);
+        }
+
+        // update local variables after processing
+        $numberOfSteps = $this->getNumberOfSteps();
+
+        // set response data
+        $response->setValue('stepNumber', $curStep);
+        $response->setValue('numberOfSteps', $numberOfSteps);
+        $response->setValue('displayText', $this->getDisplayText($curStep));
+      }
+
+      // check if we are finished or should continue
+      if ($curStep >= $numberOfSteps || $oneStep) {
+        // finished -> check for download
+        $file = $this->getDownloadFile();
+        if ($file) {
+          $response->setAction('download');
+          $this->setLocalSessionValue(self::DOWNLOAD_STEP_VAR, true);
+        }
+        else {
+          $response->setAction('done');
+          $this->cleanup();
+        }
+      }
+      else {
+        // proceed
+        $response->setAction('progress');
+      }
     }
     $response->setValue('status', $response->getAction());
   }
@@ -186,8 +192,6 @@ abstract class BatchController extends Controller {
    * @return The number of the current step
    */
   protected function getStepNumber() {
-    // since we actally call processPart() in the second step,
-    // return the real step number reduced by one
     return $this->curStep;
   }
 
@@ -247,10 +251,11 @@ abstract class BatchController extends Controller {
   }
 
   /**
-   * Process the next step.
+   * Process the given step (1-base).
+   * @param $step The step to process
    */
-  protected function processPart() {
-    $curWorkPackageDef = $this->workPackages[$this->getStepNumber()-1];
+  protected function processPart($step) {
+    $curWorkPackageDef = $this->workPackages[$step-1];
     $request = $this->getRequest();
     $response = $this->getResponse();
     if (strlen($curWorkPackageDef['callback']) == 0) {
@@ -292,7 +297,9 @@ abstract class BatchController extends Controller {
    * @param $step The step number
    */
   protected function getDisplayText($step) {
-    return $this->workPackages[$step-1]['name']." ...";
+    $numPackages = sizeof($this->workPackages);
+    return ($step>=0 && $step<$numPackages) ? $this->workPackages[$step]['name']." ..." :
+      ($step>=$numPackages ? "Done" : "");
   }
 
   /**

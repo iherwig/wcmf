@@ -50,6 +50,9 @@ class SearchIndexController extends BatchController {
   // default values, maybe overriden by corresponding request values (see above)
   private $NODES_PER_CALL = 1;
 
+  // the number of nodes to index before optimizing the index
+  private static $OPTIMIZE_FREQ = 50;
+
   /**
    * Constructor
    * @param $session
@@ -128,8 +131,13 @@ class SearchIndexController extends BatchController {
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     foreach ($types as $type) {
       $oids = $persistenceFacade->getOIDs($type);
-      $this->addWorkPackage($this->getMessage()->getText('Indexing %0%', array($type)),
-              $nodesPerCall, $oids, 'index');
+      $oidLists = array_chunk($oids, self::$OPTIMIZE_FREQ);
+      for ($i=0, $count=sizeof($oidLists); $i<$count; $i++) {
+        $this->addWorkPackage($this->getMessage()->getText('Indexing %0% %1% objects, starting from %2%., ', array(sizeof($oids), $type, ($i*self::$OPTIMIZE_FREQ+1))),
+                $nodesPerCall, $oidLists[$i], 'index');
+        $this->addWorkPackage($this->getMessage()->getText('Optimizing index'),
+                1, array(0), 'optimize');
+      }
     }
   }
 

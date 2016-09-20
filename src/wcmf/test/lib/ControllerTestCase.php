@@ -33,6 +33,26 @@ abstract class ControllerTestCase extends DatabaseTestCase {
    * @return Response instance
    */
   protected function runRequest($action, $data, $addActionKey=true) {
+    return $this->runInternal($action, $data, $addActionKey, false);
+  }
+
+  /**
+   * Make a request to the controller with the controller set as sender.
+   * @see ControllerTestCase::runRequest()
+   */
+  protected function runRequestFromThis($action, $data, $addActionKey=true) {
+    return $this->runInternal($action, $data, $addActionKey, true);
+  }
+
+  /**
+   * Make a request to the controller.
+   * @param $action The action
+   * @param $data An associative array with additional key/value pairs for the Request instance
+   * @parma $addActionKey Boolean, whether to add an action key for the given action to the configuration or not (optional, default: _true_)
+   * @parma $addSender Boolean, whether to add the controller as sender or not (optional, default: _false_)
+   * @return Response instance
+   */
+  private function runInternal($action, $data, $addActionKey=true, $addSender=false) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $persistenceFacade->getTransaction()->rollback();
 
@@ -44,6 +64,9 @@ abstract class ControllerTestCase extends DatabaseTestCase {
     // make request
     $request = ObjectFactory::getInstance('request');
     $request->setAction($action);
+    if ($addSender) {
+      $request->setSender($this->getControllerName());
+    }
     foreach ($data as $key => $value) {
       $request->setValue($key, $value);
     }
