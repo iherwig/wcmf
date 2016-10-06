@@ -21,7 +21,7 @@ interface Response extends ControllerMessage {
 
   /**
    * Set a string value that uniquely identifies the request data
-   * that cause the current response. This value maybe used to compare
+   * resulting in the current response. This value maybe used to compare
    * two requests and return cached responses based on the result.
    * @param $cacheId
    */
@@ -33,6 +33,20 @@ interface Response extends ControllerMessage {
    * @return The id
    */
   public function getCacheId();
+
+  /**
+   * Set the last modified date of the response data. This value maybe
+   * used to compare two requests and return cached responses based on the result.
+   * @param $date
+   */
+  public function setLastMofified(\DateTime $date);
+
+  /**
+   * Get the last modified date.
+   * @see Response::setLastMofified()
+   * @return DateTime
+   */
+  public function getLastMofified();
 
   /**
    * Set the response HTTP status code

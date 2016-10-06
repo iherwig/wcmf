@@ -64,6 +64,14 @@ interface View {
   public static function isCached($tplFile, $cacheId=null);
 
   /**
+   * Get the date of the cache entry, if the view is cached
+   * @param $tplFile The template file
+   * @param $cacheId The id of the view (@see Controller::getCacheId())
+   * @return DateTime or null, if not cached
+   */
+  public static function getCacheDate($tplFile, $cacheId=null);
+
+  /**
    * Get the template filename for the view from the configfile for the given action key.
    * @param $controller The name of the controller
    * @param $context The name of the context

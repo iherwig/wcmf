@@ -81,7 +81,7 @@ class SmartyView implements View {
    * @param $caching Boolean
    */
   public function setCaching($caching) {
-    $this->view->caching = $caching;
+    $this->view->caching = $caching ? \Smarty::CACHING_LIFETIME_CURRENT : \Smarty::CACHING_OFF;
   }
 
   /**
@@ -183,7 +183,19 @@ class SmartyView implements View {
     if (self::$sharedView == null) {
       self::$sharedView = ObjectFactory::getInstance('view');
     }
-    return (self::$sharedView->view->caching && self::$sharedView->view->isCached($tplFile, $cacheId));
+    $tpl = self::$sharedView->view->createTemplate($tplFile, $cacheId);
+    return $tpl->isCached();
+  }
+
+  /**
+   * @see View::getCacheDate()
+   */
+  public static function getCacheDate($tplFile, $cacheId=null) {
+    if (!self::isCached($tplFile, $cacheId)) {
+      return null;
+    }
+    $tpl = self::$sharedView->view->createTemplate($tplFile, $cacheId);
+    return \DateTime::createFromFormat('U', $tpl->cached->timestamp);
   }
 
   /**

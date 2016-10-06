@@ -97,6 +97,29 @@ class DefaultFormatter implements Formatter {
       self::sendHeader($name.': '.$value);
     }
     $format->serialize($response);
+
+    // handle caching
+    session_cache_limiter("public");
+
+    // get the caching request headers
+    $ifModifiedSinceHeader = (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : false);
+    $etagHeader = (isset($_SERVER['HTTP_IF_NONE_MATCH']) ? trim($_SERVER['HTTP_IF_NONE_MATCH']) : false);
+
+    // get caching parameters from response
+    $cacheId = $response->getCacheId();
+    $lastModified = $response->getLastMofified();
+    $lastModifiedTs = $lastModified->getTimestamp();
+    $etag = md5($lastModifiedTs.$cacheId);
+
+    header('Last-Modified: '.($lastModified->format("D, d M Y H:i:s")." GMT")." GMT", true);
+    header('ETag: "'.$etag.'"', true);
+    header('Cache-Control: public', true);
+
+    // check if page has changed. If not, send 304 and exit
+    if (@strtotime($ifModifiedSinceHeader) == $lastModifiedTs || $etagHeader == $etag) {
+      header("HTTP/1.1 304 Not Modified");
+      exit;
+    }
   }
 
   /**

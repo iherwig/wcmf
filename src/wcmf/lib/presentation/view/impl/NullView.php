@@ -67,6 +67,13 @@ class NullView implements View {
   }
 
   /**
+   * @see View::getCacheDate()
+   */
+  public static function getCacheDate($tplFile, $cacheId=null) {
+    return null;
+  }
+
+  /**
    * @see View::getTemplate()
    */
   public static function getTemplate($controller, $context, $action) {

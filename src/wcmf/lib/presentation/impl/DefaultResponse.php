@@ -23,6 +23,7 @@ use wcmf\lib\presentation\Response;
 class DefaultResponse extends AbstractControllerMessage implements Response {
 
   private $cacheId = null;
+  private $lastModifiedDate = null;
   private $status = 200;
   private $file = null;
   private $isFinal = false;
@@ -47,6 +48,21 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
    */
   public function getCacheId() {
     return $this->cacheId;
+  }
+
+  /**
+   * @see Response::setLastMofified()
+   */
+  public function setLastMofified(\DateTime $date) {
+    $this->lastModifiedDate = $date;
+  }
+
+  /**
+   * @see Response::getLastMofified()
+   */
+  public function getLastMofified() {
+    return $this->lastModifiedDate != null ? $this->lastModifiedDate :
+            new \DateTime();
   }
 
   /**

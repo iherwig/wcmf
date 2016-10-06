@@ -100,7 +100,12 @@ class HtmlFormat extends AbstractFormat {
             $formatViewTplFile : $viewTplFile;
 
     // display the view
-    $view->render($finalTplFile, $response->getCacheId());
+    $cacheId = $response->getCacheId();
+    $view->render($finalTplFile, $cacheId);
+
+    // set last modified date
+    $response->setLastMofified($view->getCacheDate($finalTplFile, $cacheId));
+
     return $values;
   }
 
