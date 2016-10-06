@@ -27,101 +27,77 @@ use wcmf\lib\presentation\Response;
 abstract class AbstractFormat implements Format {
 
   private $deserializedNodes = array();
-  private $request = null;
-  private $response = null;
 
   /**
    * @see Format::deserialize()
    */
   public function deserialize(Request $request) {
-    $this->request = $request;
-    $values = $request->getValues();
-    $values = $this->beforeDeserialize($values);
-    $values = $this->deserializeValues($values);
-    $values = $this->afterDeserialize($values);
-    $request->setValues($values);
+    $request->setValues($this->beforeDeserialize($request));
+    $request->setValues($this->deserializeValues($request));
+    $request->setValues($this->afterDeserialize($request));
   }
 
   /**
    * @see Format::serialize()
    */
   public function serialize(Response $response) {
-    $this->response = $response;
-    $values = $response->getValues();
-    $values = $this->beforeSerialize($values);
-    $values = $this->serializeValues($values);
-    $values = $this->afterSerialize($values);
-    $response->setValues($values);
-  }
-
-  /**
-   * Get the currently deserialized request
-   * @return Request
-   */
-  protected function getRequest() {
-    return $this->request;
-  }
-
-  /**
-   * Get the currently deserialized response
-   * @return Response
-   */
-  protected function getResponse() {
-    return $this->response;
+    $response->setValues($this->beforeSerialize($response));
+    $response->setValues($this->serializeValues($response));
+    $response->setValues($this->afterSerialize($response));
   }
 
   /**
    * Modify data before deserialization. The default implementation does nothing.
-   * @param $values The request values
-   * @return The modified values array
+   * @param $request The request
+   * @return Array/object of values
    * @note Subclasses override this if necessary
    */
-  protected function beforeDeserialize($values) {
-    return $values;
+  protected function beforeDeserialize(Request $request) {
+    return $request->getValues();
   }
 
   /**
    * Deserialize an array of values.
-   * @param $values The array/object of values
-   * @return The array/object of values
+   * @param $request The request
+   * @return Array/object of values
    */
-  protected abstract function deserializeValues($values);
+  protected abstract function deserializeValues(Request $request);
 
   /**
    * Modify data after deserialization. The default implementation does nothing.
-   * @param $values The request values
-   * @return The modified values array
+   * @param $request The request
+   * @return Array/object of values
    * @note Subclasses override this if necessary
    */
-  protected function afterDeserialize($values) {
-    return $values;
+  protected function afterDeserialize(Request $request) {
+    return $request->getValues();
   }
 
   /**
    * Modify data before serialization. The default implementation does nothing.
-   * @param $values The response values
-   * @return The modified values array
+   * @param $response The response
+   * @return Array/object of values
    * @note Subclasses override this if necessary
    */
-  protected function beforeSerialize($values) {
-    return $values;
+  protected function beforeSerialize(Response $response) {
+    return $response->getValues();
   }
 
   /**
    * Serialize an array of values.
-   * @param $values The array/object of values
-   * @return The array/object of values
+   * @param $response The response
+   * @return Array/object of values
    */
-  protected abstract function serializeValues($values);
+  protected abstract function serializeValues(Response $response);
 
   /**
    * Modify data after serialization. The default implementation does nothing.
-   * @param $values The response values
-   * @return The modified values array
+   * @param $response The response
+   * @return Array/object of values
    * @note Subclasses override this if necessary
    */
-  protected function afterSerialize($values) {
-    return $values;
+  protected function afterSerialize(Response $response) {
+    return $response->getValues();
   }
 
   /**

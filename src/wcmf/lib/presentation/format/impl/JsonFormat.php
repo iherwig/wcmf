@@ -13,6 +13,7 @@ namespace wcmf\lib\presentation\format\impl;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
+use wcmf\lib\presentation\Response;
 
 /**
  * JsonFormat realizes the JSON request/response format. All data will
@@ -69,16 +70,23 @@ class JsonFormat extends HierarchicalFormat {
   }
 
   /**
+   * @see Format::isCached()
+   */
+  public function isCached(Response $response) {
+    return false;
+  }
+
+  /**
    * @see HierarchicalFormat::afterSerialize()
    */
-  protected function afterSerialize($values) {
+  protected function afterSerialize(Response $response) {
     // TODO: check if merging is required for multiple actions
     /*
     // merge data into global data array
     // new values override old
     self::$jsonData = array_merge(self::$jsonData, $data);
      */
-    self::$jsonData = $values;
+    self::$jsonData = $response->getValues();
     self::$jsonUsed = true;
     return $values;
   }

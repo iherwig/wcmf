@@ -20,6 +20,25 @@ namespace wcmf\lib\presentation;
 interface Response extends ControllerMessage {
 
   /**
+   * Set the Request instance belonging to the response.
+   * @param $request Request
+   */
+  public function setRequest(Request $request);
+
+  /**
+   * Get the Request instance belonging to the response.
+   * @return Request
+   */
+  public function getRequest();
+
+  /**
+   * Check if the response is cached already. Controllers may use the result
+   * to determine if the controller logic must be executed or not.
+   * @return Boolean
+   */
+  public function isCached();
+
+  /**
    * Set a string value that uniquely identifies the request data
    * resulting in the current response. This value maybe used to compare
    * two requests and return cached responses based on the result.

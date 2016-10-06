@@ -40,5 +40,12 @@ interface Format {
    * @param $response A reference to the Response instance
    */
   public function serialize(Response $response);
+
+  /**
+   * Check if the formatted response will be returned from a cache and does not
+   * require further processing.
+   * @return Boolean
+   */
+  public function isCached(Response $response);
 }
 ?>

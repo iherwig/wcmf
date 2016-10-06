@@ -11,7 +11,7 @@
 namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\presentation\Request;
-use wcmf\lib\presentation\Response; // ambiguous
+use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\Format;
 
 /**
@@ -38,5 +38,12 @@ class NullFormat implements Format {
    * @see Format::serialize()
    */
   public function serialize(Response $response) {}
+
+  /**
+   * @see Format::isCached()
+   */
+  public function isCached(Response $response) {
+    return false;
+  }
 }
 ?>

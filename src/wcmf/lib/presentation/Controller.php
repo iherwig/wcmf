@@ -152,16 +152,23 @@ class Controller {
       }
     }
 
-    // prepare the response
-    $this->assignResponseDefaults();
-    if ($isDebugEnabled) {
-      $this->logger->debug('Response: '.$this->response);
+    // return the last error
+    $errors = $this->response->getErrors();
+    if (sizeof($errors) > 0) {
+      $error = array_pop($errors);
+      $this->response->setValue('errorCode', $error->getCode());
+      $this->response->setValue('errorMessage', $error->getMessage());
+      $this->response->setValue('errorData', $error->getData());
+      $this->response->setStatus($error->getStatusCode());
     }
 
     // log errors
-    $errors = $this->response->getErrors();
     for ($i=0,$count=sizeof($errors); $i<$count; $i++) {
       $this->logger->error($errors[$i]->__toString());
+    }
+
+    if ($isDebugEnabled) {
+      $this->logger->debug('Response: '.$this->response);
     }
   }
 
@@ -290,22 +297,6 @@ class Controller {
    */
   protected function getConfiguration() {
     return $this->configuration;
-  }
-
-  /**
-   * Assign default variables to the response. This method is called after Controller execution.
-   * This method may be used by derived controller classes for convenient response setup.
-   */
-  protected function assignResponseDefaults() {
-    // return the last error
-    $errors = $this->response->getErrors();
-    if (sizeof($errors) > 0) {
-      $error = array_pop($errors);
-      $this->response->setValue('errorCode', $error->getCode());
-      $this->response->setValue('errorMessage', $error->getMessage());
-      $this->response->setValue('errorData', $error->getData());
-      $this->response->setStatus($error->getStatusCode());
-    }
   }
 
   /**

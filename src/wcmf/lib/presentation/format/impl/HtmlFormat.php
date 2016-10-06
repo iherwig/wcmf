@@ -13,6 +13,8 @@ namespace wcmf\lib\presentation\format\impl;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\format\impl\AbstractFormat;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -36,6 +38,7 @@ use wcmf\lib\util\StringUtil;
 class HtmlFormat extends AbstractFormat {
 
   private static $inputFieldNameDelimiter = '-';
+  private static $sharedView = null;
 
   /**
    * @see Format::getMimeType()
@@ -45,11 +48,24 @@ class HtmlFormat extends AbstractFormat {
   }
 
   /**
+   * @see Format::isCached()
+   */
+  public function isCached(Response $response) {
+    if (self::$sharedView == null) {
+      self::$sharedView = ObjectFactory::getInstance('view');
+    }
+    $templateFile = $this->getTemplateFile($response);
+    $cacheId = $response->getCacheId();
+    return self::$sharedView->isCached($templateFile, $cacheId);
+  }
+
+  /**
    * @see AbstractFormat::deserializeValues()
    */
-  protected function deserializeValues($values) {
+  protected function deserializeValues(Request $request) {
     // construct nodes from values serialized as form fields
     // nodes are encoded in separated fields with names value-<name>-<oid>
+    $values = $request->getValues();
     foreach ($values as $key => $value) {
       $valueDef = self::getValueDefFromInputControlName($key);
       if ($valueDef != null) {
@@ -68,43 +84,23 @@ class HtmlFormat extends AbstractFormat {
   /**
    * @see AbstractFormat::serializeValues()
    */
-  protected function serializeValues($values) {
+  protected function serializeValues(Response $response) {
     // create the view
     $view = ObjectFactory::getInstance('view');
 
-    // check if a view template is defined
-    $response = $this->getResponse();
-    $viewTpl = $view->getTemplate($response->getSender(),
-                  $response->getContext(), $response->getAction());
-    if (!$viewTpl) {
-      throw new ConfigurationException("View definition missing for ".
-                  "response: ".$response->__toString());
-    }
-
     // assign the response data to the view
+    $values = $response->getValues();
     foreach ($values as $key => $value) {
       $view->setValue($key, $value);
     }
 
-    // check for html_format property in response
-    // and add the suffix if existing
-    $viewTplFile = WCMF_BASE.$viewTpl;
-    $format = $response->getProperty('html_tpl_format');
-    if (isset($format)) {
-      $ext = pathinfo($viewTplFile, PATHINFO_EXTENSION);
-      $formatViewTplFile = dirname($viewTplFile).'/'.basename($viewTplFile, ".$ext").'-'.$format.'.'.$ext;
-    }
-
-    // give precedence to format specific file
-    $finalTplFile = isset($formatViewTplFile) && file_exists($formatViewTplFile) ?
-            $formatViewTplFile : $viewTplFile;
-
     // display the view
+    $templateFile = $this->getTemplateFile($response);
     $cacheId = $response->getCacheId();
-    $view->render($finalTplFile, $cacheId);
+    $view->render($templateFile, $cacheId);
 
     // set last modified date
-    $response->setLastMofified($view->getCacheDate($finalTplFile, $cacheId));
+    $response->setLastMofified($view->getCacheDate($templateFile, $cacheId));
 
     return $values;
   }
@@ -131,6 +127,37 @@ class HtmlFormat extends AbstractFormat {
     $def['oid'] = array_shift($pieces);
 
     return $def;
+  }
+
+  /**
+   * Get the template file for the given response
+   * @param $response
+   */
+  protected function getTemplateFile(Response $response) {
+    if (self::$sharedView == null) {
+      self::$sharedView = ObjectFactory::getInstance('view');
+    }
+    // check if a view template is defined
+    $viewTpl = self::$sharedView->getTemplate($response->getSender(),
+                  $response->getContext(), $response->getAction());
+    if (!$viewTpl) {
+      throw new ConfigurationException("View definition missing for ".
+                  "response: ".$response->__toString());
+    }
+
+    // check for html_format property in response
+    // and add the suffix if existing
+    $viewTplFile = WCMF_BASE.$viewTpl;
+    $format = $response->getProperty('html_tpl_format');
+    if (isset($format)) {
+      $ext = pathinfo($viewTplFile, PATHINFO_EXTENSION);
+      $formatViewTplFile = dirname($viewTplFile).'/'.basename($viewTplFile, ".$ext").'-'.$format.'.'.$ext;
+    }
+
+    // give precedence to format specific file
+    $finalTplFile = isset($formatViewTplFile) && file_exists($formatViewTplFile) ?
+            $formatViewTplFile : $viewTplFile;
+    return $finalTplFile;
   }
 }
 ?>

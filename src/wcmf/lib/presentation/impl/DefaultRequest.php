@@ -12,9 +12,9 @@ namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
+use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\impl\AbstractControllerMessage;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -38,14 +38,8 @@ define('METHOD_NOT_ALLOWED', serialize(array('METHOD_NOT_ALLOWED', ApplicationEr
  */
 class DefaultRequest extends AbstractControllerMessage implements Request {
 
-  /**
-   * The format of the response (used for de-, serialization).
-   */
+  private $response = null;
   private $responseFormat = null;
-
-  /**
-   * The HTTP method of the request
-   */
   private $method = null;
 
   private static $logger = null;
@@ -85,6 +79,20 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   }
 
   /**
+   * @see Request::setResponse()
+   */
+  public function setResponse(Response $response) {
+    return $this->response = $response;
+  }
+
+  /**
+   * @see Request::getResponse()
+   */
+  public function getResponse() {
+    return $this->response;
+  }
+
+  /**
    * @see Request::initialize()
    *
    * The method tries to match the current request path against the routes
@@ -99,8 +107,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * GET,POST,PUT,DELETE/rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
    * @endcode
    */
-  public function initialize(Response $response, $controller=null,
-          $context=null, $action=null) {
+  public function initialize($controller=null, $context=null, $action=null) {
     // get base request data from request path
     $basePath = preg_replace('/\/?[^\/]*$/', '', $_SERVER['SCRIPT_NAME']);
     $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
@@ -176,14 +183,14 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         'referrer' => $_SERVER['HTTP_REFERER']);
 
     if (!$routeFound) {
-      throw new ApplicationException($this, $response,
+      throw new ApplicationException($this, $this->response,
               ApplicationError::get('ROUTE_NOT_FOUND', array_merge(
                       $userInfo, array('route' => $requestPath))));
     }
 
     // check if method is allowed
     if (!$methodAllowed) {
-      throw new ApplicationException($this, $response,
+      throw new ApplicationException($this, $this->response,
               ApplicationError::get('METHOD_NOT_ALLOWED', array_merge(
                       $userInfo, array('method' => $method, 'route' => $requestPath))));
     }

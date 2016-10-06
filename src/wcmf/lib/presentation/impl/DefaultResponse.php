@@ -13,6 +13,7 @@ namespace wcmf\lib\presentation\impl;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\impl\AbstractControllerMessage;
+use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
@@ -22,6 +23,8 @@ use wcmf\lib\presentation\Response;
  */
 class DefaultResponse extends AbstractControllerMessage implements Response {
 
+  private $formatter = null;
+  private $request = null;
   private $cacheId = null;
   private $lastModifiedDate = null;
   private $status = 200;
@@ -34,6 +37,29 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
    */
   public function __construct(Formatter $formatter) {
     parent::__construct($formatter);
+    $this->formatter = $formatter;
+  }
+
+  /**
+   * @see Response::setRequest()
+   */
+  public function setRequest(Request $request) {
+    return $this->request = $request;
+  }
+
+  /**
+   * @see Response::getRequest()
+   */
+  public function getRequest() {
+    return $this->request;
+  }
+
+  /**
+   * @see Response::isCached()
+   */
+  public function isCached() {
+    $format = $this->formatter->getFormat($this->getFormat());
+    return $format->isCached($this);
   }
 
   /**

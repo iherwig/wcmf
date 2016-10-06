@@ -13,6 +13,8 @@ namespace wcmf\lib\presentation\format\impl;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\format\impl\AbstractFormat;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
  * HierarchicalFormat maybe used as base class for formats that
@@ -27,7 +29,8 @@ abstract class HierarchicalFormat extends AbstractFormat {
   /**
    * @see AbstractFormat::deserializeValues()
    */
-  protected function deserializeValues($values) {
+  protected function deserializeValues(Request $request) {
+    $values = $request->getValues();
     if ($this->isSerializedNode($values)) {
       // the values represent a node
       $result = $this->deserializeNode($values);
@@ -62,7 +65,8 @@ abstract class HierarchicalFormat extends AbstractFormat {
   /**
    * @see AbstractFormat::serializeValues()
    */
-  protected function serializeValues($values) {
+  protected function serializeValues(Response $response) {
+    $values = $response->getValues();
     if ($this->isDeserializedNode($values)) {
       // the values represent a node
       $values = $this->serializeNode($values);

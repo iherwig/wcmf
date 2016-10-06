@@ -35,6 +35,16 @@ class DefaultFormatter implements Formatter {
   }
 
   /**
+   * @see Formatter::getFormat()
+   */
+  public function getFormat($name) {
+    if (isset($this->formats[$name])) {
+      return $this->formats[$name];
+    }
+    throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition with name: ".$name);
+  }
+
+  /**
    * @see Formatter::getFormatFromMimeType()
    */
   public function getFormatFromMimeType($mimeType) {
@@ -102,8 +112,11 @@ class DefaultFormatter implements Formatter {
     session_cache_limiter("public");
 
     // get the caching request headers
-    $ifModifiedSinceHeader = (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : false);
-    $etagHeader = (isset($_SERVER['HTTP_IF_NONE_MATCH']) ? trim($_SERVER['HTTP_IF_NONE_MATCH']) : false);
+    $request = $response->getRequest();
+    $ifModifiedSinceHeader = $request->hasHeader('If-Modified-Since') ?
+            $request->getHeader('If-Modified-Since') : false;
+    $etagHeader = $request->hasHeader('If-None-Match') ?
+            trim($request->getHeader('If-None-Match')) : false;
 
     // get caching parameters from response
     $cacheId = $response->getCacheId();
@@ -115,10 +128,9 @@ class DefaultFormatter implements Formatter {
     header('ETag: "'.$etag.'"', true);
     header('Cache-Control: public', true);
 
-    // check if page has changed. If not, send 304 and exit
+    // check if page has changed and send 304 if not
     if (@strtotime($ifModifiedSinceHeader) == $lastModifiedTs || $etagHeader == $etag) {
       header("HTTP/1.1 304 Not Modified");
-      exit;
     }
   }
 
@@ -130,18 +142,6 @@ class DefaultFormatter implements Formatter {
     if (!self::$headersSent) {
       header($header);
     }
-  }
-
-  /**
-   * Get the format with the given name
-   * @param $name
-   * @return Format
-   */
-  protected function getFormat($name) {
-    if (isset($this->formats[$name])) {
-      return $this->formats[$name];
-    }
-    throw new ConfigurationException("Configuration section 'Formats' does not contain a format definition with name: ".$name);
   }
 }
 ?>

@@ -23,6 +23,13 @@ use wcmf\lib\presentation\Response;
 interface Formatter {
 
   /**
+   * Get a Format instance from it's name.
+   * @param $name The format name
+   * @return Format
+   */
+  public function getFormat($name);
+
+  /**
    * Get the format name for the given mime type.
    * @param $mimeType The mime type
    * @return String

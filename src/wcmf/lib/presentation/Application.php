@@ -75,9 +75,10 @@ class Application {
     // create the Request and Response instances
     $this->request = ObjectFactory::getInstance('request');
     $this->response = ObjectFactory::getInstance('response');
+    $this->request->setResponse($this->response);
+    $this->response->setRequest($this->request);
 
-    $this->request->initialize($this->response,
-            $defaultController, $defaultContext, $defaultAction);
+    $this->request->initialize($defaultController, $defaultContext, $defaultAction);
 
     // initialize session
     $session = ObjectFactory::getInstance('session');

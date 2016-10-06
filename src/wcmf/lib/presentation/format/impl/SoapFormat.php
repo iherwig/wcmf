@@ -12,6 +12,7 @@ namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
+use wcmf\lib\presentation\Response;
 
 /**
  * SoapFormat realizes the SOAP request/response format. Nodes are serialized
@@ -36,6 +37,13 @@ class SoapFormat extends HierarchicalFormat {
    */
   public function getMimeType() {
     return 'application/soap+xml';
+  }
+
+  /**
+   * @see Format::isCached()
+   */
+  public function isCached(Response $response) {
+    return false;
   }
 
   /**
