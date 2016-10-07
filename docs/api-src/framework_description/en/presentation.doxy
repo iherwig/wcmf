@@ -579,9 +579,8 @@ using the \link wcmf::lib::presentation::Response::setCacheId `Response::setCach
 method. If the used \link wcmf::lib::presentation::format::Format `Format`\endlink
 is capable of caching
 (e.g. \link wcmf::lib::presentation::format::impl::HtmlFormat `HtmlFormat`\endlink)
-it will take care of setting the _last modified date_ from the cached data using the
-\link wcmf::lib::presentation::Response::setLastMofified `Response::setLastMofified`\endlink
-method. \link wcmf::lib::presentation::format::impl::DefaultFormatter `DefaultFormatter`\endlink
+it will provide the _last modified date_ from the cached data.
+\link wcmf::lib::presentation::format::impl::DefaultFormatter `DefaultFormatter`\endlink
 will then use this information to create the `Etag` and `Last Modified` headers:
 
 ~~~~~~~~~~~~~
