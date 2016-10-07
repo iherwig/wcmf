@@ -22,7 +22,7 @@ abstract class AbstractNodeSerializer implements NodeSerializer {
 
   /**
    * Deserialize a node value
-   * @param $node A reference to the node
+   * @param $node Node instance
    * @param $key The value name or type if value is an array
    * @param $value The value or child data, if value is an array
    */

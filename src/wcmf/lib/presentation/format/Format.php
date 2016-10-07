@@ -32,21 +32,28 @@ interface Format {
 
   /**
    * Deserialize Request data from the external representation into Nodes and scalars/arrays.
-   * @param $request A reference to the Request instance
+   * @param $request The Request instance
    */
   public function deserialize(Request $request);
 
   /**
    * Serialize Response data according to the external representation.
-   * @param $response A reference to the Response instance
+   * @param $response The Response instance
    */
   public function serialize(Response $response);
 
   /**
-   * Check if the formatted response will be returned from a cache and does not
-   * require further processing.
+   * Check if the response identified by it's cache id is cached for this format.
+   * @param $response The Response instance
    * @return Boolean
    */
   public function isCached(Response $response);
+
+  /**
+   * Get the caching date, if the response is cached.
+   * @param $response The Response instance
+   * @return DateTime or null, if not cached
+   */
+  public function getCacheDate(Response $response);
 }
 ?>

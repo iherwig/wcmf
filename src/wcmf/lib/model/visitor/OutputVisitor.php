@@ -27,7 +27,7 @@ class OutputVisitor extends Visitor {
 
   /**
    * Constructor.
-   * @param $outputStrategy A reference to an OutputStrategy to use (If 'null', a DefaultOutputStrategy will be used).
+   * @param $outputStrategy OutputStrategy instance to use (If 'null', a DefaultOutputStrategy will be used).
    */
   public function __construct($outputStrategy=null) {
     if (get_class($outputStrategy) != '') {
@@ -40,7 +40,7 @@ class OutputVisitor extends Visitor {
 
   /**
    * Set the PersistenceStrategy.
-   * @param $strategy A reference to an OutputStrategy to use.
+   * @param $strategy OutputStrategy instance to use.
    */
   public function setOutputStrategy($strategy) {
     $this->outputStrategy = $strategy;
@@ -49,7 +49,7 @@ class OutputVisitor extends Visitor {
   /**
    * Visit the current object in iteration and output its content using
    * the configured OutputStrategy.
-   * @param $obj A reference to the current object.
+   * @param $obj PersistentObject instance
    */
   public function visit($obj) {
     $this->outputStrategy->writeObject($obj);

@@ -161,12 +161,12 @@ class DefaultLocalization implements Localization {
 
   /**
    * Load a translation of a single entity for a specific language.
-   * @param $object A reference to the object to load the translation into. The object
+   * @param $object PersistentObject instance to load the translation into. The object
    *    is supposed to have it's values in the default language.
    * @param $lang The language of the translation to load.
    * @param $useDefaults Boolean whether to use the default language values
    *    for untranslated/empty values or not. Optional, default is true.
-   * @return A reference to the translated object.
+   * @return PersistentObject instance
    * @throws IllegalArgumentException
    */
   protected function loadTranslationImpl(PersistentObject $object, $lang, $useDefaults=true) {

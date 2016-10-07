@@ -49,20 +49,20 @@ interface Localization {
    * @param $lang The language of the translation to load.
    * @param $useDefaults Boolean whether to use the default language values
    *    for untranslated/empty values or not. Optional, default is true
-   * @return A reference to the translated object.
+   * @return PersistentObject
    */
   public function loadTranslatedObject(ObjectId $oid, $lang, $useDefaults=true);
 
   /**
    * Load a translation of an entity for a specific language.
-   * @param $object A reference to the object to load the translation into. The object
+   * @param $object The PersistentObject instance to load the translation into. The object
    *    is supposed to have it's values in the default language.
    * @param $lang The language of the translation to load.
    * @param $useDefaults Boolean whether to use the default language values
    *    for untranslated/empty values or not. Optional, default is true.
    * @param $recursive Boolean whether to load translations for children too or not.
    *    Optional, default is true. For recursive use, the object must have a getChildren method.
-   * @return A reference to the translated object.
+   * @return PersistentObject
    */
   public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true);
 

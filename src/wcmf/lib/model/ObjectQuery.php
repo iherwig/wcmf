@@ -188,7 +188,7 @@ class ObjectQuery extends AbstractQuery {
 
   /**
    * Register an object template at the query.
-   * @param $template A reference to the template to register (must be an instance of PersistentObject)
+   * @param $template Node instance to register as template
    * @param $alias An alias name to be used in the query. if null, use the default name (default: _null_)
    * @param $combineOperator One of the Criteria::OPERATOR constants that precedes
    *    the conditions described in the template (default: Criteria::OPERATOR_AND)

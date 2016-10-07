@@ -45,5 +45,12 @@ class NullFormat implements Format {
   public function isCached(Response $response) {
     return false;
   }
+
+  /**
+   * @see Format::isCached()
+   */
+  public function getCacheDate(Response $response) {
+    return null;
+  }
 }
 ?>

@@ -578,7 +578,7 @@ class Node extends DefaultPersistentObject {
   /**
    * Get the Node's parent. This method exists for compatibility with previous
    * versions. It returns the first parent.
-   * @return A reference to the Nodes parent.
+   * @return Node
    */
   public function getParent() {
     $parents = $this->getParents();

@@ -439,7 +439,7 @@ class SaveController extends Controller {
   /**
    * Confirm save action on given Node value.
    * @note subclasses will override this to implement special application requirements.
-   * @param $node A reference to the Node to confirm.
+   * @param $node The Node instance to confirm.
    * @param $valueName The name of the value to save.
    * @param $newValue The new value to set.
    * @return Boolean whether the value should be changed (default: _true_).
@@ -451,7 +451,7 @@ class SaveController extends Controller {
   /**
    * Confirm save action on given Node. This method is called before modify()
    * @note subclasses will override this to implement special application requirements.
-   * @param $node A reference to the Node to confirm.
+   * @param $node The Node instance to confirm.
    * @return Boolean whether the Node should be saved (default: _true_).
    */
   protected function confirmSave($node) {
@@ -461,7 +461,7 @@ class SaveController extends Controller {
   /**
    * Called before save.
    * @note subclasses will override this to implement special application requirements.
-   * @param $node A reference to the Node to be saved.
+   * @param $node The Node instance to be saved.
    * @return Boolean whether the Node was modified (default: _false_).
    */
   protected function beforeSave($node) {
@@ -471,7 +471,7 @@ class SaveController extends Controller {
   /**
    * Called after save.
    * @note subclasses will override this to implement special application requirements.
-   * @param $node A reference to the Node saved.
+   * @param $node The saved Node instance.
    */
   protected function afterSave($node) {}
 }

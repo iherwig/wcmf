@@ -30,7 +30,7 @@ class ValueChangeEvent extends Event {
 
   /**
    * Constructor.
-   * @param $object A reference to the PersistentObject object that whose value has changed.
+   * @param $object PersistentObject instance which value has changed.
    * @param $name The name of the item that has changed.
    * @param $oldValue The old value of the item that has changed.
    * @param $newValue The new value of the item that has changed.

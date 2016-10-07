@@ -30,7 +30,7 @@ class LinkProcessor {
 
  /**
    * Check and convert links in the given node.
-   * @param $node A reference to the node
+   * @param $node Node instance
    * @param $base The base url of relative links as seen from the executing script
    * @param $strategy The strategy used to check and create urls
    * @param recursive Boolean whether to process child nodes to (default: true)

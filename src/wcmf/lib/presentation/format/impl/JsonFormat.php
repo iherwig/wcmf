@@ -77,6 +77,13 @@ class JsonFormat extends HierarchicalFormat {
   }
 
   /**
+   * @see Format::isCached()
+   */
+  public function getCacheDate(Response $response) {
+    return null;
+  }
+
+  /**
    * @see HierarchicalFormat::afterSerialize()
    */
   protected function afterSerialize(Response $response) {

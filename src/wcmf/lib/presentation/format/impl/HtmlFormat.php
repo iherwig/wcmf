@@ -60,6 +60,18 @@ class HtmlFormat extends AbstractFormat {
   }
 
   /**
+   * @see Format::getCacheDate()
+   */
+  public function getCacheDate(Response $response) {
+    if (self::$sharedView == null) {
+      self::$sharedView = ObjectFactory::getInstance('view');
+    }
+    $templateFile = $this->getTemplateFile($response);
+    $cacheId = $response->getCacheId();
+    return self::$sharedView->getCacheDate($templateFile, $cacheId);
+  }
+
+  /**
    * @see AbstractFormat::deserializeValues()
    */
   protected function deserializeValues(Request $request) {
@@ -98,12 +110,6 @@ class HtmlFormat extends AbstractFormat {
     $templateFile = $this->getTemplateFile($response);
     $cacheId = $response->getCacheId();
     $view->render($templateFile, $cacheId);
-
-    // set last modified date
-    $cacheDate = $view->getCacheDate($templateFile, $cacheId);
-    if ($cacheDate != null) {
-      $response->setLastMofified($cacheDate);
-    }
 
     return $values;
   }

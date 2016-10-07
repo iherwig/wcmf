@@ -145,7 +145,7 @@ class NodeUtil {
    * If the 'display_value' is an array ('|' separated strings) the pieces will be put together with ' - '.
    * If search for 'display_value' gives no result the function returns an empty string.
    * Example: 'name|text' shows the name of the Node together with the content of the text attribute
-   * @param $node A reference to the Node to display
+   * @param $node Node instance to display
    * @param $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
    * @note The display type is configured via the display_type property of a value. It describes how the value should be displayed.
    *       The description is of the form @code type @endcode or @code type[attributes] @endcode
@@ -159,7 +159,7 @@ class NodeUtil {
 
   /**
    * Does the same as NodeUtil::getDisplayValue but returns the display value as associative array
-   * @param $node A reference to the Node to display
+   * @param $node Node instance to display
    * @param $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
    * @return The display array
    */
@@ -200,7 +200,7 @@ class NodeUtil {
 
   /**
    * Make all urls matching a given base url in a Node relative.
-   * @param $node A reference to the Node the holds the value
+   * @param $node Node instance that holds the value
    * @param $baseUrl The baseUrl to which matching urls will be made relative
    * @param $recursive Boolean whether to recurse into child Nodes or not (default: true)
    */
@@ -215,7 +215,7 @@ class NodeUtil {
 
   /**
    * Make the urls matching a given base url in a PersistentObject value relative.
-   * @param $node A reference to the Node the holds the value
+   * @param $node Node instance that holds the value
    * @param $valueName The name of the value
    * @param $baseUrl The baseUrl to which matching urls will be made relative
    */
@@ -246,7 +246,7 @@ class NodeUtil {
    * @note Translation in this case refers to mapping list values from the key to the value
    * and should not be confused with localization, although values maybe localized using the
    * language parameter.
-   * @param $nodes A reference to the array of Nodes
+   * @param $nodes A reference to the array of Node instances
    * @param $language The language code, if the translated values should be localized.
    *                 Optional, default is Localizat$objectgetDefaultLanguage()
    */

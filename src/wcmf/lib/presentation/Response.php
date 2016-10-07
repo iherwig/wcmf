@@ -32,13 +32,6 @@ interface Response extends ControllerMessage {
   public function getRequest();
 
   /**
-   * Check if the response is cached already. Controllers may use the result
-   * to determine if the controller logic must be executed or not.
-   * @return Boolean
-   */
-  public function isCached();
-
-  /**
    * Set a string value that uniquely identifies the request data
    * resulting in the current response. This value maybe used to compare
    * two requests and return cached responses based on the result.
@@ -54,18 +47,17 @@ interface Response extends ControllerMessage {
   public function getCacheId();
 
   /**
-   * Set the last modified date of the response data. This value maybe
-   * used to compare two requests and return cached responses based on the result.
-   * @param $date
+   * Check if the response is cached. Controllers may use the result
+   * to determine if the controller logic must be executed or not.
+   * @return Boolean
    */
-  public function setLastMofified(\DateTime $date);
+  public function isCached();
 
   /**
-   * Get the last modified date.
-   * @see Response::setLastMofified()
-   * @return DateTime
+   * Get the caching date, if the response is cached.
+   * @return DateTime or null, if not cached
    */
-  public function getLastMofified();
+  public function getCacheDate();
 
   /**
    * Set the response HTTP status code

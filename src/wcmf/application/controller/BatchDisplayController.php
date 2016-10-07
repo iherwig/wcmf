@@ -274,7 +274,7 @@ class BatchDisplayController extends BatchController {
 
   /**
    * Add a given node to the list variable of the response
-   * @param $node A reference to the node to add
+   * @param $node The Node instance to add
    */
   protected function addNodeToResponse(Node $node) {
     $response = $this->getResponse();

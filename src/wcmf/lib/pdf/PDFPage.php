@@ -20,7 +20,7 @@ interface PDFPage {
 
   /**
    * Render data onto a pdf.
-   * @param $pdf A reference to the FPDF/FPDI instance to render onto
+   * @param $pdf FPDF/FPDI instance to render onto
    * @param $page The page number in the pdf document
    * @param $data An optional data object to get data from.
    */

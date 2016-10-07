@@ -108,7 +108,7 @@ abstract class AbstractFormat implements Format {
    * Get a node with the given oid to deserialize values from form fields into it.
    * The method ensures that there is only one instance per oid.
    * @param $oid The oid
-   * @return A reference to the Node instance
+   * @return Node
    */
   protected function getNode(ObjectId $oid) {
     $oidStr = $oid->__toString();

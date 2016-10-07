@@ -94,11 +94,11 @@ class Controller {
    * The base class method just stores the parameters in a member variable. Specialized Controllers may overide
    * this behaviour for further initialization.
    * @attention It lies in its responsibility to fail or do some default action if some data is missing.
-   * @param $request A reference to the Request sent to the Controller. The sender attribute of the Request is the
+   * @param $request Request instance sent to the Controller. The sender attribute of the Request is the
    * last controller's name, the context is the current context and the action is the requested one.
    * All data sent from the last controller are accessible using the Request::getValue method. The request is
    * supposed to be read-only. It will not be used any more after beeing passed to the controller.
-   * @param $response A reference to the Response that will be modified by the Controller. The initial values for
+   * @param $response Response instance that will be modified by the Controller. The initial values for
    * context and action are the same as in the request parameter and are meant to be modified according to the
    * performed action. The sender attribute of the response is set to the current controller. Initially there
    * are no data stored in the response.

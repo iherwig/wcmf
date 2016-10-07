@@ -28,7 +28,7 @@ class PersistenceEvent extends Event {
 
   /**
    * Constructor.
-   * @param $object A reference to the involved PersistentObject instance.
+   * @param $object PersistentObject instance.
    * @param $action One of the PersistenceAction values.
    */
   public function __construct(PersistentObject $object, $action) {

@@ -47,6 +47,13 @@ class SoapFormat extends HierarchicalFormat {
   }
 
   /**
+   * @see Format::isCached()
+   */
+  public function getCacheDate(Response $response) {
+    return null;
+  }
+
+  /**
    * Set the NodeSerializer instance to use
    * @param $serializer NodeSerializer
    */

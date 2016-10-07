@@ -29,7 +29,7 @@ class StateChangeEvent extends Event {
 
   /**
    * Constructor.
-   * @param $object A reference to the involved PersistentObject instance.
+   * @param $object PersistentObject instance
    * @param $oldValue The old value of the state.
    * @param $newValue The new value of the state.
    */

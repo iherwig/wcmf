@@ -229,7 +229,7 @@ interface PersistenceMapper {
    * Load the objects for the specified role. The implementation must check the navigability of
    * the relation and return null, if the requested direction is not navigable. The result
    * depends on the multiplicity of the relation (singlevalued or multivalued).
-   * @param $objects Array of PersistenceObject or PersstenceObjectProxy instances for which the related objects are loaded
+   * @param $objects Array of PersistentObject or PersstentObjectProxy instances for which the related objects are loaded
    * @param $role The role of the objects in relation to the given objects
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)

@@ -94,20 +94,8 @@ class DefaultFormatter implements Formatter {
       return;
     }
 
-    // default: delegate to response format
-    $formatName = $response->getFormat();
-    if (strlen($formatName) == 0) {
-      // the format must be given!
-      throw new ConfigurationException("No response format defined for ".$response->__toString());
-    }
-    $format = $this->getFormat($formatName);
-    self::sendHeader("Content-Type: ".$format->getMimeType()."; charset=utf-8");
-    foreach ($response->getHeaders() as $name => $value) {
-      self::sendHeader($name.': '.$value);
-    }
-    $format->serialize($response);
-
     // handle caching
+    $responseSent = false;
     $cacheId = $response->getCacheId();
     if ($cacheId != null) {
       // get the caching request headers
@@ -118,10 +106,12 @@ class DefaultFormatter implements Formatter {
               trim($request->getHeader("If-None-Match")) : false;
 
       // get caching parameters from response
-      $lastModified = $response->getLastMofified();
+      $cacheDate = $response->getCacheDate();
+      $lastModified =  $cacheDate !== null ? $cacheDate : new \DateTime();
       $lastModifiedTs = $lastModified->getTimestamp();
       $etag = md5($lastModifiedTs.$cacheId);
 
+      // sent caching headers
       session_cache_limiter("public");
       self::sendHeader("Last-Modified: ".($lastModified->format("D, d M Y H:i:s")." GMT")." GMT");
       self::sendHeader("ETag: \"".$etag."\"");
@@ -130,9 +120,27 @@ class DefaultFormatter implements Formatter {
       // check if page has changed and send 304 if not
       if (($ifModifiedSinceHeader !== false && strtotime($ifModifiedSinceHeader) == $lastModifiedTs) ||
               $etagHeader == $etag) {
+        // client has current response already
         $response->setStatus(304);
+        $responseSent = true;
       }
     }
+
+    // delegate serialization to the response format
+    if (!$responseSent) {
+      $formatName = $response->getFormat();
+      if (strlen($formatName) == 0) {
+        // the format must be given!
+        throw new ConfigurationException("No response format defined for ".$response->__toString());
+      }
+      $format = $this->getFormat($formatName);
+      self::sendHeader("Content-Type: ".$format->getMimeType()."; charset=utf-8");
+      foreach ($response->getHeaders() as $name => $value) {
+        self::sendHeader($name.': '.$value);
+      }
+      $format->serialize($response);
+    }
+    
     http_response_code($response->getStatus());
   }
 

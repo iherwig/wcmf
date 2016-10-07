@@ -164,7 +164,7 @@ class ListController extends Controller {
    * @param $type The object type
    * @param $queryCondition The query condition passed from the view (to be used with StringQuery).
    * @param $sortArray An array of attributes to order by (with an optional ASC|DESC appended)
-   * @param $pagingInfo A reference to the current paging information (PagingInfo instance)
+   * @param $pagingInfo The current PagingInfo instance
    * @return Array of Node instances
    */
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
@@ -194,7 +194,7 @@ class ListController extends Controller {
   /**
    * Modify the model passed to the view.
    * @note subclasses will override this to implement special application requirements.
-   * @param $nodes A reference to the array of node references passed to the view
+   * @param $nodes A reference to the array of Node instances passed to the view
    */
   protected function modifyModel(&$nodes) {
     $request = $this->getRequest();

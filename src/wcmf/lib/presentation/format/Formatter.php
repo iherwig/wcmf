@@ -38,13 +38,13 @@ interface Formatter {
 
   /**
    * Deserialize Request data into objects.
-   * @param $request A reference to the Request instance
+   * @param $request The Request instance
    */
   public function deserialize(Request $request);
 
   /**
    * Serialize Response according to the output format.
-   * @param $response A reference to the Response instance
+   * @param $response The Response instance
    */
   public function serialize(Response $response);
 }

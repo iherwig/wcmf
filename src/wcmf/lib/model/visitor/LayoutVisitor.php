@@ -39,7 +39,7 @@ class LayoutVisitor extends Visitor
 
   /**
    * Visit the current object in iteration and position it on the map.
-   * @param $obj A reference to the current object.
+   * @param $obj PersistentObject instance
    */
   public function visit($obj) {
     $this->map[$obj->getOID()] = $this->calculatePosition($obj);
@@ -70,7 +70,7 @@ class LayoutVisitor extends Visitor
 
   /**
    * Calculate the object's position using the described algorithm.
-   * @param $obj A reference to the current object.
+   * @param $obj PersistentObject instance
    */
   private function calculatePosition($obj) {
     $parent = & $obj->getParent();

@@ -55,14 +55,6 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   }
 
   /**
-   * @see Response::isCached()
-   */
-  public function isCached() {
-    $format = $this->formatter->getFormat($this->getFormat());
-    return $format->isCached($this);
-  }
-
-  /**
    * @see Response::setCacheId()
    */
   public function setCacheId($cacheId) {
@@ -77,18 +69,19 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   }
 
   /**
-   * @see Response::setLastMofified()
+   * @see Response::isCached()
    */
-  public function setLastMofified(\DateTime $date) {
-    $this->lastModifiedDate = $date;
+  public function isCached() {
+    $format = $this->formatter->getFormat($this->getFormat());
+    return $format->isCached($this);
   }
 
   /**
-   * @see Response::getLastMofified()
+   * @see Response::getCacheDate()
    */
-  public function getLastMofified() {
-    return $this->lastModifiedDate != null ? $this->lastModifiedDate :
-            new \DateTime();
+  public function getCacheDate() {
+    $format = $this->formatter->getFormat($this->getFormat());
+    return $format->getCacheDate($this);
   }
 
   /**

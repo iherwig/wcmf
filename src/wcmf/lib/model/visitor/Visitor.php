@@ -56,7 +56,7 @@ abstract class Visitor {
    * Visit the current object in iteration.
    * Subclasses of Visitor override this method to implement the specialized
    * functionality.
-   * @param $obj A reference to the current object.
+   * @param $obj PersistentObject instance
    */
   public abstract function visit($obj);
 

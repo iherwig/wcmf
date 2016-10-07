@@ -30,7 +30,7 @@ class PropertyChangeEvent extends Event {
 
   /**
    * Constructor.
-   * @param $object A reference to the PersistentObject object that whose property has changed.
+   * @param $object PersistentObject instance that whose property has changed.
    * @param $name The name of the property that has changed.
    * @param $oldValue The old value of the property that has changed.
    * @param $newValue The new value of the property that has changed.

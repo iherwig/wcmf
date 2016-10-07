@@ -40,8 +40,8 @@ interface NodeSerializer {
 
   /**
    * Serialize a Node into an array
-   * @param $node A reference to the node to serialize
-   * @return The node serialized into an associated array
+   * @param $node The Node instance to serialize
+   * @return Associative array
    */
   public function serializeNode($node);
 }

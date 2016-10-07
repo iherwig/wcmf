@@ -992,7 +992,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Apply the loaded object data to the object.
    * @note Subclasses must implement this method to define their object type.
-   * @param $object A reference to the object created with createObject method to which the data should be applied
+   * @param $object PersistentObject instance created with createObject method to which the data should be applied
    * @param $objectData An associative array with the data returned by execution of the database select statement
    *          (given by getSelectSQL).
    */
@@ -1011,7 +1011,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Apply the default data to the object.
    * @note Subclasses must implement this method to define their object type.
-   * @param $object A reference to the object created with createObject method to which the data should be applied
+   * @param $object PersistentObject instance created with createObject method to which the data should be applied
    */
   protected function applyDataOnCreate(PersistentObject $object) {
     // set object data
@@ -1237,13 +1237,13 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * Factory method for the supported object type.
    * @param $oid The object id (maybe null)
-   * @return A reference to the created object.
+   * @return PersitentObject
    */
   abstract protected function createObject(ObjectId $oid=null);
 
   /**
    * Set the object primary key and foreign key values for storing the object in the database.
-   * @param $object A reference to the object to insert.
+   * @param $object PersistentObject instance to insert.
    * @note The object does not have the final object id set. If a new id value for a primary key column is needed.
    * @note The prepared object will be used in the application afterwards. So values that are only to be modified for
    * the storage process should be changed in getInsertSQL() and getUpdateSQL() only!
@@ -1282,14 +1282,14 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Get the SQL command to insert a object into the database.
-   * @param $object A reference to the object to insert.
+   * @param $object PersistentObject instance to insert.
    * @return Array of PersistenceOperation instances that insert a new object.
    */
   abstract protected function getInsertSQL(PersistentObject $object);
 
   /**
    * Get the SQL command to update a object in the database.
-   * @param $object A reference to the object to update.
+   * @param $object PersistentObject instance to update.
    * @return Array of PersistenceOperation instances that update an existing object.
    */
   abstract protected function getUpdateSQL(PersistentObject $object);
