@@ -566,6 +566,49 @@ _resultA_ is already cached and calculate it, if not. Since it is put it into th
 cache after calculation, it can be retrieved _resultA_ directly from there the
 next time it is needed.
 
+### Response caching ### {#pres_response_caching}
+
+Besides setting caching headers by using the
+\link wcmf::lib::presentation::Response::setHeader `Response::setHeader`\endlink
+method, wCMF provides a convenient way to set the `Etag` and `Last Modified`
+headers on the response.
+
+All one needs to do is derive a _cache identifier_ from the request data, that
+allows to distinguish different requests and set it on the response
+using the \link wcmf::lib::presentation::Response::setCacheId `Response::setCacheId`\endlink
+method. If the used \link wcmf::lib::presentation::format::Format `Format`\endlink
+is capable of caching
+(e.g. \link wcmf::lib::presentation::format::impl::HtmlFormat `HtmlFormat`\endlink)
+it will take care of setting the _last modified date_ from the cached data using the
+\link wcmf::lib::presentation::Response::setLastMofified `Response::setLastMofified`\endlink
+method. \link wcmf::lib::presentation::format::impl::DefaultFormatter `DefaultFormatter`\endlink
+will then use this information to create the `Etag` and `Last Modified` headers:
+
+~~~~~~~~~~~~~
+...
+Cache-Control:public
+ETag:"93256174cf75e43ba8172a6ce01ceded"
+Last-Modified:Fri, 07 Oct 2016 19:19:13 GMT
+...
+~~~~~~~~~~~~~
+
+Another advantage of using a _cache identifier_ is the possibility to avoid
+expensive calculations in \link wcmf::lib::presentation::Controller `Controller`\endlink
+implementations by using the
+\link wcmf::lib::presentation::Response::isCached `Response::isCached`\endlink
+method. The following example shows it's usage:
+
+~~~~~~~~~~~~~{.php}
+// define a unique id for the request data and set it on the response
+$cacheId = $pageId.$language;
+$response->setCacheId($cacheId);
+
+if (!$response->isCached()) {
+  // this will be executed only, if the response is not cached yet
+  ...
+}
+~~~~~~~~~~~~~
+
 ## Events ## {#pres_events}
 
 Events are a way to decouple parts of a software by introducing an indirect
