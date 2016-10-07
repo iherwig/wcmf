@@ -100,7 +100,10 @@ class HtmlFormat extends AbstractFormat {
     $view->render($templateFile, $cacheId);
 
     // set last modified date
-    $response->setLastMofified($view->getCacheDate($templateFile, $cacheId));
+    $cacheDate = $view->getCacheDate($templateFile, $cacheId);
+    if ($cacheDate != null) {
+      $response->setLastMofified($cacheDate);
+    }
 
     return $values;
   }

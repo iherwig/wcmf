@@ -88,7 +88,7 @@ class JsonFormat extends HierarchicalFormat {
      */
     self::$jsonData = $response->getValues();
     self::$jsonUsed = true;
-    return $values;
+    return self::$jsonData;
   }
 
   /**
