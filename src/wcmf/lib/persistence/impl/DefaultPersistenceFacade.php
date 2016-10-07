@@ -185,7 +185,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     if ($pagingInfo == null) {
-      $pagingInfo = new PagingInfo(1);
+      $pagingInfo = new PagingInfo(1, true);
     }
     $oids = $this->getOIDs($type, $criteria, $orderby, $pagingInfo);
     if (sizeof($oids) > 0) {
@@ -300,7 +300,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function loadFirstObject($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
     if ($pagingInfo == null) {
-      $pagingInfo = new PagingInfo(1);
+      $pagingInfo = new PagingInfo(1, true);
     }
     $objects = $this->loadObjects($typeOrTypes, $buildDepth, $criteria, $orderby, $pagingInfo);
     if (sizeof($objects) > 0) {

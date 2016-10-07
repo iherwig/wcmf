@@ -252,7 +252,7 @@ class SortController extends Controller {
     $query = new ObjectQuery($type);
     $tpl = $query->getObjectTemplate($type);
     $tpl->setValue($sortkeyName, Criteria::asValue('<', $sortkeyValue), true);
-    $pagingInfo = new PagingInfo(1);
+    $pagingInfo = new PagingInfo(1, true);
     $invSortDir = $sortDirection == 'ASC' ? 'DESC' : 'ASC';
     $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$invSortDir), $pagingInfo);
     return sizeof($objects) > 0 ? $objects[0] : null;
@@ -266,7 +266,7 @@ class SortController extends Controller {
    */
   protected function loadLastObject($type, $sortkeyName, $sortDirection) {
     $query = new ObjectQuery($type);
-    $pagingInfo = new PagingInfo(1);
+    $pagingInfo = new PagingInfo(1, true);
     $invSortDir = $sortDirection == 'ASC' ? 'DESC' : 'ASC';
     $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$invSortDir), $pagingInfo);
     return sizeof($objects) > 0 ? $objects[0] : null;

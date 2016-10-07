@@ -143,6 +143,7 @@ class SelectStatement extends Select {
   public function getRowCount() {
     $adapter = $this->getAdapter();
     $sql = preg_replace('/^SELECT (.+) FROM/i', 'SELECT COUNT(*) AS nRows FROM', $this->getSql());
+    $sql = preg_replace('/LIMIT [0-9]+ OFFSET [0-9]+$/i', '', $sql);
     $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
     $result = $stmt->execute($this->getParameters())->getResource();
     $row = $result->fetch();
