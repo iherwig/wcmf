@@ -80,7 +80,6 @@ class DefaultFormatter implements Formatter {
    */
   public function serialize(Response $response) {
     self::$headersSent = headers_sent();
-    http_response_code($response->getStatus());
 
     // if the response has a file, we send it and return
     $file = $response->getFile();
@@ -124,9 +123,9 @@ class DefaultFormatter implements Formatter {
       $etag = md5($lastModifiedTs.$cacheId);
 
       session_cache_limiter("public");
-      self::sendHeader("Last-Modified: ".($lastModified->format("D, d M Y H:i:s")." GMT")." GMT", true);
-      self::sendHeader("ETag: \"".$etag."\"", true);
-      self::sendHeader("Cache-Control: public", true);
+      self::sendHeader("Last-Modified: ".($lastModified->format("D, d M Y H:i:s")." GMT")." GMT");
+      self::sendHeader("ETag: \"".$etag."\"");
+      self::sendHeader("Cache-Control: public");
 
       // check if page has changed and send 304 if not
       if (($ifModifiedSinceHeader !== false && strtotime($ifModifiedSinceHeader) == $lastModifiedTs) ||
@@ -134,6 +133,7 @@ class DefaultFormatter implements Formatter {
         $response->setStatus(304);
       }
     }
+    http_response_code($response->getStatus());
   }
 
   /**
