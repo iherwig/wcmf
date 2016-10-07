@@ -109,28 +109,30 @@ class DefaultFormatter implements Formatter {
     $format->serialize($response);
 
     // handle caching
-    session_cache_limiter("public");
-
-    // get the caching request headers
-    $request = $response->getRequest();
-    $ifModifiedSinceHeader = $request->hasHeader('If-Modified-Since') ?
-            $request->getHeader('If-Modified-Since') : false;
-    $etagHeader = $request->hasHeader('If-None-Match') ?
-            trim($request->getHeader('If-None-Match')) : false;
-
-    // get caching parameters from response
     $cacheId = $response->getCacheId();
-    $lastModified = $response->getLastMofified();
-    $lastModifiedTs = $lastModified->getTimestamp();
-    $etag = md5($lastModifiedTs.$cacheId);
+    if ($cacheId != null) {
+      // get the caching request headers
+      $request = $response->getRequest();
+      $ifModifiedSinceHeader = $request->hasHeader("If-Modified-Since") ?
+              $request->getHeader("If-Modified-Since") : false;
+      $etagHeader = $request->hasHeader("If-None-Match") ?
+              trim($request->getHeader("If-None-Match")) : false;
 
-    header('Last-Modified: '.($lastModified->format("D, d M Y H:i:s")." GMT")." GMT", true);
-    header('ETag: "'.$etag.'"', true);
-    header('Cache-Control: public', true);
+      // get caching parameters from response
+      $lastModified = $response->getLastMofified();
+      $lastModifiedTs = $lastModified->getTimestamp();
+      $etag = md5($lastModifiedTs.$cacheId);
 
-    // check if page has changed and send 304 if not
-    if (@strtotime($ifModifiedSinceHeader) == $lastModifiedTs || $etagHeader == $etag) {
-      header("HTTP/1.1 304 Not Modified");
+      session_cache_limiter("public");
+      self::sendHeader("Last-Modified: ".($lastModified->format("D, d M Y H:i:s")." GMT")." GMT", true);
+      self::sendHeader("ETag: \"".$etag."\"", true);
+      self::sendHeader("Cache-Control: public", true);
+
+      // check if page has changed and send 304 if not
+      if (($ifModifiedSinceHeader !== false && strtotime($ifModifiedSinceHeader) == $lastModifiedTs) ||
+              $etagHeader == $etag) {
+        $response->setStatus(304);
+      }
     }
   }
 
