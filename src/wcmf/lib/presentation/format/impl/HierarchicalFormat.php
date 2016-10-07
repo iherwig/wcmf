@@ -30,7 +30,22 @@ abstract class HierarchicalFormat extends AbstractFormat {
    * @see AbstractFormat::deserializeValues()
    */
   protected function deserializeValues(Request $request) {
-    $values = $request->getValues();
+    return $this->deserializeHierarchy($request->getValues());
+  }
+
+  /**
+   * @see AbstractFormat::serializeValues()
+   */
+  protected function serializeValues(Response $response) {
+    return $this->serializeHierarchy($response->getValues());
+  }
+
+  /**
+   * Deserialize the given values recursivly
+   * @param $values
+   * @return Array
+   */
+  private function deserializeHierarchy($values) {
     if ($this->isSerializedNode($values)) {
       // the values represent a node
       $result = $this->deserializeNode($values);
@@ -42,7 +57,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
       foreach ($values as $key => $value) {
         if (is_array($value) || is_object($value)) {
           // array/object value
-          $result = $this->deserializeValues($value);
+          $result = $this->deserializeHierarchy($value);
           // flatten the array, if the deserialization result is only an array
           // with size 1 and the key is an oid (e.g. if a node was deserialized)
           if (is_array($result) && sizeof($result) == 1 && ObjectId::isValid(key($result))) {
@@ -63,10 +78,11 @@ abstract class HierarchicalFormat extends AbstractFormat {
   }
 
   /**
-   * @see AbstractFormat::serializeValues()
+   * Serialize the given values recursivly
+   * @param $values
+   * @return Array
    */
-  protected function serializeValues(Response $response) {
-    $values = $response->getValues();
+  private function serializeHierarchy($values) {
     if ($this->isDeserializedNode($values)) {
       // the values represent a node
       $values = $this->serializeNode($values);
@@ -75,7 +91,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
       foreach ($values as $key => $value) {
         if (is_array($value) || is_object($value)) {
           // array/object value
-          $result = $this->serializeValues($value);
+          $result = $this->serializeHierarchy($value);
           if (ObjectId::isValid($key)) {
             $values = $result;
           }
