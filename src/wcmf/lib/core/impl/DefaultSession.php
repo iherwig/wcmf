@@ -15,12 +15,12 @@ use wcmf\lib\security\principal\impl\AnonymousUser;
 
 // session configuration
 ini_set('session.cookie_lifetime', 0);
-ini_set('session.use_cookies', 'On');
-ini_set('session.use_only_cookies', 'On');
-ini_set('session.use_strict_mode', 'On');
-ini_set('session.cookie_httponly', 'On');
-ini_set('session.use_trans_sid', 'Off');
-ini_set('session.cache_limiter', 'nocache');
+ini_set('session.use_cookies', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_trans_sid', 0);
+ini_set('session.cache_limiter', 'public');
 ini_set('session.hash_function', 1);
 if (in_array('sha256', hash_algos())) {
   ini_set('session.hash_function', 'sha256');
