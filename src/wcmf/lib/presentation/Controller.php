@@ -184,7 +184,7 @@ class Controller {
    */
   protected function executeSubAction($action) {
     $curRequest = $this->getRequest();
-    $subRequest = ObjectFactory::getInstance('request');
+    $subRequest = ObjectFactory::getNewInstance('request');
     $subRequest->setSender(get_class($this));
     $subRequest->setContext($curRequest->getContext());
     $subRequest->setAction($action);
@@ -192,7 +192,7 @@ class Controller {
     $subRequest->setValues($curRequest->getValues());
     $subRequest->setFormat('null');
     $subRequest->setResponseFormat('null');
-    $subResponse = ObjectFactory::getInstance('response');
+    $subResponse = ObjectFactory::getNewInstance('response');
     $this->actionMapper->processAction($subRequest, $subResponse);
     return $subResponse;
   }

@@ -130,7 +130,7 @@ class HTTPClient implements RemotingClient {
    */
   protected function doLogin() {
     if ($this->user) {
-      $request = ObjectFactory::getInstance('request');
+      $request = ObjectFactory::getNewInstance('request');
       $request->setAction('login');
       $request->setValues(
         array(

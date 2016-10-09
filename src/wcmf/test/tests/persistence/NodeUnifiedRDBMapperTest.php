@@ -37,7 +37,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
   }
 
   public function testSelectSQL() {
-    $mapper1 = ObjectFactory::getClassInstance('app\src\model\ChapterRDBMapper');
+    $mapper1 = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
     $mapper1->setConnectionParams($this->dbParams);
     $criteria = new Criteria('Chapter', 'name', '=', 'Chapter 1');
 
@@ -97,7 +97,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     // dbprefix
     $this->dbParams['dbPrefix'] = 'WCMF_';
-    $mapper2 = ObjectFactory::getClassInstance('app\src\model\ChapterRDBMapper');
+    $mapper2 = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
     $mapper2->setConnectionParams($this->dbParams);
 
     // condition
@@ -111,7 +111,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
   }
 
   public function testRelationSQL() {
-    $mapper1 = ObjectFactory::getClassInstance('app\src\model\ChapterRDBMapper');
+    $mapper1 = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
     $mapper1->setConnectionParams($this->dbParams);
 
     $chapter = new Chapter(new ObjectId('Chapter', array(1)));
@@ -119,7 +119,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     // parent (complete)
     $relationDescription2 = $mapper1->getRelation('Author');
-    $otherMapper2 = ObjectFactory::getClassInstance('app\src\model\AuthorRDBMapper');
+    $otherMapper2 = ObjectFactory::getInstanceOf('app\src\model\AuthorRDBMapper');
     $otherMapper2->setConnectionParams($this->dbParams);
     list($selectStmt2, $objValueName2, $relValueName2) = TestUtil::callProtectedMethod($otherMapper2, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription2->getThisRole()));
@@ -132,7 +132,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     // parent (order)
     $relationDescription3 = $mapper1->getRelation('Author');
-    $otherMapper3 = ObjectFactory::getClassInstance('app\src\model\AuthorRDBMapper');
+    $otherMapper3 = ObjectFactory::getInstanceOf('app\src\model\AuthorRDBMapper');
     $otherMapper3->setConnectionParams($this->dbParams);
     list($selectStmt3, $objValueName3, $relValueName3) = TestUtil::callProtectedMethod($otherMapper3, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription3->getThisRole(), null, array('name')));
@@ -146,7 +146,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
     // parent (criteria)
     $criteria4 = new Criteria('Author', 'name', '=', 'Unknown');
     $relationDescription4 = $mapper1->getRelation('Author');
-    $otherMapper4 = ObjectFactory::getClassInstance('app\src\model\AuthorRDBMapper');
+    $otherMapper4 = ObjectFactory::getInstanceOf('app\src\model\AuthorRDBMapper');
     $otherMapper4->setConnectionParams($this->dbParams);
     list($selectStmt4, $objValueName4, $relValueName4) = TestUtil::callProtectedMethod($otherMapper4, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription4->getThisRole(), array($criteria4)));
@@ -160,7 +160,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
 
     // child (complete)
     $relationDescription6 = $mapper1->getRelation('NormalImage');
-    $otherMapper6 = ObjectFactory::getClassInstance('app\src\model\ImageRDBMapper');
+    $otherMapper6 = ObjectFactory::getInstanceOf('app\src\model\ImageRDBMapper');
     $otherMapper6->setConnectionParams($this->dbParams);
     list($selectStmt6, $objValueName6, $relValueName6) = TestUtil::callProtectedMethod($otherMapper6, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription6->getThisRole()));
@@ -173,11 +173,11 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
       "FROM `Image` WHERE `Image`.`fk_chapter_id` IN(:Image_fk_chapter_id0) ORDER BY `Image`.`sortkey_normalchapter` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected6, 'Author'), str_replace("\n", "", $sql6));
 
-    $mapper2 = ObjectFactory::getClassInstance('app\src\model\PublisherRDBMapper');
+    $mapper2 = ObjectFactory::getInstanceOf('app\src\model\PublisherRDBMapper');
 
     // many to many (complete)
     $relationDescription8 = $mapper2->getRelation('Author');
-    $otherMapper8 = ObjectFactory::getClassInstance('app\src\model\AuthorRDBMapper');
+    $otherMapper8 = ObjectFactory::getInstanceOf('app\src\model\AuthorRDBMapper');
     $otherMapper8->setConnectionParams($this->dbParams);
     list($selectStmt8, $objValueName8, $relValueName8) = TestUtil::callProtectedMethod($otherMapper8, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription8->getThisRole()));
@@ -192,7 +192,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
   }
 
   public function testInsertSQL() {
-    $mapper = ObjectFactory::getClassInstance('app\src\model\ChapterRDBMapper');
+    $mapper = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
     $mapper->setConnectionParams($this->dbParams);
 
     $chapter1 = new Chapter(new ObjectId('Chapter', 1));
@@ -218,7 +218,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
   }
 
   public function testUpdateSQL() {
-    $mapper = ObjectFactory::getClassInstance('app\src\model\ChapterRDBMapper');
+    $mapper = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
     $mapper->setConnectionParams($this->dbParams);
 
     $chapter1 = new Chapter(new ObjectId('Chapter', 1));
@@ -244,7 +244,7 @@ class NodeUnifiedRDBMapperTest extends BaseTestCase {
   }
 
   public function testDeleteSQL() {
-    $mapper = ObjectFactory::getClassInstance('app\src\model\ChapterRDBMapper');
+    $mapper = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
     $mapper->setConnectionParams($this->dbParams);
 
     $operations = TestUtil::callProtectedMethod($mapper, 'getDeleteSQL', array(new ObjectId('Chapter', 1)));

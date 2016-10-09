@@ -127,7 +127,7 @@ class DefaultActionMapper implements ActionMapper {
     }
 
     // instantiate controller
-    $controllerObj = ObjectFactory::getClassInstance($controllerClass);
+    $controllerObj = ObjectFactory::getInstanceOf($controllerClass);
 
     // everything is right in place, start processing
     if ($isDebugEnabled) {
@@ -180,7 +180,7 @@ class DefaultActionMapper implements ActionMapper {
     }
 
     // set the request based on the result
-    $nextRequest = ObjectFactory::getInstance('request');
+    $nextRequest = ObjectFactory::getNewInstance('request');
     $nextRequest->setSender($controllerClass);
     $nextRequest->setContext($response->getContext());
     $nextRequest->setAction($response->getAction());

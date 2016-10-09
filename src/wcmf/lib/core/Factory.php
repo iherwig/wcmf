@@ -19,7 +19,8 @@ namespace wcmf\lib\core;
 interface Factory {
 
   /**
-   * Get an instance from the configuration.
+   * Get an instance from the configuration. Instances created with this method
+   * might be shared (depending on the __shared configuration property).
    * @note Instance names are treated case insensitive
    * @param $name The name of the instance (section, where the instance is defined)
    * @param $dynamicConfiguration Associative array with key value pairs for
@@ -29,13 +30,23 @@ interface Factory {
   public function getInstance($name, $dynamicConfiguration=array());
 
   /**
+   * Get a new instance from the configuration. Instances created with this method are not shared.
+   * @note Instance names are treated case insensitive
+   * @param $name The name of the instance (section, where the instance is defined)
+   * @param $dynamicConfiguration Associative array with key value pairs for
+   * dynamic instance properties (optional)
+   * @return Object
+   */
+  public function getNewInstance($name, $dynamicConfiguration=array());
+
+  /**
    * Create an instance of a class. Instances created with this method are not shared.
    * @param $class The name of the class
    * @param $dynamicConfiguration Associative array with key value pairs for
    * dynamic instance properties (optional)
    * @return Object
    */
-  public function getClassInstance($class, $dynamicConfiguration=array());
+  public function getInstanceOf($class, $dynamicConfiguration=array());
 
   /**
    * Register a shared instance with a given name.

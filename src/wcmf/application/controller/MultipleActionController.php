@@ -133,13 +133,13 @@ class MultipleActionController extends Controller {
       // since serializer may replace the params key by the actual
       // node data, we use actionData as fallback
       $params = isset($actionData['params']) ? $actionData['params'] : $actionData;
-      $requestPart = ObjectFactory::getInstance('request');
+      $requestPart = ObjectFactory::getNewInstance('request');
       $requestPart->setContext($context);
       $requestPart->setAction($action);
       $requestPart->setValues($params);
       $requestPart->setFormat('null');
       $requestPart->setResponseFormat('null');
-      $responsePart = ObjectFactory::getInstance('response');
+      $responsePart = ObjectFactory::getNewInstance('response');
 
       // execute the request
       try {

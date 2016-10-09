@@ -139,9 +139,21 @@ class DefaultFactory implements Factory {
   }
 
   /**
-   * @see Factory::getClassInstance()
+   * @see Factory::getNewInstance()
    */
-  public function getClassInstance($class, $dynamicConfiguration=array()) {
+  public function getNewInstance($name, $dynamicConfiguration=array()) {
+    $configuration = array_merge(array(
+        '__shared' => false
+    ), $dynamicConfiguration);
+
+    $instance = $this->getInstance($name, $configuration);
+    return $instance;
+  }
+
+  /**
+   * @see Factory::getInstanceOf()
+   */
+  public function getInstanceOf($class, $dynamicConfiguration=array()) {
     $configuration = array_merge(array(
         '__class' => $class,
         '__shared' => false
@@ -235,7 +247,7 @@ class DefaultFactory implements Factory {
             elseif (($paramClass = $param->getClass()) != null) {
               // check for parameter's class from type hint
               // will cause an exception, if the class does not exist
-              $cParams[$paramName] = $this->getClassInstance($paramClass->name);
+              $cParams[$paramName] = $this->getInstanceOf($paramClass->name);
             }
             else {
               throw new ConfigurationException('Constructor parameter \''.$paramName.

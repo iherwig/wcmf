@@ -26,7 +26,6 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   private $formatter = null;
   private $request = null;
   private $cacheId = null;
-  private $lastModifiedDate = null;
   private $status = 200;
   private $file = null;
   private $isFinal = false;

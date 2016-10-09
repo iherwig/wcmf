@@ -111,7 +111,7 @@ class RPCClient implements RemotingClient {
     chdir($currentDir);
 
     $responseData = json_decode($jsonResponse[0], true);
-    $response = ObjectFactory::getInstance('response');
+    $response = ObjectFactory::getNewInstance('response');
     $response->setValues($responseData);
     $response->setFormat('json');
     $formatter = ObjectFactory::getInstance('formatter');
@@ -139,7 +139,7 @@ class RPCClient implements RemotingClient {
    */
   protected function doLogin() {
     if ($this->user) {
-      $request = ObjectFactory::getInstance('request');
+      $request = ObjectFactory::getNewInstance('request');
       $request->setAction('login');
       $request->setValues(
         array(

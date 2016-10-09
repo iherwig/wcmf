@@ -54,7 +54,7 @@ class RemotingServer {
       $response = $client->call($request);
       return $response;
     }
-    return ObjectFactory::getInstance('response');
+    return ObjectFactory::getNewInstance('response');
   }
 
   /**

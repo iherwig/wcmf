@@ -50,11 +50,19 @@ class ObjectFactory {
   }
 
   /**
-   * @see Factory::getClassInstance()
+   * @see Factory::getNewInstance()
    */
-  public static function getClassInstance($class, $dynamicConfiguration=array()) {
+  public static function getNewInstance($name, $dynamicConfiguration=array()) {
     self::checkConfig();
-    return self::$factory->getClassInstance($class, $dynamicConfiguration);
+    return self::$factory->getNewInstance($name, $dynamicConfiguration);
+  }
+
+  /**
+   * @see Factory::getInstanceOf()
+   */
+  public static function getInstanceOf($class, $dynamicConfiguration=array()) {
+    self::checkConfig();
+    return self::$factory->getInstanceOf($class, $dynamicConfiguration);
   }
 
   /**

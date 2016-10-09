@@ -62,7 +62,7 @@ abstract class ControllerTestCase extends DatabaseTestCase {
     }
 
     // make request
-    $request = ObjectFactory::getInstance('request');
+    $request = ObjectFactory::getNewInstance('request');
     $request->setAction($action);
     if ($addSender) {
       $request->setSender($this->getControllerName());

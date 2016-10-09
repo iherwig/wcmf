@@ -140,7 +140,7 @@ class TestUtil {
 
     // run request
     $actionMapper = ObjectFactory::getInstance('actionMapper');
-    $response = ObjectFactory::getInstance('response');
+    $response = ObjectFactory::getNewInstance('response');
     $actionMapper->processAction($request, $response);
     return $response;
   }

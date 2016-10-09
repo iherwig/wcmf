@@ -226,7 +226,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       $serverKey = array_pop(preg_split('/:/', $umi->getPrefix()));
 
       // create the request
-      $request = ObjectFactory::getInstance('request');
+      $request = ObjectFactory::getNewInstance('request');
       $request->setAction('display');
       $request->setValues(
         array(

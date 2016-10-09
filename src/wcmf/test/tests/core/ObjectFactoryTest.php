@@ -36,6 +36,9 @@ class ObjectFactoryTest extends BaseTestCase {
   }
 
   public function testNonShared() {
+    $conf = ObjectFactory::getInstance('configuration');
+    $conf->addConfiguration('factory.ini', true);
+
     $obj = ObjectFactory::getInstance('request');
     $this->assertEquals('wcmf\lib\presentation\impl\DefaultRequest', get_class($obj));
 
@@ -57,7 +60,7 @@ class ObjectFactoryTest extends BaseTestCase {
 
   public function testAlias() {
     $conf = ObjectFactory::getInstance('configuration');
-    $conf->addConfiguration('alias.ini', true);
+    $conf->addConfiguration('factory.ini', true);
 
     // get second time (same instance)
     $cache = ObjectFactory::getInstance('filecache');
