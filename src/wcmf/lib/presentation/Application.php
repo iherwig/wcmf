@@ -74,7 +74,8 @@ class Application {
 
     // create the Request and Response instances
     $this->request = ObjectFactory::getInstance('request');
-    $this->response = $this->request->getResponse();
+    $this->response = ObjectFactory::getInstance('response');
+    $this->request->setResponse($this->response);
 
     $this->request->initialize($defaultController, $defaultContext, $defaultAction);
 

@@ -18,6 +18,18 @@ namespace wcmf\lib\presentation;
 interface Request extends ControllerMessage {
 
   /**
+   * Set the Response instance belonging to the request and vice versa.
+   * @param $response Response
+   */
+  public function setResponse(Response $response);
+
+  /**
+   * Get the Response instance belonging to the request.
+   * @return Response
+   */
+  public function getResponse();
+
+  /**
    * Initialize the request instance from the HTTP request.
    * @param $controller The controller to call if none is given in request parameters (optional)
    * @param $context The context to set if none is given in request parameters (optional)
@@ -45,11 +57,5 @@ interface Request extends ControllerMessage {
    * @return String
    */
   public function getResponseFormat();
-
-  /**
-   * Get the Response instance belonging to the request.
-   * @return Response
-   */
-  public function getResponse();
 }
 ?>

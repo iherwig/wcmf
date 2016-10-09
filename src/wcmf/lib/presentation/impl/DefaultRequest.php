@@ -48,15 +48,11 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * Constructor
    * @param $formatter
    */
-  public function __construct(Response $response, Formatter $formatter) {
+  public function __construct(Formatter $formatter) {
     parent::__construct($formatter);
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
-
-    // initialize response
-    $this->response = $response;
-    $this->response->setRequest($this);
 
     // add header values to request
     foreach (self::getAllHeaders() as $name => $value) {
@@ -80,6 +76,21 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
     $this->method = isset($_SERVER['REQUEST_METHOD']) ?
             strtoupper($_SERVER['REQUEST_METHOD']) : '';
+  }
+
+  /**
+   * @see Response::setResponse()
+   */
+  public function setResponse(Response $response) {
+    $response->setRequest($this);
+    $this->response = $response;
+  }
+
+  /**
+   * @see Request::getResponse()
+   */
+  public function getResponse() {
+    return $this->response;
   }
 
   /**
@@ -239,13 +250,6 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       $this->responseFormat = $this->getFormatter()->getFormatFromMimeType($this->getHeader('Accept'));
     }
     return $this->responseFormat;
-  }
-
-  /**
-   * @see Request::getResponse()
-   */
-  public function getResponse() {
-    return $this->response;
   }
 
   /**

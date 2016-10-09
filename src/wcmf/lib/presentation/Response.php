@@ -20,7 +20,7 @@ namespace wcmf\lib\presentation;
 interface Response extends ControllerMessage {
 
   /**
-   * Set the Request instance belonging to the response.
+   * Set the Request instance belonging to the response and vice versa.
    * @param $request Request
    */
   public function setRequest(Request $request);
