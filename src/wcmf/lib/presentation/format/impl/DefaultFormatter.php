@@ -111,7 +111,7 @@ class DefaultFormatter implements Formatter {
       $lastModifiedTs = $lastModified->getTimestamp();
       $etag = md5($lastModifiedTs.$cacheId);
 
-      // sent caching headers
+      // send caching headers
       session_cache_limiter("public");
       self::sendHeader("Last-Modified: ".($lastModified->format("D, d M Y H:i:s")." GMT")." GMT");
       self::sendHeader("ETag: \"".$etag."\"");

@@ -96,16 +96,17 @@ class Lock implements \Serializable {
   }
 
   public function serialize() {
-    return serialize(array(serialize($this->objectId),
+    return serialize(array($this->type, serialize($this->objectId),
         $this->login, $this->created, serialize($this->currentState)));
   }
 
   public function unserialize($data) {
     $parts = unserialize($data);
-    $this->objectId = unserialize($parts[0]);
-    $this->login = $parts[1];
-    $this->created = $parts[2];
-    $this->currentState = unserialize($parts[3]);
+    $this->type = $parts[0];
+    $this->objectId = unserialize($parts[1]);
+    $this->login = $parts[2];
+    $this->created = $parts[3];
+    $this->currentState = unserialize($parts[4]);
   }
 }
 ?>
