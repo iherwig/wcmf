@@ -82,8 +82,10 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * @see Response::setResponse()
    */
   public function setResponse(Response $response) {
-    $response->setRequest($this);
     $this->response = $response;
+    if ($response->getRequest() !== $this) {
+      $response->setRequest($this);
+    }
   }
 
   /**
