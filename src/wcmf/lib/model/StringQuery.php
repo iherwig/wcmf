@@ -51,19 +51,27 @@ class StringQuery extends ObjectQuery {
    */
   public static function fromRql($type, $query) {
     $operatorMap = array('eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
-        'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp');
+        'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp', '=' => '=');
     $combineMap = array('|' => 'OR', '&' => 'AND');
     $mapper = self::getMapper($type);
     $stringQuery = new StringQuery($type);
     foreach ($operatorMap as $rqlOp => $sqlOp) {
-      $query = preg_replace_callback('/(='.$rqlOp.'=)([^|&\)]+)/', function ($match)
+      $query = preg_replace_callback('/([^ =|&\)]+)(='.$rqlOp.'=|'.$rqlOp.')([^ =|&\)]+)/', function ($match)
               use($rqlOp, $sqlOp, $mapper) {
-        $replace = ' '.$sqlOp.' ';
-        if ($rqlOp == 'in') {
-          $replace .= '('.join(',', array_map(array($mapper,'quoteValue'), explode(',', $match[2]))).')';
+        $typeAttr = $match[1];
+        $value = $match[3];
+        list($typeOrRole, $attribute) = explode('.', $typeAttr, 2);
+        // check if the attribute type
+        $attributeDef = $mapper->hasAttribute($attribute) ? $mapper->getAttribute($attribute) : null;
+        $attributeType = $attributeDef != null ? strtolower($attributeDef->getType()) : null;
+        $isNumber = $attributeType == 'integer' || $attributeType == 'float';
+
+        $replace = $typeAttr.' '.$sqlOp.' ';
+        if ($rqlOp == 'in' && !$isNumber) {
+          $replace .= '('.join(',', array_map(array($mapper, 'quoteValue'), explode(',', $value))).')';
         }
         else {
-          $replace .= $mapper->quoteValue($match[2]);
+          $replace .= $isNumber ? $value : $mapper->quoteValue($value);
         }
         return $replace;
       }, $query);
