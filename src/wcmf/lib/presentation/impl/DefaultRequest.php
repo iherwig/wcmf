@@ -63,7 +63,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if (isset($_SERVER['QUERY_STRING'])) {
       self::fix($_GET, $_SERVER['QUERY_STRING']);
     }
-    if (isset($_SERVER['QUERY_STRING'])) {
+    if (isset($_SERVER['COOKIES'])) {
       self::fix($_COOKIE, $_SERVER['COOKIES']);
     }
     $requestBody = file_get_contents("php://input");
