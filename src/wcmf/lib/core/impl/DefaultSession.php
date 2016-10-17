@@ -27,7 +27,9 @@ if (in_array('sha256', hash_algos())) {
 }
 
 /**
- * Default session implementation.
+ * DefaultSession uses the default PHP session implementation:
+ * - server side storage
+ * - session id sent as a cookie to the client
  *
  * @author ingo herwig <ingo@wemove.com>
  */
