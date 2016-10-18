@@ -10,36 +10,41 @@
  */
 namespace wcmf\lib\core\impl;
 
-use wcmf\lib\core\Session;
+use wcmf\lib\config\Configuration;
 use wcmf\lib\core\impl\DefaultSession;
+use wcmf\lib\core\Session;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\security\principal\impl\AnonymousUser;
+use wcmf\lib\util\URIUtil;
 
 /**
  * AuthTokenSession is a DefaultSession, but additionally requires
  * clients to send a token in the X-Auth-Token request header.
  * The token is created, when the authenticated user is associated
- * with the session and send to the client in a cookie named auth-token.
+ * with the session and send to the client in a cookie named
+ * <em>application-title</em>-token.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class AuthTokenSession extends DefaultSession implements Session {
 
-  const TOKEN_NAME = 'auth-token';
   const TOKEN_HEADER = 'X-Auth-Token';
 
+  private $tokenName = '';
   private $isTokenValid = false;
 
   /**
    * Constructor
+   * @param $configuration
    * @param $request
    */
-  public function __construct(Request $request) {
-    parent::__construct();
+  public function __construct(Configuration $configuration, Request $request) {
+    parent::__construct($configuration);
 
     // check for valid auth-token in request
+    $this->tokenName = $this->getCookiePrefix().'-token';
     $this->isTokenValid = $request->hasHeader(self::TOKEN_HEADER) &&
-      $request->getHeader(self::TOKEN_HEADER) == $this->get(self::TOKEN_NAME);
+      $request->getHeader(self::TOKEN_HEADER) == $this->get($this->tokenName);
   }
 
   /**
@@ -52,9 +57,8 @@ class AuthTokenSession extends DefaultSession implements Session {
     if ($login !== AnonymousUser::USER_GROUP_NAME) {
       // generate a token, set it in the session and send it to the client
       $token = base64_encode(openssl_random_pseudo_bytes(32));
-      $this->set(self::TOKEN_NAME, $token);
-      $domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
-      setcookie(self::TOKEN_NAME, $token, 0, '/', $domain, false, false);
+      $this->set($this->tokenName, $token);
+      setcookie($this->tokenName, $token, 0, '/', '', URIUtil::isHttps(), false);
       $this->isTokenValid = true;
     }
   }

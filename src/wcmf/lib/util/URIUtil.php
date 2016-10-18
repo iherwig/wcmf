@@ -22,6 +22,7 @@ class URIUtil {
    * code from http://www.webmasterworld.com/forum88/334.htm
    * @param $absUri Absolute URI at which the path should end, may have a trailing filename
    * @param $base Absolute URI from which the relative should start
+   * @return String
    */
   public static function makeRelative($absUri, $base) {
     // normalize slashes and remove drive names
@@ -60,6 +61,7 @@ class URIUtil {
    * code from http://99webtools.com/relative-path-into-absolute-url.php
    * @param $relUri URI relative to base
    * @param $base Absolute URI
+   * @return String
    */
   public static function makeAbsolute($relUri, $base) {
     list($relUri, $base) = self::normalizeSlashes(array($relUri, $base));
@@ -103,7 +105,7 @@ class URIUtil {
    * URIUtil::translate($filepathAsSeenFromA, $pathFromBtoA)
    * @param $pathFromA Relative URI to translate as seen from base
    * @param $pathFromScriptToA Base URI
-   * @return An associative array with keys 'absolute' and 'relative'
+   * @return Associative array with keys 'absolute' and 'relative'
    * and the absolute and relative URI (as seen from the executed script) as values
    */
   public static function translate($pathFromA, $pathFromScriptToA) {
@@ -122,7 +124,7 @@ class URIUtil {
    * @note requires cURL library
    * @param $url The url to check
    * @param $timeout The timeout in seconds (default: 5)
-   * @return Boolean whether the url is available
+   * @return Boolean
    */
   public static function validateUrl($url, $timeout=5) {
     $urlParts = @parse_url($url);
@@ -147,38 +149,26 @@ class URIUtil {
   }
 
   /*
-   * Get the protocol string (http:// or https://)
-   * @return The protocol string
+   * Determine, if the script is served via HTTPS
+   * @return Boolean
    */
-  public static function getProtocolStr() {
-    if (isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) > 0 && $_SERVER['HTTPS'] != 'off') {
-      return 'https://';
-    }
-    else {
-      return 'http://';
-    }
+  public static function isHttps() {
+    return (isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) > 0 && $_SERVER['HTTPS'] != 'off');
   }
 
-  /**
-   * Get the current page url
-   * @return The url of the page
+  /*
+   * Get the protocol string (http:// or https://)
+   * @return String
    */
-  public static function getPageURL() {
-    $pageURL = self::getProtocolStr();
-    if ($_SERVER["SERVER_PORT"] != "80") {
-      $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-    }
-    else {
-      $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-   }
-   return $pageURL;
+  public static function getProtocolStr() {
+    return self::isHttps() ? 'https://' : 'http://';
   }
 
   /**
    * Normalize slashes
    * @param $paths Path to normalize or array of paths
    */
-  public static function normalizeSlashes($paths) {
+  private static function normalizeSlashes($paths) {
     return preg_replace(
             array("/\\\\/"), array('/'),
             $paths);
@@ -188,7 +178,7 @@ class URIUtil {
    * Remove protocols
    * @param $paths Path to normalize or array of paths
    */
-  public static function removeProtocols($paths) {
+  private static function removeProtocols($paths) {
     return preg_replace(array("/^[^:]{1}:/"), array(''), $paths);
   }
 
@@ -196,7 +186,7 @@ class URIUtil {
    * Normalize paths (replace '//' or '/./' or '/foo/../' with '/')
    * @param $paths Path to normalize or array of paths
    */
-  public static function normalizePaths($paths) {
+  private static function normalizePaths($paths) {
     $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
     for ($n=1; $n>0; $paths=preg_replace($re, '/', $paths, -1, $n)) {}
     return $paths;
