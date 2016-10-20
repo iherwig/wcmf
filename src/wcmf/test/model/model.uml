@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_1jaukLQuEeOLlbB2YLI0iw" name="PrimitiveTypes">
@@ -289,6 +289,11 @@
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_oVqA4LQ7EeOQ5oJFa1i8cg" name="admin.ini"/>
             <packagedElement xmi:type="uml:Package" xmi:id="_0wslELQWEeOIMOFxCilDfw" name="server.ini">
+              <packagedElement xmi:type="uml:Class" xmi:id="_1rsNwJcREeaXcdkD6-aM1A" name="Application">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_7sNlwJcREeaXcdkD6-aM1A" name="secret" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_OUnrUJcSEeaXcdkD6-aM1A" value="changeme"/>
+                </ownedAttribute>
+              </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_sYqjILQWEeOIMOFxCilDfw" name="Database">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_8j7BELQnEeOULris00pHLg" name="dbType" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_KPmcALQqEeOULris00pHLg" value="1"/>
@@ -2211,4 +2216,5 @@
   <Chronos:ChiSystem xmi:id="_E9vfkEpzEea8q88i0kauCw" plattform="wcmf" base_Class="_E9tDUEpzEea8q88i0kauCw"/>
   <Chronos:ChiController xmi:id="_OBqoIGIiEead5JLiLC2fdQ" base_Class="_N8yIIGIiEead5JLiLC2fdQ"/>
   <Chronos:ChiActionKey xmi:id="_hPWlAGIiEead5JLiLC2fdQ" action="history" base_Association="_ebmrAGIiEead5JLiLC2fdQ"/>
+  <Chronos:ChiSystem xmi:id="_6307cJcREeaXcdkD6-aM1A" plattform="wcmf" config="server.ini" base_Class="_1rsNwJcREeaXcdkD6-aM1A"/>
 </xmi:XMI>
