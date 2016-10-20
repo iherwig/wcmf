@@ -148,13 +148,10 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $mapper = $this->getMapper($type);
     $obj = $mapper->create($type, $buildDepth);
 
-    // register the object with the transaction, if it is active
-    $transaction = $this->getTransaction();
-    if ($transaction->isActive()) {
-      $transaction->registerNew($obj);
-    }
+    // attach the object to the transaction
+    $attachedObjec = $this->getTransaction()->attach($obj);
 
-    return $obj;
+    return $attachedObjec;
   }
 
   /**

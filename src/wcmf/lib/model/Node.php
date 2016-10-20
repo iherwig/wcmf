@@ -49,9 +49,11 @@ class Node extends DefaultPersistentObject {
 
   /**
    * Constructor
+   * @param $oid ObjectId instance (optional)
+   * @param $initialData Associative array with initial data to override default data (optional)
    */
-  public function __construct(ObjectId $oid=null) {
-    parent::__construct($oid);
+  public function __construct(ObjectId $oid=null, array $initialData=null) {
+    parent::__construct($oid, $initialData);
     // get parent::getValue method by reflection
     if (self::$parentGetValueMethod == null) {
       $reflector = new \ReflectionClass(__CLASS__);

@@ -176,8 +176,8 @@ interface PersistenceMapper {
   /**
    * Load a PersistentObject instance from the storage.
    * @note PersistentMapper implementations must call the PersistentObject::afterLoad()
-   * lifecycle callcack on each loaded object and register it at the PersistenceFacade using
-   * the Transaction::registerLoaded() method.
+   * lifecycle callcack on each loaded object and attach it to the current transaction using
+   * the Transaction::attach() method.
    * @param $oid The object id of the object to construct
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)

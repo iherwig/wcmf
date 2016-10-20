@@ -29,14 +29,6 @@ interface PersistentObject {
   const STATE_DELETED = 3;
 
   /**
-   * Initialize the object with a set of data. This method does not validate, does not
-   * change the object's state and does not call any listeners. Any existing data will
-   * be overwritten. The data will also be used as base line for tracking changes.
-   * @param $data An associative array with the data to set.
-   */
-  public function initialize(array $data);
-
-  /**
    * Get the type of the object.
    * @return The objects type.
    */

@@ -949,16 +949,16 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     // add related objects
     $this->addRelatedObjects($objects, $buildDepth);
 
-    // register objects with the transaction
-    $registeredObjects = array();
+    // attach objects to the transaction
+    $attachedObjects = array();
     for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
-      $registeredObject = $tx->registerLoaded($objects[$i]);
+      $attachedObject = $tx->attach($objects[$i]);
       // don't return objects that are to be deleted by the current transaction
-      if ($registeredObject->getState() != PersistentObject::STATE_DELETED) {
-        $registeredObjects[] = $registeredObject;
+      if ($attachedObject->getState() != PersistentObject::STATE_DELETED) {
+        $attachedObjects[] = $attachedObject;
       }
     }
-    return $registeredObjects;
+    return $attachedObjects;
   }
 
   /**
@@ -972,56 +972,24 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
     // initialize data and oid
     $oid = null;
+    $initialData = $data;
     if ($createFromLoadedData) {
-      $oid = $this->constructOID($data);
+      $oid = $this->constructOID($initialData);
+      // cleanup data
+      foreach($initialData as $name => $value) {
+        if ($this->hasAttribute($name) || strpos($name, self::INTERNAL_VALUE_PREFIX) === 0) {
+          $value = $this->convertValueFromStorage($name, $value);
+          $initialData[$name] = $value;
+        }
+        else {
+          unset($initialData[$name]);
+        }
+      }
     }
 
     // construct object
-    $object = $this->createObject($oid);
-
-    // apply data to the created object
-    if ($createFromLoadedData) {
-      $this->applyDataOnLoad($object, $data);
-    }
-    else {
-      $this->applyDataOnCreate($object);
-    }
+    $object = $this->createObject($oid, $initialData);
     return $object;
-  }
-
-  /**
-   * Apply the loaded object data to the object.
-   * @note Subclasses must implement this method to define their object type.
-   * @param $object PersistentObject instance created with createObject method to which the data should be applied
-   * @param $objectData An associative array with the data returned by execution of the database select statement
-   *          (given by getSelectSQL).
-   */
-  protected function applyDataOnLoad(PersistentObject $object, array $objectData) {
-    // set object data
-    $values = array();
-    foreach($objectData as $name => $value) {
-      if ($this->hasAttribute($name) || strpos($name, self::INTERNAL_VALUE_PREFIX) === 0) {
-        $value = $this->convertValueFromStorage($name, $value);
-        $values[$name] = $value;
-      }
-    }
-    $object->initialize($values);
-  }
-
-  /**
-   * Apply the default data to the object.
-   * @note Subclasses must implement this method to define their object type.
-   * @param $object PersistentObject instance created with createObject method to which the data should be applied
-   */
-  protected function applyDataOnCreate(PersistentObject $object) {
-    // set object data
-    $values = array();
-    $attributeDescriptions = $this->getAttributes();
-    foreach($attributeDescriptions as $curAttributeDesc) {
-      $name = $curAttributeDesc->getName();
-      $values[$name] = $curAttributeDesc->getDefaultValue();
-    }
-    $object->initialize($values);
   }
 
   /**

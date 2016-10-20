@@ -54,8 +54,9 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * the type. If the id parameter of the object id is a dummy id, the object
    * is supposed to be a newly created object (@see ObjectId::containsDummyIds()).
    * @param $oid ObjectId instance (optional)
+   * @param $initialData Associative array with initial data to override default data (optional)
    */
-  public function __construct(ObjectId $oid=null) {
+  public function __construct(ObjectId $oid=null, array $initialData=null) {
     // set oid and state (avoid calling listeners)
     if ($oid == null || !ObjectId::isValid($oid)) {
       $oid = ObjectId::NULL_OID();
@@ -70,12 +71,20 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
     }
     // set primary keys
     $this->setOIDInternal($oid, false);
-  }
 
-  /**
-   * @see PersistentObject::initialize()
-   */
-  public function initialize(array $data) {
+    // set initial data
+
+    // defaults
+    $data = array();
+    $attributeDescriptions = $this->getMapper()->getAttributes();
+    foreach($attributeDescriptions as $curAttributeDesc) {
+      $data[$curAttributeDesc->getName()] = $curAttributeDesc->getDefaultValue();
+    }
+    // merge given data
+    if ($initialData != null) {
+      $data = array_merge($data, $initialData);
+    }
+    // set tha data
     foreach ($data as $name => $value) {
       $this->setValueInternal($name, $value);
     }

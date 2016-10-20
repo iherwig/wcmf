@@ -21,32 +21,6 @@ namespace wcmf\lib\persistence;
 interface Transaction {
 
   /**
-   * Register a loaded object. Mappers must call this method on each
-   * loaded object. The returned object is the registered instance.
-   * @param $object PersistentObject instance
-   * @return PersistentObject instance
-   */
-  public function registerLoaded(PersistentObject $object);
-
-  /**
-   * Register a newly created object
-   * @param $object PersistentObject instance
-   */
-  public function registerNew(PersistentObject $object);
-
-  /**
-   * Register a dirty object.
-   * @param $object PersistentObject instance
-   */
-  public function registerDirty(PersistentObject $object);
-
-  /**
-   * Register a deleted object.
-   * @param $object PersistentObject instance
-   */
-  public function registerDeleted(PersistentObject $object);
-
-  /**
    * Set the transaction active (object changes will be recorded).
    */
   public function begin();
@@ -71,11 +45,11 @@ interface Transaction {
   public function isActive();
 
   /**
-   * Get a loaded object.
-   * @param $oid ObjectId of the object
-   * @return PersistentObject instance or null if not loaded yet
+   * Attach an object to the transaction. The returned object is the attached instance.
+   * @param $object The object
+   * @return PersistentObject
    */
-  public function getLoaded(ObjectId $oid);
+  public function attach(PersistentObject $object);
 
   /**
    * Detach an object from the transaction. All local changes will not
@@ -83,6 +57,13 @@ interface Transaction {
    * @param $oid The object id of the object
    */
   public function detach(ObjectId $oid);
+
+  /**
+   * Get a loaded object.
+   * @param $oid ObjectId of the object
+   * @return PersistentObject instance or null if not loaded yet
+   */
+  public function getLoaded(ObjectId $oid);
 
   /**
    * Get all objects currently involved in the transaction

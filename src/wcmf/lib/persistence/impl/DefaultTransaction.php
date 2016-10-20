@@ -78,104 +78,6 @@ class DefaultTransaction implements Transaction {
   }
 
   /**
-   * @see Transaction::registerLoaded()
-   */
-  public function registerLoaded(PersistentObject $object) {
-    $oid = $object->getOID();
-    $key = $oid->__toString();
-    if (self::$isDebugEnabled) {
-      self::$logger->debug("New Data:\n".$object->dump());
-      self::$logger->debug("Registry before:\n".$this->dump());
-    }
-    // register the object if it is newly loaded or
-    // merge the attributes, if it is already loaded
-    $registeredObject = null;
-    if (isset($this->loadedObjects[$key])) {
-      $registeredObject = $this->loadedObjects[$key];
-      // merge existing attributes with new attributes
-      if (self::$isDebugEnabled) {
-        self::$logger->debug("Merging data of ".$key);
-      }
-      $registeredObject->mergeValues($object);
-    }
-    else {
-      if (self::$isDebugEnabled) {
-        self::$logger->debug("Register loaded object: ".$key);
-      }
-      $this->loadedObjects[$key] = $object;
-      // start to listen to changes if the transaction is active
-      if ($this->isActive) {
-        if (self::$isDebugEnabled) {
-          self::$logger->debug("Start listening to: ".$key);
-        }
-        $this->observedObjects[$key] = $object;
-      }
-      $registeredObject = $object;
-    }
-    if (self::$isDebugEnabled) {
-      self::$logger->debug("Registry after:\n".$this->dump());
-    }
-    return $registeredObject;
-  }
-
-  /**
-   * @see Transaction::registerNew()
-   */
-  public function registerNew(PersistentObject $object) {
-    if (!$this->isActive) {
-      return;
-    }
-    $key = $object->getOID()->__toString();
-    if (self::$isDebugEnabled) {
-      self::$logger->debug("Register new object: ".$key);
-    }
-    $this->newObjects[$key] = $object;
-    $this->observedObjects[$key] = $object;
-  }
-
-  /**
-   * @see Transaction::registerDirty()
-   */
-  public function registerDirty(PersistentObject $object) {
-    if (!$this->isActive) {
-      return;
-    }
-    $key = $object->getOID()->__toString();
-    // if it was a new or deleted object, we return immediatly
-    if (isset($this->newObjects[$key]) || isset($this->deletedObjects[$key])) {
-      return;
-    }
-    if (self::$isDebugEnabled) {
-      self::$logger->debug("Register dirty object: ".$key);
-    }
-    $this->dirtyObjects[$key] = $object;
-  }
-
-  /**
-   * @see Transaction::registerDeleted()
-   */
-  public function registerDeleted(PersistentObject $object) {
-    if (!$this->isActive) {
-      return;
-    }
-    $key = $object->getOID()->__toString();
-    // if it was a new object, we remove it from the registry and
-    // return immediatly
-    if (isset($this->newObjects[$key])) {
-      unset($this->newObjects[$key]);
-      return;
-    }
-    // if it was a dirty object, we remove it from the registry
-    if (isset($this->dirtyObjects[$key])) {
-      unset($this->dirtyObjects[$key]);
-    }
-    if (self::$isDebugEnabled) {
-      self::$logger->debug("Register deleted object: ".$key);
-    }
-    $this->deletedObjects[$key] = $object;
-  }
-
-  /**
    * @see Transaction::begin()
    */
   public function begin() {
@@ -275,15 +177,26 @@ class DefaultTransaction implements Transaction {
   }
 
   /**
-   * @see Transaction::getLoaded()
+   * @see Transaction::attach()
    */
-  public function getLoaded(ObjectId $oid) {
-    $registeredObject = null;
-    $key = $oid->__toString();
-    if (isset($this->loadedObjects[$key])) {
-      $registeredObject = $this->loadedObjects[$key];
+  public function attach(PersistentObject $object) {
+    if (!$this->isActive()) {
+      return $object;
     }
-    return $registeredObject;
+    switch ($object->getState()) {
+      case PersistentObject::STATE_CLEAN:
+        return $this->registerLoaded($object);
+
+      case PersistentObject::STATE_NEW:
+        return $this->registerNew($object);
+
+      case PersistentObject::STATE_DIRTY:
+        return $this->registerDirty($object);
+
+      case PersistentObject::STATE_DELETED:
+        return $this->registerDeleted($object);
+    }
+    return null;
   }
 
   /**
@@ -308,17 +221,120 @@ class DefaultTransaction implements Transaction {
   }
 
   /**
-   * Dump the registry content into a string
-   * @return String
+   * @see Transaction::getLoaded()
    */
-  protected function dump() {
-    $str = '';
-    foreach (array_values($this->loadedObjects) as $curObject) {
-      $str .= $curObject->dump();
+  public function getLoaded(ObjectId $oid) {
+    $registeredObject = null;
+    $key = $oid->__toString();
+    if (isset($this->loadedObjects[$key])) {
+      $registeredObject = $this->loadedObjects[$key];
     }
-    return $str;
+    return $registeredObject;
   }
 
+  /**
+   * @see Transaction::getObjects()
+   */
+  public function getObjects() {
+    return $this->observedObjects;
+  }
+
+  /**
+   * Register a loaded object. The returned object is the registered instance.
+   * @param $object PersistentObject instance
+   * @return PersistentObject instance
+   */
+  protected function registerLoaded(PersistentObject $object) {
+    $oid = $object->getOID();
+    $key = $oid->__toString();
+    if (self::$isDebugEnabled) {
+      self::$logger->debug("New Data:\n".$object->dump());
+      self::$logger->debug("Registry before:\n".$this->dump());
+    }
+    // register the object if it is newly loaded or
+    // merge the attributes, if it is already loaded
+    $registeredObject = null;
+    if (isset($this->loadedObjects[$key])) {
+      $registeredObject = $this->loadedObjects[$key];
+      // merge existing attributes with new attributes
+      if (self::$isDebugEnabled) {
+        self::$logger->debug("Merging data of ".$key);
+      }
+      $registeredObject->mergeValues($object);
+    }
+    else {
+      if (self::$isDebugEnabled) {
+        self::$logger->debug("Register loaded object: ".$key);
+      }
+      $this->loadedObjects[$key] = $object;
+      // start to listen to changes if the transaction is active
+      if ($this->isActive) {
+        if (self::$isDebugEnabled) {
+          self::$logger->debug("Start listening to: ".$key);
+        }
+        $this->observedObjects[$key] = $object;
+      }
+      $registeredObject = $object;
+    }
+    if (self::$isDebugEnabled) {
+      self::$logger->debug("Registry after:\n".$this->dump());
+    }
+    return $registeredObject;
+  }
+
+  /**
+   * Register a newly created object. The returned object is the registered instance.
+   * @param $object PersistentObject instance
+   */
+  protected function registerNew(PersistentObject $object) {
+    $key = $object->getOID()->__toString();
+    if (self::$isDebugEnabled) {
+      self::$logger->debug("Register new object: ".$key);
+    }
+    $this->newObjects[$key] = $object;
+    $this->observedObjects[$key] = $object;
+    return $object;
+  }
+
+  /**
+   * Register a dirty object. The returned object is the registered instance.
+   * @param $object PersistentObject instance
+   */
+  protected function registerDirty(PersistentObject $object) {
+    $key = $object->getOID()->__toString();
+    // if it was a new or deleted object, we return immediatly
+    if (isset($this->newObjects[$key]) || isset($this->deletedObjects[$key])) {
+      return $object;
+    }
+    if (self::$isDebugEnabled) {
+      self::$logger->debug("Register dirty object: ".$key);
+    }
+    $this->dirtyObjects[$key] = $object;
+    return $object;
+  }
+
+  /**
+   * Register a deleted object. The returned object is the registered instance.
+   * @param $object PersistentObject instance
+   */
+  protected function registerDeleted(PersistentObject $object) {
+    $key = $object->getOID()->__toString();
+    // if it was a new object, we remove it from the registry and
+    // return immediatly
+    if (isset($this->newObjects[$key])) {
+      unset($this->newObjects[$key]);
+      return $object;
+    }
+    // if it was a dirty object, we remove it from the registry
+    if (isset($this->dirtyObjects[$key])) {
+      unset($this->dirtyObjects[$key]);
+    }
+    if (self::$isDebugEnabled) {
+      self::$logger->debug("Register deleted object: ".$key);
+    }
+    $this->deletedObjects[$key] = $object;
+    return $object;
+  }
   /**
    * Clear all internal
    */
@@ -438,33 +454,37 @@ class DefaultTransaction implements Transaction {
     if (isset($this->detachedObjects[$key])) {
       return;
     }
-    //if (isset($this->observedObjects[$object->getOID()->__toString()])) {
-      $oldState = $event->getOldValue();
-      $newState = $event->getNewValue();
-      if (self::$isDebugEnabled) {
-        self::$logger->debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState);
-      }
-      switch ($newState) {
-        case PersistentObject::STATE_NEW:
-          $this->registerNew($object);
-          break;
 
-        case PersistentObject::STATE_DIRTY:
-          $this->registerDirty($object);
-          break;
+    $oldState = $event->getOldValue();
+    $newState = $event->getNewValue();
+    if (self::$isDebugEnabled) {
+      self::$logger->debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState);
+    }
+    switch ($newState) {
+      case PersistentObject::STATE_NEW:
+        $this->registerNew($object);
+        break;
 
-        case PersistentObject::STATE_DELETED:
-          $this->registerDeleted($object);
-          break;
-      }
-    //}
+      case PersistentObject::STATE_DIRTY:
+        $this->registerDirty($object);
+        break;
+
+      case PersistentObject::STATE_DELETED:
+        $this->registerDeleted($object);
+        break;
+    }
   }
 
   /**
-   * @see Transaction::getObjects()
+   * Dump the registry content into a string
+   * @return String
    */
-  public function getObjects() {
-    return $this->observedObjects;
+  protected function dump() {
+    $str = '';
+    foreach (array_values($this->loadedObjects) as $curObject) {
+      $str .= $curObject->dump();
+    }
+    return $str;
   }
 }
 ?>

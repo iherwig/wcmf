@@ -155,12 +155,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
           }
         }
         // if there was no concurrent update, attach the object again
-        if ($object->getState() == PersistentObject::STATE_DIRTY) {
-          $transaction->registerDirty($object);
-        }
-        elseif ($object->getState() == PersistentObject::STATE_DELETED) {
-          $transaction->registerDeleted($object);
-        }
+        $transaction->attach($object);
       }
     }
     // everything is ok
