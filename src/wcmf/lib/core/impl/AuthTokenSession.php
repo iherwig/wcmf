@@ -58,8 +58,11 @@ class AuthTokenSession extends DefaultSession implements Session {
       // generate a token, set it in the session and send it to the client
       $token = base64_encode(openssl_random_pseudo_bytes(32));
       $this->set($this->tokenName, $token);
-      setcookie($this->tokenName, $token, 0, '/', '', URIUtil::isHttps(), false);
       $this->isTokenValid = true;
+      // NOTE: prevent "headers already sent" errors in phpunit tests
+      if (!headers_sent()) {
+        setcookie($this->tokenName, $token, 0, '/', '', URIUtil::isHttps(), false);
+      }
     }
   }
 

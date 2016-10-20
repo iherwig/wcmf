@@ -69,26 +69,27 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
     else {
       $this->state = self::STATE_CLEAN;
     }
-    // set primary keys
-    $this->setOIDInternal($oid, false);
 
-    // set initial data
-
-    // defaults
+    // get default data
     $data = array();
     $attributeDescriptions = $this->getMapper()->getAttributes();
     foreach($attributeDescriptions as $curAttributeDesc) {
       $data[$curAttributeDesc->getName()] = $curAttributeDesc->getDefaultValue();
     }
-    // merge given data
+
+    // merge initial data
     if ($initialData != null) {
       $data = array_merge($data, $initialData);
     }
-    // set tha data
+
+    // set data
     foreach ($data as $name => $value) {
       $this->setValueInternal($name, $value);
     }
     $this->originalData = $data;
+
+    // set primary keys
+    $this->setOIDInternal($oid, false);
   }
 
   /**
