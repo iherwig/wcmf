@@ -86,7 +86,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
   }
 
-  public function testOneNodeRegistered() {
+  public function testNewNodeRegistered() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $authorTpl = $persistenceFacade->create('Author', BuildDepth::SINGLE);
     $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
@@ -97,6 +97,22 @@ class ObjectQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
       "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
+      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+  }
+
+  public function testExistingNodeRegistered() {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $authorTpl = $persistenceFacade->create('Author', BuildDepth::SINGLE);
+    $authorTpl->setValue("id", 10); // like from database
+    $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
+    $authorTpl->setValue("creator", "admin"); // implicit LIKE
+
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."4");
+    $query->registerObjectTemplate($authorTpl);
+    $sql = $query->getQueryString();
+    $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
+      "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` WHERE (`Author`.`id` = 10 AND `Author`.`name` LIKE '%ingo%' ".
       "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
   }

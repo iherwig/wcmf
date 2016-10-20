@@ -74,7 +74,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $chapter1 = new Chapter(new ObjectId('Chapter', 12));
     $chapter1->setValue('name', 'Chapter 1');
     $chapter1->setValue('created', '2011-05-31');
-    $chapter1->setValue('creator', 'admin');
+    $chapter1->setValue('notExisting', 'admin');
 
     $chapter2 = new Chapter(new ObjectId('Chapter', 23));
     $chapter2->setValue('name', 'Chapter 2');
@@ -83,7 +83,7 @@ class PersistentObjectTest extends DatabaseTestCase {
     $this->assertEquals('app.src.model.Chapter:23', $chapter2->getOID()->__toString());
     $this->assertEquals('Chapter 2', $chapter2->getValue('name'));
     $this->assertEquals(null, $chapter2->getValue('created'));
-    $this->assertEquals('admin', $chapter2->getValue('creator'));
+    $this->assertEquals('admin', $chapter2->getValue('notExisting'));
 
     TestUtil::endSession();
   }

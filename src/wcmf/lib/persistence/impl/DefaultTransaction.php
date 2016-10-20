@@ -180,10 +180,11 @@ class DefaultTransaction implements Transaction {
    * @see Transaction::attach()
    */
   public function attach(PersistentObject $object) {
-    if (!$this->isActive()) {
+    $state = $object->getState();
+    if (!$this->isActive() && $state != PersistentObject::STATE_CLEAN) {
       return $object;
     }
-    switch ($object->getState()) {
+    switch ($state) {
       case PersistentObject::STATE_CLEAN:
         return $this->registerLoaded($object);
 

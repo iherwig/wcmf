@@ -54,7 +54,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * the type. If the id parameter of the object id is a dummy id, the object
    * is supposed to be a newly created object (@see ObjectId::containsDummyIds()).
    * @param $oid ObjectId instance (optional)
-   * @param $initialData Associative array with initial data to override default data (optional)
+   * @param $initialData Associative array with initial attribute data to override default data (optional)
    */
   public function __construct(ObjectId $oid=null, array $initialData=null) {
     // set oid and state (avoid calling listeners)

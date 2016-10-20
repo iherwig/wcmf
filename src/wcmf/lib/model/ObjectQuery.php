@@ -21,6 +21,7 @@ use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\UnknownFieldException;
@@ -195,12 +196,14 @@ class ObjectQuery extends AbstractQuery {
    */
   public function registerObjectTemplate(Node $template, $alias=null, $combineOperator=Criteria::OPERATOR_AND) {
     if ($template != null) {
-      $initialOid = $template->getOID()->__toString();
-      $template->setProperty(self::PROPERTY_INITIAL_OID, $initialOid);
-      $this->observedObjects[$initialOid] = $template;
+      $initialOid = $template->getOID();
+      $initialOidStr = $initialOid->__toString();
+      $template->setProperty(self::PROPERTY_INITIAL_OID, $initialOidStr);
+      $this->observedObjects[$initialOidStr] = $template;
 
       // call the setters for all attributes in order to register them in the query
-      $template->copyValues($template);
+      $includePKs = !ObjectId::isDummyId($initialOid->getFirstId());
+      $template->copyValues($template, $includePKs);
 
       $template->setProperty(self::PROPERTY_COMBINE_OPERATOR, $combineOperator);
       if ($alias != null) {
