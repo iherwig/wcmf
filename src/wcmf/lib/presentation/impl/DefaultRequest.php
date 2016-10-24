@@ -186,14 +186,14 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         'referrer' => $_SERVER['HTTP_REFERER']);
 
     if (!$routeFound) {
-      throw new ApplicationException($this, $this->response,
+      throw new ApplicationException($this, $this->getResponse(),
               ApplicationError::get('ROUTE_NOT_FOUND', array_merge(
                       $userInfo, array('route' => $requestPath))));
     }
 
     // check if method is allowed
     if (!$methodAllowed) {
-      throw new ApplicationException($this, $this->response,
+      throw new ApplicationException($this, $this->getResponse(),
               ApplicationError::get('METHOD_NOT_ALLOWED', array_merge(
                       $userInfo, array('method' => $method, 'route' => $requestPath))));
     }

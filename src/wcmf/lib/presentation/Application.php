@@ -119,7 +119,7 @@ class Application {
    * @param $exception The Exception instance
    */
   public function handleException(\Exception $exception) {
-    self::$logger->error($exception->getMessage()."\n".$exception->getTraceAsString());
+    self::$logger->error($exception);
 
     try {
       if (ObjectFactory::getInstance('configuration') != null) {

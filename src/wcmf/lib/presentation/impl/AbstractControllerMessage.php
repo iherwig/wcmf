@@ -325,7 +325,7 @@ abstract class AbstractControllerMessage implements ControllerMessage {
     $str .= 'context='.$this->context.', ';
     $str .= 'action='.$this->action.', ';
     $str .= 'format='.$this->format.', ';
-    $str .= 'values='.StringUtil::getDump($this->values);
+    $str .= 'values='.StringUtil::getDump($this->values).', ';
     $str .= 'errors='.StringUtil::getDump($this->errors);
     return $str;
   }

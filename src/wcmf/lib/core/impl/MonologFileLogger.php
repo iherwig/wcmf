@@ -189,7 +189,9 @@ class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger 
    * @return String
    */
   private function prepareMessage($message) {
-    return is_string($message) ? $message : StringUtil::getDump($message);
+    return is_string($message) ? $message :
+      (is_object($message) && method_exists($message, '__toString') ? $message->__toString() :
+            StringUtil::getDump($message));
   }
 
   /**

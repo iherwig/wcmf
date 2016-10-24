@@ -67,5 +67,21 @@ class ApplicationException extends \Exception {
   public function getError() {
     return $this->error;
   }
+
+  /**
+   * Get a string representation of the exception
+   * @return String
+   */
+  public function __toString() {
+    $str = $this->error->__toString().", ";
+    if ($this->request) {
+      $str .= "Request: ".$this->request->__toString().", ";
+    }
+    if ($this->response) {
+      $str .= "Response: ".$this->response->__toString().", ";
+    }
+    $str .= "\n".parent::getTraceAsString();
+    return $str;
+  }
 }
 ?>
