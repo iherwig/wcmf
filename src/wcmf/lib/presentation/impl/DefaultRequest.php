@@ -42,6 +42,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   private $responseFormat = null;
   private $method = null;
 
+  private static $requestDataFixed = false;
   private static $logger = null;
 
   /**
@@ -54,28 +55,30 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
 
-    // add header values to request
+    // set headers and method
     foreach (self::getAllHeaders() as $name => $value) {
       $this->setHeader($name, $value);
     }
+    $this->method = isset($_SERVER['REQUEST_METHOD']) ?
+            strtoupper($_SERVER['REQUEST_METHOD']) : '';    
 
     // fix get request parameters
-    if (isset($_SERVER['QUERY_STRING'])) {
-      self::fix($_GET, $_SERVER['QUERY_STRING']);
+    if (!self::$requestDataFixed) {
+      if (isset($_SERVER['QUERY_STRING'])) {
+        self::fix($_GET, $_SERVER['QUERY_STRING']);
+      }
+      if (isset($_SERVER['COOKIES'])) {
+        self::fix($_COOKIE, $_SERVER['COOKIES']);
+      }
+      $requestBody = file_get_contents("php://input");
+      if ($this->getFormat() != 'json') {
+        self::fix($_POST, $requestBody);
+      }
+      else {
+        $_POST = json_decode($requestBody, true);
+      }
+      self::$requestDataFixed = true;
     }
-    if (isset($_SERVER['COOKIES'])) {
-      self::fix($_COOKIE, $_SERVER['COOKIES']);
-    }
-    $requestBody = file_get_contents("php://input");
-    if ($this->getFormat() != 'json') {
-      self::fix($_POST, $requestBody);
-    }
-    else {
-      $_POST = json_decode($requestBody, true);
-    }
-
-    $this->method = isset($_SERVER['REQUEST_METHOD']) ?
-            strtoupper($_SERVER['REQUEST_METHOD']) : '';
   }
 
   /**

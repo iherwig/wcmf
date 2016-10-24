@@ -24,7 +24,7 @@ class StringUtil {
    */
   public static function getDump($var) {
     ob_start();
-    var_export($var);
+    var_dump($var);
     $out = ob_get_contents();
     ob_end_clean();
     return $out;
