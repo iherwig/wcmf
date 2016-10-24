@@ -13,6 +13,8 @@ namespace wcmf\lib\presentation;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\ApplicationException;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Request;
 
 /**
@@ -119,7 +121,13 @@ class Application {
    * @param $exception The Exception instance
    */
   public function handleException(\Exception $exception) {
-    self::$logger->error($exception);
+    // get error level
+    $logFunction = 'error';
+    if ($exception instanceof ApplicationException) {
+      $logFunction = $exception->getError()->getLevel() == ApplicationError::LEVEL_WARNING ?
+              'warn' : 'error';
+    }
+    self::$logger->$logFunction($exception);
 
     try {
       if (ObjectFactory::getInstance('configuration') != null) {

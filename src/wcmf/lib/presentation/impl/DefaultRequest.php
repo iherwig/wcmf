@@ -24,10 +24,10 @@ use wcmf\lib\util\StringUtil;
  * Predefined errors
  */
 $message = ObjectFactory::getInstance('message');
-define('ROUTE_NOT_FOUND', serialize(array('ROUTE_NOT_FOUND', ApplicationError::LEVEL_ERROR, 404,
+define('ROUTE_NOT_FOUND', serialize(array('ROUTE_NOT_FOUND', ApplicationError::LEVEL_WARNING, 404,
   $message->getText('No route matching the request path can be found.')
 )));
-define('METHOD_NOT_ALLOWED', serialize(array('METHOD_NOT_ALLOWED', ApplicationError::LEVEL_ERROR, 405,
+define('METHOD_NOT_ALLOWED', serialize(array('METHOD_NOT_ALLOWED', ApplicationError::LEVEL_WARNING, 405,
   $message->getText('The HTTP method is not allowed on the requested path.')
 )));
 
