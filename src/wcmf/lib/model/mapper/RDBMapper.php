@@ -657,9 +657,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $result = $mapper->quoteIdentifier($tableName).".".$mapper->quoteIdentifier($columnName);
     $operator = $criteria->getOperator();
     $value = $criteria->getValue();
-    if ($operator == '=' && $value === null) {
+    if (($operator == '=' || $operator == '!=') && $value === null) {
       // handle null values
-      $result .= " IS NULL";
+      $result .= " IS ".($operator == '!=' ? "NOT " : "")."NULL";
     }
     else {
       $result .= " ".$criteria->getOperator()." ";

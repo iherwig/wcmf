@@ -336,6 +336,17 @@ $articles = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Articl
 In this example all `Article` instances with titles starting with _A_ and release date
 _2014 or later_ are loaded.
 
+#### Null values #### {#pers_search_null}
+
+Null values are matched/not matched using the following criteria:
+
+~~~~~~~~~~~~~{.php}
+new Criteria("Article", "title", "=", null); // translates to Article.title IS NULL
+new Criteria("Article", "title", "!=", null); // translates to Article.title IS NOT NULL
+~~~~~~~~~~~~~
+
+#### Object queries #### {#pers_search_object_queries}
+
 More complex use cases are supported by the \link wcmf::lib::model::ObjectQuery `ObjectQuery`\endlink
 class. For example it allows to set search constraints on connected objects as
 shown in the following example:
