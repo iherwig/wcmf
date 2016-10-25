@@ -334,6 +334,67 @@ as follows:
 - _Not authenticated_: Resource is _not accessible_
 - _Authenticated_: Resource is _accessible_
 
+## Sessions ## {#sec_session}
+
+### Session implementations ### {#sec_session_impl}
+
+wCMF provides the following \link wcmf::lib::core::Session `Session`\endlink
+implementations:
+
+- \link wcmf::lib::core::impl::DefaultSession `DefaultSession`\endlink
+- \link wcmf::lib::core::impl::AuthTokenSession `AuthTokenSession`\endlink
+- \link wcmf::lib::core::impl::ClientSideSession `ClientSideSession`\endlink
+
+### CSRF protection ### {#sec_input_csrf}
+
+To avoid [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) vulnerabilities
+in a web application, forms are usually protected by using _CSRF tokens_. The
+\link wcmf::lib::presentation::Controller::generateCsrfToken `Controller::generateCsrfToken`\endlink
+method is used to generate a unique token value for each form display. The token is validated by using the
+\link wcmf::lib::presentation::Controller::validateCsrfToken `Controller::validateCsrfToken`\endlink
+method when the form is submitted. For proper identification, tokens are referenced by a
+name (e.g. the form's name) which is passed to these methods.
+
+The following example demonstrates the usage of these methods.
+
+A new token value is generated each time the form is displayed:
+
+~~~~~~~~~~~~~{.php}
+class UserController {
+
+  public function render() {
+
+    $this->generateCsrfToken('login');
+
+  }
+}
+~~~~~~~~~~~~~
+
+This creates the `csrf_token` response variable. The variable is used to add
+the token as a hidden field to the form:
+
+~~~~~~~~~~~~~{.php}
+<input type="hidden" name="csrf_token" value="{$csrf_token}">
+~~~~~~~~~~~~~
+
+After form submission the controller validates the token and acts appropriately:
+
+~~~~~~~~~~~~~{.php}
+class UserController {
+
+  public function login() {
+
+    if (!$this->validateCsrfToken('login')) {
+      // error
+    }
+    else {
+      // do login
+    }
+
+  }
+}
+~~~~~~~~~~~~~
+
 ## Input ## {#sec_input}
 
 Generally all external input sent to the application should be considered harmful.
