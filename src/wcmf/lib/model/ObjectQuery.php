@@ -362,9 +362,12 @@ class ObjectQuery extends AbstractQuery {
             // because the attributes are not selected with alias, the column name has to be used
             $index = sizeof(array_keys($this->parameterOrder));
             $placeholder = ':'.$tableName['alias'].'_'.$attributeDesc->getColumn().$index;
-            $condition .= $mapper->renderCriteria($criterion, $placeholder, $tableName['alias'],
-                    $attributeDesc->getColumn());
-            $this->parameterOrder[$placeholder] = $this->getParameterPosition($criterion, $this->conditions);
+            list($criteriaCondition, $criteriaPlaceholder) = $mapper->renderCriteria($criterion,
+                    $placeholder, $tableName['alias'], $attributeDesc->getColumn());
+            $condition .= $criteriaCondition;
+            if ($criteriaPlaceholder != null) {
+              $this->parameterOrder[$criteriaPlaceholder] = $this->getParameterPosition($criterion, $this->conditions);
+            }
           }
         }
       }

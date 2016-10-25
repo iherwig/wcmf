@@ -601,9 +601,13 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       foreach ($criteria as $criterion) {
         if ($criterion instanceof Criteria) {
           $placeholder = ':'.$tableName.'_'.$criterion->getAttribute();
-          $condition = $this->renderCriteria($criterion, $placeholder, $tableName);
+          list($criteriaCondition, $criteriaPlaceholder) =
+                  $this->renderCriteria($criterion, $placeholder, $tableName);
+          $condition = $criteriaCondition;
           $selectStmt->where($condition, $criterion->getCombineOperator());
-          $parameters[$placeholder] = $criterion->getValue();
+          if ($criteriaPlaceholder) {
+            $parameters[$criteriaPlaceholder] = $criterion->getValue();
+          }
         }
         else {
           throw new IllegalArgumentException("The select condition must be an instance of Criteria");

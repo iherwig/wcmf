@@ -382,8 +382,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     // transform criteria
     $where = array();
     foreach ($operation->getCriteria() as $criterion) {
-      $condition = $this->renderCriteria($criterion, null, $tableName);
-      $where[] = $condition;
+      list($criteriaCondition) = $this->renderCriteria($criterion, null, $tableName);
+      $where[] = $criteriaCondition;
     }
 
     // execute the statement
@@ -636,7 +636,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param $placeholder Placeholder (':columnName', '?') used instead of the value (optional, default: _null_)
    * @param $tableName The table name to use (may differ from criteria's type attribute) (optional)
    * @param $columnName The column name to use (may differ from criteria's attribute attribute) (optional)
-   * @return String
+   * @return Array with condition (string) and placeholder (string)
    */
   public function renderCriteria(Criteria $criteria, $placeholder=null, $tableName=null, $columnName=null) {
     $type = $criteria->getType();
@@ -654,24 +654,25 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $columnName = $attrDesc->getColumn();
     }
 
-    $result = $mapper->quoteIdentifier($tableName).".".$mapper->quoteIdentifier($columnName);
+    $condition = $mapper->quoteIdentifier($tableName).".".$mapper->quoteIdentifier($columnName);
     $operator = $criteria->getOperator();
     $value = $criteria->getValue();
     if (($operator == '=' || $operator == '!=') && $value === null) {
       // handle null values
-      $result .= " IS ".($operator == '!=' ? "NOT " : "")."NULL";
+      $condition .= " IS ".($operator == '!=' ? "NOT " : "")."NULL";
+      $placeholder = null;
     }
     else {
-      $result .= " ".$criteria->getOperator()." ";
+      $condition .= " ".$criteria->getOperator()." ";
       $valueStr = !$placeholder ? $mapper->quoteValue($value) : $placeholder;
       if (is_array($value)) {
-        $result .= "(".$valueStr.")";
+        $condition .= "(".$valueStr.")";
       }
       else {
-        $result .= $valueStr;
+        $condition .= $valueStr;
       }
     }
-    return $result;
+    return array($condition, $placeholder);
   }
 
   /**
