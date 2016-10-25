@@ -348,7 +348,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
   /**
    * Get the select statement for a many-to-one or one-to-many relation.
-   * This method is the commen part used in both relations.
+   * This method is the common part used in both relations.
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getRelationStatement($thisAttr, $parameters,
@@ -603,8 +603,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           $placeholder = ':'.$tableName.'_'.$criterion->getAttribute();
           list($criteriaCondition, $criteriaPlaceholder) =
                   $this->renderCriteria($criterion, $placeholder, $tableName);
-          $condition = $criteriaCondition;
-          $selectStmt->where($condition, $criterion->getCombineOperator());
+          $selectStmt->where($criteriaCondition, $criterion->getCombineOperator());
           if ($criteriaPlaceholder) {
             $parameters[$criteriaPlaceholder] = $criterion->getValue();
           }
@@ -655,7 +654,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       foreach ($criteria as $criterion) {
         if ($criterion instanceof Criteria) {
           $placeholder = ':'.$tableName.'_'.$criterion->getAttribute();
-          $parameters[$placeholder] = $criterion->getValue();
+          list($criteriaCondition, $criteriaPlaceholder) = $this->renderCriteria($criterion, $placeholder, '', '');
+          if ($criteriaPlaceholder) {
+            $parameters[$criteriaPlaceholder] = $criterion->getValue();
+          }
         }
         else {
           throw new IllegalArgumentException("The select condition must be an instance of Criteria");

@@ -100,7 +100,7 @@ class SelectStatement extends Select {
   }
 
   /**
-   * Add customt meta value
+   * Add custom meta value
    * @param $key
    * @param $value
    */
@@ -109,7 +109,7 @@ class SelectStatement extends Select {
   }
 
   /**
-   * Get customt meta value
+   * Get custom meta value
    * @param $key
    * @return Associative array
    */
