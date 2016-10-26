@@ -6,13 +6,14 @@
   <h1>wCMF</h1>
   <h2>A MDSD framework for building<br><kbd>reliable</kbd> <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications with PHP</h2>
   <a href="gettingstarted.html" class="btn btn-success btn-lg">Getting started</a>
+  <a href="https://github.com/iherwig/wcmf/releases" class="btn btn-info btn-lg"><i class="fa fa-download"></i> Download</a>
 </div>
 
 <h2>Model-Driven Software Development</h2>
 wCMF features a pragmatic Model-Driven Software Development (<em>MDSD</em>) approach that has the following advantages:<br><br>
 <ul>
   <li><strong>Single Source of Truth</strong> All important aspects of the application are defined in one place - the <em>model</em>.</li>
-  <li><strong>Consistency</strong> The code generator takes care that model changes are applied consistently in all relevant places, e.g. if an entity attribute 
+  <li><strong>Consistency</strong> The code generator takes care that model changes are applied consistently in all relevant places, e.g. if an entity attribute
     is changed, added or deleted, all persistence and domain classes are changed appropriately. This results in less errors and better code quality.</li>
   <li><strong>Increased productivity</strong> By spending less time on repetitive tasks, developers can concentrate more on the application domain.</li>
 </ul>
