@@ -425,7 +425,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
               $this->quoteIdentifier($otherFkAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
       // order (in this case we use the order of the many to many objects)
       $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);
-      $this->addOrderBy($selectStmt, $orderby, $nmTablename, $nmSortDefs);
+      $hasNmOrder = sizeof($nmSortDefs) > 0;
+      $orderTable = $hasNmOrder ? $nmTablename : $tableName;
+      $defaultOrderDef = $hasNmOrder ? $nmSortDefs : $this->getDefaultOrder($otherRole);
+      $this->addOrderBy($selectStmt, $orderby, $orderTable, $defaultOrderDef);
       foreach($nmSortDefs as $nmSortDef) {
         // add the sort attribute from the many to many object
         $nmSortAttributeDesc = $nmMapper->getAttribute($nmSortDef['sortFieldName']);
