@@ -155,7 +155,7 @@ FULL_PATH_NAMES        = YES
 STRIP_FROM_PATH        = C:/Users/ingo/Daten/web/htdocs/wcmf/docs/api-src/framework_description/en/ \
                          C:/Users/ingo/Daten/web/htdocs/wcmf/src/wcmf/ \
                          E:/Daten/web/wcmf/src/wcmf/docs/api-src/framework_description/en/ \
-                         E:/Daten/web/wcmf/src/wcmf/
+                         E:/Daten/web/wcmf/src/wcmf/ \
                          J:/Daten/web/htdocs/wcmf/src/wcmf/docs/api-src/framework_description/en/ \
                          J:/Daten/web/htdocs/wcmf/src/wcmf/
 
