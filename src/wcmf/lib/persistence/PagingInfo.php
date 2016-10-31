@@ -33,6 +33,9 @@ class PagingInfo {
    */
   public function __construct($pageSize, $ignoreTotalCount=false) {
     $this->pageSize = intval($pageSize);
+    if ($this->pageSize == -1) {
+      $this->pageSize = PHP_INT_MAX;
+    }
     $this->ignoreTotalCount = $ignoreTotalCount;
   }
 

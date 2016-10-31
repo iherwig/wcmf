@@ -11,6 +11,7 @@
 namespace wcmf\test\lib;
 
 use wcmf\lib\core\LogManager;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
 /**
@@ -55,6 +56,11 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
 
   protected function tearDown() {
     self::$frameworkReady = false;
+  }
+
+  protected function executeSql($type, $sql, $parameters=array()) {
+    return ObjectFactory::getInstance('persistenceFacade')->getMapper($type)->executeSql($sql, $parameters);
+
   }
 }
 ?>

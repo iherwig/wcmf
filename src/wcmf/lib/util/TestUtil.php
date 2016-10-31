@@ -66,14 +66,23 @@ class TestUtil {
     $mapper = $persistenceFacade->getMapper($types[0]);
     $pdo = $mapper->getConnection();
 
-    // create sqlite db
+    // create db
     $params = $mapper->getConnectionParams();
-    if ($params['dbType'] == 'sqlite') {
-      $numTables = $pdo->query('SELECT count(*) FROM sqlite_master WHERE type = "table"')->fetchColumn();
-      if ($numTables == 0) {
-        $schema = file_get_contents(WCMF_BASE.'install/tables_sqlite.sql');
-        $pdo->exec($schema);
-      }
+    switch($params['dbType']) {
+      case 'sqlite':
+        $numTables = $pdo->query('SELECT count(*) FROM sqlite_master WHERE type = "table"')->fetchColumn();
+        if ($numTables == 0) {
+          $schema = file_get_contents(WCMF_BASE.'install/tables_sqlite.sql');
+          $pdo->exec($schema);
+        }
+        break;
+      case 'mysql':
+        $numTables = $pdo->query('SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "'.$params['dbName'].'"')->fetchColumn();
+        if ($numTables == 0) {
+          $schema = file_get_contents(WCMF_BASE.'install/tables_mysql.sql');
+          $pdo->exec($schema);
+        }
+        break;
     }
     $params['connection'] = $pdo;
     return $params;

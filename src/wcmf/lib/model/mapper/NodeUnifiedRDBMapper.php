@@ -637,12 +637,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
         }
       }
     }
-    foreach($orderby as $orderExpression) {
-      $orderbyFinal[] = $this->ensureTablePrefix($orderExpression, $tableName);
-    }
-    if (sizeof($orderby) > 0) {
-      $selectStmt->order($orderbyFinal);
-    }
+    $selectStmt->order($orderby);
   }
 
   /**
@@ -823,20 +818,6 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
     }
     return false;
-  }
-
-  /**
-   * Make sure that the given table name is prefixed before the given expression
-   * and return the modified expression.
-   * @param $expression The expression
-   * @param $tableName The table name
-   * @return String
-   */
-  protected function ensureTablePrefix($expression, $tableName) {
-    if (strpos($expression, '.') === false) {
-      $expression = $tableName.".".$expression;
-    }
-    return $expression;
   }
 
   /**

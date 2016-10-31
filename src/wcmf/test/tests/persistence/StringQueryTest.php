@@ -31,6 +31,9 @@ class StringQueryTest extends DatabaseTestCase {
       'User' => array(
         array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
       ),
+      'Author' => array(
+        array('id' => 100, 'name' => 'ingo', 'creator' => 'admin'),
+      ),
       'Chapter' => array(
         array('id' => 300, 'name' => 'Chapter A'),
         array('id' => 301, 'name' => 'Chapter B'),
@@ -46,8 +49,9 @@ class StringQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, ".
       "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` ".
-      "FROM `Author` WHERE `Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%' ORDER BY `Author`.`name` ASC";
+      "FROM `Author` WHERE `Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%' ORDER BY `name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+    $this->executeSql('Author', $sql);
   }
 
   public function testNoCondition() {
@@ -55,8 +59,9 @@ class StringQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, ".
       "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` ".
-      "FROM `Author` ORDER BY `Author`.`name` ASC";
+      "FROM `Author` ORDER BY `name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+    $this->executeSql('Author', $sql);
   }
 
   public function testParentChild() {
@@ -67,8 +72,9 @@ class StringQueryTest extends DatabaseTestCase {
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, ".
       "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` ".
       "FROM `Author` INNER JOIN `Chapter` AS `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
-      "WHERE `Author`.`name` LIKE '%ingo%' AND `Chapter`.`name` LIKE 'Chapter 1%' ORDER BY `Author`.`name` ASC";
+      "WHERE `Author`.`name` LIKE '%ingo%' AND `Chapter`.`name` LIKE 'Chapter 1%' ORDER BY `name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+    $this->executeSql('Author', $sql);
   }
 
   public function testParentChildSameType() {
@@ -82,8 +88,9 @@ class StringQueryTest extends DatabaseTestCase {
       "`Chapter`.`sortkey_parentchapter` AS `sortkey_parentchapter`, `Chapter`.`sortkey` AS `sortkey`, ".
       "`AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` INNER JOIN `Chapter` AS `SubChapter` ON ".
       "`SubChapter`.`fk_chapter_id` = `Chapter`.`id` WHERE `Chapter`.`creator` LIKE '%ingo%' AND `SubChapter`.`name` ".
-      "LIKE 'Chapter 1%' ORDER BY `Chapter`.`sortkey` ASC";
+      "LIKE 'Chapter 1%' ORDER BY `sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql));
+    $this->executeSql('Chapter', $sql);
   }
 
   public function testChildParent() {
@@ -95,8 +102,9 @@ class StringQueryTest extends DatabaseTestCase {
       "`Image`.`file` AS `filename`, `Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
       "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
       "FROM `Image` INNER JOIN `Chapter` AS `NormalChapter` ON ".
-      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE `NormalChapter`.`id` = 10 ORDER BY `Image`.`sortkey` ASC";
+      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE `NormalChapter`.`id` = 10 ORDER BY `sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql));
+    $this->executeSql('Image', $sql);
   }
 
   public function testChildParentSameType() {
@@ -109,8 +117,9 @@ class StringQueryTest extends DatabaseTestCase {
       "`Chapter`.`creator` AS `creator`, `Chapter`.`modified` AS `modified`, `Chapter`.`last_editor` AS `last_editor`, `Chapter`.`sortkey_author` AS `sortkey_author`, ".
       "`Chapter`.`sortkey_book` AS `sortkey_book`, `Chapter`.`sortkey_parentchapter` AS `sortkey_parentchapter`, `Chapter`.`sortkey` AS `sortkey`, ".
       "`AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` INNER JOIN `Chapter` AS `ParentChapter` ON ".
-      "`Chapter`.`fk_chapter_id` = `ParentChapter`.`id` WHERE `ParentChapter`.`id` = 10 ORDER BY `Chapter`.`sortkey` ASC";
+      "`Chapter`.`fk_chapter_id` = `ParentChapter`.`id` WHERE `ParentChapter`.`id` = 10 ORDER BY `sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql));
+    $this->executeSql('Chapter', $sql);
   }
 
   public function testManyToMany() {
@@ -122,8 +131,9 @@ class StringQueryTest extends DatabaseTestCase {
       "`Publisher`.`created` AS `created`, `Publisher`.`creator` AS `creator`, `Publisher`.`modified` AS `modified`, `Publisher`.`last_editor` AS `last_editor` ".
       "FROM `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` ".
       "INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
-      "WHERE `Publisher`.`name` LIKE '%Publisher 1%' AND `Author`.`name` = 'Author 2' ORDER BY `Publisher`.`name` ASC";
+      "WHERE `Publisher`.`name` LIKE '%Publisher 1%' AND `Author`.`name` = 'Author 2' ORDER BY `name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
+    $this->executeSql('Publisher', $sql);
   }
 
   /**
@@ -140,6 +150,7 @@ class StringQueryTest extends DatabaseTestCase {
       "`TitleImage`.`fk_titlechapter_id` = `Chapter`.`id` WHERE (`Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
       "AND `TitleImage`.`file` = 'title_image.jpg') ORDER BY `Author`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+    $this->executeSql('Author', $sql);
   }
 
   public function testDifferentRoles() {
@@ -152,8 +163,9 @@ class StringQueryTest extends DatabaseTestCase {
       "`Author`.`last_editor` AS `last_editor` FROM `Author` INNER JOIN `Chapter` AS `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
       "INNER JOIN `Image` AS `NormalImage` ON `NormalImage`.`fk_chapter_id` = `Chapter`.`id` INNER JOIN `Image` AS `TitleImage` ON ".
       "`TitleImage`.`fk_titlechapter_id` = `Chapter`.`id` WHERE `Author`.`name` LIKE '%ingo%' AND `NormalImage`.`file` = 'image.jpg' ".
-      "AND `TitleImage`.`file` = 'title_image.jpg' ORDER BY `Author`.`name` ASC";
+      "AND `TitleImage`.`file` = 'title_image.jpg' ORDER BY `name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+    $this->executeSql('Author', $sql);
   }
 
   public function testWithDB() {

@@ -41,7 +41,6 @@ class RDBMapperTest extends DatabaseTestCase {
   public function testSelect() {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
-    // project tag connections
     $mapper = $persistenceFacade->getMapper('Chapter');
     $sql = "SELECT * FROM Chapter";
     $results = $mapper->executeSql($sql);
@@ -56,7 +55,7 @@ class RDBMapperTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     $mapper = $persistenceFacade->getMapper('Chapter');
-    $sql = "SELECT count(*) as c FROM Chapter";
+    $sql = "SELECT COUNT(*) as c FROM Chapter";
     $results = $mapper->executeSql($sql);
 
     $this->assertEquals(1, sizeof($results));

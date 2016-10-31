@@ -10,19 +10,24 @@
  */
 namespace wcmf\test\tests\model;
 
-use wcmf\test\lib\BaseTestCase;
-
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
 
 /**
  * NodeUtilTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeUtilTest extends BaseTestCase {
+class NodeUtilTest extends DatabaseTestCase {
+
+  protected function getDataSet() {
+    return new ArrayDataSet(array(
+    ));
+  }
 
   public function testGetConnection() {
     $paths1 = NodeUtil::getConnections('Author', null, 'Image', 'child');
@@ -92,8 +97,9 @@ class NodeUtilTest extends BaseTestCase {
       "`Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
       "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
       "FROM `Image` INNER JOIN `Chapter` AS `NormalChapter` ON ".
-      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE (`NormalChapter`.`id` = 10) ORDER BY `Image`.`sortkey` ASC";
+      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE (`NormalChapter`.`id` = 10) ORDER BY `sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected1, 'Image'), str_replace("\n", "", $sql1));
+    $this->executeSql('Image', $sql1);
 
     // Chapter -> ParentChapter
     $node2 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
@@ -110,8 +116,9 @@ class NodeUtilTest extends BaseTestCase {
       "`Chapter`.`sortkey` AS `sortkey`, ".
       "`AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` ".
       "INNER JOIN `Chapter` AS `SubChapter` ON `SubChapter`.`fk_chapter_id` = `Chapter`.`id` ".
-      "WHERE (`SubChapter`.`id` = 10) ORDER BY `Chapter`.`sortkey` ASC";
+      "WHERE (`SubChapter`.`id` = 10) ORDER BY `sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected2, 'Chapter'), str_replace("\n", "", $sql2));
+    $this->executeSql('Chapter', $sql2);
 
     // Chapter -> SubChapter
     $node3 = ObjectFactory::getInstance('persistenceFacade')->create('Chapter');
@@ -128,8 +135,9 @@ class NodeUtilTest extends BaseTestCase {
       "`Chapter`.`sortkey` AS `sortkey`, ".
       "`AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` ".
       "INNER JOIN `Chapter` AS `ParentChapter` ON `Chapter`.`fk_chapter_id` = `ParentChapter`.`id` ".
-      "WHERE (`ParentChapter`.`id` = 10) ORDER BY `Chapter`.`sortkey` ASC";
+      "WHERE (`ParentChapter`.`id` = 10) ORDER BY `sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected3, 'Chapter'), str_replace("\n", "", $sql3));
+    $this->executeSql('Chapter', $sql3);
   }
 }
 ?>

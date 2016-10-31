@@ -301,9 +301,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $this->connect();
     }
     try {
-      $results = $this->adapter->query($sql, $parameters);
-      if ($results instanceof \Zend\Db\ResultSet\ResultSet) {
-        return $results->toArray();
+      $stmt = $this->adapter->createStatement($sql, $parameters);
+      $results = $stmt->execute();
+      if ($results->isQueryResult()) {
+        return $results->getResource()->fetchAll();
       }
       else {
         return $results->getAffectedRows();

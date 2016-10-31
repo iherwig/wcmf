@@ -93,7 +93,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // out of bounds 1
     $pagingInfo4 = new PagingInfo(-1);
     $chapters4 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo4);
-    $this->assertEquals(0, sizeof($chapters4));
+    $this->assertEquals($this->numChapters, sizeof($chapters4));
 
     // out of bounds 2
     $pagingInfo5 = new PagingInfo(100000000);
