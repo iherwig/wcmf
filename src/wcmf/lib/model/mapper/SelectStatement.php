@@ -144,7 +144,8 @@ class SelectStatement extends Select {
     $adapter = $this->getAdapter();
     $sql = preg_replace('/^SELECT (.+) FROM/i', 'SELECT COUNT(*) AS nRows FROM', $this->getSql());
     $sql = preg_replace('/LIMIT [0-9]+ OFFSET [0-9]+$/i', '', $sql);
-    $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
+    $sql = preg_replace('/ORDER BY .+$/i', '', $sql);
+    $stmt = $adapter->getDriver()->getConnection()->prepare(trim($sql));
     $result = $stmt->execute($this->getParameters())->getResource();
     $row = $result->fetch();
     $nRows = $row['nRows'];
