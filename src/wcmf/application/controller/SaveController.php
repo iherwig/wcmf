@@ -16,6 +16,7 @@ use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
@@ -115,6 +116,11 @@ class SaveController extends Controller {
             }
             // ignore primary key values, because they are immutable
             if (!$isNew && in_array($curValueName, $pkValueNames)) {
+              continue;
+            }
+            // ignore reference attributes
+            $attribute = $mapper->getAttribute($curValueName);
+            if ($attribute instanceof ReferenceDescription) {
               continue;
             }
 

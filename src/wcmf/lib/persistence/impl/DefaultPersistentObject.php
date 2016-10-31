@@ -17,6 +17,7 @@ use wcmf\lib\persistence\impl\NullMapper;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PropertyChangeEvent;
+use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\persistence\validator\Validator;
@@ -424,12 +425,17 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * Check a value's value against the validation type set on it. This method uses the
    * validateType property of the attribute definition.
-   * Throws a ValidationException if the valud is not valid.
+   * Throws a ValidationException if the value is not valid.
    * @param $name The name of the item to set.
    * @param $value The value of the item.
    * @param $message The Message instance used to provide translations.
    */
   protected function validateValueAgainstValidateType($name, $value, Message $message) {
+    // don't validate referenced values
+    $mapper = $this->getMapper();
+    if ($mapper->hasAttribute($name) && $mapper->getAttribute($name) instanceof ReferenceDescription) {
+      return;
+    }
     $validateType = $this->getValueProperty($name, 'validate_type');
     if (($validateType == '' || Validator::validate($value, $validateType, $message))) {
       return;
