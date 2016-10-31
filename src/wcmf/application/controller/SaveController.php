@@ -118,6 +118,10 @@ class SaveController extends Controller {
             if (!$isNew && in_array($curValueName, $pkValueNames)) {
               continue;
             }
+            // ignore relations
+            if ($mapper->hasRelation($curValueName)) {
+              continue;
+            }
             // ignore reference attributes
             $attribute = $mapper->getAttribute($curValueName);
             if ($attribute instanceof ReferenceDescription) {
@@ -140,10 +144,8 @@ class SaveController extends Controller {
               }
               else {
                 // no upload
-                // connect array values to a comma separated string if it's no a relation
-                if (!$mapper->hasRelation($curValueName)) {
-                  $curRequestValue = join($curRequestValue, ",");
-                }
+                // connect array values to a comma separated string
+                $curRequestValue = join($curRequestValue, ",");
               }
             }
 
