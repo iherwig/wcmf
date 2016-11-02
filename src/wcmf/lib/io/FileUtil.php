@@ -278,5 +278,14 @@ class FileUtil {
     $file = preg_replace("([\.]{2,})", '', $file);
     return $file;
   }
+
+  /**
+   * Check if the given file exists
+   * @param $file
+   * @return Boolean
+   */
+  public static function fileExists($file) {
+    return file_exists($file) || file_exists(iconv('utf-8', 'cp1252', $file));
+  }
 }
 ?>
