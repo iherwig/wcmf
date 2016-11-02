@@ -173,19 +173,19 @@ class SortController extends Controller {
       $type = $insertObject->getType();
       $sortkeyDef = $mapper->getSortkey();
       $sortkey = $sortkeyDef['sortFieldName'];
-      $sortdir = $sortkeyDef['sortDirection'];
+      $sortdir = strtoupper($sortkeyDef['sortDirection']);
 
       // get the sortkey values of the objects before and after the insert position
       if ($isOrderBottom) {
         $lastObject = $this->loadLastObject($type, $sortkey, $sortdir);
         $prevValue = $lastObject != null ? $this->getSortkeyValue($lastObject, $sortkey) : 1;
-        $nextValue = ceil($prevValue+1);
+        $nextValue = ceil($sortdir == 'ASC' ? $prevValue+1 : $prevValue-1);
       }
       else {
         $nextValue = $this->getSortkeyValue($referenceObject, $sortkey);
         $prevObject = $this->loadPreviousObject($type, $sortkey, $nextValue, $sortdir);
         $prevValue = $prevObject != null ? $this->getSortkeyValue($prevObject, $sortkey) :
-          ceil($nextValue-1);
+          ceil($sortdir == 'ASC' ? $nextValue-1 : $nextValue+1);
       }
 
       // set the sortkey value to the average
@@ -251,10 +251,9 @@ class SortController extends Controller {
   protected function loadPreviousObject($type, $sortkeyName, $sortkeyValue, $sortDirection) {
     $query = new ObjectQuery($type);
     $tpl = $query->getObjectTemplate($type);
-    $tpl->setValue($sortkeyName, Criteria::asValue('<', $sortkeyValue), true);
+    $tpl->setValue($sortkeyName, Criteria::asValue($sortDirection == 'ASC' ? '<' : '>', $sortkeyValue), true);
     $pagingInfo = new PagingInfo(1, true);
-    $invSortDir = $sortDirection == 'ASC' ? 'DESC' : 'ASC';
-    $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$invSortDir), $pagingInfo);
+    $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$sortDirection), $pagingInfo);
     return sizeof($objects) > 0 ? $objects[0] : null;
   }
 

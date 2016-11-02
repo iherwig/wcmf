@@ -59,6 +59,11 @@ class SortControllerTest extends ControllerTestCase {
         array('id' => 403, 'fk_referencedbook_id' => 304, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 403.0),
         array('id' => 404, 'fk_referencedbook_id' => 305, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 404.0),
         array('id' => 405, 'fk_referencedbook_id' => 306, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 405.0),
+      ),
+      'Image' => array(
+        array('id' => 503, 'sortkey' => 205.0),
+        array('id' => 504, 'sortkey' => 204.0),
+        array('id' => 505, 'sortkey' => 203.0),
       )
     ));
   }
@@ -66,7 +71,7 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testMoveBeforeTop() {
+  public function testAscMoveBeforeTop() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
@@ -88,7 +93,7 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testMoveBeforeMiddle() {
+  public function testAscMoveBeforeMiddle() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
@@ -110,7 +115,7 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testMoveBeforeBottom() {
+  public function testAscMoveBeforeBottom() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
@@ -132,7 +137,73 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testInsertBeforeTop() {
+  public function testDescMoveBeforeTop() {
+    TestUtil::startSession('admin', 'admin');
+
+    // test before
+    $this->assertTrue($this->testImageOrder([503, 504, 505]));
+
+    // simulate a movebefore call
+    $data = array(
+      'insertOid' => 'Image:505',
+      'referenceOid' => 'Image:503'
+    );
+    $this->runRequest('moveBefore', $data);
+
+    // test
+    $this->assertTrue($this->testImageOrder([505, 503, 504]));
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testDescMoveBeforeMiddle() {
+    TestUtil::startSession('admin', 'admin');
+
+    // test before
+    $this->assertTrue($this->testImageOrder([503, 504, 505]));
+
+    // simulate a movebefore call
+    $data = array(
+      'insertOid' => 'Image:505',
+      'referenceOid' => 'Image:504'
+    );
+    $this->runRequest('moveBefore', $data);
+
+    // test
+    $this->assertTrue($this->testImageOrder([503, 505, 504]));
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testDescMoveBeforeBottom() {
+    TestUtil::startSession('admin', 'admin');
+
+    // test before
+    $this->assertTrue($this->testImageOrder([503, 504, 505]));
+
+    // simulate a movebefore call
+    $data = array(
+      'insertOid' => 'Image:503',
+      'referenceOid' => 'ORDER_BOTTOM'
+    );
+    $this->runRequest('moveBefore', $data);
+
+    // test
+    $this->assertTrue($this->testImageOrder([504, 505, 503]));
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testAscInsertBeforeTop() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
@@ -156,7 +227,7 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testInsertBeforeMiddle() {
+  public function testAscInsertBeforeMiddle() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
@@ -180,7 +251,7 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testInsertBeforeBottom() {
+  public function testAscInsertBeforeBottom() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
@@ -290,7 +361,18 @@ class SortControllerTest extends ControllerTestCase {
     return true;
   }
 
-    private function testNMBookOrder(array $order, $bookId) {
+  private function testImageOrder(array $order) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $images = $persistenceFacade->loadObjects('Image');
+    for ($i=0, $count=sizeof($images); $i<$count; $i++) {
+      if ($images[$i]->getOID()->getFirstId() != $order[$i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private function testNMBookOrder(array $order, $bookId) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $referencingBook = $persistenceFacade->load(new ObjectId('Book', $bookId));
     $referencedBooks = $referencingBook->getValue('ReferencedBook');

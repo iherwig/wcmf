@@ -2155,7 +2155,7 @@
   <Chronos:ChiNode xmi:id="_cDacMLU4EeORdpT3S9OOtw" base_Class="_BMnDwLU2EeORdpT3S9OOtw" display_value="name" is_searchable="true" is_soap="true" orderby="sortkey"/>
   <Chronos:ChiValueRef xmi:id="_nlhNcLU4EeORdpT3S9OOtw" base_Property="_kn2icLU4EeORdpT3S9OOtw" reference_value="name" reference_type="Author"/>
   <Chronos:ChiValue xmi:id="_p0IaELU4EeORdpT3S9OOtw" app_data_type="DATATYPE_ATTRIBUTE|TRANSLATABLE" is_editable="true" base_Property="_kq-u8LU4EeORdpT3S9OOtw"/>
-  <Chronos:ChiNode xmi:id="_uWjcYLU4EeORdpT3S9OOtw" base_Class="_BQLVILU2EeORdpT3S9OOtw" display_value="filename" is_searchable="true" is_soap="true" orderby="sortkey"/>
+  <Chronos:ChiNode xmi:id="_uWjcYLU4EeORdpT3S9OOtw" base_Class="_BQLVILU2EeORdpT3S9OOtw" display_value="filename" is_searchable="true" is_soap="true" orderby="sortkey DESC"/>
   <Chronos:ChiValue xmi:id="_169B8LU4EeORdpT3S9OOtw" is_editable="true" input_type="filebrowser" display_type="image" column_name="file" base_Property="_0UxuULU4EeORdpT3S9OOtw"/>
   <Chronos:ChiManyToMany xmi:id="_7oE80LU4EeORdpT3S9OOtw" base_Class="_BTThoLU2EeORdpT3S9OOtw" orderby="sortkey"/>
   <Chronos:ChiAssociation xmi:id="_g5KtYLU8EeORdpT3S9OOtw" fk_name="fk_titlechapter_id" base_Association="_H7bIULU6EeORdpT3S9OOtw"/>
