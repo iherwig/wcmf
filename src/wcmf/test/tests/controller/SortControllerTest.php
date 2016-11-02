@@ -61,9 +61,9 @@ class SortControllerTest extends ControllerTestCase {
         array('id' => 405, 'fk_referencedbook_id' => 306, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 405.0),
       ),
       'Image' => array(
-        array('id' => 503, 'sortkey' => 205.0),
-        array('id' => 504, 'sortkey' => 204.0),
-        array('id' => 505, 'sortkey' => 203.0),
+        array('id' => 503, 'fk_chapter_id' => 203, 'sortkey' => 205.0, 'sortkey_normalchapter' => 205.0),
+        array('id' => 504, 'fk_chapter_id' => 203, 'sortkey' => 204.0, 'sortkey_normalchapter' => 204.0),
+        array('id' => 505, 'fk_chapter_id' => 203, 'sortkey' => 203.0, 'sortkey_normalchapter' => 203.0),
       )
     ));
   }
@@ -137,6 +137,78 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
+  public function testAscInsertBeforeTop() {
+    TestUtil::startSession('admin', 'admin');
+
+    // test before
+    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+
+    // simulate a insertbefore call
+    $data = array(
+      'containerOid' => 'Author:100',
+      'insertOid' => 'Chapter:205',
+      'referenceOid' => 'Chapter:203',
+      'role' => 'Chapter'
+    );
+    $this->runRequest('insertBefore', $data);
+
+    // test
+    $this->assertTrue($this->testChapterOrder([205, 203, 204], 100));
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testAscInsertBeforeMiddle() {
+    TestUtil::startSession('admin', 'admin');
+
+    // test before
+    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+
+    // simulate a insertbefore call
+    $data = array(
+      'containerOid' => 'Author:100',
+      'insertOid' => 'Chapter:205',
+      'referenceOid' => 'Chapter:204',
+      'role' => 'Chapter'
+    );
+    $this->runRequest('insertBefore', $data);
+
+    // test
+    $this->assertTrue($this->testChapterOrder([203, 205, 204], 100));
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
+  public function testAscInsertBeforeBottom() {
+    TestUtil::startSession('admin', 'admin');
+
+    // test before
+    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+
+    // simulate a insertbefore call
+    $data = array(
+      'containerOid' => 'Author:100',
+      'insertOid' => 'Chapter:203',
+      'referenceOid' => 'ORDER_BOTTOM',
+      'role' => 'Chapter'
+    );
+    $this->runRequest('insertBefore', $data);
+
+    // test
+    $this->assertTrue($this->testChapterOrder([204, 205, 203], 100));
+
+    TestUtil::endSession();
+  }
+
+  /**
+   * @group controller
+   */
   public function testDescMoveBeforeTop() {
     TestUtil::startSession('admin', 'admin');
 
@@ -203,23 +275,23 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testAscInsertBeforeTop() {
+  public function testDescInsertBeforeTop() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+    $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
     $data = array(
-      'containerOid' => 'Author:100',
-      'insertOid' => 'Chapter:205',
-      'referenceOid' => 'Chapter:203',
-      'role' => 'Chapter'
+      'containerOid' => 'Chapter:203',
+      'insertOid' => 'Image:505',
+      'referenceOid' => 'Image:503',
+      'role' => 'NormalImage'
     );
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([205, 203, 204], 100));
+    $this->assertTrue($this->testImageOrder([505, 503, 504], 203));
 
     TestUtil::endSession();
   }
@@ -227,23 +299,23 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testAscInsertBeforeMiddle() {
+  public function testDescInsertBeforeMiddle() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+    $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
     $data = array(
-      'containerOid' => 'Author:100',
-      'insertOid' => 'Chapter:205',
-      'referenceOid' => 'Chapter:204',
-      'role' => 'Chapter'
+      'containerOid' => 'Chapter:203',
+      'insertOid' => 'Image:505',
+      'referenceOid' => 'Image:504',
+      'role' => 'NormalImage'
     );
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([203, 205, 204], 100));
+    $this->assertTrue($this->testImageOrder([503, 505, 504], 203));
 
     TestUtil::endSession();
   }
@@ -251,23 +323,23 @@ class SortControllerTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testAscInsertBeforeBottom() {
+  public function testDescInsertBeforeBottom() {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+    $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
     $data = array(
-      'containerOid' => 'Author:100',
-      'insertOid' => 'Chapter:203',
+      'containerOid' => 'Chapter:203',
+      'insertOid' => 'Image:503',
       'referenceOid' => 'ORDER_BOTTOM',
-      'role' => 'Chapter'
+      'role' => 'NormalImage'
     );
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([204, 205, 203], 100));
+    $this->assertTrue($this->testImageOrder([504, 505, 503], 203));
 
     TestUtil::endSession();
   }
@@ -361,9 +433,15 @@ class SortControllerTest extends ControllerTestCase {
     return true;
   }
 
-  private function testImageOrder(array $order) {
+  private function testImageOrder(array $order, $chapterId=null) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $images = $persistenceFacade->loadObjects('Image');
+    if ($chapterId == null) {
+      $images = $persistenceFacade->loadObjects('Image');
+    }
+    else {
+      $chapter = $persistenceFacade->load(new ObjectId('Chapter', $chapterId));
+      $images = $chapter->getValue('NormalImage');
+    }
     for ($i=0, $count=sizeof($images); $i<$count; $i++) {
       if ($images[$i]->getOID()->getFirstId() != $order[$i]) {
         return false;

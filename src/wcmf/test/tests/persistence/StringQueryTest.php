@@ -102,7 +102,7 @@ class StringQueryTest extends DatabaseTestCase {
       "`Image`.`file` AS `filename`, `Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
       "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
       "FROM `Image` INNER JOIN `Chapter` AS `NormalChapter` ON ".
-      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE `NormalChapter`.`id` = 10 ORDER BY `sortkey` ASC";
+      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE `NormalChapter`.`id` = 10 ORDER BY `sortkey` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql));
     $this->executeSql('Image', $sql);
   }

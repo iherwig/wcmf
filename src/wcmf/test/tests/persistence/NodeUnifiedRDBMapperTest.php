@@ -183,7 +183,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $expected6 = "SELECT `Image`.`id` AS `id`, `Image`.`fk_chapter_id` AS `fk_chapter_id`, `Image`.`fk_titlechapter_id` AS `fk_titlechapter_id`, `Image`.`file` AS `filename`, ".
       "`Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
       "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
-      "FROM `Image` WHERE `Image`.`fk_chapter_id` IN(:Image_fk_chapter_id0) ORDER BY `sortkey_normalchapter` ASC";
+      "FROM `Image` WHERE `Image`.`fk_chapter_id` IN(:Image_fk_chapter_id0) ORDER BY `sortkey_normalchapter` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected6, 'Author'), str_replace("\n", "", $sql6));
     $this->executeSql('Image', $sql6, array('Image_fk_chapter_id0' => 1));
 

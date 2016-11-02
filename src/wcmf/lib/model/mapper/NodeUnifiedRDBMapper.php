@@ -189,6 +189,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
               $relationDescPrev = $defaultRelationDesc != null ? $defaultRelationDesc :
                   $object->getNodeRelation($prevNode);
               $sortkeyDefPrev = $prevNode->getMapper()->getSortkey($relationDescPrev->getThisRole());
+              $sortdirPrev = strtoupper($sortkeyDefPrev['sortDirection']);
               $prevSortNode = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
                     PersistentObjectProxy::fromObject($prevNode), $relationDesc);
               $prevValue = $prevSortNode->getValue($sortkeyDefPrev['sortFieldName']);
@@ -201,6 +202,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
               $relationDescNext = $defaultRelationDesc != null ? $defaultRelationDesc :
                   $object->getNodeRelation($nextNode);
               $sortkeyDefNext = $nextNode->getMapper()->getSortkey($relationDescNext->getThisRole());
+              $sortdirNext = strtoupper($sortkeyDefNext['sortDirection']);
               $nextSortNode = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
                     PersistentObjectProxy::fromObject($nextNode), $relationDesc);
               $nextValue = $nextSortNode->getValue($sortkeyDefNext['sortFieldName']);
@@ -208,10 +210,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
             // set edge values
             if ($prevValue == null) {
-              $prevValue = ceil($nextValue-1);
+              $prevValue = ceil($sortdirNext == 'ASC' ? $nextValue-1 : $nextValue+1);
             }
             if ($nextValue == null) {
-              $nextValue = ceil($prevValue+1);
+              $nextValue = ceil($sortdirPrev == 'ASC' ? $prevValue+1 : $prevValue-1);
             }
 
             // set the sortkey value to the average
