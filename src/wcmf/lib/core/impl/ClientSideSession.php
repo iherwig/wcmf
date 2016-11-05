@@ -76,6 +76,7 @@ class ClientSideSession implements Session {
     if (!headers_sent()) {
       setcookie($key, $value, 0, '/', '', URIUtil::isHttps(), false);
     }
+    $_COOKIE[$key] = $value;
   }
 
   /**
@@ -85,6 +86,7 @@ class ClientSideSession implements Session {
     if (!headers_sent()) {
       setcookie($key, false, 0, '/', '', URIUtil::isHttps(), false);
     }
+    unset($_COOKIE[$key]);
   }
 
   /**
