@@ -44,11 +44,13 @@ key2 = value2
 key3 = value3
 ~~~~~~~~~~~~~
 
+@note Configuration section and key names are treated case-insensitive.
+
 Additionally it defines __array values__ (enclosed in curly braces) and __inclusion__
 of additional files. Included files are defined in the `include` key of the `Config`
-section. If a configuration section exists in both files, the values are merged,
-whereby values in the current file override values from included files. This
-behavior is comparable to the concept of inheritance and can be disabled by
+section. If a configuration section with the same name exists in both files, the
+values are merged, whereby values in the current file override values from included files.
+This behavior is comparable to the concept of inheritance and can be disabled by
 adding the `__inherit` configuration key to the section and setting it to _false_.
 
 The following example shows how to include an array of additional configuration
@@ -59,6 +61,9 @@ files to separate concerns:
 include = {server.ini, persistence.ini, presentation.ini, security.ini}
 ~~~~~~~~~~~~~
 
+Configuration sections from following files override identically named sections
+from preceding files.
+
 @note While path values in the configuration are normally resolved relative to the
 value of the `WCMF_BASE` constant, the included files are expected to be located
 in the directory that is passed to the constructor of
@@ -68,8 +73,6 @@ The possibility to include configuration files into others is useful, if you wan
 to __separate varying parts__ from static ones to simplify the deployment process.
 In the \ref app "default application" for example all server specific configuration
 (e.g. database connection) are separated into a file called _server.ini_.
-
-@note Configuration section and key names are treated case-insensitive.
 
 ## Dependency injection ## {#conf_di}
 
