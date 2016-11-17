@@ -11,7 +11,6 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\config\Configuration;
-use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
@@ -46,7 +45,7 @@ use wcmf\lib\security\PermissionManager;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class Controller {
+abstract class Controller {
 
   const CSRF_TOKEN_PARAM = 'csrf_token';
 
@@ -91,13 +90,13 @@ class Controller {
 
   /**
    * Initialize the Controller with request/response data. Which data is required is defined by the Controller.
-   * The base class method just stores the parameters in a member variable. Specialized Controllers may overide
-   * this behaviour for further initialization.
+   * The base class method just stores the parameters in a member variable. Specialized Controllers may override
+   * this behavior for further initialization.
    * @attention It lies in its responsibility to fail or do some default action if some data is missing.
    * @param $request Request instance sent to the Controller. The sender attribute of the Request is the
    * last controller's name, the context is the current context and the action is the requested one.
    * All data sent from the last controller are accessible using the Request::getValue method. The request is
-   * supposed to be read-only. It will not be used any more after beeing passed to the controller.
+   * supposed to be read-only. It will not be used any more after being passed to the controller.
    * @param $response Response instance that will be modified by the Controller. The initial values for
    * context and action are the same as in the request parameter and are meant to be modified according to the
    * performed action. The sender attribute of the response is set to the current controller. Initially there
@@ -124,15 +123,13 @@ class Controller {
 
   /**
    * Execute the Controller resulting in its action processed. The actual
-   * processing is delegated to the given method, which must be implemented
-   * by concrete Controller subclasses.
-   * @param $method The name of the method to execute (optional, defaults to 'doExecute' if not given)
+   * processing is delegated to the doExecute() method.
+   * @param $method The name of the method to execute, will be passed to doExecute() (optional)
    */
   public function execute($method=null) {
-    $method = $method == null ? 'doExecute' : $method;
     $isDebugEnabled = $this->logger->isDebugEnabled();
     if ($isDebugEnabled) {
-      $this->logger->debug('Executing: '.get_class($this).'::'.$method);
+      $this->logger->debug('Executing: '.get_class($this).($method ? '::'.$method: ''));
       $this->logger->debug('Request: '.$this->request);
     }
 
@@ -144,12 +141,7 @@ class Controller {
 
     // execute controller logic
     if (!$validationFailed) {
-      if (method_exists($this, $method)) {
-        call_user_func(array($this, $method));
-      }
-      else {
-        throw new IllegalArgumentException("The method '".$method."' is not defined in class ".get_class($this));
-      }
+      $this->doExecute($method);
     }
 
     // return the last error
@@ -171,6 +163,12 @@ class Controller {
       $this->logger->debug('Response: '.$this->response);
     }
   }
+
+  /**
+   * Execute the given controller method.
+   * @param $method The name of the method to execute (optional)
+   */
+  protected abstract function doExecute($method=null);
 
   /**
    * Delegate the current request to another action. The context is the same as

@@ -119,7 +119,7 @@ class LoginController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     $session = $this->getSession();
     $request = $this->getRequest();
     $response = $this->getResponse();

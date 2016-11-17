@@ -51,7 +51,7 @@ class DeleteController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     $persistenceFacade = $this->getPersistenceFacade();
     $request = $this->getRequest();
     $response = $this->getResponse();

@@ -91,7 +91,7 @@ class ListController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     $request = $this->getRequest();
     $permissionManager = $this->getPermissionManager();
 

@@ -52,7 +52,7 @@ class SOAPController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     global $server;
 
     // instantiate server

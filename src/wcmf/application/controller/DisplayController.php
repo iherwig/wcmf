@@ -70,7 +70,7 @@ class DisplayController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     $persistenceFacade = $this->getPersistenceFacade();
     $permissionManager = $this->getPermissionManager();
     $request = $this->getRequest();

@@ -69,7 +69,7 @@ class UserController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     $session = $this->getSession();
     $permissionManager = $this->getPermissionManager();
     $persistenceFacade = $this->getPersistenceFacade();

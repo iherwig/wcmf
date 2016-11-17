@@ -135,7 +135,7 @@ abstract class BatchController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     $response = $this->getResponse();
 
     // check if a download was triggered in the last step

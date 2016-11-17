@@ -106,7 +106,7 @@ class MultipleActionController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     // create and execute requests for the actions given in data
     $request = $this->getRequest();
     $response = $this->getResponse();

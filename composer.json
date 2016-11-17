@@ -16,9 +16,9 @@
             "type": "package",
             "package": {
                 "name": "olympos/chronos-generator",
-                "version": "1.0.2",
+                "version": "1.0.3",
                 "dist": {
-                    "url": "https://downloads.sourceforge.net/project/olympos/ChronosGenerator-wCMF/ChronosGenerator-wCMF-1.0.2.zip",
+                    "url": "https://downloads.sourceforge.net/project/olympos/ChronosGenerator-wCMF/ChronosGenerator-wCMF-1.0.3.zip",
                     "type": "zip"
                 }
             }

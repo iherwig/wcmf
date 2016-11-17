@@ -60,7 +60,7 @@ class ValueListController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute() {
+  protected function doExecute($method=null) {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
