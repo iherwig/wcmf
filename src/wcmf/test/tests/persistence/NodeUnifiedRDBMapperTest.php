@@ -129,7 +129,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
 
     // parent (complete)
     $relationDescription2 = $mapper1->getRelation('Author');
-    $otherMapper2 = ObjectFactory::getInstanceOf('app\src\model\AuthorRDBMapper');
+    $otherMapper2 = ObjectFactory::getInstanceOf('app\src\model\_base\AuthorRDBMapper');
     $otherMapper2->setConnectionParams($this->dbParams);
     list($selectStmt2, $objValueName2, $relValueName2) = TestUtil::callProtectedMethod($otherMapper2, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription2->getThisRole()));
@@ -143,7 +143,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
 
     // parent (order)
     $relationDescription3 = $mapper1->getRelation('Author');
-    $otherMapper3 = ObjectFactory::getInstanceOf('app\src\model\AuthorRDBMapper');
+    $otherMapper3 = ObjectFactory::getInstanceOf('app\src\model\_base\AuthorRDBMapper');
     $otherMapper3->setConnectionParams($this->dbParams);
     list($selectStmt3, $objValueName3, $relValueName3) = TestUtil::callProtectedMethod($otherMapper3, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription3->getThisRole(), null, array('name')));
@@ -158,7 +158,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     // parent (criteria)
     $criteria4 = new Criteria('Author', 'name', '=', 'Unknown');
     $relationDescription4 = $mapper1->getRelation('Author');
-    $otherMapper4 = ObjectFactory::getInstanceOf('app\src\model\AuthorRDBMapper');
+    $otherMapper4 = ObjectFactory::getInstanceOf('app\src\model\_base\AuthorRDBMapper');
     $otherMapper4->setConnectionParams($this->dbParams);
     list($selectStmt4, $objValueName4, $relValueName4) = TestUtil::callProtectedMethod($otherMapper4, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription4->getThisRole(), array($criteria4)));
@@ -191,7 +191,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
 
     // many to many (complete)
     $relationDescription8 = $mapper2->getRelation('Author');
-    $otherMapper8 = ObjectFactory::getInstanceOf('app\src\model\AuthorRDBMapper');
+    $otherMapper8 = ObjectFactory::getInstanceOf('app\src\model\_base\AuthorRDBMapper');
     $otherMapper8->setConnectionParams($this->dbParams);
     list($selectStmt8, $objValueName8, $relValueName8) = TestUtil::callProtectedMethod($otherMapper8, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription8->getThisRole()));
