@@ -21,17 +21,6 @@ use wcmf\lib\presentation\Response;
 use wcmf\lib\util\StringUtil;
 
 /**
- * Predefined errors
- */
-$message = ObjectFactory::getInstance('message');
-define('ROUTE_NOT_FOUND', serialize(array('ROUTE_NOT_FOUND', ApplicationError::LEVEL_WARNING, 404,
-  $message->getText('No route matching the request path can be found.')
-)));
-define('METHOD_NOT_ALLOWED', serialize(array('METHOD_NOT_ALLOWED', ApplicationError::LEVEL_WARNING, 405,
-  $message->getText('The HTTP method is not allowed on the requested path.')
-)));
-
-/**
  * Default Request implementation.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -44,6 +33,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
   private static $requestDataFixed = false;
   private static $logger = null;
+  private static $errorsDefined = false;
 
   /**
    * Constructor
@@ -54,13 +44,14 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
+    self::defineErrors();
 
     // set headers and method
     foreach (self::getAllHeaders() as $name => $value) {
       $this->setHeader($name, $value);
     }
     $this->method = isset($_SERVER['REQUEST_METHOD']) ?
-            strtoupper($_SERVER['REQUEST_METHOD']) : '';    
+            strtoupper($_SERVER['REQUEST_METHOD']) : '';
 
     // fix get request parameters
     if (!self::$requestDataFixed) {
@@ -341,6 +332,22 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         $key = preg_replace('/(\.| )/', '_', $key);
         $target[$key] = $val;
       }
+    }
+  }
+
+  /**
+   * Define errors
+   */
+  private static function defineErrors() {
+    if (self::$errorsDefined) {
+      $message = ObjectFactory::getInstance('message');
+      define('ROUTE_NOT_FOUND', serialize(array('ROUTE_NOT_FOUND', ApplicationError::LEVEL_WARNING, 404,
+        $message->getText('No route matching the request path can be found.')
+      )));
+      define('METHOD_NOT_ALLOWED', serialize(array('METHOD_NOT_ALLOWED', ApplicationError::LEVEL_WARNING, 405,
+        $message->getText('The HTTP method is not allowed on the requested path.')
+      )));
+      self::$errorsDefined = true;
     }
   }
 }

@@ -28,7 +28,7 @@ use wcmf\lib\presentation\Response;
  * <div>
  * Handle action according to HTTP method and parameters.
  *
- * For details about the paramters, see documentation of the methods.
+ * For details about the parameters, see documentation of the methods.
  *
  * | __Response Actions__   | |
  * |------------------------|-------------------------
@@ -39,6 +39,7 @@ use wcmf\lib\presentation\Response;
  * @author ingo herwig <ingo@wemove.com>
  */
 class RESTController extends Controller {
+  use \wcmf\lib\presentation\ControllerMethods;
 
   /**
    * @see Controller::initialize()

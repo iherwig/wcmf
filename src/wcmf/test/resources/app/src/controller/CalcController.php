@@ -18,6 +18,7 @@ use wcmf\lib\presentation\Controller;
  * @author ingo herwig <ingo@wemove.com>
  */
 class CalcController extends Controller {
+  use \wcmf\lib\presentation\ControllerMethods;
 
   protected function calcOk() {
     $this->recordCall(__METHOD__);
