@@ -41,7 +41,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
   }
 
   public function testSelectSQL() {
-    $mapper1 = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
+    $mapper1 = ObjectFactory::getInstanceOf('app\src\model\_base\ChapterRDBMapper');
     $mapper1->setConnectionParams($this->dbParams);
     $criteria = new Criteria('Chapter', 'name', '=', 'Chapter 1');
 
@@ -107,7 +107,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
 
     // dbprefix
     $this->dbParams['dbPrefix'] = 'WCMF_';
-    $mapper2 = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
+    $mapper2 = ObjectFactory::getInstanceOf('app\src\model\_base\ChapterRDBMapper');
     $mapper2->setConnectionParams($this->dbParams);
 
     // condition
@@ -121,7 +121,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
   }
 
   public function testRelationSQL() {
-    $mapper1 = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
+    $mapper1 = ObjectFactory::getInstanceOf('app\src\model\_base\ChapterRDBMapper');
     $mapper1->setConnectionParams($this->dbParams);
 
     $chapter = new Chapter(new ObjectId('Chapter', array(1)));
@@ -207,7 +207,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
   }
 
   public function testInsertSQL() {
-    $mapper = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
+    $mapper = ObjectFactory::getInstanceOf('app\src\model\_base\ChapterRDBMapper');
     $mapper->setConnectionParams($this->dbParams);
 
     $chapter1 = new Chapter(new ObjectId('Chapter', 1));
@@ -233,7 +233,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
   }
 
   public function testUpdateSQL() {
-    $mapper = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
+    $mapper = ObjectFactory::getInstanceOf('app\src\model\_base\ChapterRDBMapper');
     $mapper->setConnectionParams($this->dbParams);
 
     $chapter1 = new Chapter(new ObjectId('Chapter', 1));
@@ -259,7 +259,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
   }
 
   public function testDeleteSQL() {
-    $mapper = ObjectFactory::getInstanceOf('app\src\model\ChapterRDBMapper');
+    $mapper = ObjectFactory::getInstanceOf('app\src\model\_base\ChapterRDBMapper');
     $mapper->setConnectionParams($this->dbParams);
 
     $operations = TestUtil::callProtectedMethod($mapper, 'getDeleteSQL', array(new ObjectId('Chapter', 1)));
