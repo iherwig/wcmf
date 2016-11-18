@@ -173,7 +173,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
 
     // child (complete)
     $relationDescription6 = $mapper1->getRelation('NormalImage');
-    $otherMapper6 = ObjectFactory::getInstanceOf('app\src\model\ImageRDBMapper');
+    $otherMapper6 = ObjectFactory::getInstanceOf('app\src\model\_base\ImageRDBMapper');
     $otherMapper6->setConnectionParams($this->dbParams);
     list($selectStmt6, $objValueName6, $relValueName6) = TestUtil::callProtectedMethod($otherMapper6, 'getRelationSelectSQL',
             array(array(PersistentObjectProxy::fromObject($chapter)), $relationDescription6->getThisRole()));
@@ -187,7 +187,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $this->assertEquals($this->fixQueryQuotes($expected6, 'Author'), str_replace("\n", "", $sql6));
     $this->executeSql('Image', $sql6, array('Image_fk_chapter_id0' => 1));
 
-    $mapper2 = ObjectFactory::getInstanceOf('app\src\model\PublisherRDBMapper');
+    $mapper2 = ObjectFactory::getInstanceOf('app\src\model\_base\PublisherRDBMapper');
 
     // many to many (complete)
     $relationDescription8 = $mapper2->getRelation('Author');
