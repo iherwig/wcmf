@@ -56,7 +56,7 @@ class ObjectQueryTest extends DatabaseTestCase {
   public function testOid() {
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
     $sql = $query->getQueryString(false);
-    $expected = "SELECT DISTINCT `Author`.`id` AS `id` ".
+    $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name` ".
       "FROM `Author` AS `Author` ORDER BY `name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);
@@ -180,7 +180,8 @@ class ObjectQueryTest extends DatabaseTestCase {
     $authorTpl->setValue("name", Criteria::asValue("=", "Author")); // explicit LIKE
     $publisherTpl->addNode($authorTpl);
     $sql = $query->getQueryString(BuildDepth::SINGLE, array('sortkey_publisher DESC'));
-    $expected = "SELECT DISTINCT `Publisher`.`id` AS `id`, `Publisher`.`name` AS `name`, `Publisher`.`created` AS `created`, `Publisher`.`creator` AS `creator`, `Publisher`.`modified` AS `modified`, `Publisher`.`last_editor` AS `last_editor` ".
+    $expected = "SELECT DISTINCT `Publisher`.`id` AS `id`, `Publisher`.`name` AS `name`, `Publisher`.`created` AS `created`, `Publisher`.`creator` AS `creator`, `Publisher`.`modified` AS `modified`, `Publisher`.`last_editor` AS `last_editor`, ".
+      "`NMPublisherAuthor`.`sortkey_publisher` AS `sortkey_publisher` ".
       "FROM `Publisher` AS `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
       "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `NMPublisherAuthor`.`sortkey_publisher` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));

@@ -239,11 +239,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       // table
       $tableName = $this->getRealTableName();
       if ($alias != null) {
-        $selectStmt->from(array($alias => $tableName), '');
+        $selectStmt->from(array($alias => $tableName));
         $tableName = $alias;
       }
       else {
-        $selectStmt->from($tableName, '');
+        $selectStmt->from($tableName);
       }
 
       // columns

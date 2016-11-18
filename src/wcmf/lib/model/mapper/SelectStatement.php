@@ -162,18 +162,44 @@ class SelectStatement extends Select {
     }
   }
 
-    /**
+  /**
    * @see Select::join()
-     */
-    public function join($name, $on, $columns = self::SQL_STAR, $type = self::JOIN_INNER) {
-      // prevent duplicate joins
-      foreach ($this->joins->getJoins() as $join) {
-        if ($join['name'] == $name) {
-          return $this;
-        }
+   */
+  public function join($name, $on, $columns=self::SQL_STAR, $type=self::JOIN_INNER) {
+    // prevent duplicate joins
+    foreach ($this->joins->getJoins() as $join) {
+      if ($join['name'] == $name) {
+        return $this;
       }
-      return parent::join($name, $on, $columns, $type);
     }
+    return parent::join($name, $on, $columns, $type);
+  }
+
+  /**
+   * Add columns to the statement
+   * @param $columns Array of columns (@see Select::columns())
+   * @param $joinName The name of the join to which the columns belong
+   */
+  public function addColumns(array $columns, $joinName=null) {
+    if ($joinName === null) {
+      // add normal column
+      $this->columns = $this->columns + $columns;
+    }
+    else {
+      // add column to join
+      $joins = array();
+      foreach ($this->joins->getJoins() as $join) {
+        if ($join['name'] == $joinName) {
+          $join['columns'] += $columns;
+        }
+        $joins[] = $join;
+      }
+      $this->joins->reset();
+      foreach ($joins as $join) {
+        parent::join($join['name'], $join['on'], $join['columns'], $join['type']);
+      }
+    }
+  }
 
   /**
    * Get the sql string for this statement

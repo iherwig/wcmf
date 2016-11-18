@@ -502,6 +502,25 @@ class ObjectQuery extends AbstractQuery {
         throw new UnknownFieldException($orderAttribute, "The sort field name '".$orderAttribute."' is unknown");
       }
     }
+    // add order columns to selected columns as required for distinct queries
+    $order = $selectStmt->getRawState(SelectStatement::ORDER);
+    if (sizeof($order) > 0) {
+      $columnNames = array_keys($selectStmt->getRawState(SelectStatement::COLUMNS));
+      foreach($order as $curOrderBy) {
+        $orderByParts = preg_split('/ /', $curOrderBy);
+        $orderAttribute = $orderByParts[0];
+        $orderType = null;
+        if (strpos($orderAttribute, '.') > 0) {
+          // the type is included in the attribute
+          $orderAttributeParts = preg_split('/\./', $orderAttribute);
+          $orderAttribute = array_pop($orderAttributeParts);
+          $orderType = join('.', $orderAttributeParts);
+        }
+        if (!in_array($orderAttribute, $columnNames)) {
+          $selectStmt->addColumns(array($orderAttribute), $orderType);
+        }
+      }
+    }
   }
 
   /**
