@@ -24,19 +24,13 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
 
   private static $frameworkReady = false;
 
-  // only instantiate PHPUnit_Extensions_Database_DB_IDatabaseConnection once per test
-  private $conn = null;
-
   public final function getConnection() {
     if (!self::$frameworkReady) {
       TestUtil::initFramework(WCMF_BASE.'app/config/');
       self::$frameworkReady = true;
     }
-    if ($this->conn === null) {
-      $params = TestUtil::createDatabase();
-      $this->conn = $this->createDefaultDBConnection($params['connection'], $params['dbName']);
-    }
-    return $this->conn;
+    $params = TestUtil::createDatabase();
+    return $this->createDefaultDBConnection($params['connection'], $params['dbName']);
   }
 
   public function run(\PHPUnit_Framework_TestResult $result=null) {
@@ -60,7 +54,6 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
 
   protected function executeSql($type, $sql, $parameters=array()) {
     return ObjectFactory::getInstance('persistenceFacade')->getMapper($type)->executeSql($sql, $parameters);
-
   }
 }
 ?>

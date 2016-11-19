@@ -3,7 +3,7 @@
 <phpunit bootstrap="bootstrap.php"
          backupGlobals="false"
          backupStaticAttributes="false"
-         processIsolation="false"
+         processIsolation="true"
          verbose="true">
   <testsuites>
     <testsuite name="Controller">
