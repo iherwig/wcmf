@@ -21,6 +21,7 @@ env:
   - secure: CzS6tWrXhO+YYC3eN2yeB4+BgmA3G62drxgj+XIzu0LdZTjbaafvDQCkNUQ6SUaMguS/WTDr9XcqA5MZy4J5QqucWkidcvGnaH4iBJLdYLQ5aIxZqK75zzf2K9vfgh/Zy2JQh07OKBz4ViCZumY8RdW6jxv3lq68Az5yQ31iG/M=
 
 before_script:
+- phpenv config-rm xdebug.ini
 - mysql -e 'CREATE DATABASE wcmf_testapp;'
 - composer self-update
 - composer install
@@ -28,7 +29,7 @@ before_script:
 - cd $TEST_DIR/model && ant
 
 script:
-- cd $TEST_DIR && phpunit --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
+- cd $TEST_DIR && phpdbg -qrr $TRAVIS_BUILD_DIR/vendor/phpunit/phpunit/phpunit --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
 
 after_script:
 - cd $TRAVIS_BUILD_DIR && php $TRAVIS_BUILD_DIR/vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml
