@@ -29,7 +29,4 @@ before_script:
 - cd $TEST_DIR/model && ant
 
 script:
-- cd $TEST_DIR && $TRAVIS_BUILD_DIR/vendor/phpunit/phpunit/phpunit --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
-
-after_script:
-- cd $TRAVIS_BUILD_DIR && php $TRAVIS_BUILD_DIR/vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml
+- cd $TEST_DIR && $TRAVIS_BUILD_DIR/vendor/phpunit/phpunit/phpunit --bootstrap bootstrap.php -c configuration.xml
