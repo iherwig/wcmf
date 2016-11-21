@@ -21,6 +21,9 @@ env:
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
   - secure: CzS6tWrXhO+YYC3eN2yeB4+BgmA3G62drxgj+XIzu0LdZTjbaafvDQCkNUQ6SUaMguS/WTDr9XcqA5MZy4J5QqucWkidcvGnaH4iBJLdYLQ5aIxZqK75zzf2K9vfgh/Zy2JQh07OKBz4ViCZumY8RdW6jxv3lq68Az5yQ31iG/M=
 
+before_install:
+  - if [[ $TRAVIS_PHP_VERSION != 5.6 ]] ; then phpenv config-rm xdebug.ini; fi
+
 before_script:
 - mysql -e 'CREATE DATABASE wcmf_testapp;'
 - composer self-update
