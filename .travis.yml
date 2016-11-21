@@ -15,14 +15,20 @@ php:
 - 7.0
 - 7.1
 
+matrix:
+  include:
+  - php: 5.6
+    env: coverage=true
+  - php: 7.0
+    env: coverage=false
+  - php: 7.1
+    env: coverage=false
+
 env:
   global:
   - JAVA_HOME=/usr/lib/jvm/java-8-oracle
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
   - secure: CzS6tWrXhO+YYC3eN2yeB4+BgmA3G62drxgj+XIzu0LdZTjbaafvDQCkNUQ6SUaMguS/WTDr9XcqA5MZy4J5QqucWkidcvGnaH4iBJLdYLQ5aIxZqK75zzf2K9vfgh/Zy2JQh07OKBz4ViCZumY8RdW6jxv3lq68Az5yQ31iG/M=
-
-before_install:
-  - if [[ $TRAVIS_PHP_VERSION != 5.6 ]] ; then phpenv config-rm xdebug.ini; fi
 
 before_script:
 - mysql -e 'CREATE DATABASE wcmf_testapp;'
@@ -32,7 +38,8 @@ before_script:
 - cd $TEST_DIR/model && ant
 
 script:
-- cd $TEST_DIR && $TRAVIS_BUILD_DIR/vendor/phpunit/phpunit/phpunit -v --debug --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml
+- if [[ $coverage = 'false' ]]; then cd $TEST_DIR && $TRAVIS_BUILD_DIR/vendor/phpunit/phpunit/phpunit -v --bootstrap bootstrap.php -c configuration.xml; fi
+- if [[ $coverage = 'true' ]]; then cd $TEST_DIR && $TRAVIS_BUILD_DIR/vendor/phpunit/phpunit/phpunit -v --debug --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml; fi
 
 after_script:
-- cd $TRAVIS_BUILD_DIR && php $TRAVIS_BUILD_DIR/vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml
+- if [[ $coverage = 'true' ]]; then cd $TRAVIS_BUILD_DIR && php $TRAVIS_BUILD_DIR/vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml; fi
