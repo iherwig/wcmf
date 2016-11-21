@@ -10,27 +10,28 @@ services:
 
 language: php
 
-php:
-- 5.6
-- 7.0
-- 7.1
-
-matrix:
-  include:
-  - php: 5.6
-    env: coverage=true
-  - php: 7.0
-    env: coverage=false
-  - php: 7.1
-    env: coverage=false
-
 env:
   global:
   - JAVA_HOME=/usr/lib/jvm/java-8-oracle
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
+  - VENDOR_DIR=$TRAVIS_BUILD_DIR/vendor
+  - PHPUNIT_DIR=$VENDOR_DIR/phpunit/phpunit
+  - DISABLE_XDEBUG=true
+  - DISABLE_COVERAGE=true
   - secure: CzS6tWrXhO+YYC3eN2yeB4+BgmA3G62drxgj+XIzu0LdZTjbaafvDQCkNUQ6SUaMguS/WTDr9XcqA5MZy4J5QqucWkidcvGnaH4iBJLdYLQ5aIxZqK75zzf2K9vfgh/Zy2JQh07OKBz4ViCZumY8RdW6jxv3lq68Az5yQ31iG/M=
 
+matrix:
+  include:
+  - php: 5.6
+    env: DISABLE_XDEBUG=false DISABLE_COVERAGE=false
+  - php: 7.0
+  - php: 7.1
+    env: DISABLE_XDEBUG=false
+
 before_script:
+- if [[ $DISABLE_XDEBUG ]]; then
+    phpenv config-rm xdebug.ini;
+  fi
 - mysql -e 'CREATE DATABASE wcmf_testapp;'
 - composer self-update
 - composer install
@@ -38,8 +39,13 @@ before_script:
 - cd $TEST_DIR/model && ant
 
 script:
-- if [[ $coverage = 'false' ]]; then cd $TEST_DIR && $TRAVIS_BUILD_DIR/vendor/phpunit/phpunit/phpunit -v --bootstrap bootstrap.php -c configuration.xml; fi
-- if [[ $coverage = 'true' ]]; then cd $TEST_DIR && $TRAVIS_BUILD_DIR/vendor/phpunit/phpunit/phpunit -v --debug --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml; fi
+- if [[ !$DISABLE_COVERAGE ]]; then
+    cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml;
+  else
+    cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --bootstrap bootstrap.php -c configuration.xml;
+  fi
 
 after_script:
-- if [[ $coverage = 'true' ]]; then cd $TRAVIS_BUILD_DIR && php $TRAVIS_BUILD_DIR/vendor/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml; fi
+- if [[ !$DISABLE_COVERAGE ]]; then
+    cd $TRAVIS_BUILD_DIR && php $VENDOR_DIR/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml;
+  fi
