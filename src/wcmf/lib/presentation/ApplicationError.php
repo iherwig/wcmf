@@ -178,7 +178,7 @@ class ApplicationError {
   /**
    * Predefined errors
    */
-  private function predefine() {
+  private static function predefine() {
     if (!self::$predefined) {
       $message = ObjectFactory::getInstance('message');
       define('GENERAL_WARNING', serialize(array('GENERAL_WARNING', ApplicationError::LEVEL_WARNING, 400,
