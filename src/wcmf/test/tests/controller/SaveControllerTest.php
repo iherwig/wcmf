@@ -157,8 +157,8 @@ class SaveControllerTest extends ControllerTestCase {
     $errors = $response->getErrors();
     $this->assertEquals(1, sizeof($errors));
     $error = $errors[0];
+    var_dump($error);
     $this->assertEquals("PARAMETER_INVALID", $error->getCode());
-    fwrite(STDERR, print_r($error, TRUE));
 
     TestUtil::endSession();
   }
