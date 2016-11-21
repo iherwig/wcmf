@@ -29,7 +29,7 @@ matrix:
     env: DISABLE_XDEBUG=false
 
 before_script:
-- if [[ $DISABLE_XDEBUG=true ]]; then
+- if [[ "$DISABLE_XDEBUG"=="true" ]]; then
     phpenv config-rm xdebug.ini;
   fi
 - mysql -e 'CREATE DATABASE wcmf_testapp;'
@@ -39,13 +39,13 @@ before_script:
 - cd $TEST_DIR/model && ant
 
 script:
-- if [[ $DISABLE_COVERAGE=false ]]; then
+- if [[ "$DISABLE_COVERAGE"=="false" ]]; then
     cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml;
   else
     cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --bootstrap bootstrap.php -c configuration.xml;
   fi
 
 after_script:
-- if [[ $DISABLE_COVERAGE=false ]]; then
+- if [[ "$DISABLE_COVERAGE"=="false" ]]; then
     cd $TRAVIS_BUILD_DIR && php $VENDOR_DIR/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml;
   fi
