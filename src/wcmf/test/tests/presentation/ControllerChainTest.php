@@ -86,19 +86,19 @@ class ControllerChainTest extends ControllerTestCase {
   /**
    * @group controller
    */
-  public function testChainInterrupted() {
+  public function testChainBreak() {
     TestUtil::startSession('admin', 'admin');
 
     // simulate calc call
     $data = array(
       'value' => 2
     );
-    $response = $this->runRequest('calcChainInterrupted', $data, false);
+    $response = $this->runRequest('calcChainBreak', $data, false);
 
     // test
     $this->assertEquals(4, $response->getValue('value'));
-    $this->assertEquals('continue', $response->getAction());
-    $this->assertEquals('app\src\controller\CalcController::calcContinue', trim($response->getValue('stack')));
+    $this->assertEquals(null, $response->getAction());
+    $this->assertEquals('app\src\controller\CalcController::calcContinueSameActionKey', trim($response->getValue('stack')));
 
     TestUtil::endSession();
   }

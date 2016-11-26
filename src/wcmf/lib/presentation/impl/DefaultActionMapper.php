@@ -162,15 +162,17 @@ class DefaultActionMapper implements ActionMapper {
       self::$logger->debug("Next action key: ".$nextActionKey);
     }
 
-    // terminate, if there is no next action key or the response is final
-    $terminate = strlen($nextActionKey) == 0 || $response->isFinal();
+    // terminate
+    // - if there is no next action key or
+    // - if the next action key is the same as the previous one (to prevent recursion)
+    $terminate = strlen($nextActionKey) == 0 || $actionKey == $nextActionKey;
     if ($terminate) {
       if ($isDebugEnabled) {
         self::$logger->debug("Terminate");
       }
       // stop processing
       $this->formatter->serialize($response);
-      $this->isFinished = $response->isFinal();
+      $this->isFinished = true;
       return;
     }
 

@@ -73,7 +73,6 @@ interface Response extends ControllerMessage {
 
   /**
    * Set a file as response.
-   * NOTE: This automatically sets the response to final (see Response::setFinal)
    * @param $filename The name of the file, must be a real file, if no content is provided
    * @param $isDownload Boolean, indicating whether the file should be return as download or not
    * @param $content File content, if in-memory only (optional)
@@ -86,16 +85,5 @@ interface Response extends ControllerMessage {
    * @return Array with keys 'isDownload', 'filename', 'content' and 'type' or null
    */
   public function getFile();
-
-  /**
-   * Make sure there is no further processing after this response
-   */
-  public function setFinal();
-
-  /**
-   * Check if the response forbids further processing or not
-   * @return Boolean
-   */
-  public function isFinal();
 }
 ?>

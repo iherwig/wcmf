@@ -143,7 +143,6 @@ class Application {
           $this->request->setAction('failure');
           $this->response->setAction('failure');
           $this->response->setStatus($error->getStatusCode());
-          $this->response->setFinal();
           ObjectFactory::getInstance('actionMapper')->processAction($this->request, $this->response);
           return;
         }

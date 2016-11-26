@@ -28,7 +28,6 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   private $cacheId = null;
   private $status = 200;
   private $file = null;
-  private $isFinal = false;
 
   /**
    * Constructor
@@ -114,7 +113,6 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
         'content' => $content,
         'type' => $type
     );
-    $this->setFinal();
   }
 
   /**
@@ -122,20 +120,6 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
    */
   public function getFile() {
     return $this->file;
-  }
-
-  /**
-   * @see Response::setFinal()
-   */
-  public function setFinal() {
-    $this->isFinal = true;
-  }
-
-  /**
-   * @see Response::isFinal()
-   */
-  public function isFinal() {
-    return $this->isFinal;
   }
 }
 ?>

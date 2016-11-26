@@ -36,12 +36,11 @@ class CalcController extends Controller {
     $response->setAction('continue');
   }
 
-  protected function calcContinueFinal() {
+  protected function calcContinueSameActionKey() {
     $this->recordCall(__METHOD__);
-    $this->calcContinue();
+    $this->calc();
 
-    $response = $this->getResponse();
-    $response->setFinal();
+    // request processing will stop because the action key is unchanged
   }
 
   protected function calcExecuteSubAction() {

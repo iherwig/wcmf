@@ -214,7 +214,6 @@ abstract class Controller {
     $response->setHeader('Location', $location);
     $response->setStatus(302);
     $response->setFormat('null'); // prevent any rendering
-    $response->setFinal(); // prevent any further processing
   }
 
   /**

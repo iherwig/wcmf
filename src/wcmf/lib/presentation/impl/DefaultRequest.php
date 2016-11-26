@@ -109,16 +109,118 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     $basePath = preg_replace('/\/?[^\/]*$/', '', $_SERVER['SCRIPT_NAME']);
     $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
     $requestPath = preg_replace('/^'.StringUtil::escapeForRegex($basePath).'/', '', $requestUri);
+    $requestMethod = $this->getMethod();
     if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Request path: ".$requestPath);
+      self::$logger->debug("Request: ".$requestMethod." ".$requestPath);
     }
-    $config = ObjectFactory::getInstance('configuration');
 
-    $baseRequestData = array();
+    // get all routes from the configuration that match the request path
+    $matchingRoutes = $this->getMatchingRoutes($requestPath);
+
+    // get client info error for logging
+    $clientInfo = array('ip' => $_SERVER['REMOTE_ADDR'],
+        'agent' => $_SERVER['HTTP_USER_AGENT'],
+        'referrer' => $_SERVER['HTTP_REFERER']);
+
+    // check if the requested route matches any configured route
+    if (sizeof($matchingRoutes) == 0) {
+      throw new ApplicationException($this, $this->getResponse(),
+              ApplicationError::get('ROUTE_NOT_FOUND', array_merge(
+                      $clientInfo, array('route' => $requestPath))));
+    }
+
+    // get the best matching route
+    $route = $this->getBestRoute($matchingRoutes);
+
+    // check if method is allowed
+    $allowedMethods = $route['methods'];
+    if ($allowedMethods != null && !in_array($requestMethod, $allowedMethods)) {
+      throw new ApplicationException($this, $this->getResponse(),
+              ApplicationError::get('METHOD_NOT_ALLOWED', array_merge(
+                      $clientInfo, array('method' => $requestMethod, 'route' => $requestPath))));
+    }
+
+    // get request parameters from route
+    $pathRequestData = $route['parameters'];
+
+    // get other request data
+    $requestData = array();
+    switch ($requestMethod) {
+      case 'GET':
+        $requestData = $_GET;
+        break;
+      case 'POST':
+      case 'PUT':
+        $requestData = $_POST;
+        break;
+    }
+
+    // get controller/context/action triple
+    $controller = isset($requestData['controller']) ?
+            filter_var($requestData['controller'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($pathRequestData['controller']) ? $pathRequestData['controller'] : $controller);
+
+    $context = isset($requestData['context']) ?
+            filter_var($requestData['context'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($pathRequestData['context']) ? $pathRequestData['context'] : $context);
+
+    $action = isset($requestData['action']) ?
+            filter_var($requestData['action'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
+            (isset($pathRequestData['action']) ? $pathRequestData['action'] : $action);
+
+    // setup request
+    $this->setSender($controller);
+    $this->setContext($context);
+    $this->setAction($action);
+    $this->setValues(array_merge($pathRequestData, $requestData));
+  }
+
+  /**
+   * @see Request::getMethod()
+   */
+  public function getMethod() {
+    return $this->method;
+  }
+
+  /**
+   * @see Request::setResponseFormat()
+   */
+  public function setResponseFormat($format) {
+    $this->responseFormat = $format;
+  }
+
+  /**
+   * @see Request::getResponseFormat()
+   */
+  public function getResponseFormat() {
+    if ($this->responseFormat == null) {
+      $this->responseFormat = $this->getFormatter()->getFormatFromMimeType($this->getHeader('Accept'));
+    }
+    return $this->responseFormat;
+  }
+
+  /**
+   * Get a string representation of the message
+   * @return The string
+   */
+  public function __toString() {
+    $str = 'method='.$this->method.', ';
+    $str .= 'responseformat='.$this->responseFormat.', ';
+    $str .= parent::__toString();
+    return $str;
+  }
+
+  /**
+   * Get all routes from the Routes configuration section that match the given
+   * request path
+   * @param $requestPath
+   * @return Array of arrays with keys 'numPathParameters', 'parameters', 'methods'
+   */
+  protected function getMatchingRoutes($requestPath) {
+    $matchingRoutes = array();
     $defaultValuePattern = '([^/]+)';
-    $method = $this->getMethod();
-    $routeFound = false;
-    $methodAllowed = false;
+
+    $config = ObjectFactory::getInstance('configuration');
     if ($config->hasSection('routes')) {
       $routes = $config->getSection('routes');
       foreach ($routes as $route => $requestDef) {
@@ -156,107 +258,53 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           if (self::$logger->isDebugEnabled()) {
             self::$logger->debug("Match");
           }
-          // set parameters from request path
+          // ignore first match
+          array_shift($matches);
+
+          // collect request variables
+          $requestParameters = array();
+
+          // 1. path variables
           for ($i=0, $count=sizeof($params); $i<$count; $i++) {
-            $baseRequestData[$params[$i]] = isset($matches[$i+1]) ? $matches[$i+1] : null;
+            $requestParameters[$params[$i]] = isset($matches[$i]) ? $matches[$i] : null;
           }
-          // set parameters from request definition (overriding path parameters)
+
+          // 2. parameters from route configuration (overriding path parameters)
           $requestDefData = array();
           parse_str($requestDef, $requestDefData);
-          $baseRequestData = array_merge($baseRequestData, $requestDefData);
-          $routeFound = true;
+          $requestParameters = array_merge($requestParameters, $requestDefData);
 
-          // check if method is allowed
-          if ($allowedMethods == null || in_array($method, $allowedMethods)) {
-            $methodAllowed = true;
-            break;
-          }
+          // store match
+          $matchingRoutes[] = array(
+            'route' => $route,
+            'numPathParameters' => sizeof($params),
+            'parameters' => $requestParameters,
+            'methods' => $allowedMethods
+          );
         }
       }
     }
-
-    $userInfo = array('ip' => $_SERVER['REMOTE_ADDR'],
-        'agent' => $_SERVER['HTTP_USER_AGENT'],
-        'referrer' => $_SERVER['HTTP_REFERER']);
-
-    if (!$routeFound) {
-      throw new ApplicationException($this, $this->getResponse(),
-              ApplicationError::get('ROUTE_NOT_FOUND', array_merge(
-                      $userInfo, array('route' => $requestPath))));
-    }
-
-    // check if method is allowed
-    if (!$methodAllowed) {
-      throw new ApplicationException($this, $this->getResponse(),
-              ApplicationError::get('METHOD_NOT_ALLOWED', array_merge(
-                      $userInfo, array('method' => $method, 'route' => $requestPath))));
-    }
-
-    // get request data
-    $requestData = array();
-    switch ($method) {
-      case 'GET':
-        $requestData = $_GET;
-        break;
-      case 'POST':
-      case 'PUT':
-        $requestData = $_POST;
-        break;
-    }
-
-    // get controller/context/action triple
-    $controller = isset($requestData['controller']) ?
-            filter_var($requestData['controller'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
-            (isset($baseRequestData['controller']) ? $baseRequestData['controller'] : $controller);
-
-    $context = isset($requestData['context']) ?
-            filter_var($requestData['context'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
-            (isset($baseRequestData['context']) ? $baseRequestData['context'] : $context);
-
-    $action = isset($requestData['action']) ?
-            filter_var($requestData['action'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW) :
-            (isset($baseRequestData['action']) ? $baseRequestData['action'] : $action);
-
-    // setup request
-    $this->setSender($controller);
-    $this->setContext($context);
-    $this->setAction($action);
-    $this->setValues(array_merge($baseRequestData, $requestData));
+    return $matchingRoutes;
   }
 
   /**
-   * @see Request::getMethod()
+   * Get the best matching route from the given list of routes
+   * @param $routes Array of route definitions as returned by getMatchingRoutes()
+   * @return Array with keys 'numPathParameters', 'parameters', 'methods'
    */
-  public function getMethod() {
-    return $this->method;
-  }
+  protected function getBestRoute($routes) {
+    // order matching routes by number of parameters
+    usort($routes, function($a, $b) {
+      $numParamsA = sizeof($a['numPathParameters']);
+      $numParamsB = sizeof($b['numPathParameters']);
+      if ($numParamsA == $numParamsB) {
+        return 0;
+      }
+      return ($numParamsA > $numParamsB) ? 1 : -1;
+    });
 
-  /**
-   * @see Request::setResponseFormat()
-   */
-  public function setResponseFormat($format) {
-    $this->responseFormat = $format;
-  }
-
-  /**
-   * @see Request::getResponseFormat()
-   */
-  public function getResponseFormat() {
-    if ($this->responseFormat == null) {
-      $this->responseFormat = $this->getFormatter()->getFormatFromMimeType($this->getHeader('Accept'));
-    }
-    return $this->responseFormat;
-  }
-
-  /**
-   * Get a string representation of the message
-   * @return The string
-   */
-  public function __toString() {
-    $str = 'method='.$this->method.', ';
-    $str .= 'responseformat='.$this->responseFormat.', ';
-    $str .= parent::__toString();
-    return $str;
+    // return most specific route (minimum number of parameters)
+    return array_shift($routes);
   }
 
   /**
@@ -339,7 +387,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * Define errors
    */
   private static function defineErrors() {
-    if (self::$errorsDefined) {
+    if (!self::$errorsDefined) {
       $message = ObjectFactory::getInstance('message');
       define('ROUTE_NOT_FOUND', serialize(array('ROUTE_NOT_FOUND', ApplicationError::LEVEL_WARNING, 404,
         $message->getText('No route matching the request path can be found.')
