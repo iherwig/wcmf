@@ -295,8 +295,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   protected function getBestRoute($routes) {
     // order matching routes by number of parameters
     usort($routes, function($a, $b) {
-      $numParamsA = sizeof($a['numPathParameters']);
-      $numParamsB = sizeof($b['numPathParameters']);
+      $numParamsA = $a['numPathParameters'];
+      $numParamsB = $b['numPathParameters'];
       if ($numParamsA == $numParamsB) {
         return 0;
       }
