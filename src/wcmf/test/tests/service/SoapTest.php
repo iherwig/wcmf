@@ -85,7 +85,7 @@ class SoapTest extends DatabaseTestCase {
     curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
     $wsdl = curl_exec($ch);
     curl_close($ch);
-    echo $wsdl;
+    echo "!".$wsdl;
 
     $options = array('trace' => 1, 'exceptions' => 0);
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
