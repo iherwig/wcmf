@@ -67,19 +67,6 @@ class CalcController extends Controller {
     $this->internalRedirect('continue', '', $data);
   }
 
-  protected function calcInternalRedirectFinal() {
-    $this->recordCall(__METHOD__);
-    $this->calc();
-
-    $request = $this->getRequest();
-    $response = $this->getResponse();
-    $response->setAction('ok');
-    $response->setFinal();
-    // use original request data + stack
-    $data = array_merge(array('stack' => $response->getValue('stack')), $request->getValues());
-    $this->internalRedirect('continue', '', $data);
-  }
-
   protected function calcInternalRedirectChain() {
     $this->recordCall(__METHOD__);
     $this->calc();

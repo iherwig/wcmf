@@ -153,7 +153,6 @@ class SoapServer extends \nusoap_server {
 
     // run the application
     $actionResponse = ObjectFactory::getInstance('response');
-    $actionResponse->setFinal();
     try {
       $response = $this->application->run($request);
       if ($response->hasErrors()) {

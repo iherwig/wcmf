@@ -72,10 +72,9 @@ class SOAPController extends Controller {
 
     // NOTE: the response is not used, because the SoapServer::service method
     // returns the data to the client but we need to make sure that there is
-    // no further processing
+    // no further processing/formatting
     $response = $this->getResponse();
     $response->setFormat('null');
-    $response->setFinal();
   }
 
   /**
