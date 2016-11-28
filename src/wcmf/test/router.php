@@ -35,7 +35,7 @@ else {
       $application->handleException($ex);
     }
     catch (Exception $unhandledEx) {
-      echo("An unhandled exception occured. Please see log file for details.");
+      var_dump($unhandledEx);
     }
   }
 }
