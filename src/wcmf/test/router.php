@@ -35,7 +35,7 @@ else {
       $application->handleException($ex);
     }
     catch (Exception $unhandledEx) {
-      print_r($unhandledEx);
+      echo $unhandledEx->getMessage()."\n".$unhandledEx->getTraceAsString();
     }
   }
 }
