@@ -81,6 +81,7 @@ class SoapTest extends DatabaseTestCase {
   public function testList() {
     $wsdl = file_get_contents('http://localhost:8500/soap?wsdl');
     echo $wsdl;
+    $this->assertEquals("<xml>", $wsdl);
 
     $options = array('trace' => 1, 'exceptions' => 0);
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
