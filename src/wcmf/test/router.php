@@ -35,7 +35,7 @@ else {
       $application->handleException($ex);
     }
     catch (Exception $unhandledEx) {
-      var_dump($unhandledEx);
+      var_export($unhandledEx);
     }
   }
 }
