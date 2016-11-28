@@ -79,14 +79,6 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testList() {
-    $wsdlUrl = self::getEndPoint().'?wsdl';
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $wsdlUrl);
-    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-    $wsdl = curl_exec($ch);
-    curl_close($ch);
-    $this->assertEquals("<xml>", $wsdl);
-
     $options = array('trace' => 1, 'exceptions' => 0);
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
@@ -126,9 +118,9 @@ class SoapTest extends DatabaseTestCase {
     $author->oid = 'app.src.model.Author:202';
     $author->id = 202;
     $author->name = 'Test Author Modified';
-    $author->created = '';
+    $author->created = (new \DateTime())->format('Y-m-d H:i:s');
     $author->creator = '';
-    $author->modified = '';
+    $author->modified = (new \DateTime())->format('Y-m-d H:i:s');
     $author->last_editor = '';
     $author->Chapter = array();
     $author->Publisher = array();
@@ -158,9 +150,9 @@ class SoapTest extends DatabaseTestCase {
     $author->oid = 'app.src.model.Author:wcmfa3934eb734bd3ebfbd674da8d6bcd7c9';
     $author->id = '';
     $author->name = 'Test Author New';
-    $author->created = '';
+    $author->created = (new \DateTime())->format('Y-m-d H:i:s');
     $author->creator = '';
-    $author->modified = '';
+    $author->modified = (new \DateTime())->format('Y-m-d H:i:s');
     $author->last_editor = '';
     $author->Chapter = array();
     $author->Publisher = array();

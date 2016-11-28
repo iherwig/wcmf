@@ -116,6 +116,7 @@ class MultipleActionController extends Controller {
     $data = $request->getValue('data');
     $actions = array_keys($data);
     $numActions = sizeof($actions);
+    $errors = array();
     $exceptions = array();
 
     for($i=0; $i<$numActions; $i++) {
@@ -147,6 +148,11 @@ class MultipleActionController extends Controller {
       }
       catch (\Exception $ex) {
         $exceptions[] = $ex;
+      }
+      if ($responsePart->hasErrors()) {
+        foreach ($responsePart->getErrors() as $error) {
+          $response->addError($error);
+        }
       }
 
       // collect the result

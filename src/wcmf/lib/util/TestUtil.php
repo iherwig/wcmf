@@ -137,6 +137,8 @@ class TestUtil {
         }
       });
     }
+
+    sleep(3);
   }
 
   /**
