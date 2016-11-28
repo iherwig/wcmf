@@ -79,8 +79,12 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testList() {
-    $wsdl = file_get_contents('http://localhost:8500/soap?wsdl');
-    echo $wsdl;
+    $wsdlUrl = self::getEndPoint().'?wsdl';
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $wsdlUrl);
+    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+    $wsdl = curl_exec($ch);
+    curl_close($ch);
     $this->assertEquals("<xml>", $wsdl);
 
     $options = array('trace' => 1, 'exceptions' => 0);
