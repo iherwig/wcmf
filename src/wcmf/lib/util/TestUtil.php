@@ -98,10 +98,10 @@ class TestUtil {
     if (!is_dir($documentRoot)) {
       throw new \Exception('Document root '.$documentRoot.' does not exist');
     }
-    if (!defined('SERVER_HOST')) {
+    //if (!defined('SERVER_HOST')) {
       define('SERVER_HOST', 'localhost');
       define('SERVER_PORT', 8500);
-    }
+    //}
     $cmd = sprintf('php -S %s:%d -t %s %s', SERVER_HOST, SERVER_PORT, $documentRoot, $router);
 
     $descriptorspec = array(
