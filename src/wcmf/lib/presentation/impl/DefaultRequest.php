@@ -116,6 +116,10 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
     // get all routes from the configuration that match the request path
     $matchingRoutes = $this->getMatchingRoutes($requestPath);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Matching routes:");
+      self::$logger->debug($matchingRoutes);
+    }
 
     // get client info error for logging
     $clientInfo = array('ip' => $_SERVER['REMOTE_ADDR'],
@@ -131,6 +135,10 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
     // get the best matching route
     $route = $this->getBestRoute($matchingRoutes);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Best route:");
+      self::$logger->debug($matchingRoutes);
+    }
 
     // check if method is allowed
     $allowedMethods = $route['methods'];
