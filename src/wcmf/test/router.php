@@ -35,7 +35,8 @@ else {
       $application->handleException($ex);
     }
     catch (Exception $unhandledEx) {
-      echo $unhandledEx->getMessage()."\n".$unhandledEx->getTraceAsString()."\n".
+      echo "Eception in request to ".$_SERVER["REQUEST_URI"]."\n".
+      $unhandledEx->getMessage()."\n".$unhandledEx->getTraceAsString()."\n".
       file_get_contents(WCMF_BASE."app/log/".(new \DateTime())->format('Y-m-d').".log");
     }
   }
