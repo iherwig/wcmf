@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\core;
 
+ini_set('html_errors', false);
+
 /**
  * LogManager is used to retrieve Logger instances.
  *
