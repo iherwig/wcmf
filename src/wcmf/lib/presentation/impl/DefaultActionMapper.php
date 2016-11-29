@@ -171,6 +171,7 @@ class DefaultActionMapper implements ActionMapper {
         self::$logger->debug("Terminate");
       }
       // stop processing
+      self::$logger->error($actionKey." ".$nextActionKey." ".$response->getFormat());
       $this->formatter->serialize($response);
       $this->isFinished = true;
       return;
