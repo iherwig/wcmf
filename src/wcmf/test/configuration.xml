@@ -3,12 +3,12 @@
 <phpunit bootstrap="bootstrap.php"
          backupGlobals="false"
          backupStaticAttributes="false"
-         processIsolation="false"
+         processIsolation="true"
          verbose="true"
          colors="true"
 >
   <testsuites>
-    <!--testsuite name="Controller">
+    <testsuite name="Controller">
       <file>tests/controller/DeleteControllerTest.php</file>
       <file>tests/controller/DisplayControllerTest.php</file>
       <file>tests/controller/ListControllerTest.php</file>
@@ -55,7 +55,7 @@
     <testsuite name="Security">
       <file>tests/security/PermissionsTest.php</file>
       <file>tests/security/UserTest.php</file>
-    </testsuite-->
+    </testsuite>
     <testsuite name="Service">
       <file>tests/service/SoapTest.php</file>
     </testsuite>
