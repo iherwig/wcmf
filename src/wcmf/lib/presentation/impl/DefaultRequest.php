@@ -137,7 +137,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     $route = $this->getBestRoute($matchingRoutes);
     if (self::$logger->isDebugEnabled()) {
       self::$logger->debug("Best route:");
-      self::$logger->debug($matchingRoutes);
+      self::$logger->debug($route);
     }
 
     // check if method is allowed
@@ -285,7 +285,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           // store match
           $matchingRoutes[] = array(
             'route' => $route,
-            'numPathParameters' => sizeof($params),
+            'numPathParameters' => (sizeof($params) + substr_count($route, "*")),
             'parameters' => $requestParameters,
             'methods' => $allowedMethods
           );
