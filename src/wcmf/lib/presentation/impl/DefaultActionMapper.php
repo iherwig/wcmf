@@ -152,6 +152,7 @@ class DefaultActionMapper implements ActionMapper {
 
     // return if we are finished
     if ($this->isFinished) {
+      $this->formatter->serialize($response);
       return;
     }
 

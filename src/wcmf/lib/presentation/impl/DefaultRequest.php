@@ -285,7 +285,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           // store match
           $matchingRoutes[] = array(
             'route' => $route,
-            'numPathParameters' => (sizeof($params) + substr_count($route, "*")),
+            'numPathParameters' => (preg_match('/\*/', $route) ? PHP_INT_MAX : sizeof($params)),
             'parameters' => $requestParameters,
             'methods' => $allowedMethods
           );
@@ -302,15 +302,23 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   protected function getBestRoute($routes) {
     // order matching routes by number of parameters
-    usort($routes, function($a, $b) {
+    $method = $this->getMethod();
+    usort($routes, function($a, $b) use ($method) {
       $numParamsA = $a['numPathParameters'];
       $numParamsB = $b['numPathParameters'];
       if ($numParamsA == $numParamsB) {
-        return 0;
+        $hasMethodA = in_array($method, $a['methods']);
+        $hasMethodB = in_array($method, $b['methods']);
+        return ($hasMethodA && !$hasMethodB) ? -1 :
+                ((!$hasMethodA && $hasMethodB) ? 1 : 0);
       }
       return ($numParamsA > $numParamsB) ? 1 : -1;
     });
 
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Ordered routes:");
+      self::$logger->debug($routes);
+    }
     // return most specific route (minimum number of parameters)
     return array_shift($routes);
   }
