@@ -168,10 +168,9 @@ class DefaultActionMapper implements ActionMapper {
     $terminate = strlen($nextActionKey) == 0 || $actionKey == $nextActionKey;
     if ($terminate) {
       if ($isDebugEnabled) {
-        self::$logger->debug("Terminate");
+        self::$logger->debug("Terminating with response format: ".$response->getFormat());
       }
       // stop processing
-      self::$logger->error($actionKey." ".$nextActionKey." ".$response->getFormat());
       $this->formatter->serialize($response);
       $this->isFinished = true;
       return;
