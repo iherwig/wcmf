@@ -12,8 +12,8 @@ namespace wcmf\lib\core\impl;
 
 use wcmf\lib\config\Configuration;
 use wcmf\lib\core\impl\DefaultSession;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
-use wcmf\lib\presentation\Request;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 use wcmf\lib\util\URIUtil;
 
@@ -36,15 +36,11 @@ class AuthTokenSession extends DefaultSession implements Session {
   /**
    * Constructor
    * @param $configuration
-   * @param $request
    */
-  public function __construct(Configuration $configuration, Request $request) {
+  public function __construct(Configuration $configuration) {
     parent::__construct($configuration);
 
-    // check for valid auth-token in request
     $this->tokenName = $this->getCookiePrefix().'-token';
-    $this->isTokenValid = $request->hasHeader(self::TOKEN_HEADER) &&
-      $request->getHeader(self::TOKEN_HEADER) == $_COOKIE[$this->tokenName];
   }
 
   /**
@@ -70,6 +66,21 @@ class AuthTokenSession extends DefaultSession implements Session {
    */
   public function getAuthUser() {
     $login = parent::getAuthUser();
-    return $this->isTokenValid ? $login : AnonymousUser::USER_GROUP_NAME;
+    return $this->isTokenValid() ? $login : AnonymousUser::USER_GROUP_NAME;
+  }
+
+  /**
+   * Check if the request contains a valid token
+   */
+  protected function isTokenValid() {
+    if ($this->isTokenValid) {
+      // already validated
+      return true;
+    }
+    $request = ObjectFactory::getInstance('request');
+    $token = $request->hasHeader(self::TOKEN_HEADER) ? $request->getHeader(self::TOKEN_HEADER) :
+        $request->getValue(self::TOKEN_HEADER, null);
+    $this->isTokenValid = $token != null && $token == $_COOKIE[$this->tokenName];
+    return $this->isTokenValid;
   }
 }
