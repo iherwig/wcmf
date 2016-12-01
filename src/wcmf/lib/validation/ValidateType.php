@@ -8,7 +8,7 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\lib\persistence\validator;
+namespace wcmf\lib\validation;
 
 use wcmf\lib\i18n\Message;
 

@@ -8,11 +8,11 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\lib\persistence\validator\impl;
+namespace wcmf\lib\validation\impl;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\persistence\validator\ValidateType;
+use wcmf\lib\validation\ValidateType;
 
 /**
  * RegExp validates against the given regular expression.

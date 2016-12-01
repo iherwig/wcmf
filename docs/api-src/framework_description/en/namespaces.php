@@ -51,9 +51,9 @@ namespace wcmf\lib\persistence\output;
 /** &nbsp; */
 namespace wcmf\lib\persistence\output\impl;
 /** &nbsp; */
-namespace wcmf\lib\persistence\validator;
+namespace wcmf\lib\validation;
 /** &nbsp; */
-namespace wcmf\lib\persistence\validator\impl;
+namespace wcmf\lib\validation\impl;
 
 /** Presentation related interfaces and classes */
 namespace wcmf\lib\presentation;

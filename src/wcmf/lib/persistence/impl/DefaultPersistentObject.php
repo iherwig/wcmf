@@ -20,7 +20,7 @@ use wcmf\lib\persistence\PropertyChangeEvent;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\ValidationException;
-use wcmf\lib\persistence\validator\Validator;
+use wcmf\lib\validation\Validator;
 use wcmf\lib\persistence\ValueChangeEvent;
 use wcmf\lib\util\StringUtil;
 

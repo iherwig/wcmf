@@ -11,7 +11,7 @@
 namespace wcmf\test\tests\persistence;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\persistence\validator\Validator;
+use wcmf\lib\validation\Validator;
 use wcmf\test\lib\BaseTestCase;
 
 /**
