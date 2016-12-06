@@ -23,16 +23,16 @@ class ObjectFactoryTest extends BaseTestCase {
   public function testShared() {
     $conf = ObjectFactory::getInstance('configuration');
     $this->assertEquals('wcmf\lib\config\impl\InifileConfiguration', get_class($conf));
-    $this->assertEquals('WCMF TEST MODEL', $conf->getValue('title', 'Application'));
+    $this->assertEquals('WCMF DEFAULT APPLICATION', $conf->getValue('title', 'Application'));
 
     // modify instance
-    $conf->setValue('title', 'WCMF TEST MODEL2', 'Application');
-    $this->assertEquals('WCMF TEST MODEL2', $conf->getValue('title', 'Application'));
+    $conf->setValue('title', 'WCMF DEFAULT APPLICATION2', 'Application');
+    $this->assertEquals('WCMF DEFAULT APPLICATION2', $conf->getValue('title', 'Application'));
 
     // get second time (same instance)
     $conf2 = ObjectFactory::getInstance('configuration');
     $this->assertEquals('wcmf\lib\config\impl\InifileConfiguration', get_class($conf2));
-    $this->assertEquals('WCMF TEST MODEL2', $conf->getValue('title', 'Application'));
+    $this->assertEquals('WCMF DEFAULT APPLICATION2', $conf->getValue('title', 'Application'));
   }
 
   public function testNonShared() {
