@@ -14,6 +14,7 @@ use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ControllerMessage;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\util\StringUtil;
+use wcmf\lib\validation\Validator;
 
 /**
  * AbstractControllerMessage is the base class for request/response
