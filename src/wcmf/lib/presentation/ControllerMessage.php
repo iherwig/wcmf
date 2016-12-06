@@ -112,7 +112,7 @@ interface ControllerMessage {
   public function clearHeaders();
 
   /**
-   * Check for existance of a header
+   * Check for existence of a header
    * @param $name The name of the header
    * @return Boolean whether the header exists or not exist
    */
@@ -135,11 +135,10 @@ interface ControllerMessage {
    * Get a value
    * @param $name The name of the variable
    * @param $default The default value if the value is not defined (optional, default: _null_)
-   * @param $filter PHP filter constant (FILTER_SANITIZE/FILTER_VALIDATE) to be applied to the value (optional, default: _null_)
-   * @param $options Filter parameters (optional, default: _null_)
+   * @param $validateDesc An validation description to be used with Validator::validate() (optional, default: _null_)
    * @return The (filtered) value or default, if it does not exist
    */
-  public function getValue($name, $default=null, $filter=null, $options=null);
+  public function getValue($name, $default=null, $validateDesc=null);
 
   /**
    * Get a value as boolean
@@ -167,7 +166,7 @@ interface ControllerMessage {
   public function clearValues();
 
   /**
-   * Check for existance of a value
+   * Check for existence of a value
    * @param $name The name of the variable
    * @return Boolean whether the value exists or not exist
    */

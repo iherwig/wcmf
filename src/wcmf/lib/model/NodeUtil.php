@@ -141,27 +141,23 @@ class NodeUtil {
   }
 
   /**
-   * Get the display value for a Node defined by the 'display_value' property.
-   * If the 'display_value' is an array ('|' separated strings) the pieces will be put together with ' - '.
-   * If search for 'display_value' gives no result the function returns an empty string.
-   * Example: 'name|text' shows the name of the Node together with the content of the text attribute
+   * Get the display value for a Node defined by the 'displayValues' property.
+   * If the 'displayValues' property is an array the items will be put together with ' - '.
+   * If the 'displayValues' property is empty the function returns an empty string.
+   * Example: 'name,text' shows the name of the Node together with the content of the text attribute
    * @param $node Node instance to display
    * @param $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
-   * @note The display type is configured via the display_type property of a value. It describes how the value should be displayed.
-   *       The description is of the form @code type @endcode or @code type[attributes] @endcode
-   *       - type: text|image|link
-   *       - attributes: a string of attributes used in the HTML definition (e.g. 'height="50"')
-   * @return The display string
+   * @return String
    */
   public static function getDisplayValue(Node $node, $language=null) {
     return join(' - ', array_values(self::getDisplayValues($node, $language)));
   }
 
   /**
-   * Does the same as NodeUtil::getDisplayValue but returns the display value as associative array
+   * Does the same as NodeUtil::getDisplayValue but returns the display values as associative array
    * @param $node Node instance to display
    * @param $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
-   * @return The display array
+   * @return Array of strings
    */
   public static function getDisplayValues(Node $node, $language=null) {
     // localize node if requested
@@ -171,9 +167,8 @@ class NodeUtil {
     }
 
     $displayArray = array();
-    $displayValueDef = $node->getProperty('display_value');
-    if (strlen($displayValueDef) > 0) {
-      $displayValuesNames = preg_split('/\|/', $displayValueDef);
+    $displayValuesNames = $node->getProperty('displayValues');
+    if (sizeof($displayValuesNames) > 0) {
       $mapper = $node->getMapper();
       foreach($displayValuesNames as $displayValueName) {
         $inputType = ''; // needed for the translation of a list value
@@ -279,8 +274,7 @@ class NodeUtil {
    * @param $node The Node instance
    */
   public static function removeNonDisplayValues(Node $node) {
-    $displayValueStr = $node->getProperty('display_value');
-    $displayValues = preg_split('/\|/', $displayValueStr);
+    $displayValues = $node->getProperty('displayValues');
     $valueNames = $node->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $displayValues)) {

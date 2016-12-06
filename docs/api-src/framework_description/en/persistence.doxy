@@ -130,7 +130,7 @@ The following terms are important to know when working with wCMF's domain classe
   \link wcmf::lib::persistence::PersistentObject::getValue `getValue`\endlink
   and \link wcmf::lib::persistence::PersistentObject::setValue `setValue`\endlink.
 - __Properties__ apply to domain classes and domain class values. They describe
-  static features like the `display_value` of the class or the `input_type`
+  static features like the `displayValues` of the class or the `inputType`
   of a value. Properties are defined in the model as _tags_ (see \ref model_profile)
   and are accessed using the methods
   \link wcmf::lib::persistence::PersistentObject::getProperty `getProperty`\endlink/
@@ -512,7 +512,7 @@ validates against a PHP filter (see [filter_var](http://php.net/manual/en/functi
 e.g.
 ~~~~~~~~~~~~~{.php}
 // FILTER_VALIDATE_INT with min_range option and FILTER_FLAG_ALLOW_HEX flag
-filter:{"type":"int","options":{"options":{"min_range":0},"flags":2}}
+filter:{"type":"number_int","options":{"options":{"min_range":0},"flags":2}}
 ~~~~~~~~~~~~~
 
 \link wcmf::lib::persistence::validator::impl::Image `Image`\endlink

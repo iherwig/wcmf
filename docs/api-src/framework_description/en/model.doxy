@@ -71,14 +71,14 @@ The following __tags__ are defined on the _ChiNode_ / _ChiManyToMany_ stereotype
 | Tag | Description | Example | Default value
 |-----|-------------|---------|--------------
 | _initparams_ | Name of the configuration section, which defines initialization parameters for the \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink instance | _database_ | _database_
-| _display_value_ | Attributes to display in a list view: A single attribute name or \|-separated list of attribute names | _name\|date_ | |
+| _display_value_ | Attributes to display in a list view: A single attribute name or comma separated list of attribute names | _name,date_ | |
 | _orderby_ | Definition of default sorting: _none_ (no order), _sortkey_ (generates a _sortkey_ column, that is used for explicit sorting) or the name of any attribute optionally followed by _ASC_ or _DESC_ | _name ASC_ | _none_
 | _is_searchable_ | Boolean, indicating whether this type should be included in the default search | _true_ | _true_
 | _is_soap_ | Boolean, indicating whether this type should be exposed to the SOAP interface | _true_ | _true_
 | _table_name_ | The name of the database table in which instances will be stored | _Author_ | Class name
-| _pk_name_ | The name of the primary key column: A single value or \|-separated list of values (the generator will add this automatically, if there is no appropriate attribute) | _fk_user_id\|fk_role_id_ | _id_
-| _child_order_ | The order of the associated child types: A single type or \|-separated list of types | _Image\|Textblock\|Attachment_ in Article type | |
-| _parent_order_ | The order of the associated parent types: A single type or \|-separated list of types | _Author\|Publisher_ in Article type | |
+| _pk_name_ | The name of the primary key column: A single value or comma separated list of values (the generator will add this automatically, if there is no appropriate attribute) | _fk_user_id,fk_role_id_ | _id_
+| _child_order_ | The order of the associated relations: A comma separated list of role names | _Author,Publisher,Image,Textblock,Attachment_ in Article type | |
+| _parent_order_ | _not used_ | | |
 
 \note Some of these tags are accessible in the application through the
 \link wcmf::lib::persistence::PersistentObject::getProperty `PersistentObject::getProperty`\endlink
@@ -90,7 +90,7 @@ The following __tags__ are defined on the _ChiValue_ stereotype.
 
 | Tag | Description | Example | Default value
 |-----|-------------|---------|--------------
-| _app_data_type_ | Application specific attribute tags: A single value or \|-separated list of values (see \ref pers_values) | _TAG_A\|TAG_B_ | _DATATYPE_ATTRIBUTE_
+| _app_data_type_ | Application specific attribute tags: A single value or comma separated list of values (see \ref pers_values) | _TAG_A,TAG_B_ | _DATATYPE_ATTRIBUTE_
 | _db_data_type_ | The attribute's database type | _TEXT_ | _VARCHAR(255)_ |
 | _is_editable_ | Boolean, indicating whether this attribute is editable | _true_ | _true_
 | _input_type_ | Name of the attribute's input control as listed in the _InputTypes_ configuration section and additional configuration encoded as JSON string | _filebrowser_ or _ckeditor:{"toolbarSet":"full"}_ | _text_

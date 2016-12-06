@@ -206,10 +206,11 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * @see ControllerMessage::getValue()
    */
-  public function getValue($name, $default=null, $filter=null, $options=null) {
+  public function getValue($name, $default=null, $validateDesc=null) {
     if ($this->hasValue($name)) {
       $value = $this->values[$name];
-      return ($filter != null) ? filter_var($value, $filter, $options) : $value;
+      return $validateDesc === null ? $value :
+          (Validator::validate($value, $validateDesc) ? $value : null);
     }
     else {
       return $default;

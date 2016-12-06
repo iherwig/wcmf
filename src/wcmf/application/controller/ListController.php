@@ -200,7 +200,7 @@ class ListController extends Controller {
     $request = $this->getRequest();
     // TODO: put this into subclass ListController
 
-    // remove all attributes except for display_values
+    // remove all attributes except for display values
     if ($request->getBooleanValue('completeObjects', true) == false) {
       for($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         NodeUtil::removeNonDisplayValues($nodes[$i]);
