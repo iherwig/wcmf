@@ -20,7 +20,7 @@ use wcmf\lib\validation\ValidateType;
  * Configuration example:
  * @code
  * // integer or empty
- * regexp:{"pattern":"^[0-9]*$"}
+ * regexp:{"pattern":"/^[0-9]*$/"}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -36,7 +36,7 @@ class RegExp implements ValidateType {
       throw new ConfigurationException($message->getText("No 'pattern' given in regexp options: %1%"),
               array(json_encode($options)));
     }
-    return preg_match("/".$options['pattern']."/m", $value);
+    return preg_match($options['pattern'], $value);
   }
 }
 ?>

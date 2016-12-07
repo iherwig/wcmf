@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\presentation\impl;
 
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ControllerMessage;
 use wcmf\lib\presentation\format\Formatter;
@@ -210,8 +211,9 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   public function getValue($name, $default=null, $validateDesc=null) {
     if ($this->hasValue($name)) {
       $value = $this->values[$name];
+      $message = ObjectFactory::getInstance('message');
       return $validateDesc === null ? $value :
-          (Validator::validate($value, $validateDesc) ? $value : null);
+          (Validator::validate($value, $validateDesc, $message) ? $value : null);
     }
     else {
       return $default;

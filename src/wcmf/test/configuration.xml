@@ -8,12 +8,17 @@
          colors="true"
 >
   <testsuites>
+    <testsuite name="Config">
+      <file>tests/config/InifileConfigurationTest.php</file>
+    </testsuite>
     <testsuite name="Controller">
+      <file>tests/controller/BatchControllerTest.php</file>
       <file>tests/controller/DeleteControllerTest.php</file>
       <file>tests/controller/DisplayControllerTest.php</file>
       <file>tests/controller/ListControllerTest.php</file>
       <file>tests/controller/PermissionControllerTest.php</file>
       <file>tests/controller/SaveControllerTest.php</file>
+      <file>tests/controller/SortControllerTest.php</file>
     </testsuite>
     <testsuite name="Core">
       <file>tests/core/ObjectFactoryTest.php</file>
@@ -29,6 +34,7 @@
     </testsuite>
     <testsuite name="Model">
       <file>tests/model/IteratorTest.php</file>
+      <file>tests/model/NodeComparatorTest.php</file>
       <file>tests/model/NodeTest.php</file>
       <file>tests/model/NodeUtilTest.php</file>
     </testsuite>
@@ -39,16 +45,18 @@
       <file>tests/persistence/NodeUnifiedRDBMapperTest.php</file>
       <file>tests/persistence/ObjectIdTest.php</file>
       <file>tests/persistence/ObjectQueryTest.php</file>
+      <file>tests/persistence/PersistentFacadeTest.php</file>
       <file>tests/persistence/PersistentObjectPerformanceTest.php</file>
       <file>tests/persistence/PersistentObjectProxyTest.php</file>
       <file>tests/persistence/PersistentObjectTest.php</file>
+      <file>tests/persistence/RDBMapperTest.php</file>
       <file>tests/persistence/RelationDescriptionTest.php</file>
       <file>tests/persistence/SortTest.php</file>
       <file>tests/persistence/StringQueryTest.php</file>
       <file>tests/persistence/TransactionTest.php</file>
-      <file>tests/persistence/ValidatorTest.php</file>
     </testsuite>
     <testsuite name="Presentation">
+      <file>tests/presentation/ControllerChainTest.php</file>
       <file>tests/presentation/InternalLinkTest.php</file>
       <file>tests/presentation/ValueListProviderTest.php</file>
     </testsuite>
@@ -58,6 +66,12 @@
     </testsuite>
     <testsuite name="Service">
       <file>tests/service/SoapTest.php</file>
+    </testsuite>
+    <testsuite name="Util">
+      <file>tests/service/URIUtilTest.php</file>
+    </testsuite>
+    <testsuite name="Validation">
+      <file>tests/service/ValidatorTest.php</file>
     </testsuite>
   </testsuites>
   <groups>

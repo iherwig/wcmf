@@ -43,7 +43,7 @@ class Validator {
     // combine validateType and options again
     foreach ($validateDescParts[0] as $validateDescPart) {
       if (preg_match('/^\{.*?\}$/', $validateDescPart)) {
-        // options of preciding validator
+        // options of preceding validator
         $numValidators = sizeof($validators);
         if ($numValidators > 0) {
           $validators[$numValidators-1] .= ':'.$validateDescPart;
@@ -56,16 +56,19 @@ class Validator {
 
     // validate against each validator
     foreach ($validators as $validator) {
-      list($validateTypeName, $validateOptions) = preg_split('/:/', $validator, 2);
+      list($validateTypeName, $validateOptions) = array_pad(preg_split('/:/', $validator, 2), 2, null);;
 
       // get the validator that should be used for this value
       $validatorInstance = self::getValidateType($validateTypeName);
-      $decodedOptions = json_decode($validateOptions, true);
-      if ($decodedOptions === null) {
-        throw new ConfigurationException($message->getText("No valid JSON format: %1%",
-                array($validateOptions)));
+      if ($validateOptions !== null) {
+        $decodedOptions = json_decode($validateOptions, true);
+        if ($decodedOptions === null) {
+          throw new ConfigurationException($message->getText("No valid JSON format: %1%",
+                  array($validateOptions)));
+        }
+        $validateOptions = $decodedOptions;
       }
-      if (!$validatorInstance->validate($value, $message, $decodedOptions)) {
+      if (!$validatorInstance->validate($value, $message, $validateOptions)) {
         return false;
       }
     }

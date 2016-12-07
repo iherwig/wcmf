@@ -496,26 +496,37 @@ validation fails.
 ### Validation types ### {#pers_validation_types}
 
 The actual validation is delegated to the
-\link wcmf::lib::persistence::validator::Validator `Validator`\endlink
+\link wcmf::lib::validation::Validator `Validator`\endlink
 class, which uses
-\link wcmf::lib::persistence::validator::ValidateType `ValidateType`\endlink
+\link wcmf::lib::validation::ValidateType `ValidateType`\endlink
 implementations for validating different types of attributes. Each validation type
 accepts configuration options, that are passed in as a string value. The format
 of this value is completely up to the validator type implementation. To define
 which validation should be applied to a domain class attribute, the
 _tag_ `restrictions_match` is used in the model (see \ref model_chivalue).
 
-Currently three validation types are supported:
+Currently the following validation types exist:
 
-\link wcmf::lib::persistence::validator::impl::Filter `Filter`\endlink
+\link wcmf::lib::validation::impl::Date `Date`\endlink
+validates against a date format,
+e.g.
+~~~~~~~~~~~~~{.php}
+// validate against the default date format ('Y-m-d')
+date
+
+// validate against a custom date format ('Y-m-d')
+date:{"format":"j-M-Y"}
+~~~~~~~~~~~~~
+
+\link wcmf::lib::validation::impl::Filter `Filter`\endlink
 validates against a PHP filter (see [filter_var](http://php.net/manual/en/function.filter-var.php)),
 e.g.
 ~~~~~~~~~~~~~{.php}
 // FILTER_VALIDATE_INT with min_range option and FILTER_FLAG_ALLOW_HEX flag
-filter:{"type":"number_int","options":{"options":{"min_range":0},"flags":2}}
+filter:{"type":"int","options":{"options":{"min_range":0},"flags":2}}
 ~~~~~~~~~~~~~
 
-\link wcmf::lib::persistence::validator::impl::Image `Image`\endlink
+\link wcmf::lib::validation::impl::Image `Image`\endlink
 checks _width_ and _height_ of the referred image file
 e.g.
 ~~~~~~~~~~~~~{.php}
@@ -523,12 +534,19 @@ e.g.
 image:{"width":[200,1],"height":[100,0]}
 ~~~~~~~~~~~~~
 
-\link wcmf::lib::persistence::validator::impl::RegExp `RegExp`\endlink
+\link wcmf::lib::validation::impl::RegExp `RegExp`\endlink
 validates against a regular expression (see [preg_match](http://php.net/manual/en/function.preg-match.php))
 e.g.
 ~~~~~~~~~~~~~{.php}
 // integer or empty
-regexp:{"pattern":"^[0-9]*$"}
+regexp:{"pattern":"/^[0-9]*$/"}
+~~~~~~~~~~~~~
+
+\link wcmf::lib::validation::impl::Required `Required`\endlink
+checks if the value is not empty
+e.g.
+~~~~~~~~~~~~~{.php}
+required
 ~~~~~~~~~~~~~
 
 \note The validation type is derived from the part of the configuration string,
