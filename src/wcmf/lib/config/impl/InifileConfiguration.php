@@ -22,7 +22,7 @@ use wcmf\lib\io\IOException;
 use wcmf\lib\util\StringUtil;
 
 /**
- * InifileConfiguration reads the application configuraiton from ini files.
+ * InifileConfiguration reads the application configuration from ini files.
  * @note This class only supports ini files with sections.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -60,7 +60,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   }
 
   /**
-   * Get the filesystem path to the configuration files.
+   * Get the file system path to the configuration files.
    * @return The path, either absolute or relative to the executed script
    */
   public function getConfigPath() {
@@ -141,7 +141,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   }
 
   /**
-   * Process the given file recursivly
+   * Process the given file recursively
    * @param $filename The filename
    * @param $configArray Configuration array
    * @param $parsedFiles Parsed files
@@ -581,7 +581,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * or they are re-defined in the second array.
    * @param $array1 First array.
    * @param $array2 Second array.
-   * @param $override Boolean whether values defined in array1 should be overriden by values defined in array2.
+   * @param $override Boolean whether values defined in array1 should be overridden by values defined in array2.
    * @return The merged array.
    */
   protected function configMerge($array1, $array2, $override) {
@@ -648,7 +648,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   }
 
   /**
-   * Retrieve parsed ini data from the filesystem and update the current instance.
+   * Retrieve parsed ini data from the file system and update the current instance.
    * If the current instance is modified or any file given in parsedFiles
    * is newer than the serialized data, this call is ignored.
    * If InifileConfiguration class changed, the call will be ignored as well.
@@ -709,7 +709,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   }
 
   /**
-   * Notify configuratin change listeners
+   * Notify configuration change listeners
    */
   protected function configChanged() {
     if (self::$logger->isDebugEnabled()) {

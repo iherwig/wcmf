@@ -25,6 +25,8 @@ class InifileConfigurationTest extends BaseTestCase {
 
   public function testConfigFileNotChanged() {
     $config = ObjectFactory::getInstance('configuration');
+    $testConfig = new InifileConfiguration($config->getConfigPath());
+    $testConfig->addConfiguration('config.ini');
 
     $hasChanged = false;
     ObjectFactory::getInstance('eventManager')->addListener(ConfigChangeEvent::NAME, function($event) use (&$hasChanged) {
@@ -32,12 +34,14 @@ class InifileConfigurationTest extends BaseTestCase {
     });
 
     // test
-    $config->addConfiguration('config.ini');
+    $testConfig->addConfiguration('config.ini');
     $this->assertFalse($hasChanged);
   }
 
   public function testConfigFileChanged() {
     $config = ObjectFactory::getInstance('configuration');
+    $testConfig = new InifileConfiguration($config->getConfigPath());
+    $testConfig->addConfiguration('config.ini');
 
     $hasChanged = false;
     ObjectFactory::getInstance('eventManager')->addListener(ConfigChangeEvent::NAME, function($event) use (&$hasChanged) {
@@ -47,9 +51,9 @@ class InifileConfigurationTest extends BaseTestCase {
     $this->changeInifile(self::INI_FILE);
 
     // test
-    $config->addConfiguration('config.ini');
+    $testConfig->addConfiguration('config.ini');
     $this->assertTrue($hasChanged);
-    
+
     $this->resetInifile(self::INI_FILE);
   }
 
