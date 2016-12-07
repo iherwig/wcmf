@@ -409,24 +409,22 @@ method. Besides the variable name this method defines the following optional
 parameters:
 
 - `$default` default value if the value is not contained in the request
-- `$filter` [filter](http://php.net/manual/en/filter.filters.php) to be applied
-  to the value
-- `$options` filter parameters if necessary
+- `$validateDesc` description of the validation to be applied to the value
 
-The `$filter` and `$options` values are passed to the
-[filter_var](http://php.net/manual/en/function.filter-var.php) function and the
-result is returned by the method.
+The `$validateDesc` parameter is passed to the
+\link wcmf::lib::validation::Validator::validate `Validator::validate`\endlink method
+and `null` is returned if validation fails.
 
 The following code demonstrates the usage:
 
 ~~~~~~~~~~~~~{.php}
 // validate an email value
-$email = $request->getValue('email', '', FILTER_VALIDATE_EMAIL);
+$email = $request->getValue('email', '', 'filter:{"type":"validate_email"}');
 
-// validate a date using a regular expression and
-// return the current date on failure
+// validate a date using a regular expression and return the current date on failure
 $today = date('Y-m-d');
-$options = array("options" => array("regexp" => "/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/"));
-$date = $request->getValue('date', $today, FILTER_VALIDATE_REGEXP, $options);
+$date = $request->getValue('date', $today, 'regex:{"pattern":"/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/"}');
 ~~~~~~~~~~~~~
+
+For more information about validation see \ref pers_validation.
 */
