@@ -11,6 +11,7 @@
 namespace wcmf\test\tests\config;
 
 use wcmf\lib\config\ConfigChangeEvent;
+use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\test\lib\BaseTestCase;
 
