@@ -81,7 +81,7 @@ class CalcController extends Controller {
   private function calc() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $value = $request->getValue('value', 0, 'filter:{"type":"int"') + 2;
+    $value = $request->getValue('value', 0, 'filter:{"type":"int"}') + 2;
     $response->setValue('value', $value);
   }
 

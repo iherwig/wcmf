@@ -56,7 +56,7 @@ class Validator {
 
     // validate against each validator
     foreach ($validators as $validator) {
-      list($validateTypeName, $validateOptions) = array_pad(preg_split('/:/', $validator, 2), 2, null);;
+      list($validateTypeName, $validateOptions) = array_pad(preg_split('/:/', $validator, 2), 2, null);
 
       // get the validator that should be used for this value
       $validatorInstance = self::getValidateType($validateTypeName);
