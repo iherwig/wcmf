@@ -27,7 +27,7 @@ class TestUtil {
   /**
    * Set up the wcmf framework. The method makes the following assumptions
    * about file locations:
-   * - main configuration in $configPath.'config.ini'
+   * - main configuration in $configPath.'backend.ini'
    * - optional additional configuration in $configPath.'test.ini'
    * - logging configuration in $configPath.'log.ini'
    * @param $configPath The path to the configuration directory
@@ -44,7 +44,7 @@ class TestUtil {
 
     // setup configuration
     $configuration = new InifileConfiguration($configPath);
-    $configuration->addConfiguration('config.ini');
+    $configuration->addConfiguration('backend.ini');
     $configuration->addConfiguration('test.ini');
 
     // setup object factory
