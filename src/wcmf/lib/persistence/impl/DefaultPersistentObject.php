@@ -343,14 +343,8 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    */
   public function setValue($name, $value, $forceSet=false, $trackChange=true) {
     if (!$forceSet) {
-      try {
         $message = ObjectFactory::getInstance('message');
         $this->validateValue($name, $value, $message);
-      }
-      catch(ValidationException $ex) {
-        $msg = "Invalid value (".$value.") for ".$this->getOID().".".$name.": ".$ex->getMessage();
-        throw new ValidationException($msg);
-      }
     }
     $oldValue = self::getValue($name);
     if ($forceSet || $oldValue !== $value) {
@@ -411,7 +405,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
       }
     }
     if (strlen($errorMessage) > 0) {
-      throw new ValidationException($errorMessage);
+      throw new ValidationException(null, null, $errorMessage);
     }
   }
 
@@ -441,20 +435,20 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
       return;
     }
     // construct the error message
-    $errorMessage = $message->getText("Wrong value for %0% (%1%). ", array($name, $value));
+    $errorMessage = $message->getText("The value of '%0%' (%1%) is invalid.", array($name, $value));
 
     // use configured message if existing
     $validateDescription = $this->getValueProperty($name, 'validate_description');
     if (strlen($validateDescription) > 0) {
-      $errorMessage .= $validateDescription;
+      $errorMessage .= " ".$validateDescription;
     }
     else {
       // construct default message
       if (strlen($validateType) > 0) {
-        $errorMessage .= $message->getText("The value must match %0%.", array($validateType));
+        $errorMessage .= " ".$message->getText("The value must match %0%.", array($validateType));
       }
     }
-    throw new ValidationException($errorMessage);
+    throw new ValidationException($name, $value, $errorMessage);
   }
 
   /**

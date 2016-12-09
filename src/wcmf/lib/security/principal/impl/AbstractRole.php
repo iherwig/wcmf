@@ -47,12 +47,12 @@ abstract class AbstractRole extends Node implements Role {
     // the name is expected to be stored in the 'name' value
     if ($name == 'name') {
       if (strlen(trim($value)) == 0) {
-        throw new ValidationException($message->getText("The role requires a name"));
+        throw new ValidationException($name, $value, $message->getText("The role requires a name"));
       }
       $principalFactory = ObjectFactory::getInstance('principalFactory');
       $role = $principalFactory->getRole($value);
       if ($role != null && $role->getOID() != $this->getOID()) {
-        throw new ValidationException($message->getText("The role '%0%' already exists", array($value)));
+        throw new ValidationException($name, $value, $message->getText("The role '%0%' already exists", array($value)));
       }
     }
   }

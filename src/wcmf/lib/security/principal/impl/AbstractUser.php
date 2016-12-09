@@ -171,16 +171,16 @@ abstract class AbstractUser extends Node implements User {
     // the login is expected to be stored in the 'login' value
     if ($name == 'login') {
       if (strlen(trim($value)) == 0) {
-        throw new ValidationException($message->getText("The user requires a login name"));
+        throw new ValidationException($name, $value, $message->getText("The user requires a login name"));
       }
       if ($value == AnonymousUser::USER_GROUP_NAME) {
-        throw new ValidationException($message->getText("The login '%0%' is not allowed",
+        throw new ValidationException($name, $value, $message->getText("The login '%0%' is not allowed",
                 array(AnonymousUser::USER_GROUP_NAME)));
       }
       $principalFactory = ObjectFactory::getInstance('principalFactory');
       $user = $principalFactory->getUser($value);
       if ($user != null && $user->getLogin() == $value && $user->getOID() != $this->getOID()) {
-        throw new ValidationException($message->getText("The login '%0%' already exists", array($value)));
+        throw new ValidationException($name, $value, $message->getText("The login '%0%' already exists", array($value)));
       }
     }
 
@@ -188,7 +188,7 @@ abstract class AbstractUser extends Node implements User {
     // the password is expected to be stored in the 'password' value
     if ($name == 'password') {
       if ($this->getState() == self::STATE_NEW && strlen(trim($value)) == 0) {
-        throw new ValidationException($message->getText("The password can't be empty"));
+        throw new ValidationException($name, $value, $message->getText("The password can't be empty"));
       }
     }
   }

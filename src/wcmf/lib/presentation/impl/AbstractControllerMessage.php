@@ -15,6 +15,7 @@ use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ControllerMessage;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\util\StringUtil;
+use wcmf\lib\validation\ValidationException;
 use wcmf\lib\validation\Validator;
 
 /**
@@ -212,8 +213,11 @@ abstract class AbstractControllerMessage implements ControllerMessage {
     if ($this->hasValue($name)) {
       $value = $this->values[$name];
       $message = ObjectFactory::getInstance('message');
-      return $validateDesc === null ? $value :
-          (Validator::validate($value, $validateDesc, $message) ? $value : null);
+      if ($validateDesc === null || Validator::validate($value, $validateDesc, $message)) {
+        return $value;
+      }
+      throw new ValidationException($name, $value,
+              $message->getText("The value of '%0%' (%1%) is invalid.", array($name, $value)));
     }
     else {
       return $default;

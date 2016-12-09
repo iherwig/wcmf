@@ -145,7 +145,7 @@ abstract class Controller {
     }
 
     // return the last error
-    $errors = $this->response->getErrors();
+    $errors = array_merge($this->request->getErrors(), $this->response->getErrors());
     if (sizeof($errors) > 0) {
       $error = array_pop($errors);
       $this->response->setValue('errorCode', $error->getCode());
