@@ -185,22 +185,22 @@ class TreeController extends Controller {
    * @return Array of Node instances
    */
   protected function getRootTypes() {
-    $request = $this->getRequest();
+    $types = null;
     $config = $this->getConfiguration();
-    $appConfig = $config->getSection('application');
 
     // get root types from configuration
     // try request value first
+    $request = $this->getRequest();
     $rootTypeVar = $request->getValue('rootTypes');
-    if (isset($appConfig[$rootTypeVar]) && is_array($appConfig[$rootTypeVar])) {
-      $types = $appConfig[$rootTypeVar];
+    if ($config->hasValue('application', $rootTypeVar)) {
+      $types = $config->getValue('application', $rootTypeVar);
+      if (!is_array($types)) {
+        $types = null;
+      }
     }
-    else if (isset($appConfig['rootTypes']) && is_array($appConfig['rootTypes'])) {
+    if ($types == null) {
       // fall back to root types
-      $types = $appConfig['rootTypes'];
-    }
-    else {
-      throw new ConfigurationException("No root types defined.");
+      $types = $config->hasValue('application', 'rootTypes');
     }
 
     // filter types by read permission

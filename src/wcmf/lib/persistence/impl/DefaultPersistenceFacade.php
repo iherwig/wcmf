@@ -16,7 +16,6 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeComparator;
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
@@ -70,10 +69,17 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $this->mappers = $mappers;
     foreach ($mappers as $fqName => $mapper) {
       // register simple type names
-      $name = $this->getSimpleType($fqName);
+      $name = $this->calculateSimpleType($fqName);
       if (!isset($this->mappers[$name])) {
         $this->mappers[$name] = $mapper;
-        $this->simpleToFqNames[$name] = $fqName;
+        if (!isset($this->simpleToFqNames[$name])) {
+          $this->simpleToFqNames[$name] = $fqName;
+        }
+        else {
+          // if the simple type name already exists, we remove
+          // it in order to prevent collisions with the new type
+          unset($this->simpleToFqNames[$name]);
+        }
       }
       // set logging strategy
       $mapper->setLogStrategy($this->logStrategy);
@@ -111,11 +117,11 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::getSimpleType()
    */
   public function getSimpleType($type) {
-    $pos = strrpos($type, '.');
-    if ($pos !== false) {
-      return substr($type, $pos+1);
-    }
-    return $type;
+    $simpleType = $this->calculateSimpleType($type);
+    // if there is a entry for the type name but not for the simple type name,
+    // the type is ambiquous and we return the type name
+    return (isset($this->mappers[$type]) && !isset($this->simpleToFqNames[$type])) ?
+        $type : $simpleType;
   }
 
   /**
@@ -379,6 +385,19 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       }
       $this->createdOIDs[$type][] = $object->getOID();
     }
+  }
+
+  /**
+   * Calculate the simple type name for a given fully qualified type name.
+   * @param $type Type name with namespace
+   * @return Simple type name (without namespace)
+   */
+  protected function calculateSimpleType($type) {
+    $pos = strrpos($type, '.');
+    if ($pos !== false) {
+      return substr($type, $pos+1);
+    }
+    return $type;
   }
 
   /**

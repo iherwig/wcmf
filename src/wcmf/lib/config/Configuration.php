@@ -60,10 +60,11 @@ interface Configuration {
   /**
    * Get a section.
    * @param $section The section to return.
+   * @param $includeMeta Boolean whether to include section meta data keys (optional, default: false)
    * @return Array holding the key/value pairs belonging to the section.
    * @throws ConfigurationException if the section does not exist
    */
-  public function getSection($section);
+  public function getSection($section, $includeMeta=false);
 
   /**
    * Check if a configuration value exists.

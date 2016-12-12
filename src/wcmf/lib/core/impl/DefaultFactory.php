@@ -130,7 +130,7 @@ class DefaultFactory implements Factory {
     }
     else {
       // construct instance
-      $staticConfiguration = $this->configuration->getSection($name);
+      $staticConfiguration = $this->configuration->getSection($name, true);
       $configuration = array_merge($staticConfiguration, $dynamicConfiguration);
       $instance = $this->createInstance($name, $configuration, $instanceKey);
     }

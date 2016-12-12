@@ -189,13 +189,20 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::getSection()
    */
-  public function getSection($section) {
+  public function getSection($section, $includeMeta=false) {
     $lookupEntry = $this->lookup($section);
     if ($lookupEntry == null) {
       throw new ConfigurationException('Section \''.$section.'\' not found!');
     }
     else {
-      return $this->configArray[$lookupEntry[0]];
+      if ($includeMeta) {
+        return $this->configArray[$lookupEntry[0]];
+      }
+      else {
+        return array_filter($this->configArray[$lookupEntry[0]], function($k) {
+          return !preg_match('/^__/', $k);
+        }, \ARRAY_FILTER_USE_KEY);
+      }
     }
   }
 
