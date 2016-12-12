@@ -120,7 +120,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $simpleType = $this->calculateSimpleType($type);
     // if there is a entry for the type name but not for the simple type name,
     // the type is ambiquous and we return the type name
-    return (isset($this->mappers[$type]) && !isset($this->simpleToFqNames[$type])) ?
+    return (isset($this->mappers[$type]) && !isset($this->simpleToFqNames[$simpleType])) ?
         $type : $simpleType;
   }
 
