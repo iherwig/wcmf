@@ -188,7 +188,7 @@ class LuceneSearch implements IndexedSearch {
    * @see Search::isSearchable()
    */
   public function isSearchable(PersistentObject $obj) {
-    return (boolean) $obj->getProperty('is_searchable');
+    return (boolean) $obj->getProperty('isSearchable');
   }
 
   /**

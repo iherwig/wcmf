@@ -38,7 +38,7 @@ interface Search {
 
   /**
    * Check if the instance object is searchable
-   * (defined by the property 'is_searchable')
+   * (defined by the property 'isSearchable')
    * @param $obj PersistentObject instance
    * @return Boolean whether the object is searchable or not
    */
