@@ -11,9 +11,7 @@
 namespace wcmf\test\tests\config;
 
 use wcmf\lib\config\ConfigChangeEvent;
-use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\io\FileUtil;
 use wcmf\test\lib\BaseTestCase;
 
 /**
@@ -24,12 +22,6 @@ use wcmf\test\lib\BaseTestCase;
 class InifileConfigurationTest extends BaseTestCase {
 
   const INI_FILE = WCMF_BASE.'app/config/config.ini';
-
-  protected function setUp() {
-    parent::setUp();
-    $path = session_save_path().DIRECTORY_SEPARATOR;
-    FileUtil::emptyDir($path);
-  }
 
   public function testConfigFileNotChanged() {
     $config = ObjectFactory::getInstance('configuration');
