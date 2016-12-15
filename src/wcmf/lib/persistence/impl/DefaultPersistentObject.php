@@ -19,10 +19,10 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PropertyChangeEvent;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\StateChangeEvent;
-use wcmf\lib\persistence\ValidationException;
-use wcmf\lib\validation\Validator;
 use wcmf\lib\persistence\ValueChangeEvent;
 use wcmf\lib\util\StringUtil;
+use wcmf\lib\validation\ValidationException;
+use wcmf\lib\validation\Validator;
 
 /**
  * DefaultPersistentObject is the base class of all persistent objects.
