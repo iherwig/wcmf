@@ -709,7 +709,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    */
   protected function checkFileDate($fileList, $referenceFile) {
     foreach ($fileList as $file) {
-      if (filemtime($file) > filemtime($referenceFile)) {
+      if (@filemtime($file) > @filemtime($referenceFile)) {
         return true;
       }
     }

@@ -23,6 +23,11 @@ class InifileConfigurationTest extends BaseTestCase {
 
   const INI_FILE = WCMF_BASE.'app/config/config.ini';
 
+  protected function setUp() {
+    parent::setUp();
+    session_save_path(WCMF_BASE.'app/cache');
+  }
+
   public function testConfigFileNotChanged() {
     $config = ObjectFactory::getInstance('configuration');
     $config->addConfiguration('config.ini');
