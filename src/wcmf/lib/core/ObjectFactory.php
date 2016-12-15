@@ -85,8 +85,10 @@ class ObjectFactory {
    * @see Factory::clear()
    */
   public static function clear() {
-    self::checkConfig();
-    self::$factory->clear();
+    if (self::$factory != null) {
+      self::$factory->clear();
+    }
+    self::$factory = null;
   }
 
   /**

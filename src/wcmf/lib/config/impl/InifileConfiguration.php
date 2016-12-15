@@ -96,7 +96,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (self::$logger->isDebugEnabled()) {
       self::$logger->debug("Parsed files: ".$numParsedFiles.", last file: ".$lastFile);
     }
-    if ($numParsedFiles > 0 && $lastFile == $filename) {
+    if ($numParsedFiles > 0 && $lastFile == $filename &&
+            !$this->checkFileDate($this->addedFiles, $this->getSerializeFilename($this->addedFiles))) {
       if (self::$logger->isDebugEnabled()) {
         self::$logger->debug("Skipping");
       }
@@ -723,6 +724,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       self::$logger->debug("Configuration is changed");
     }
     if (ObjectFactory::isConfigured()) {
+      if (self::$logger->isDebugEnabled()) {
+        self::$logger->debug("Emitting change event");
+      }
       ObjectFactory::getInstance('eventManager')->dispatch(ConfigChangeEvent::NAME,
               new ConfigChangeEvent());
     }

@@ -13,6 +13,7 @@ namespace wcmf\test\tests\config;
 use wcmf\lib\config\ConfigChangeEvent;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileUtil;
 use wcmf\test\lib\BaseTestCase;
 
 /**
@@ -24,10 +25,15 @@ class InifileConfigurationTest extends BaseTestCase {
 
   const INI_FILE = WCMF_BASE.'app/config/config.ini';
 
+  protected function setUp() {
+    parent::setUp();
+    $path = session_save_path().DIRECTORY_SEPARATOR;
+    FileUtil::emptyDir($path);
+  }
+
   public function testConfigFileNotChanged() {
     $config = ObjectFactory::getInstance('configuration');
-    $testConfig = new InifileConfiguration($config->getConfigPath());
-    $testConfig->addConfiguration('config.ini');
+    $config->addConfiguration('config.ini');
 
     $hasChanged = false;
     ObjectFactory::getInstance('eventManager')->addListener(ConfigChangeEvent::NAME, function($event) use (&$hasChanged) {
@@ -35,24 +41,24 @@ class InifileConfigurationTest extends BaseTestCase {
     });
 
     // test
-    $testConfig->addConfiguration('config.ini');
+    $config->addConfiguration('config.ini');
     $this->assertFalse($hasChanged);
   }
 
   public function testConfigFileChanged() {
     $config = ObjectFactory::getInstance('configuration');
-    $testConfig = new InifileConfiguration($config->getConfigPath());
-    $testConfig->addConfiguration('config.ini');
+    $config->addConfiguration('config.ini');
 
     $hasChanged = false;
     ObjectFactory::getInstance('eventManager')->addListener(ConfigChangeEvent::NAME, function($event) use (&$hasChanged) {
       $hasChanged = true;
     });
 
+    sleep(5);
     $this->changeInifile(self::INI_FILE);
 
     // test
-    $testConfig->addConfiguration('config.ini');
+    $config->addConfiguration('config.ini');
     $this->assertTrue($hasChanged);
 
     $this->resetInifile(self::INI_FILE);
