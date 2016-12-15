@@ -95,6 +95,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $lastFile = $numParsedFiles > 0 ? $this->addedFiles[$numParsedFiles-1] : '';
     if (self::$logger->isDebugEnabled()) {
       self::$logger->debug("Parsed files: ".$numParsedFiles.", last file: ".$lastFile);
+      foreach($this->addedFiles as $addedFile) {
+        self::$logger->debug("File date ".$addedFile.": ".@filemtime($addedFile));
+      }
+      $cachedFile = $this->getSerializeFilename($this->addedFiles);
+      self::$logger->debug("File date ".$cachedFile.": ".@filemtime($cachedFile));
     }
     if ($numParsedFiles > 0 && $lastFile == $filename &&
             !$this->checkFileDate($this->addedFiles, $this->getSerializeFilename($this->addedFiles))) {
