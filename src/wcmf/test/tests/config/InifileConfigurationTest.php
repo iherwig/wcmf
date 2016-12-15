@@ -11,8 +11,8 @@
 namespace wcmf\test\tests\config;
 
 use wcmf\lib\config\ConfigChangeEvent;
-use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileUtil;
 use wcmf\test\lib\BaseTestCase;
 
 /**
@@ -23,36 +23,53 @@ use wcmf\test\lib\BaseTestCase;
 class InifileConfigurationTest extends BaseTestCase {
 
   const INI_FILE = WCMF_BASE.'app/config/config.ini';
+  const SESSION_SAVE_PATH = WCMF_BASE.'app/cache';
+
+  private $defaultSessionSavePath = '';
+
+  protected function setUp() {
+    $this->defaultSessionSavePath = session_save_path();
+    FileUtil::mkdirRec(self::SESSION_SAVE_PATH);
+    FileUtil::emptyDir(self::SESSION_SAVE_PATH);
+    session_save_path(self::SESSION_SAVE_PATH);
+    parent::setUp();
+  }
+
+  protected function tearDown() {
+    FileUtil::emptyDir(self::SESSION_SAVE_PATH);
+    session_save_path($this->defaultSessionSavePath);
+    parent::tearDown();
+  }
 
   public function testConfigFileNotChanged() {
     $config = ObjectFactory::getInstance('configuration');
-    $testConfig = new InifileConfiguration($config->getConfigPath());
-    $testConfig->addConfiguration('config.ini');
+    $config->addConfiguration('config.ini');
 
     $hasChanged = false;
     ObjectFactory::getInstance('eventManager')->addListener(ConfigChangeEvent::NAME, function($event) use (&$hasChanged) {
       $hasChanged = true;
     });
+    sleep(2);
 
     // test
-    $testConfig->addConfiguration('config.ini');
+    $config->addConfiguration('config.ini');
     $this->assertFalse($hasChanged);
   }
 
   public function testConfigFileChanged() {
     $config = ObjectFactory::getInstance('configuration');
-    $testConfig = new InifileConfiguration($config->getConfigPath());
-    $testConfig->addConfiguration('config.ini');
+    $config->addConfiguration('config.ini');
 
     $hasChanged = false;
     ObjectFactory::getInstance('eventManager')->addListener(ConfigChangeEvent::NAME, function($event) use (&$hasChanged) {
       $hasChanged = true;
     });
+    sleep(2);
 
     $this->changeInifile(self::INI_FILE);
 
     // test
-    $testConfig->addConfiguration('config.ini');
+    $config->addConfiguration('config.ini');
     $this->assertTrue($hasChanged);
 
     $this->resetInifile(self::INI_FILE);

@@ -40,7 +40,7 @@ class FileCache implements Cache {
   }
 
   /**
-   * Desctructor.
+   * Destructor.
    */
   public function __destruct() {
     ObjectFactory::getInstance('eventManager')->removeListener(ConfigChangeEvent::NAME,

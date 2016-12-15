@@ -26,8 +26,6 @@ use wcmf\test\lib\DatabaseTestCase;
  */
 class PersistentObjectPerformanceTest extends DatabaseTestCase {
 
-  private static $logger = null;
-
   protected function getDataSet() {
     $chapters = array();
     for ($i=0; $i<1000; $i++) {
@@ -50,14 +48,6 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
       'Chapter' => $chapters,
     ));
   }
-
-  protected function setUp() {
-    parent::setUp();
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
-  }
-
 
   /**
    * @group performance
@@ -87,8 +77,9 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $start = time();
     $chapters = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE);
-    self::$logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
-    self::$logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
+    $logger = $this->getLogger(__CLASS__);
+    $logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
+    $logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
     TestUtil::endSession();
   }
 
@@ -100,8 +91,9 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
     $start = time();
     $query = new ObjectQuery('Chapter');
     $chapters = $query->execute(BuildDepth::SINGLE);
-    self::$logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
-    self::$logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
+    $logger = $this->getLogger(__CLASS__);
+    $logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
+    $logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
     TestUtil::endSession();
   }
 
@@ -113,8 +105,9 @@ class PersistentObjectPerformanceTest extends DatabaseTestCase {
     $start = time();
     $query = new ObjectQuery('Chapter', SelectStatement::NO_CACHE);
     $chapters = $query->execute(BuildDepth::SINGLE);
-    self::$logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
-    self::$logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
+    $logger = $this->getLogger(__CLASS__);
+    $logger->info("Loaded ".sizeof($chapters)." chapters in ".(time()-$start)." seconds");
+    $logger->info("Size of chapter: ".TestUtil::getSizeof($chapters[0])." bytes");
     TestUtil::endSession();
   }
 }

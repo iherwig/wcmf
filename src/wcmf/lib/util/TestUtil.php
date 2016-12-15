@@ -37,6 +37,7 @@ class TestUtil {
       throw new \Exception('Configuration path '.$configPath.' is not a directory. '.
               'Did you forget to generate code from the model?');
     }
+    ObjectFactory::clear();
 
     // setup logging
     $logger = new MonologFileLogger('main', $configPath.'log.ini');
@@ -44,15 +45,16 @@ class TestUtil {
 
     // setup configuration
     $configuration = new InifileConfiguration($configPath);
-    $configuration->addConfiguration('backend.ini');
-    $configuration->addConfiguration('test.ini');
 
     // setup object factory
     ObjectFactory::configure(new DefaultFactory($configuration));
     ObjectFactory::registerInstance('configuration', $configuration);
 
-    $cache = ObjectFactory::getInstance('dynamicCache');
-    $cache->clearAll();
+    // add configurations
+    $configuration->addConfiguration('backend.ini');
+    $configuration->addConfiguration('test.ini');
+
+    ObjectFactory::getInstance('dynamicCache')->clearAll();
   }
 
   /**

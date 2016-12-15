@@ -18,6 +18,7 @@ use wcmf\lib\util\TestUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
+  use TestTrait;
 
   /**
    * @see http://getbootstrap.com/css/#grid-media-queries
@@ -57,6 +58,7 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
     $this->setBrowser('firefox');
     $this->setBrowserUrl(self::getAppUrl());
     parent::setUp();
+    $this->getLogger(__CLASS__)->info("Running: ".get_class($this).".".$this->getName());
   }
 
   public function tearDown() {
@@ -118,15 +120,6 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
     $this->byName('password')->value($password);
     $btn = $this->byXPath("//span[contains(text(),'Sign in')]");
     $btn->click();
-  }
-
-  /**
-   * Get the logger for the given category
-   * @param $category
-   * @return Logger
-   */
-  protected function getLogger($category) {
-    return LogManager::getLogger($category);
   }
 }
 ?>
