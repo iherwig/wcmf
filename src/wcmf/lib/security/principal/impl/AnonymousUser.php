@@ -55,9 +55,33 @@ class AnonymousUser implements User {
   }
 
   /**
-   * @see User::verifyPassword
+   * @see User::verifyPassword()
    */
   public function verifyPassword($password) {
+    return false;
+  }
+
+  /**
+   * @see User::setIsActive()
+   */
+  public function setIsActive($isActive) {}
+
+  /**
+   * @see User::isActive()
+   */
+  public function isActive() {
+    return true;
+  }
+
+  /**
+   * @see User::setIsSuperUser()
+   */
+  public function setIsSuperUser($isSuperUser) {}
+
+  /**
+   * @see User::isSuperUser()
+   */
+  public function isSuperUser() {
     return false;
   }
 

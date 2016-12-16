@@ -52,7 +52,7 @@ class DefaultAuthenticationManager implements AuthenticationManager {
 
     // check if user exists
     $loginOk = false;
-    if ($user != null) {
+    if ($user != null && $user->isActive()) {
       // check password
       $loginOk = $user->verifyPassword($password);
       if ($loginOk) {

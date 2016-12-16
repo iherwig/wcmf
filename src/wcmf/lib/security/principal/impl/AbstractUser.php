@@ -65,6 +65,34 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
+   * @see User::setIsActive()
+   */
+  public function setIsActive($isActive) {
+    $this->setValue('active', $isActive);
+  }
+
+  /**
+   * @see User::isActive()
+   */
+  public function isActive() {
+    return intval($this->getValue('active')) === 1;
+  }
+
+  /**
+   * @see User::setIsSuperUser()
+   */
+  public function setIsSuperUser($isSuperUser) {
+    $this->setValue('super_user', $isSuperUser);
+  }
+
+  /**
+   * @see User::isSuperUser()
+   */
+  public function isSuperUser() {
+    return intval($this->getValue('super_user')) === 1;
+  }
+
+  /**
    * @see User::setConfig()
    */
   public function setConfig($config) {
@@ -118,6 +146,16 @@ abstract class AbstractUser extends Node implements User {
   }
 
   /**
+   * @see PersistentObject::beforeDelete()
+   */
+  public function beforeDelete() {
+    if ($this->isSuperUser()) {
+      $message = ObjectFactory::getInstance("message");
+      throw new \Exception($message->getText("Super users cannot be deleted"));
+    }
+  }
+
+  /**
    * Hash password property if not done already.
    */
   protected function ensureHashedPassword() {
@@ -168,7 +206,6 @@ abstract class AbstractUser extends Node implements User {
     parent::validateValue($name, $value, $message);
 
     // validate the login property
-    // the login is expected to be stored in the 'login' value
     if ($name == 'login') {
       if (strlen(trim($value)) == 0) {
         throw new ValidationException($name, $value, $message->getText("The user requires a login name"));
@@ -185,10 +222,23 @@ abstract class AbstractUser extends Node implements User {
     }
 
     // validate the password property if the user is newly created
-    // the password is expected to be stored in the 'password' value
     if ($name == 'password') {
       if ($this->getState() == self::STATE_NEW && strlen(trim($value)) == 0) {
         throw new ValidationException($name, $value, $message->getText("The password can't be empty"));
+      }
+    }
+
+    // validate the active property
+    if ($name == 'active') {
+      if ($this->isSuperUser() && intval($value) !== 1) {
+        throw new ValidationException($name, $value, $message->getText("Super users must be active"));
+      }
+    }
+
+    // validate the super_user property
+    if ($name == 'super_user') {
+      if ($this->getState() != self::STATE_NEW && $this->getValue('super_user') != $value) {
+        throw new ValidationException($name, $value, $message->getText("The super user property can't be changed after creation"));
       }
     }
   }

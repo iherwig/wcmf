@@ -21,7 +21,7 @@ interface AuthenticationManager {
   /**
    * Authenticate using the given credentials.
    * @param $credentials Associative array with implementation specific keys
-   * @return User instance if successfull, null else
+   * @return User instance if successful, null else
    */
   public function login($credentials);
 }
