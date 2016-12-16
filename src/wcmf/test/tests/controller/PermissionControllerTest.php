@@ -38,8 +38,8 @@ class PermissionControllerTest extends ControllerTestCase {
         array('table' => ''),
       ),
       'User' => array(
-        array('id' => 0, 'login' => 'admin', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => 'permissions.ini'),
-        array('id' => 1, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'config' => 'permissions.ini')
+        array('id' => 0, 'login' => 'admin', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => 'permissions.ini'),
+        array('id' => 1, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => 'permissions.ini')
       ),
       'NMUserRole' => array(
         array('fk_user_id' => 0, 'fk_role_id' => 0),
