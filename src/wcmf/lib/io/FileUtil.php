@@ -280,6 +280,24 @@ class FileUtil {
   }
 
   /**
+   * Fix the name of an existing file to be used with php file functions
+   * @param $file
+   * @return String or null, if the file does not exist
+   */
+  public static function fixFilename($file) {
+    if (file_exists($file)) {
+      return $file;
+    }
+    else {
+      $file = iconv('utf-8', 'cp1252', $file);
+      if (file_exists($file)) {
+        return $file;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Check if the given file exists
    * @param $file
    * @return Boolean
