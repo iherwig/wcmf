@@ -319,6 +319,22 @@ the method. The following diagram illustrates the concept:
 
 \image html controller-methods.png "Controller methods"
 
+#### Request parameters #### {#model_controller_parameters}
+
+Parameters may be added to controller methods. The generator will create code
+that extracts and validates the input parameters from the requests or sets
+default values if they are absent. Output parameters will be added to the response.
+
+#### Routes #### {#model_controller_routes}
+
+If an action should be available in the public API of the application, it must be
+mapped to a request uri in the `Routes` configuration section (see \ref pres_routingext).
+
+This can be easily achieved by setting a request uri pattern on the action key's
+source end. The following diagram illustrates the concept:
+
+\image html controller-routes.png "Controller routes"
+
 ### Configuration ### {#model_config}
 
 The following __stereotypes__ are used to model the application configuration.
@@ -347,8 +363,8 @@ method and passing _database_ as `section` paramter.
 
 ### Default model ### {#model_default}
 
-The \ref app "default application" inlcudes a demo UML model located in
-`model/model.uml`. It is a good starting point for own experiments. For those who
+The \ref app "default application" includes a demo UML model located in
+`model/model.uml`. It is a good starting point for custom applications. For those who
 want to start from scratch there are also base models in _model/base/cwm/_ (for
 [Chronos Web Modeler](http://sourceforge.net/projects/olympos/)) and
 _model/base/papyrus/_ (for [Eclipse Papyrus](http://www.eclipse.org/papyrus/)).
@@ -357,15 +373,14 @@ The default model has the following package structure:
 
 - _model_
   - _wcmf test_
-    - _Primitive types_
     - _root_
-      - __configuration__ Application specific configuration
-        - _default_
+      - _wcmf_ Framework packages with useful (base-)classes
+        - _Primitive types_
+        - _configuration_ Base configuration
           - _config.ini_
             - `«ChiSystem» Config`
             - ...
           - ...
-      - _wcmf_ Framework packages with useful (base-)classes
         - _application_
           - _controller_ Existing controllers
             - `«ChiController» AssociateController`
@@ -381,6 +396,9 @@ The default model has the following package structure:
                 - `AbstractUser` Base class for custom user class
                 - `AbstractRole` Base class for custom role class
       - _app_ Application specific packages
+        - __configuration__ Application specific configuration
+          - _backend.ini_
+          - _server.ini_ Deployment specific configuration
         - _src_
           - __model__ Domain class package
             - _wcmf_ Default framework classes
@@ -505,8 +523,11 @@ The generator creates the following files:
 
 - __Controller classes__ are generated in directories corresponding to the
   model packages (_app/src/controller_, if the default model packages are used). For
-  each `ChiController` class one subclass of
-  \link wcmf::lib::presentation::Controller `Controller`\endlink will be created.
+  each `ChiController` class two classes are created, one base class that contains
+  all generated code and one subclass that contains the methods to be implemented.
+  The base class inherits from
+  \link wcmf::lib::presentation::Controller `Controller`\endlink or one of it's
+  subclasses.
 
 - The __SOAP interface__ is generated in the file _app/public/soap-interface.php_.
   \link wcmf::application::controller::SOAPController `SOAPController`\endlink

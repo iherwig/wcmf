@@ -336,14 +336,49 @@ as follows:
 
 ## Sessions ## {#sec_session}
 
-### Session implementations ### {#sec_session_impl}
-
 wCMF provides the following \link wcmf::lib::core::Session `Session`\endlink
 implementations:
 
-- \link wcmf::lib::core::impl::DefaultSession `DefaultSession`\endlink
-- \link wcmf::lib::core::impl::AuthTokenSession `AuthTokenSession`\endlink
-- \link wcmf::lib::core::impl::ClientSideSession `ClientSideSession`\endlink
+- \link wcmf::lib::core::impl::DefaultSession `DefaultSession`\endlink is a session
+  that uses PHP's default server side session implementation in combination with a
+  session cookie.
+- \link wcmf::lib::core::impl::AuthTokenSession `AuthTokenSession`\endlink additionally
+  requires clients to send an `X-Auth-Token` request header.
+- \link wcmf::lib::core::impl::ClientSideSession `ClientSideSession`\endlink has
+  no server state as it stores the data in cookies.
+
+## Input ## {#sec_input}
+
+Generally all external input sent to the application should be considered harmful.
+
+In PHP this input is stored in so called _Superglobals_, e.g. <em>$_GET</em>,
+<em>$_POST</em>, <em>$_FILES</em>. To avoid using these global variables directly
+in code, wCMF encapsulates them in the
+\link wcmf::lib::presentation::Request `Request`\endlink instance and makes
+them available through the
+\link wcmf::lib::presentation::Request::getValue `Request::getValue`\endlink
+method. Besides the variable name this method defines the following optional
+parameters:
+
+- `$default` default value if the value is not contained in the request
+- `$validateDesc` description of the validation to be applied to the value
+
+The `$validateDesc` parameter is passed to the
+\link wcmf::lib::validation::Validator::validate `Validator::validate`\endlink method
+and `null` is returned if validation fails.
+
+The following code demonstrates the usage:
+
+~~~~~~~~~~~~~{.php}
+// validate an email value
+$email = $request->getValue('email', '', 'filter:{"type":"validate_email"}');
+
+// validate a date using a regular expression and return the current date on failure
+$today = date('Y-m-d');
+$date = $request->getValue('date', $today, 'regex:{"pattern":"/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/"}');
+~~~~~~~~~~~~~
+
+For more information about validation see \ref pers_validation.
 
 ### CSRF protection ### {#sec_input_csrf}
 
@@ -394,37 +429,4 @@ class UserController {
   }
 }
 ~~~~~~~~~~~~~
-
-## Input ## {#sec_input}
-
-Generally all external input sent to the application should be considered harmful.
-
-In PHP this input is stored in so called _Superglobals_, e.g. <em>$_GET</em>,
-<em>$_POST</em>, <em>$_FILES</em>. To avoid using these global variables directly
-in code, wCMF encapsulates them in the
-\link wcmf::lib::presentation::Request `Request`\endlink instance and makes
-them available through the
-\link wcmf::lib::presentation::Request::getValue `Request::getValue`\endlink
-method. Besides the variable name this method defines the following optional
-parameters:
-
-- `$default` default value if the value is not contained in the request
-- `$validateDesc` description of the validation to be applied to the value
-
-The `$validateDesc` parameter is passed to the
-\link wcmf::lib::validation::Validator::validate `Validator::validate`\endlink method
-and `null` is returned if validation fails.
-
-The following code demonstrates the usage:
-
-~~~~~~~~~~~~~{.php}
-// validate an email value
-$email = $request->getValue('email', '', 'filter:{"type":"validate_email"}');
-
-// validate a date using a regular expression and return the current date on failure
-$today = date('Y-m-d');
-$date = $request->getValue('date', $today, 'regex:{"pattern":"/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/"}');
-~~~~~~~~~~~~~
-
-For more information about validation see \ref pers_validation.
 */

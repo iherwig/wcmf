@@ -249,7 +249,7 @@ GET/* = action=cms
   It is mapped to the _cms_ action - corresponding to the action key <em>??cms</em>.
 
 @note Any requests on routes that are __not__ defined in the `Routes` configuration
-section will cause an error. This is why this section is also considered the
+section will cause a `404` error. This is why this section is also considered the
 _public_ interface of the application.
 
 ##### HTTP methods #####
