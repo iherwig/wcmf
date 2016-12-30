@@ -247,7 +247,6 @@ class GraphicsUtil {
       call_user_func_array(array($image, $function), $params);
       $image->save(dirname($destName), basename($destName), true, null, 100);
     }
-    chmod($destName, 0644);
   }
 
   /**
@@ -353,7 +352,6 @@ class GraphicsUtil {
 
       // write the image
       $image->save(dirname($filename), basename($filename), true, null, 100);
-      chmod($filename, 0644);
       return true;
     } catch (\Exception $ex) {
       $this->errorMsg = $ex->getMessage();

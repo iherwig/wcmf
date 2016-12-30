@@ -10,10 +10,17 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\config\Configuration;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\PersistenceAction;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\security\principal\User;
 

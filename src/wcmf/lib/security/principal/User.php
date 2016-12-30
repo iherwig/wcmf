@@ -58,6 +58,30 @@ interface User {
   public function verifyPassword($password);
 
   /**
+   * Set if the user is active.
+   * @param $isActive Boolean whether the user is active or not
+   */
+  public function setIsActive($isActive);
+
+  /**
+   * Check if the user is active.
+   * @return Boolean.
+   */
+  public function isActive();
+
+  /**
+   * Set if the user is super user (can't be inactive).
+   * @param $isSuperUser Boolean whether the user is super user or not
+   */
+  public function setIsSuperUser($isSuperUser);
+
+  /**
+   * Check if the user is super user (can't be inactive).
+   * @return Boolean
+   */
+  public function isSuperUser();
+
+  /**
    * Set the configuration file of the user.
    * @param $config The configuration file of the user.
    */

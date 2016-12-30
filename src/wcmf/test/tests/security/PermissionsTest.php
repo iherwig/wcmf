@@ -34,7 +34,7 @@ class PermissionsTest extends DatabaseTestCase {
         array('table' => ''),
       ),
       'User' => array(
-        array('id' => 555, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'config' => 'permissions.ini')
+        array('id' => 555, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => 'permissions.ini')
       ),
       'NMUserRole' => array(
         array('fk_user_id' => 555, 'fk_role_id' => 555),

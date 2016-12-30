@@ -161,7 +161,7 @@ class TestUtil {
   }
 
   /**
-   * Start a session. This is usefull for simulateRequest calls
+   * Start a session. This is useful for simulateRequest calls
    * @param $user The name of the user
    * @param $password The password of the user
    * @return The session id. Use this as data['sid'] parameter for

@@ -26,7 +26,7 @@ class FileUtil {
    * @param $mediaFile An assoziative array with the following keys: 'name', 'type', 'tmp_name' (typically a $_FILES entry)
    * @param $destName The destination file name
    * @param $mimeTypes An array holding the allowed mimetypes, null if arbitrary (default: _null_)
-   * @param $override Boolean whether an existing file should be overridden, if false an unque id will be placed in the filename to prevent overriding (default: _true_)
+   * @param $override Boolean whether an existing file should be overridden, if false an unique id will be placed in the filename to prevent overriding (default: _true_)
    * @return The filename of the uploaded file
    */
   public static function uploadFile($mediaFile, $destName, $mimeTypes=null, $override=true) {
@@ -55,7 +55,6 @@ class FileUtil {
     if ($result === false) {
       throw new IOException("Failed to move %0% to %1%.", array($mediaFile['tmp_name'], $destName));
     }
-    chmod($destName, 0644);
     $filename = basename($destName);
     return $filename;
   }
@@ -212,10 +211,11 @@ class FileUtil {
   /**
    * Recursive directory creation.
    * @param $dirname The name of the directory
+   * @param $perm The permission for the new directories (default: 0775)
    */
-  public static function mkdirRec($dirname) {
+  public static function mkdirRec($dirname, $perm=0775) {
     if (!is_dir($dirname)) {
-      @mkdir($dirname, 0755, true);
+      @mkdir($dirname, $perm, true);
     }
   }
 
@@ -277,6 +277,24 @@ class FileUtil {
     $file = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).])", '', $file);
     $file = preg_replace("([\.]{2,})", '', $file);
     return $file;
+  }
+
+  /**
+   * Fix the name of an existing file to be used with php file functions
+   * @param $file
+   * @return String or null, if the file does not exist
+   */
+  public static function fixFilename($file) {
+    if (file_exists($file)) {
+      return $file;
+    }
+    else {
+      $file = iconv('utf-8', 'cp1252', $file);
+      if (file_exists($file)) {
+        return $file;
+      }
+    }
+    return null;
   }
 
   /**

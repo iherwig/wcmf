@@ -17,9 +17,9 @@ use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\ReferenceDescription;
-use wcmf\lib\persistence\ValidationException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\validation\ValidationException;
 
 /**
  * SaveController is a controller that saves Node data.

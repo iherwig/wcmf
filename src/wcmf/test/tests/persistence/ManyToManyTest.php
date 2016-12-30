@@ -33,9 +33,9 @@ class ManyToManyTest extends DatabaseTestCase {
         array('table' => ''),
       ),
       'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'config' => ''),
-        array('id' => 50, 'login' => 'user1', 'config' => ''),
-        array('id' => 60, 'login' => 'user2', 'config' => ''),
+        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
+        array('id' => 50, 'login' => 'user1', 'active' => 1, 'super_user' => 0, 'config' => ''),
+        array('id' => 60, 'login' => 'user2', 'active' => 1, 'super_user' => 0, 'config' => ''),
       ),
       'Role' => array(
         array('id' => 0, 'name' => 'administrators'),
