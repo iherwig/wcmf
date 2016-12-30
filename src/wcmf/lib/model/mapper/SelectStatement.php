@@ -189,7 +189,7 @@ class SelectStatement extends Select {
       // add column to join
       $joins = array();
       foreach ($this->joins->getJoins() as $join) {
-        if ($join['name'] == $joinName) {
+        if ($join['name'] == $joinName || in_array($joinName, array_keys($join['name']))) {
           $join['columns'] += $columns;
         }
         $joins[] = $join;
