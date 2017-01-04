@@ -8,7 +8,6 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
@@ -31,30 +30,33 @@ if (!class_exists('Assetic\Asset\AssetCollection')) {
             'as dependency to your project');
 }
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File:     block.assetic.php
-* Type:     block
-* Name:     assetic
-* Purpose:  Deliver assets using assetic library. Files will be combined and
-*           minified. JS and CSS will be recognized by the file extension.
-*           In order to not minify minified files again, the must use .min. in
-*           the filename. The result will be cached in the smarty cache.
-*           Works only for local files.
-* Parameters: name The name of the created file (will be appended by .min.js|.min.css)
-*             debug Boolean, if true the content will be returned as is
-* Usage:    {assetic name='header' debug=false}
-*             <link rel="stylesheet" href="css/normalize.min.css">
-*             <link rel="stylesheet" href="css/main.css">
-*
-*             <script src="js/vendor/modernizr-2.8.3.min.js"></script>
-*             <script src="js/main.js"></script>
-*           {/assetic}
-*
-* Author:   Ingo Herwig <ingo@wemove.com>
-* -------------------------------------------------------------
-*/
+/**
+ * Deliver assets using assetic library. Files will be combined and minified.
+ * JS and CSS will be recognized by the file extension.
+ * In order to not minify minified files again, the must use .min. in the filename.
+ * The result will be cached in the smarty cache.
+ *
+ * Example:
+ * @code
+ * {assetic name='header' debug=false}
+ *   <link rel="stylesheet" href="css/normalize.min.css">
+ *   <link rel="stylesheet" href="css/main.css">
+ *
+ *   <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+ *   <script src="js/main.js"></script>
+ * {/assetic}
+ * @endcode
+ *
+ * @note Works only for local files.
+ *
+ * @param $params Array with keys:
+ *   - name: The name of the created file (will be appended by .min.js|.min.css)
+ *   - debug: Boolean, if true the content will be returned as is
+ * @param $content
+ * @param $template Smarty_Internal_Template
+ * @param $repeat
+ * @return String
+ */
 function smarty_block_assetic($params, $content, Smarty_Internal_Template $template, &$repeat) {
   if(!$repeat) {
     if (isset($content)) {

@@ -8,40 +8,44 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File:     function.image.php
-* Type:     function
-* Name:     image
-* Purpose:  Renders an image tag, if the 'src' value points to an image file or the 'default' parameter is
-*           given. If 'width' or 'height' are given, the image will be resized to that values. The resize method
-*           depends on the 'sizemode' parameter. If the image size will be physically changed, a copy will be created
-*           in the cache directory that is used by the View class, which means that invalidating the View
-*           cache invalidates the image cache too. The content of the 'params' parameter will be put as is in the
-*           created image tag. If the image url has to be translated, use the 'base' parameter (see
-*           smarty_function_translate_url).
-*           The 'sizemode' parameter can have one of the followig values:
-*           - resize: The browser scales the image to fit inside the given dimensions
-*           - resample: The image will be physically scaled to fit inside the given dimensions
-*           - crop: The image will be clipped from the middle to fit inside the given dimensions
-*           If the parameter is not given, it defaults to resample.
-*           The 'valueMode' parameter can have one of the following values:
-*           - fitInto: The image is resized if it's width or height exceeds one of the given values. Image proportions will be kept.
-*           - scaleTo: The image is resized if it's width or height differs from the given values. Image proportions will be kept.
-*           - default: The image is resized if it's width or height differs from the given values. Image proportions will be ignored.
-*           The image will be resized according to the given sizemode. The image won't be cropped with 'valuemode' set to anything else than default.
-*           If the parameter is not given, default is used. Size attributes may be skipped using the nosizeoutput parameter.
-* Usage:    {image src=$image->getFile() base="cms/application/" width="100" alt="Image 1" params='border="0"'
+/**
+ * Render an image tag, if the 'src' value points to an image file or the 'default' parameter is
+ * given. If 'width' or 'height' are given, the image will be resized to that values. The resize method
+ * depends on the 'sizemode' parameter. If the image size will be physically changed, a copy will be created
+ * in the cache directory that is used by the View class, which means that invalidating the View
+ * cache invalidates the image cache too. The content of the 'params' parameter will be put as is in the
+ * created image tag.
+ *
+ * Example:
+ * @code
+ * {image src=$image->getFile() width="100" alt="Image 1" params='border="0"'
 *           default="images/blank.gif" sizemode="resize" nosizeoutput=true}
-* -------------------------------------------------------------
-*/
+ * @endcode
+ *
+ * @param $params Array with keys:
+ *        - src: The image file
+ *        - default: The default file, if src does not exist (optional)
+ *        - width: The width to render (optional)
+ *        - height: The height to render (optional)
+ *        - sizemode: One of the following values (optional, default: 'resample')
+ *          - resize: The browser scales the image to fit inside the given dimensions
+ *          - resample: The image will be physically scaled to fit inside the given dimensions
+ *          - crop: The image will be clipped from the middle to fit inside the given dimensions
+ *        - valuemode: One of the following values (optional, default: 'default')
+ *          - fitInto: The image is resized if it's width or height exceeds one of the given values. Image proportions will be kept.
+ *          - scaleTo: The image is resized if it's width or height differs from the given values. Image proportions will be kept.
+ *          - default: The image is resized if it's width or height differs from the given values. Image proportions will be ignored.
+ *        - nosizeoutput: Boolean whether to suppress output of width and height (optional, default: false)
+ *        - alt: Alternative text (optional)
+ *        - params: Additional attribute string for the image tag (optional)
+ * @param $template Smarty_Internal_Template
+ * @return String
+ */
 function smarty_function_image($params, Smarty_Internal_Template $template) {
   $file = $params['src'];
   $default = isset($params['default']) ? $params['default'] : '';

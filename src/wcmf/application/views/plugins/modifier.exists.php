@@ -8,19 +8,22 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
+use wcmf\lib\io\FileUtil;
 
 /**
- * Remove enclosing p tags from a string.
+ * Check if the given file path exists.
  *
  * Example:
  * @code
- * <p>{$text|strip_p_tags}</p>
+ * {if $file|exists}
+ *    ...
+ * {/if}
  * @endcode
  *
- * @param $text The text
- * @return String
+ * @param $path The file path
+ * @return Boolean
  */
-function smarty_modifier_strip_p_tags($text) {
-  return preg_replace('/^\s*<p>|<\/p>\s*$/', '', $text);
+function smarty_modifier_exists($path) {
+  return FileUtil::fileExists($path);
 }
 ?>

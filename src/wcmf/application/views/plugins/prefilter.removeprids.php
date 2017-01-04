@@ -9,20 +9,18 @@
  * additional information.
  */
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File: prefilter.removeprids.php
-* Type: prefilter
-* Name: removeprids
-* Purpose: Remove protected region ids (used by wCMFGenerator).
-* -------------------------------------------------------------
-*/
-function smarty_prefilter_removeprids($tplSource, \Smarty_Internal_Template $template) {
+/**
+ * Remove protected region ids (used by wCMFGenerator).
+ *
+ * @param $output
+ * @param $template Smarty_Internal_Template
+ * @return String
+ */
+function smarty_prefilter_removeprids($output, Smarty_Internal_Template $template) {
   // remove protected regions
-  $tplSource = preg_replace("/<!-- PROTECTED REGION .*? -->/U", "", $tplSource);
+  $output = preg_replace("/<!-- PROTECTED REGION .*? -->/U", "", $output);
 
   // remove any wCMFGenerator generated comments
-  return preg_replace("/<!--.*?ChronosGenerator.*?-->/s", "", $tplSource);
+  return preg_replace("/<!--.*?ChronosGenerator.*?-->/s", "", $output);
 }
 ?>

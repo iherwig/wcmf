@@ -9,23 +9,20 @@
  * additional information.
  */
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File:     function.uniqueid.php
-* Type:     function
-* Name:     uniqueid
-* Purpose:  output an unique id or assign it to a smarty variable
-* Usage:    e.g. {uniqueid} or {uniqueid varname="uid"}
-* -------------------------------------------------------------
-*/
-function smarty_function_uniqueid($params, \Smarty_Internal_Template $template) {
-  $uid = md5(uniqid(ip2long($_SERVER['REMOTE_ADDR']) ^ (int)$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space('/tmp'), 1));
-  if (isset($params['varname'])) {
-    $template->assign($params['varname'], $uid);
-  }
-  else {
-    echo $uid;
-  }
+/**
+ * Output an unique id.
+ *
+ * Example:
+ * @code
+ * {uniqueid}
+ * @endcode
+ *
+ * @param $params Not used
+ * @param $template Smarty_Internal_Template
+ * @return String
+ */
+function smarty_function_uniqueid($params, Smarty_Internal_Template $template) {
+  $uid = md5(uniqid(ip2long($_SERVER['REMOTE_ADDR']) ^ (int)$_SERVER['REMOTE_PORT'] ^ getmypid() ^ @disk_free_space('/tmp'), 1));
+  echo $uid;
 }
 ?>

@@ -9,14 +9,16 @@
  * additional information.
  */
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File:     smarty_outputfilter_obfuscate_email
-* code from: http://www.phpinsider.com/smarty-forum/viewtopic.php?t=2166
-* -------------------------------------------------------------
-*/
-function smarty_outputfilter_obfuscate_email($output, \Smarty_Internal_Template $template) {
+/**
+ * Obfuscate email addresses.
+ * @see http://www.phpinsider.com/smarty-forum/viewtopic.php?t=2166
+ *
+ * @global $obfuscated_email_count
+ * @param $output
+ * @param $template Smarty_Internal_Template
+ * @return String
+ */
+function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $template) {
   global $obfuscated_email_count;
   $obfuscated_email_count = 0;
   $output = preg_replace_callback(

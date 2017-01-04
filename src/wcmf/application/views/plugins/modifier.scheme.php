@@ -10,17 +10,17 @@
  */
 
 /**
- * Remove enclosing p tags from a string.
+ * Add the scheme to an url, if missing.
  *
  * Example:
  * @code
- * <p>{$text|strip_p_tags}</p>
+ * <a href="{$url|scheme}">Link</a>
  * @endcode
  *
- * @param $text The text
+ * @param $url The url
  * @return String
  */
-function smarty_modifier_strip_p_tags($text) {
-  return preg_replace('/^\s*<p>|<\/p>\s*$/', '', $text);
+function smarty_modifier_scheme($url) {
+  return (!preg_match('/^[a-zA-Z0-9-]+:\/\//', $url)) ? '//'.$url : $url;
 }
 ?>

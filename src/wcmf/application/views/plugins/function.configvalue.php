@@ -10,31 +10,22 @@
  */
 use wcmf\lib\core\ObjectFactory;
 
-/*
-* Smarty plugin
-* -------------------------------------------------------------
-* File:     function.configvalue.php
-* Type:     function
-* Name:     configvalue
-* Purpose:  output a configuration value/section
-*           or assign it to a smarty variable
-* Usage:    e.g. {configvalue key="exportDir" section="cms"} or
-*           {configvalue key="exportDir" section="cms" varname="exportDir"}
-* -------------------------------------------------------------
-*/
-function smarty_function_configvalue($params, \Smarty_Internal_Template $template) {
+/**
+ * Output a configuration value.
+ *
+ * Example:
+ * @code
+ * {configvalue key="exportDir" section="cms"}
+ * @endcode
+ *
+ * @param $params Array with keys:
+ *        - key: The key in the configuration section
+ *        - section: The name of the configuration section
+ * @param $template Smarty_Internal_Template
+ * @return String
+ */
+function smarty_function_configvalue(array $params, Smarty_Internal_Template $template) {
   $config = ObjectFactory::getInstance('configuration');
-  if (isset($params['key'])) {
-    $value = $config->getValue($params['key'], $params['section']);
-  }
-  else {
-    $value = $config->getSection($params['section']);
-  }
-  if (isset($params['varname'])) {
-    $template->assign($params['varname'], $value);
-  }
-  else {
-    echo $value;
-  }
+  echo $config->getValue($params['key'], $params['section']);
 }
 ?>
