@@ -65,16 +65,7 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
     return;
   }
 
-  // translate the file url using base
-  if (isset($params['base'])) {
-    $base = $params['base'];
-    // translate file url
-    $urls = URIUtil::translate($file, $base);
-    $file = $urls['relative'];
-    // translate default file url
-    $urls = URIUtil::translate($default, $base);
-    $default = $urls['relative'];
-  }
+  $file = FileUtil::fixFilename($file);
 
   // check if the file exists
   if (!is_file($file)) {
