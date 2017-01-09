@@ -44,27 +44,6 @@ if (!class_exists('\elFinder')) {
  * </div>
  * </div>
  *
- * <div class="controller-action">
- * <div> __Action__ crop </div>
- * <div>
- * Crop the given image.
- * | Parameter                | Description
- * |--------------------------|-------------------------
- * | _in_ `directory`         | elFinder _startPath_ parameter
- * | _in_ / _out_ `fieldName` | The name of the input field that should receive the url of the selected file. if not given, elFinder will search for a CkEditor instance and set the url on that.
- * | _in_ / _out_ `oid`       | The filename of the image to crop
- * | _in_ `cropX`             | The x value of the top-left corner of the crop frame
- * | _in_ `cropY`             | The y value of the top-left corner of the crop frame
- * | _in_ `cropWidth`         | The width of the crop frame
- * | _in_ `cropHeight`        | The height of the crop frame
- * | _out_ `rootUrl`          | Root url of all media as derived from the configuration value _uploadDir_ in the configuration section _media_
- * | _out_ `rootPath`         | Root path of all media as derived from the configuration value _uploadDir_ in the configuration section _media_
- * | __Response Actions__     | |
- * | `browseMedia`            | If all crop parameters are defined
- * | `ok`                     | In crop parameters are missing
- * </div>
- * </div>
- *
  * @note elFinder defines action names in the _cmd_ parameter.
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -130,43 +109,6 @@ class MediaController extends Controller {
 
       // unreachable, since elFinder calls exit()
       $response->setAction('ok');
-    }
-    else {
-      // custom crop action
-      if ($request->getAction() == "crop") {
-        if (!class_exists('\Eventviva\ImageResize')) {
-            throw new ConfigurationException(
-                    'wcmf\application\controller\MediaController requires '.
-                    'ImageResize to crop images. If you are using composer, add eventviva/php-image-resize '.
-                    'as dependency to your project');
-        }
-
-        $file = $request->getValue('oid');
-        $response->setValue('oid', $file);
-        if ($request->hasValue('cropX') && $request->hasValue('cropY') &&
-                $request->hasValue('cropWidth') && $request->hasValue('cropHeight')) {
-          // extract crop info
-          $x = $request->getValue('cropX');
-          $y = $request->getValue('cropY');
-          $w = $request->getValue('cropWidth');
-          $h = $request->getValue('cropHeight');
-
-          // define target file name
-          $cropInfo = 'x'.$x.'y'.$y.'w'.$w.'h'.$h;
-          $pathParts = pathinfo($file);
-          $targetFile = $pathParts['dirname'].'/'.$pathParts['filename'].'_'.$cropInfo.'.'.$pathParts['extension'];
-
-          // crop the image
-          $image = new \Eventviva\ImageResize($file);
-          $image->freecrop($w, $h, $x, $y);
-          $image->save($targetFile);
-          $response->setValue('fieldName', $request->getValue('fieldName'));
-          $response->setAction('browseMedia');
-        }
-        else {
-          $response->setAction('ok');
-        }
-      }
     }
   }
 
