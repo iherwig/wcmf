@@ -13,7 +13,6 @@ namespace wcmf\lib\validation\impl;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\validation\ValidateType;
-use wcmf\lib\util\GraphicsUtil;
 
 /**
  * Image validates an image value.
@@ -34,6 +33,8 @@ class Image implements ValidateType {
   /**
    * @see ValidateType::validate
    * $options is an associative array with keys 'width' (optional) and 'height' (optional)
+   *    where each array entry is an array with the size as first value and an boolean
+   *    indicating if the size should be matched exactly as second value
    */
   public function validate($value, Message $message, $options=null) {
     if (strlen($value) == 0) {
@@ -48,21 +49,19 @@ class Image implements ValidateType {
     }
 
     // translate path
-    $fileUtil = new FileUtil();
     $absValue = WCMF_BASE.$value;
-    $value = $fileUtil->realpath(dirname($absValue)).'/'.basename($absValue);
-
-    $graphicsUtil = new GraphicsUtil();
-    if (!$graphicsUtil->isImage($value)) {
+    $value = FileUtil::fixFilename(FileUtil::realpath(dirname($absValue)).'/'.basename($absValue));
+    if (!$value) {
       return false;
     }
 
     // check dimensions of the image
+    list($width, $height) = @getimagesize($value);
     $widthOk = $imgWidth !== false ?
-            $graphicsUtil->isValidImageWidth($value, $imgWidth[0], $imgWidth[1]) :
+            ($imgWidth[1] && $imgWidth[0] == $width) || (!$imgWidth[1] && $imgWidth[0] <= $width) :
             true;
     $heightOk = $imgHeight !== false ?
-            $graphicsUtil->isValidImageHeight($value, $imgHeight[0], $imgHeight[1]) :
+            ($imgHeight[1] && $imgHeight[0] == $height) || (!$imgHeight[1] && $imgHeight[0] <= $height) :
             true;
 
     return $widthOk && $heightOk;

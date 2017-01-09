@@ -8,10 +8,17 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
-use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
+
+if (!class_exists('\Eventviva\ImageResize')) {
+    throw new ConfigurationException(
+            'smarty_function_image requires '.
+            'ImageResize to resize/crop images. If you are using composer, add eventviva/php-image-resize '.
+            'as dependency to your project');
+}
 
 /**
  * Render an image tag, if the 'src' value points to an image file or the 'default' parameter is
@@ -145,13 +152,14 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
     $dateOrig = @filemtime($file);
     $dateCache = @filemtime($destName);
     if (!file_exists($destName) || $dateOrig > $dateCache) {
-      $graphicsUtil = new GraphicsUtil();
+      $image = new \Eventviva\ImageResize($file);
       if ($sizemode == 'resample') {
-        $graphicsUtil->createThumbnail($file, $destName, $requestedWidth, $requestedHeight);
+        $image->resize($requestedWidth, $requestedHeight);
       }
       else {
-        $graphicsUtil->cropImage($file, $destName, $requestedWidth, $requestedHeight);
+        $image->crop($requestedWidth, $requestedHeight);
       }
+      $image->save($destName);
     }
 
     // use the cached file

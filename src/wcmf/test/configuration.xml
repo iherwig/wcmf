@@ -90,7 +90,6 @@
         <file>../lib/pdf/PDF.php</file>
         <file>../lib/presentation/view/impl/SmartyView.php</file>
         <file>../lib/service/impl/HTTPClient.php</file>
-        <file>../lib/util/GraphicsUtil.php</file>
       </exclude>
     </whitelist>
   </filter>

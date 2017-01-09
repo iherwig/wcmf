@@ -41,10 +41,8 @@
     "suggest": {
         "smarty/smarty": "Use this package to render Smarty views via SmartyView",
         "nao-pon/elfinder-nightly": "Use this package to integrate elFinder with MediaController",
+        "eventviva/php-image-resize": "Use this package for crop images with MediaController or resize images using Smarty plugins",
         "setasign/fpdi-fpdf": "Use this package to generate PDF files",
-        "sybio/image-workshop": "Use this package for image manipulations with GraphicsUtil",
-        "sybio/gif-frame-extractor": "Use this package for image manipulations with GraphicsUtil",
-        "sybio/gif-creator": "Use this package for image manipulations with GraphicsUtil",
         "zf1/zend-http": "Use this package, if you want to communicate to other wCMF instances over HTTP"
     },
     "autoload": {

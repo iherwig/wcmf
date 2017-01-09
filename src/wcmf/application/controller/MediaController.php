@@ -10,13 +10,13 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\util\GraphicsUtil;
 use wcmf\lib\util\URIUtil;
 
 if (!class_exists('\elFinder')) {
-    throw new \wcmf\lib\config\ConfigurationException(
+    throw new ConfigurationException(
             'wcmf\application\controller\MediaController requires '.
             'elFinder. If you are using composer, add studio-42/elfinder '.
             'as dependency to your project');
@@ -134,6 +134,13 @@ class MediaController extends Controller {
     else {
       // custom crop action
       if ($request->getAction() == "crop") {
+        if (!class_exists('\Eventviva\ImageResize')) {
+            throw new ConfigurationException(
+                    'wcmf\application\controller\MediaController requires '.
+                    'ImageResize to crop images. If you are using composer, add eventviva/php-image-resize '.
+                    'as dependency to your project');
+        }
+
         $file = $request->getValue('oid');
         $response->setValue('oid', $file);
         if ($request->hasValue('cropX') && $request->hasValue('cropY') &&
@@ -150,8 +157,9 @@ class MediaController extends Controller {
           $targetFile = $pathParts['dirname'].'/'.$pathParts['filename'].'_'.$cropInfo.'.'.$pathParts['extension'];
 
           // crop the image
-          $graphicsUtil = new GraphicsUtil();
-          $graphicsUtil->cropImage($file, $targetFile, $w, $h, $x, $y);
+          $image = new \Eventviva\ImageResize($file);
+          $image->freecrop($w, $h, $x, $y);
+          $image->save($targetFile);
           $response->setValue('fieldName', $request->getValue('fieldName'));
           $response->setAction('browseMedia');
         }

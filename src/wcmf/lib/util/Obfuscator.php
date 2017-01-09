@@ -13,8 +13,8 @@ namespace wcmf\lib\util;
 use wcmf\lib\core\Session;
 
 /**
- * Obfuscator allows to obfuscate strings. By passing an objuscated string
- * to the method Obfuscator::unveil() the orginal string is returned.
+ * Obfuscator allows to obfuscate strings. By passing an obfuscated string
+ * to the method Obfuscator::unveil() the original string is returned.
  * This is especially useful, if you want to place a secret string inside a client view
  * as a parameter and want to get the original string back as the request is processed.
  *
