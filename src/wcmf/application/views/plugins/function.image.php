@@ -21,45 +21,42 @@ if (!class_exists('\Eventviva\ImageResize')) {
 }
 
 /**
- * Render an image tag, if the 'src' value points to an image file or the 'default' parameter is
- * given. If 'width' or 'height' are given, the image will be resized to that values. The resize method
- * depends on the 'sizemode' parameter. If the image size will be physically changed, a copy will be created
- * in the cache directory that is used by the View class, which means that invalidating the View
- * cache invalidates the image cache too. The content of the 'params' parameter will be put as is in the
- * created image tag.
+ * Render an responsive image tag using srcset and sizes attributes.
  *
  * Example:
  * @code
- * {image src=$image->getFile() width="100" alt="Image 1" params='border="0"'
-*           default="images/blank.gif" sizemode="resize" nosizeoutput=true}
+ * {res_image src=$image->getFile() widths="1600,960,640" type="w"
+ *          sizes="(min-width: 50em) 33vw, (min-width: 28em) 50vw, 100vw"
+ *          alt="Image 1" default="images/blank.gif"}
  * @endcode
  *
  * @param $params Array with keys:
  *        - src: The image file
  *        - default: The default file, if src does not exist (optional)
- *        - width: The width to render (optional)
- *        - height: The height to render (optional)
- *        - sizemode: One of the following values (optional, default: 'resample')
- *          - resize: The browser scales the image to fit inside the given dimensions
- *          - resample: The image will be physically scaled to fit inside the given dimensions
- *          - crop: The image will be clipped from the middle to fit inside the given dimensions
- *        - valuemode: One of the following values (optional, default: 'default')
- *          - fitInto: The image is resized if it's width or height exceeds one of the given values. Image proportions will be kept.
- *          - scaleTo: The image is resized if it's width or height differs from the given values. Image proportions will be kept.
- *          - default: The image is resized if it's width or height differs from the given values. Image proportions will be ignored.
- *        - nosizeoutput: Boolean whether to suppress output of width and height (optional, default: false)
+ *        - widths: Comma separated, sorted list of width values to be used in the srcset attribute
+ *        - type: Indicates how width values should be used (optional, default: w)
+ *          - w: Values will be used as pixels, e.g. widths="1600,960" results in srcset="... 1600w, ... 960w"
+ *          - x: Values will be used as pixel ration, e.g. widths="1600,960" results in srcset="... 2x, ... 1x"
+ *        - sizes: Media queries to define image size in relation of the viewport (optional)
+ *        - useDataAttributes: Boolean indicating whether to replace src, srcset, sizes by data-src, data-srcset, data-sizes (optional, default: false)
+ *        - generate: Boolean indicating whether to generate the images or not (optional, default: false)
+ *        - class: Image class (optional)
  *        - alt: Alternative text (optional)
- *        - params: Additional attribute string for the image tag (optional)
+ *        - title: Image title (optional)
  * @param $template Smarty_Internal_Template
  * @return String
  */
 function smarty_function_image($params, Smarty_Internal_Template $template) {
   $file = $params['src'];
   $default = isset($params['default']) ? $params['default'] : '';
-  $sizemode = isset($params['sizemode']) ? $params['sizemode'] : 'resample';
-  $valuemode = isset($params['valuemode']) ? $params['valuemode'] : 'default';
+  $widths = $params['widths'];
+  $type = isset($params['type']) ? $params['type'] : 'w';
+  $sizes = isset($params['sizes']) ? $params['sizes'] : '';
+  $useDataAttributes = isset($params['useDataAttributes']) ? $params['useDataAttributes'] : false;
+  $generate = isset($params['generate']) ? $params['generate'] : false;
+  $class = isset($params['class']) ? $params['class'] : '';
   $alt = isset($params['alt']) ? $params['alt'] : '';
-  $imageParams = isset($params['params']) ? $params['params'] : '';
+  $title = isset($params['title']) ? $params['title'] : '';
 
   if (strlen($file) == 0 && strlen($default) == 0) {
     return;
@@ -77,99 +74,55 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
   }
 
   // get the image size in order to see if we have to resize
-  $imageSize = getimagesize($file);
-  if ($imageSize == false) {
+  $imageInfo = getimagesize($file);
+  if ($imageInfo == false) {
     // the file is no image
     return;
   }
 
-  $requestedWidth = isset($params['width']) ? $params['width']: null;
-  $requestedHeight = isset($params['height']) ? $params['height']: null;
-
-  // calculate new dimensions if value mode is set
-  if ($valuemode == 'scaleTo' || $valuemode == 'fitInto') {
-    if ($valuemode == 'fitInto' && $requestedHeight && $requestedHeight > $imageSize[1]) {
-      // if image should fit into a rectangle and it's height is smaller than the requested, leave image untouched
-      $requestedHeight = $imageSize[1];
-    }
-    else if ($valuemode == 'fitInto' && $requestedWidth && $requestedWidth > $imageSize[0]) {
-      // if image should fit into a rectangle and it's width is smaller than the requested, leave image untouched
-      $requestedWidth = $imageSize[0];
-    }
-    if ($requestedHeight == null) {
-      // calculate height if only width is given
-      $requestedHeight = floor(($imageSize[1] * $requestedWidth) / $imageSize[0]);
-    }
-    else if ($requestedWidth == null) {
-      // calculate width if only height is given
-      $requestedWidth = floor(($imageSize[0] * $requestedHeight) / $imageSize[1]);
-    }
-    else {
-      // calculate either width or height depending on the ratio
-      $requestedAspectRatio = $requestedHeight / $requestedWidth;
-      $imageAspectRatio = $imageSize[1] / $imageSize[0];
-      if ($requestedAspectRatio >= $imageAspectRatio) {
-        // scale based on width, keep requestedWidth
-        $requestedHeight = ($imageSize[1] * $requestedWidth) / $imageSize[0];
-      }
-      else {
-        // scale based on height, keep requestedHeight
-        $requestedWidth = ($imageSize[0] * $requestedHeight) / $imageSize[1];
-      }
-    }
+  $config = ObjectFactory::getInstance('configuration');
+  $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'Media').'images/';
+  if ($generate) {
+    FileUtil::mkdirRec(pathinfo($cacheRootAbs.$file, PATHINFO_DIRNAME));
   }
 
-  // don't resize big images, because of resource limits
-  if (filesize($file) > 2500000) {
-    $sizemode = 'resize';
-  }
+  $extension = pathinfo($file, PATHINFO_EXTENSION);
+  $baseName = $cacheRootAbs.preg_replace('/\.'.$extension.'$/', '', $file).'-';
 
-  if (($sizemode != 'resize') && ($requestedWidth != null || $requestedHeight != null) &&
-    ($requestedWidth < $imageSize[0] || $requestedHeight < $imageSize[1])) {
-    // if 'width' or 'height' are given and they differ from the image values,
-    // we have to resize the image
-
-    // get the file extension
-    preg_match('/\.(\w+)$/', $file, $matches);
-    $extension = $matches[1];
-
-    $config = ObjectFactory::getInstance('configuration');
-    $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'Media');
-
-    $destNameAbs = $cacheRootAbs.md5($file.filectime($file).$requestedWidth.$requestedHeight.$sizemode).'.'.$extension;
+  $srcset = array();
+  $requestedWidths = array_map('trim', explode(',', $widths));
+  for ($i=0, $count=sizeof($requestedWidths); $i<$count; $i++) {
+    $width = $requestedWidths[$i];
+    $destNameAbs = $baseName.$width.'.'.$extension;
     $destName = URIUtil::makeRelative($destNameAbs, dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/');
 
-    // if the file does not exist in the cache, we have to create it
-    $dateOrig = @filemtime($file);
-    $dateCache = @filemtime($destName);
-    if (!file_exists($destName) || $dateOrig > $dateCache) {
-      $image = new \Eventviva\ImageResize($file);
-      if ($sizemode == 'resample') {
-        $image->resize($requestedWidth, $requestedHeight);
+    // if 'width' differs from the image values, we have to resize the image
+    if ($width < $imageInfo[0] && $generate) {
+      // if the file does not exist in the cache, we have to create it
+      $dateOrig = @filemtime($file);
+      $dateCache = @filemtime($destName);
+      if (!file_exists($destName) || $dateOrig > $dateCache) {
+        $image = new \Eventviva\ImageResize($file);
+        $image->resizeToWidth($width);
+        $image->save($destName);
       }
-      else {
-        $image->crop($requestedWidth, $requestedHeight);
-      }
-      $image->save($destName);
-    }
 
-    // use the cached file
-    if (file_exists($destName)) {
-      $file = $destName;
+      // fallback to file, if cached file could not be created
+      if (!file_exists($destName)) {
+        $destName = $file;
+      }
     }
+    $srcset[] = $destName.' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
   }
 
-  $widthStr = "";
-  $heightStr = "";
-  if (!isset($params['nosizeoutput']) || $params['nosizeoutput'] == false) {
-    if ($requestedWidth != null) {
-      $widthStr = ' width="'.$requestedWidth.'"';
-    }
-    if ($requestedHeight != null) {
-      $heightStr = ' height="'.$requestedHeight.'"';
-    }
-  }
-
-  echo '<img src="'.$file.'"'.$widthStr.$heightStr.' alt="'.$alt.'" '.$imageParams.'>';
+  $tag = '<img'.
+          ' '.($useDataAttributes ? 'data-' : '').'src="'.$file.'"'.
+          ' '.($useDataAttributes ? 'data-' : '').'srcset="'.join(', ', $srcset).'"'.
+          ' '.(strlen($sizes) > 0 ? ($useDataAttributes ? 'data-' : '').'sizes="'.$sizes.'"' : '').
+          (strlen($class) > 0 ? ' class="'.$class.'"' : '').
+          (strlen($alt) > 0 ? ' alt="'.$alt.'"' : '').
+          (strlen($title) > 0 ? ' title="'.$title.'"' : '').
+          '>';
+  return $tag;
 }
 ?>
