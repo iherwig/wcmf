@@ -62,19 +62,19 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
     return;
   }
 
-  $file = FileUtil::fixFilename($file);
+  $fixedFile = FileUtil::fixFilename($file);
 
   // check if the file exists
-  if (!is_file($file)) {
+  if (!file_exists($fixedFile)) {
     // try the default
-    $file = $default;
-    if (!is_file($file)) {
+    $file = $fixedFile = $default;
+    if (!file_exists($fixedFile)) {
       return;
     }
   }
 
   // get the image size in order to see if we have to resize
-  $imageInfo = getimagesize($file);
+  $imageInfo = getimagesize($fixedFile);
   if ($imageInfo == false) {
     // the file is no image
     return;
@@ -99,7 +99,7 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
     // if 'width' differs from the image values, we have to resize the image
     if ($width < $imageInfo[0] && $generate) {
       // if the file does not exist in the cache, we have to create it
-      $dateOrig = @filemtime($file);
+      $dateOrig = @filemtime($fixedFile);
       $dateCache = @filemtime($destName);
       if (!file_exists($destName) || $dateOrig > $dateCache) {
         $image = new \Eventviva\ImageResize($file);
