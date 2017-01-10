@@ -81,7 +81,7 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
   }
 
   $config = ObjectFactory::getInstance('configuration');
-  $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'Media').'images/';
+  $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'Media');
   if ($generate) {
     FileUtil::mkdirRec(pathinfo($cacheRootAbs.$file, PATHINFO_DIRNAME));
   }
