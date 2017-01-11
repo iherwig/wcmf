@@ -112,7 +112,7 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
         $destName = $file;
       }
     }
-    $srcset[] = $destName.' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
+    $srcset[] = preg_replace('/ /', '%20', $destName).' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
   }
 
   $tag = '<img'.
