@@ -34,7 +34,7 @@ if (!class_exists('Assetic\Asset\AssetCollection')) {
  * Deliver assets using assetic library. Files will be combined and minified.
  * JS and CSS will be recognized by the file extension.
  * In order to not minify minified files again, the must use .min. in the filename.
- * The result will be cached in the smarty cache.
+ * The result will be cached in the frontend cache (_FrontendCache_ configuration section).
  *
  * Example:
  * @code
@@ -82,7 +82,7 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
         // setup assetic
         $config = ObjectFactory::getInstance('configuration');
         $basePath = dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/';
-        $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'Media');
+        $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'FrontendCache');
         $cacheRootRel = URIUtil::makeRelative($cacheRootAbs, $basePath);
 
         // process resources

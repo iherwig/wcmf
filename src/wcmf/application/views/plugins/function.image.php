@@ -21,13 +21,74 @@ if (!class_exists('\Eventviva\ImageResize')) {
 }
 
 /**
- * Render an responsive image tag using srcset and sizes attributes.
+ * Render an responsive image tag using srcset and sizes attributes. The plugin
+ * will prepend the frontend cache directory (_FrontendCache_ configuration section)
+ * to the image locations in the srcset attribute.
  *
  * Example:
  * @code
  * {res_image src=$image->getFile() widths="1600,960,640" type="w"
  *          sizes="(min-width: 50em) 33vw, (min-width: 28em) 50vw, 100vw"
  *          alt="Image 1" default="images/blank.gif"}
+ * @endcode
+ *
+ * @note The plugin is capable of resizing the image according to the srcset sizes,
+ * but this feature is disabled by default, because it might be very memory consuming
+ * (see __generate__ option). A better option is to resize the images on demand
+ * by a separate script. To do this, add the following lines to the .htaccess file
+ * in the application's root directory:
+ *
+ * @code
+ * # responsive images (cache/ is the frontend cache directory)
+ * RewriteCond %{REQUEST_URI} cache/
+ * RewriteCond %{REQUEST_FILENAME} !-f
+ * RewriteRule ^cache/(.+)(\.(?:jpe?g|gif|png))$ image.php?file=$1$2 [NC,L]
+ * @endcode
+ *
+ * The resize script would could like this:
+ *
+ * @code
+ * <?php
+ * error_reporting(E_ALL);
+ *
+ * define('WCMF_BASE', realpath("./src/")."/");
+ * require_once(WCMF_BASE."/vendor/autoload.php");
+ *
+ * use wcmf\lib\core\ClassLoader;
+ * use wcmf\lib\io\FileUtil;
+ *
+ * new ClassLoader(WCMF_BASE);
+ *
+ * // get image file from 'file' request parameter and extract the width
+ * // filename is supposed to follow the pattern name-{width}.extension
+ * $requestedFile = filter_input(INPUT_GET, 'file', FILTER_SANITIZE_STRING);
+ * $extension = pathinfo($requestedFile, PATHINFO_EXTENSION);
+ * if(preg_match('/-([0-9]+)\.'.$extension.'$/', $requestedFile, $matches)) {
+ *   $width = $matches[1];
+ *   $originalFile = preg_replace('/-([0-9]+)\.'.$extension.'$/', '.'.$extension, $requestedFile);
+ * }
+ * else {
+ *   $originalFile = $requestedFile;
+ * }
+ *
+ * // create the resized image file, if not existing
+ * $resizedFile = 'cache/'.$requestedFile;
+ * if (FileUtil::fileExists($originalFile) && !FileUtil::fileExists($resizedFile)) {
+ *   $fixedFile = FileUtil::fixFilename($originalFile);
+ *   FileUtil::mkdirRec(pathinfo($resizedFile, PATHINFO_DIRNAME));
+ *   $image = new \Eventviva\ImageResize($fixedFile);
+ *   $image->resizeToWidth($width);
+ *   $image->save($resizedFile);
+ * }
+ *
+ * // return the image file
+ * $file = FileUtil::fileExists($resizedFile) ? $resizedFile : $originalFile;
+ * $imageInfo = getimagesize($file);
+ * $image = file_get_contents($file);
+ * header('Content-type: '.$imageInfo['mime'].';');
+ * header("Content-Length: ".strlen($image));
+ * echo $image;
+ * ?>
  * @endcode
  *
  * @param $params Array with keys:
@@ -38,8 +99,8 @@ if (!class_exists('\Eventviva\ImageResize')) {
  *          - w: Values will be used as pixels, e.g. widths="1600,960" results in srcset="... 1600w, ... 960w"
  *          - x: Values will be used as pixel ration, e.g. widths="1600,960" results in srcset="... 2x, ... 1x"
  *        - sizes: Media queries to define image size in relation of the viewport (optional)
- *        - useDataAttributes: Boolean indicating whether to replace src, srcset, sizes by data-src, data-srcset, data-sizes (optional, default: false)
- *        - generate: Boolean indicating whether to generate the images or not (optional, default: false)
+ *        - useDataAttributes: Boolean indicating whether to replace src, srcset, sizes by data-src, data-srcset, data-sizes (optional, default: __false__)
+ *        - generate: Boolean indicating whether to generate the images or not (optional, default: __false__)
  *        - class: Image class (optional)
  *        - alt: Alternative text (optional)
  *        - title: Image title (optional)
@@ -81,7 +142,7 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
   }
 
   $config = ObjectFactory::getInstance('configuration');
-  $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'Media');
+  $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'FrontendCache');
   if ($generate) {
     FileUtil::mkdirRec(pathinfo($cacheRootAbs.$file, PATHINFO_DIRNAME));
   }

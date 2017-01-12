@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_krkH0LQGEeOIMOFxCilDfw" name="root">
@@ -52,11 +52,6 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_86xZm6prEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_86xZnKprEeaGbp23C_zkpg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZnaprEeaGbp23C_zkpg" value="app/public/media/"/>
-                </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZnqprEeaGbp23C_zkpg" name="cacheDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_86xZn6prEeaGbp23C_zkpg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_86xZoKprEeaGbp23C_zkpg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZoaprEeaGbp23C_zkpg" value="app/public/cache/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_86xZoqprEeaGbp23C_zkpg" name="Localization">
@@ -294,6 +289,19 @@
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xaOaprEeaGbp23C_zkpg" name="cacheDir" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xaOqprEeaGbp23C_zkpg" value="app/cache/dynamic/"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_DkKhENhbEeatzOptAH4Ckw" name="FrontendCache">
+                <ownedComment xmi:type="uml:Comment" xmi:id="_DkKhEdhbEeatzOptAH4Ckw">
+                  <body>Frontend cache is used for caching frontend related data, e.g. generated assets.</body>
+                </ownedComment>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_DkKhEthbEeatzOptAH4Ckw" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_DkKhE9hbEeatzOptAH4Ckw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_DkKhFNhbEeatzOptAH4Ckw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_DkKhFdhbEeatzOptAH4Ckw" value="wcmf\lib\io\impl\FileCache"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_DkKhFthbEeatzOptAH4Ckw" name="cacheDir" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_DkKhF9hbEeatzOptAH4Ckw" value="app/public/cache/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_86xaO6prEeaGbp23C_zkpg" name="EventListener">
@@ -2302,4 +2310,5 @@
   <Chronos:ChiSystem xmi:id="_X_hCcLylEeaJqdbh3BIxsQ" plattform="wcmf" config="persistence.ini" base_Class="_X_gbYLylEeaJqdbh3BIxsQ"/>
   <Chronos:ChiValue xmi:id="_KXEGoMNyEeabSe-F2MKJtA" db_data_type="INT(1)" is_editable="true" input_type="binarycheckbox" display_type="check" base_Property="_KXBDUMNyEeabSe-F2MKJtA"/>
   <Chronos:ChiValue xmi:id="_bUTD0MNyEeabSe-F2MKJtA" db_data_type="INT(1)" input_type="binarycheckbox" display_type="check" base_Property="_bUR1sMNyEeabSe-F2MKJtA"/>
+  <Chronos:ChiSystem xmi:id="_Dp-1MNhbEeatzOptAH4Ckw" plattform="wcmf" base_Class="_DkKhENhbEeatzOptAH4Ckw"/>
 </xmi:XMI>

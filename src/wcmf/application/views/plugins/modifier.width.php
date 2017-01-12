@@ -22,7 +22,7 @@
  * @endcode
  *
  * @param $image The image file
- * @param $halfsize Boolean whether the width should be divided by two for retina displays (optional, default: false)
+ * @param $halfsize Boolean whether the width should be divided by two for retina displays (optional, default: __false__)
  * @return Integer
  */
 function smarty_modifier_width($image, $halfsize=false) {
