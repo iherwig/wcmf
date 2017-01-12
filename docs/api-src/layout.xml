@@ -12,12 +12,12 @@
     <tab type="classes" visible="no" title="">
       <tab type="classlist" visible="yes" title="wCMF API Documentation" intro=""/>
       <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/>
-      <tab type="hierarchy" visible="no" title="" intro=""/>
+      <tab type="hierarchy" visible="no" title="wCMF API Documentation" intro=""/>
       <tab type="classmembers" visible="no" title="" intro=""/>
     </tab>
     <tab type="files" visible="no" title="">
       <tab type="filelist" visible="no" title="" intro=""/>
-      <tab type="globals" visible="no" title="" intro=""/>
+      <tab type="globals" visible="no" title="" intro="wCMF API Documentation"/>
     </tab>
     <tab type="examples" visible="no" title="" intro=""/>
   </navindex>
