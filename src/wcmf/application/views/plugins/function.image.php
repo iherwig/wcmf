@@ -42,14 +42,14 @@ if (!class_exists('\Eventviva\ImageResize')) {
  * # responsive images (cache/ is the frontend cache directory)
  * RewriteCond %{REQUEST_URI} cache/
  * RewriteCond %{REQUEST_FILENAME} !-f
- * RewriteRule ^cache/(.+)(\.(?:jpe?g|gif|png))$ image.php?file=$1$2 [NC,L]
+ * RewriteRule ^cache/(.+)$ image.php?file=$1 [NC,L]
  * @endcode
  *
  * The resize script would could like this:
  *
  * @code
  * <?php
- * error_reporting(E_ALL);
+ * error_reporting(E_ERROR);
  *
  * define('WCMF_BASE', realpath("./src/")."/");
  * require_once(WCMF_BASE."/vendor/autoload.php");
@@ -60,12 +60,13 @@ if (!class_exists('\Eventviva\ImageResize')) {
  * new ClassLoader(WCMF_BASE);
  *
  * // get image file from 'file' request parameter and extract the width
- * // filename is supposed to follow the pattern name-{width}.extension
+ * // filename is supposed to follow the pattern directory/{width}-basename
  * $requestedFile = filter_input(INPUT_GET, 'file', FILTER_SANITIZE_STRING);
- * $extension = pathinfo($requestedFile, PATHINFO_EXTENSION);
- * if(preg_match('/-([0-9]+)\.'.$extension.'$/', $requestedFile, $matches)) {
+ * $basename = basename($requestedFile);
+ * if(preg_match('/^([0-9]+)-/', $basename, $matches)) {
+ *   $directory = dirname($requestedFile).'/';
  *   $width = $matches[1];
- *   $originalFile = preg_replace('/-([0-9]+)\.'.$extension.'$/', '.'.$extension, $requestedFile);
+ *   $originalFile = $directory.preg_replace('/^'.$width.'-/', '', $basename);
  * }
  * else {
  *   $originalFile = $requestedFile;
@@ -143,18 +144,18 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
 
   $config = ObjectFactory::getInstance('configuration');
   $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'FrontendCache');
-  if ($generate) {
-    FileUtil::mkdirRec(pathinfo($cacheRootAbs.$file, PATHINFO_DIRNAME));
-  }
 
-  $extension = pathinfo($file, PATHINFO_EXTENSION);
-  $baseName = $cacheRootAbs.preg_replace('/\.'.$extension.'$/', '', $file).'-';
+  $directory = $cacheRootAbs.dirname($file).'/';
+  $baseName = basename($file);
+  if ($generate) {
+    FileUtil::mkdirRec($directory);
+  }
 
   $srcset = array();
   $requestedWidths = array_map('trim', explode(',', $widths));
   for ($i=0, $count=sizeof($requestedWidths); $i<$count; $i++) {
     $width = $requestedWidths[$i];
-    $destNameAbs = $baseName.$width.'.'.$extension;
+    $destNameAbs = $directory.$width.'-'.$baseName;
     $destName = URIUtil::makeRelative($destNameAbs, dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/');
 
     // if 'width' differs from the image values, we have to resize the image
@@ -173,7 +174,7 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
         $destName = $file;
       }
     }
-    $srcset[] = preg_replace('/ /', '%20', $destName).' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
+    $srcset[] = preg_replace(array('/ /', '/,/'), array('%20', '%2C'), $destName).' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
   }
 
   $tag = '<img'.
