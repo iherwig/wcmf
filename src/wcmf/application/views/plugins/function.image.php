@@ -8,17 +8,8 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
-use wcmf\lib\util\URIUtil;
-
-if (!class_exists('\Eventviva\ImageResize')) {
-    throw new ConfigurationException(
-            'smarty_function_image requires '.
-            'ImageResize to resize/crop images. If you are using composer, add eventviva/php-image-resize '.
-            'as dependency to your project');
-}
+use wcmf\lib\io\ImageUtil;
 
 /**
  * Render an responsive image tag using srcset and sizes attributes. The plugin
@@ -51,44 +42,36 @@ if (!class_exists('\Eventviva\ImageResize')) {
  * <?php
  * error_reporting(E_ERROR);
  *
- * define('WCMF_BASE', realpath("./src/")."/");
+ * define('WCMF_BASE', realpath("./cms/")."/");
  * require_once(WCMF_BASE."/vendor/autoload.php");
  *
+ * use wcmf\lib\config\impl\InifileConfiguration;
  * use wcmf\lib\core\ClassLoader;
- * use wcmf\lib\io\FileUtil;
+ * use wcmf\lib\core\impl\DefaultFactory;
+ * use wcmf\lib\core\impl\MonologFileLogger;
+ * use wcmf\lib\core\LogManager;
+ * use wcmf\lib\core\ObjectFactory;
+ * use wcmf\lib\io\ImageUtil;
  *
  * new ClassLoader(WCMF_BASE);
  *
- * // get image file from 'file' request parameter and extract the width
- * // filename is supposed to follow the pattern directory/{width}-basename
- * $requestedFile = filter_input(INPUT_GET, 'file', FILTER_SANITIZE_STRING);
- * $basename = basename($requestedFile);
- * if(preg_match('/^([0-9]+)-/', $basename, $matches)) {
- *   $directory = dirname($requestedFile).'/';
- *   $width = $matches[1];
- *   $originalFile = $directory.preg_replace('/^'.$width.'-/', '', $basename);
- * }
- * else {
- *   $originalFile = $requestedFile;
- * }
+ * $configPath = WCMF_BASE.'app/config/';
  *
- * // create the resized image file, if not existing
- * $resizedFile = 'cache/'.$requestedFile;
- * if (FileUtil::fileExists($originalFile) && !FileUtil::fileExists($resizedFile)) {
- *   $fixedFile = FileUtil::fixFilename($originalFile);
- *   FileUtil::mkdirRec(pathinfo($resizedFile, PATHINFO_DIRNAME));
- *   $image = new \Eventviva\ImageResize($fixedFile);
- *   $image->resizeToWidth($width);
- *   $image->save($resizedFile);
- * }
+ * // setup logging
+ * $logger = new MonologFileLogger('main', $configPath.'log.ini');
+ * LogManager::configure($logger);
  *
- * // return the image file
- * $file = FileUtil::fileExists($resizedFile) ? $resizedFile : $originalFile;
- * $imageInfo = getimagesize($file);
- * $image = file_get_contents($file);
- * header('Content-type: '.$imageInfo['mime'].';');
- * header("Content-Length: ".strlen($image));
- * echo $image;
+ * // setup configuration
+ * $configuration = new InifileConfiguration($configPath);
+ * $configuration->addConfiguration('frontend.ini');
+ *
+ * // setup object factory
+ * ObjectFactory::configure(new DefaultFactory($configuration));
+ * ObjectFactory::registerInstance('configuration', $configuration);
+ *
+ * // the cache location is stored in the 'file' request parameter
+ * $location = filter_input(INPUT_GET, 'file', FILTER_SANITIZE_STRING);
+ * ImageUtil::getCachedImage($location);
  * ?>
  * @endcode
  *
@@ -111,7 +94,7 @@ if (!class_exists('\Eventviva\ImageResize')) {
 function smarty_function_image($params, Smarty_Internal_Template $template) {
   $file = $params['src'];
   $default = isset($params['default']) ? $params['default'] : '';
-  $widths = $params['widths'];
+  $widths = array_map('trim', explode(',', $params['widths']));
   $type = isset($params['type']) ? $params['type'] : 'w';
   $sizes = isset($params['sizes']) ? $params['sizes'] : '';
   $useDataAttributes = isset($params['useDataAttributes']) ? $params['useDataAttributes'] : false;
@@ -124,67 +107,16 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
     return;
   }
 
-  $fixedFile = FileUtil::fixFilename($file);
-
   // check if the file exists
-  if (!file_exists($fixedFile)) {
+  if (!FileUtil::fileExists($file)) {
     // try the default
-    $file = $fixedFile = $default;
-    if (!file_exists($fixedFile)) {
+    $file = $default;
+    if (!FileUtil::fileExists($file)) {
       return;
     }
   }
 
-  // get the image size in order to see if we have to resize
-  $imageInfo = getimagesize($fixedFile);
-  if ($imageInfo == false) {
-    // the file is no image
-    return;
-  }
-
-  $config = ObjectFactory::getInstance('configuration');
-  $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'FrontendCache');
-
-  $directory = $cacheRootAbs.dirname($file).'/';
-  $baseName = basename($file);
-  if ($generate) {
-    FileUtil::mkdirRec($directory);
-  }
-
-  $srcset = array();
-  $requestedWidths = array_map('trim', explode(',', $widths));
-  for ($i=0, $count=sizeof($requestedWidths); $i<$count; $i++) {
-    $width = $requestedWidths[$i];
-    $destNameAbs = $directory.$width.'-'.$baseName;
-    $destName = URIUtil::makeRelative($destNameAbs, dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/');
-
-    // if 'width' differs from the image values, we have to resize the image
-    if ($width < $imageInfo[0] && $generate) {
-      // if the file does not exist in the cache, we have to create it
-      $dateOrig = @filemtime($fixedFile);
-      $dateCache = @filemtime($destName);
-      if (!file_exists($destName) || $dateOrig > $dateCache) {
-        $image = new \Eventviva\ImageResize($file);
-        $image->resizeToWidth($width);
-        $image->save($destName);
-      }
-
-      // fallback to file, if cached file could not be created
-      if (!file_exists($destName)) {
-        $destName = $file;
-      }
-    }
-    $srcset[] = preg_replace(array('/ /', '/,/'), array('%20', '%2C'), $destName).' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
-  }
-
-  $tag = '<img'.
-          ' '.($useDataAttributes ? 'data-' : '').'src="'.$file.'"'.
-          ' '.($useDataAttributes ? 'data-' : '').'srcset="'.join(', ', $srcset).'"'.
-          ' '.(strlen($sizes) > 0 ? ($useDataAttributes ? 'data-' : '').'sizes="'.$sizes.'"' : '').
-          (strlen($class) > 0 ? ' class="'.$class.'"' : '').
-          (strlen($alt) > 0 ? ' alt="'.$alt.'"' : '').
-          (strlen($title) > 0 ? ' title="'.$title.'"' : '').
-          '>';
-  return $tag;
+  return ImageUtil::getImageTag($file, $widths, $type, $sizes,
+          $useDataAttributes, $class, $alt, $title, $generate);
 }
 ?>
