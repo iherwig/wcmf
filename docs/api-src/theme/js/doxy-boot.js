@@ -9,12 +9,22 @@ $(document).ready(function() {
   }
 
   // namespace/class list
-  $("a.el").each(function() {
-    var parent = $(this).parent();
-    var classIcon = $(this).attr('href').match(/^interface/) ?
-      '<span class="label label-info">I</span> ' : '<span class="label label-warning">C</span> ';
-    parent.find("span.icon:contains('N')").replaceWith('<span class="label label-default">N</span> ');
-    parent.parent().find("span.icon:contains('C')").replaceWith(classIcon);
+  $("td.entry").each(function() {
+    var entry = $(this);
+    var nsIcon = '<span class="label label-default">N</span> ';
+    var classIcon = '<span class="label label-warning">C</span> ';
+    entry.find("span.icon:contains('N')").replaceWith(nsIcon);
+    var link = entry.find("a.el");
+    var icon = classIcon;
+    if (link.length > 0) {
+      if (link.attr("href").match(/^interface/)) {
+        icon = '<span class="label label-info">I</span> ';
+      }
+    }
+    else {
+      icon = '<span class="label label-default">Ext</span> ';
+    }
+    entry.find("span.icon:contains('C')").replaceWith(icon);
   });
 
   $("iframe").attr("scrolling", "yes");
