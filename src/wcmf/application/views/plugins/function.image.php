@@ -77,17 +77,17 @@ use wcmf\lib\io\ImageUtil;
  *
  * @param $params Array with keys:
  *        - src: The image file
- *        - default: The default file, if src does not exist (optional)
  *        - widths: Comma separated, sorted list of width values to be used in the srcset attribute
  *        - type: Indicates how width values should be used (optional, default: w)
  *          - w: Values will be used as pixels, e.g. widths="1600,960" results in srcset="... 1600w, ... 960w"
  *          - x: Values will be used as pixel ration, e.g. widths="1600,960" results in srcset="... 2x, ... 1x"
  *        - sizes: Media queries to define image size in relation of the viewport (optional)
  *        - useDataAttributes: Boolean indicating whether to replace src, srcset, sizes by data-src, data-srcset, data-sizes (optional, default: __false__)
- *        - generate: Boolean indicating whether to generate the images or not (optional, default: __false__)
- *        - class: Image class (optional)
  *        - alt: Alternative text (optional)
+ *        - class: Image class (optional)
  *        - title: Image title (optional)
+ *        - default: The default file, if src does not exist (optional)
+ *        - generate: Boolean indicating whether to generate the images or not (optional, default: __false__)
  * @param $template Smarty_Internal_Template
  * @return String
  */
@@ -99,24 +99,11 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
   $sizes = isset($params['sizes']) ? $params['sizes'] : '';
   $useDataAttributes = isset($params['useDataAttributes']) ? $params['useDataAttributes'] : false;
   $generate = isset($params['generate']) ? $params['generate'] : false;
-  $class = isset($params['class']) ? $params['class'] : '';
   $alt = isset($params['alt']) ? $params['alt'] : '';
+  $class = isset($params['class']) ? $params['class'] : '';
   $title = isset($params['title']) ? $params['title'] : '';
 
-  if (strlen($file) == 0 && strlen($default) == 0) {
-    return;
-  }
-
-  // check if the file exists
-  if (!FileUtil::fileExists($file)) {
-    // try the default
-    $file = $default;
-    if (!FileUtil::fileExists($file)) {
-      return;
-    }
-  }
-
   return ImageUtil::getImageTag($file, $widths, $type, $sizes,
-          $useDataAttributes, $class, $alt, $title, $generate);
+          $useDataAttributes, $alt, $class, $title, $default, $generate);
 }
 ?>

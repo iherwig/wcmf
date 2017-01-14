@@ -43,68 +43,82 @@ class ImageUtil {
    *        - x: Values will be used as pixel ration, e.g. widths="1600,960" results in srcset="... 2x, ... 1x"
    * @param $sizes String of media queries to define image size in relation of the viewport (optional)
    * @param $useDataAttributes Boolean indicating whether to replace src, srcset, sizes by data-src, data-srcset, data-sizes (optional, default: __false__)
-   * @param $class Image class (optional)
    * @param $alt Alternative text (optional)
+   * @param $class Image class (optional)
    * @param $title Image title (optional)
+   * @param $fallbackFile The image file to use, if imageFile does not exist (optional)
    * @param $generate Boolean indicating whether to generate the images or not (optional, default: __false__)
    * @return String
    */
   public static function getImageTag($imageFile, $widths, $type='w', $sizes='',
-          $useDataAttributes=false, $class='', $alt='', $title='', $generate=false) {
+          $useDataAttributes=false, $alt='', $class='', $title='', $fallbackFile,
+          $generate=false) {
+    // check if the image files exist
+    if (!FileUtil::fileExists($imageFile)) {
+      // try the fallback
+      $imageFile = $fallbackFile;
+      if (!FileUtil::fileExists($imageFile)) {
+        return '';
+      }
+    }
+
     $fixedFile = FileUtil::fixFilename($imageFile);
 
     // get the image size in order to see if we have to resize
     $imageInfo = getimagesize($fixedFile);
     if ($imageInfo == false) {
       // the file is no image
-      return;
+      return '';
     }
 
-    // get file name and cache directory
-    $baseName = basename($imageFile);
-    $directory = self::getCacheDir($imageFile);
-
-    // create the cache directory if requested
-    if ($generate) {
-      FileUtil::mkdirRec($directory);
-    }
-
-    // create srcset entries
+    // skip srcset for fallback image
     $srcset = array();
-    for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
-      $width = $widths[$i];
-      $resizedFile = self::makeRelative($directory.$width.'-'.$baseName);
+    if ($imageFile != $fallbackFile) {
+      // get file name and cache directory
+      $baseName = basename($imageFile);
+      $directory = self::getCacheDir($imageFile);
 
-      // create the cached file if requested
+      // create the cache directory if requested
       if ($generate) {
-        // only if the requested width is smaller than the image width
-        if ($width < $imageInfo[0]) {
-          // if the file does not exist in the cache or is older
-          // than the source file, we create it
-          $dateOrig = @filemtime($fixedFile);
-          $dateCache = @filemtime($resizedFile);
-          if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
-            self::resizeImage($fixedFile, $resizedFile, $width);
-          }
+        FileUtil::mkdirRec($directory);
+      }
 
-          // fallback to source file, if cached file could not be created
-          if (!file_exists($resizedFile)) {
-            $resizedFile = $imageFile;
+      // create srcset entries
+      for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
+        $width = $widths[$i];
+        $resizedFile = self::makeRelative($directory.$width.'-'.$baseName);
+
+        // create the cached file if requested
+        if ($generate) {
+          // only if the requested width is smaller than the image width
+          if ($width < $imageInfo[0]) {
+            // if the file does not exist in the cache or is older
+            // than the source file, we create it
+            $dateOrig = @filemtime($fixedFile);
+            $dateCache = @filemtime($resizedFile);
+            if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
+              self::resizeImage($fixedFile, $resizedFile, $width);
+            }
+
+            // fallback to source file, if cached file could not be created
+            if (!file_exists($resizedFile)) {
+              $resizedFile = $imageFile;
+            }
           }
         }
+        $srcset[] = preg_replace(array('/ /', '/,/'), array('%20', '%2C'), $resizedFile).
+                ' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
       }
-      $srcset[] = preg_replace(array('/ /', '/,/'), array('%20', '%2C'), $resizedFile).
-              ' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
     }
 
-    $tag = '<img'.
-            ' '.($useDataAttributes ? 'data-' : '').'src="'.$imageFile.'"'.
-            ' '.($useDataAttributes ? 'data-' : '').'srcset="'.join(', ', $srcset).'"'.
-            ' '.(strlen($sizes) > 0 ? ($useDataAttributes ? 'data-' : '').'sizes="'.$sizes.'"' : '').
-            (strlen($class) > 0 ? ' class="'.$class.'"' : '').
-            (strlen($alt) > 0 ? ' alt="'.$alt.'"' : '').
-            (strlen($title) > 0 ? ' title="'.$title.'"' : '').
-            '>';
+    $tag = '<img '.($useDataAttributes ? 'data-' : '').'src="'.$imageFile.'" alt="'.$alt.'"'.
+      (strlen($class) > 0 ? ' class="'.$class.'"' : '').
+      (strlen($title) > 0 ? ' title="'.$title.'"' : '');
+    if (sizeof($srcset) > 0) {
+      $tag .= ' '.($useDataAttributes ? 'data-' : '').'srcset="'.join(', ', $srcset).'"'.
+        ' '.(strlen($sizes) > 0 ? ($useDataAttributes ? 'data-' : '').'sizes="'.$sizes.'"' : '');
+    }
+    $tag .= '>';
     return $tag;
   }
 
