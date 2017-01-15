@@ -15,8 +15,8 @@ use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\ValidationData;
 use wcmf\lib\config\Configuration;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
-use wcmf\lib\presentation\Request;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 use wcmf\lib\util\StringUtil;
 use wcmf\lib\util\URIUtil;
@@ -40,15 +40,10 @@ class ClientSideSession implements Session {
   /**
    * Constructor
    * @param $configuration
-   * @param $request
    */
-  public function __construct(Configuration $configuration, Request $request) {
+  public function __construct(Configuration $configuration) {
     $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
     $this->key = $configuration->getValue('secret', 'application');
-
-    // check for token in request
-    $this->token = $request->hasHeader(self::TOKEN_HEADER) ?
-      trim(str_replace(self::AUTH_TYPE, '', $request->getHeader(self::TOKEN_HEADER))) : null;
   }
 
   /**
@@ -180,8 +175,12 @@ class ClientSideSession implements Session {
    */
   protected function getTokenData() {
     $data = null;
-    if ($this->token !== null) {
-      $jwt = (new Parser())->parse((string)$this->token);
+
+    $request = ObjectFactory::getInstance('request');
+    $token = $request->hasHeader(self::TOKEN_HEADER) ?
+      trim(str_replace(self::AUTH_TYPE, '', $request->getHeader(self::TOKEN_HEADER))) : null;
+    if ($token !== null) {
+      $jwt = (new Parser())->parse((string)$token);
 
       // validate
       $data = new ValidationData();
