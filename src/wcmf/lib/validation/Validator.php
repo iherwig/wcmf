@@ -12,7 +12,6 @@ namespace wcmf\lib\validation;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 
 /**
  * Validator is is the single entry point for validation.
@@ -28,11 +27,12 @@ class Validator {
    * @param $value The value to validate
    * @param $validateDesc A string in the form validateTypeA,validateTypeB:optionsB, where
    *     validateType is a key in the configuration section 'validators' and
-   *     options is a JSON encoded object as used in the 'restrictions_match' definition
-   * @param $message The Message instance used to provide translations
+   *     options is a JSON encoded object as used in the 'validate_type' definition
+   * @param $context An associative array describing the validation context which will be passed
+   *     to the ValidateType::validate() method (optional)
    * @return Boolean
    */
-  public static function validate($value, $validateDesc, Message $message) {
+  public static function validate($value, $validateDesc, $context=null) {
 
     // get validator list
     $validators = array();
@@ -63,12 +63,11 @@ class Validator {
       if ($validateOptions !== null) {
         $decodedOptions = json_decode($validateOptions, true);
         if ($decodedOptions === null) {
-          throw new ConfigurationException($message->getText("No valid JSON format: %1%",
-                  array($validateOptions)));
+          throw new ConfigurationException("No valid JSON format: ".$validateOptions);
         }
         $validateOptions = $decodedOptions;
       }
-      if (!$validatorInstance->validate($value, $message, $validateOptions)) {
+      if (!$validatorInstance->validate($value, $validateOptions, $context)) {
         return false;
       }
     }

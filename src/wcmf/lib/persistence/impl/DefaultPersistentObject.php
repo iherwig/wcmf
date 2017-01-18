@@ -343,8 +343,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    */
   public function setValue($name, $value, $forceSet=false, $trackChange=true) {
     if (!$forceSet) {
-        $message = ObjectFactory::getInstance('message');
-        $this->validateValue($name, $value, $message);
+      $this->validateValue($name, $value);
     }
     $oldValue = self::getValue($name);
     if ($forceSet || $oldValue !== $value) {
@@ -392,13 +391,13 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::validateValues()
    */
-  public function validateValues(Message $message) {
+  public function validateValues() {
     $errorMessage = '';
     $iter = new NodeValueIterator($this, false);
     for($iter->rewind(); $iter->valid(); $iter->next()) {
       $curNode = $iter->currentNode();
       try {
-        $curNode->validateValue($iter->key(), $iter->current(), $message);
+        $curNode->validateValue($iter->key(), $iter->current());
       }
       catch (ValidationException $ex) {
         $errorMessage .= $ex->getMessage()."\n";
@@ -412,8 +411,8 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value, Message $message) {
-    $this->validateValueAgainstValidateType($name, $value, $message);
+  public function validateValue($name, $value) {
+    $this->validateValueAgainstValidateType($name, $value);
   }
 
   /**
@@ -422,31 +421,25 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * Throws a ValidationException if the value is not valid.
    * @param $name The name of the item to set.
    * @param $value The value of the item.
-   * @param $message The Message instance used to provide translations.
    */
-  protected function validateValueAgainstValidateType($name, $value, Message $message) {
+  protected function validateValueAgainstValidateType($name, $value) {
     // don't validate referenced values
     $mapper = $this->getMapper();
     if ($mapper->hasAttribute($name) && $mapper->getAttribute($name) instanceof ReferenceDescription) {
       return;
     }
     $validateType = $this->getValueProperty($name, 'validate_type');
-    if (($validateType == '' || Validator::validate($value, $validateType, $message))) {
+    if (($validateType == '' || Validator::validate($value, $validateType,
+            array('entity' => $this, 'value' => $value)))) {
       return;
     }
     // construct the error message
-    $errorMessage = $message->getText("The value of '%0%' (%1%) is invalid.", array($name, $value));
+    $errorMessage = ObjectFactory::getInstance('message')->getText("The value of '%0%' (%1%) is invalid.", array($name, $value));
 
     // use configured message if existing
     $validateDescription = $this->getValueProperty($name, 'validate_description');
     if (strlen($validateDescription) > 0) {
       $errorMessage .= " ".$validateDescription;
-    }
-    else {
-      // construct default message
-      if (strlen($validateType) > 0) {
-        $errorMessage .= " ".$message->getText("The value must match %0%.", array($validateType));
-      }
     }
     throw new ValidationException($name, $value, $errorMessage);
   }

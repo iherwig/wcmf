@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\validation\impl;
 
-use wcmf\lib\i18n\Message;
 use wcmf\lib\validation\ValidateType;
 
 /**
@@ -28,7 +27,7 @@ class Required implements ValidateType {
   /**
    * @see ValidateType::validate
    */
-  public function validate($value, Message $message, $options=null) {
+  public function validate($value, $options=null, $context=null) {
     return strlen($value) > 0;
   }
 }

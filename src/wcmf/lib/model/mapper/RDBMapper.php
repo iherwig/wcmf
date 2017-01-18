@@ -14,7 +14,6 @@ use PDO;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
@@ -79,15 +78,13 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param $permissionManager
    * @param $concurrencyManager
    * @param $eventManager
-   * @param $message
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
           ConcurrencyManager $concurrencyManager,
-          EventManager $eventManager,
-          Message $message) {
+          EventManager $eventManager) {
     parent::__construct($persistenceFacade, $permissionManager,
-            $concurrencyManager, $eventManager, $message);
+            $concurrencyManager, $eventManager);
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }

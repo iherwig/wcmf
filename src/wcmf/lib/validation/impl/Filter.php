@@ -11,7 +11,6 @@
 namespace wcmf\lib\validation\impl;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\validation\ValidateType;
 
 /**
@@ -38,10 +37,9 @@ class Filter implements ValidateType {
    * @see ValidateType::validate
    * $options is an associative array with keys 'type' and 'options' (optional)
    */
-  public function validate($value, Message $message, $options=null) {
+  public function validate($value, $options=null, $context=null) {
     if (!isset($options['type'])) {
-      throw new ConfigurationException($message->getText("No 'type' given in filter options: %1%",
-              array(json_encode($options))));
+      throw new ConfigurationException("No 'type' given in filter options: ".json_encode($options));
     }
     $filterName = $options['type'];
     $filterOptions = isset($options['options']) ? $options['options'] : null;

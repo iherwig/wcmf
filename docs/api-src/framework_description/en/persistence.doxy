@@ -549,6 +549,13 @@ e.g.
 required
 ~~~~~~~~~~~~~
 
+\link wcmf::lib::validation::impl::Unique `Unique`\endlink
+checks if the value is unique regarding the given entity attribute
+e.g.
+~~~~~~~~~~~~~{.php}
+unique:{"type":"Keyword","value":"name"}
+~~~~~~~~~~~~~
+
 \note The validation type is derived from the part of the configuration string,
 that precedes the first colon.
 

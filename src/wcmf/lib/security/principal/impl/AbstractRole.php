@@ -11,7 +11,6 @@
 namespace wcmf\lib\security\principal\impl;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
 use wcmf\lib\security\principal\Role;
 use wcmf\lib\validation\ValidationException;
@@ -40,12 +39,13 @@ abstract class AbstractRole extends Node implements Role {
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value, Message $message) {
-    parent::validateValue($name, $value, $message);
+  public function validateValue($name, $value) {
+    parent::validateValue($name, $value);
 
     // validate the name property
     // the name is expected to be stored in the 'name' value
     if ($name == 'name') {
+      $message = ObjectFactory::getInstance('message');
       if (strlen(trim($value)) == 0) {
         throw new ValidationException($name, $value, $message->getText("The role requires a name"));
       }

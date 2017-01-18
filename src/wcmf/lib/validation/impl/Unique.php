@@ -11,13 +11,12 @@
 namespace wcmf\lib\validation\impl;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\validation\ValidateType;
 
 /**
- * Unique checks if the value is unique regarding the given entity value.
+ * Unique checks if the value is unique regarding the given entity attribute.
  *
  * Configuration examples:
  * @code
@@ -32,18 +31,16 @@ class Unique implements ValidateType {
   /**
    * @see ValidateType::validate
    */
-  public function validate($value, Message $message, $options=null) {
+  public function validate($value, $options=null, $context=null) {
     if (strlen($value) == 0) {
       return true;
     }
 
     if (!isset($options['type'])) {
-      throw new ConfigurationException($message->getText("No 'type' given in unique options: %1%",
-              array(json_encode($options))));
+      throw new ConfigurationException("No 'type' given in unique options: ".json_encode($options));
     }
     if (!isset($options['value'])) {
-      throw new ConfigurationException($message->getText("No 'value' given in unique options: %1%",
-              array(json_encode($options))));
+      throw new ConfigurationException("No 'value' given in unique options: ".json_encode($options));
     }
 
     $type = $options['type'];

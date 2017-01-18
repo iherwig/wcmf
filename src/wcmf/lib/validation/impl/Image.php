@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\validation\impl;
 
-use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\validation\ValidateType;
 
@@ -36,7 +35,7 @@ class Image implements ValidateType {
    *    where each array entry is an array with the size as first value and an boolean
    *    indicating if the size should be matched exactly as second value
    */
-  public function validate($value, Message $message, $options=null) {
+  public function validate($value, $options=null, $context=null) {
     if (strlen($value) == 0) {
       return true;
     }

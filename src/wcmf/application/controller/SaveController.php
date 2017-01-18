@@ -191,7 +191,7 @@ class SaveController extends Controller {
             if (!$isFile || ($isFile && sizeof($curRequestValue) > 0)) {
               try {
                 // validate the new value
-                $curNode->validateValue($curValueName, $curRequestValue, $message);
+                $curNode->validateValue($curValueName, $curRequestValue);
                 if ($this->confirmSaveValue($curNode, $curValueName, $curRequestValue)) {
                   // set the new value
                   $oldValue = $curNode->getValue($curValueName);

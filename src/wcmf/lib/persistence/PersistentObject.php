@@ -189,9 +189,8 @@ interface PersistentObject {
   /**
    * Validate all values by calling PersistentObject::validateValue()
    * Throws a ValidationException in case of invalid data.
-   * @param $message The Message instance used to provide translations.
    */
-  public function validateValues(Message $message);
+  public function validateValues();
 
   /**
    * Check if data may be set. The method is also called, when setting a value.
@@ -199,10 +198,9 @@ interface PersistentObject {
    * Throws a ValidationException in case of invalid data.
    * @param $name The name of the item to set.
    * @param $value The value of the item.
-   * @param $message The Message instance used to provide translations.
    * The default implementation calls PersistentObject::validateValueAgainstValidateType().
    */
-  public function validateValue($name, $value, Message $message);
+  public function validateValue($name, $value);
 
   /**
    * Get the list of changed attributes since creation, loading.

@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\validation\impl;
 
-use wcmf\lib\i18n\Message;
 use wcmf\lib\validation\ValidateType;
 
 /**
@@ -35,7 +34,7 @@ class Date implements ValidateType {
    * @see ValidateType::validate
    * $options is an associative array with keys 'format' (optional)
    */
-  public function validate($value, Message $message, $options=null) {
+  public function validate($value, $options=null, $context=null) {
     $format = isset($options['format']) ? $options['format'] : self::DEFAULT_FORMAT;
     return strlen($value) === 0 || (\DateTime::createFromFormat($format, $value) !== false);
   }

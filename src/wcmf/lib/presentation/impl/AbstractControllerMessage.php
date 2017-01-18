@@ -212,12 +212,11 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   public function getValue($name, $default=null, $validateDesc=null) {
     if ($this->hasValue($name)) {
       $value = $this->values[$name];
-      $message = ObjectFactory::getInstance('message');
-      if ($validateDesc === null || Validator::validate($value, $validateDesc, $message)) {
+      if ($validateDesc === null || Validator::validate($value, $validateDesc, array('request' => $this))) {
         return $value;
       }
       throw new ValidationException($name, $value,
-              $message->getText("The value of '%0%' (%1%) is invalid.", array($name, $value)));
+          ObjectFactory::getInstance('message')->getText("The value of '%0%' (%1%) is invalid.", array($name, $value)));
     }
     else {
       return $default;

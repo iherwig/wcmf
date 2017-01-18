@@ -11,7 +11,6 @@
 namespace wcmf\lib\security\principal\impl;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
 use wcmf\lib\security\principal\PasswordService;
 use wcmf\lib\security\principal\Role;
@@ -202,11 +201,12 @@ abstract class AbstractUser extends Node implements User {
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value, Message $message) {
-    parent::validateValue($name, $value, $message);
+  public function validateValue($name, $value) {
+    parent::validateValue($name, $value);
 
     // validate the login property
     if ($name == 'login') {
+      $message = ObjectFactory::getInstance('message');
       if (strlen(trim($value)) == 0) {
         throw new ValidationException($name, $value, $message->getText("The user requires a login name"));
       }

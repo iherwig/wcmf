@@ -13,7 +13,7 @@ namespace wcmf\lib\persistence\impl;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\LogManager;
-use wcmf\lib\i18n\Message;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\ObjectId;
@@ -48,7 +48,6 @@ abstract class AbstractMapper implements PersistenceMapper {
   protected $permissionManager = null;
   protected $concurrencyManager = null;
   protected $eventManager = null;
-  protected $message = null;
 
   /**
    * Constructor
@@ -56,13 +55,11 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @param $permissionManager
    * @param $concurrencyManager
    * @param $eventManager
-   * @param $message
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           PermissionManager $permissionManager,
           ConcurrencyManager $concurrencyManager,
-          EventManager $eventManager,
-          Message $message) {
+          EventManager $eventManager) {
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
@@ -70,7 +67,6 @@ abstract class AbstractMapper implements PersistenceMapper {
     $this->permissionManager = $permissionManager;
     $this->concurrencyManager = $concurrencyManager;
     $this->eventManager = $eventManager;
-    $this->message = $message;
   }
 
   /**
@@ -188,7 +184,7 @@ abstract class AbstractMapper implements PersistenceMapper {
     }
 
     // validate object
-    $object->validateValues($this->message);
+    $object->validateValues();
 
     // check concurrency
     $this->concurrencyManager->checkPersist($object);
@@ -349,7 +345,8 @@ abstract class AbstractMapper implements PersistenceMapper {
    */
   protected function authorizationFailedError($resource, $action) {
     // when reading only log the error to avoid errors on the display
-    $msg = $this->message->getText("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
+    $msg = ObjectFactory::getInstance('message')->
+            getText("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
     if ($action == PersistenceAction::READ) {
       self::$logger->error($msg."\n".ErrorHandler::getStackTrace());
     }
