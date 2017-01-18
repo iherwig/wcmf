@@ -22,6 +22,9 @@ use wcmf\lib\validation\ValidateType;
  * @code
  * // ensure Keyword.name is unique
  * unique:{"type":"Keyword","value":"name"}
+ *
+ * // or without options when used in entity context
+ * unique
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -36,6 +39,15 @@ class Unique implements ValidateType {
       return true;
     }
 
+    // get type and value from context, if not set
+    if (!isset($options['type']) && isset($context['entity'])) {
+      $options['type'] = $context['entity']->getType();
+    }
+    if (!isset($options['value']) && isset($context['value'])) {
+      $options['value'] = $context['value'];
+    }
+
+    // validate options
     if (!isset($options['type'])) {
       throw new ConfigurationException("No 'type' given in unique options: ".json_encode($options));
     }

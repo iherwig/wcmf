@@ -430,7 +430,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
     }
     $validateType = $this->getValueProperty($name, 'validate_type');
     if (($validateType == '' || Validator::validate($value, $validateType,
-            array('entity' => $this, 'value' => $value)))) {
+            array('entity' => $this, 'value' => $name)))) {
       return;
     }
     // construct the error message
