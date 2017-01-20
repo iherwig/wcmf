@@ -496,16 +496,21 @@ validation fails.
 ### Validation types ### {#pers_validation_types}
 
 The actual validation is delegated to the
-\link wcmf::lib::validation::Validator `Validator`\endlink
-class, which uses
-\link wcmf::lib::validation::ValidateType `ValidateType`\endlink
-implementations for validating different types of attributes. Each validation type
-accepts configuration options, that are passed in as a string value. The format
-of this value is completely up to the validator type implementation. To define
-which validation should be applied to a domain class attribute, the
+\link wcmf::lib::validation::Validator::validate `Validator::validate`\endlink
+method, which gets a __validation description string__ passed. This string defines
+a single \link wcmf::lib::validation::ValidateType `ValidateType`\endlink or a
+combination of those. The
+\link wcmf::lib::validation::ValidateType::validate `ValidateType::validate`\endlink
+method accepts an associative array of configuration options, that is encoded into
+a JSON string when being used in the validation description string. An additional
+__validation context__ might be passed to the method (e.g. the entity instance and
+the currently validated entity attribute), when validation entity values.
+
+To define which validation should be applied to a domain class attribute, the
 _tag_ `restrictions_match` is used in the model (see \ref model_chivalue).
 
-Currently the following validation types exist:
+Currently the following validation types exist (the examples show their usage
+in a validation description string):
 
 \link wcmf::lib::validation::impl::Date `Date`\endlink
 validates against a date format,
@@ -553,7 +558,11 @@ required
 checks if the value is unique regarding the given entity attribute
 e.g.
 ~~~~~~~~~~~~~{.php}
+// explicitly define Keyword.name as being unique ...
 unique:{"type":"Keyword","value":"name"}
+
+// ... or implicitly when used in the entity validation context of the Keyword.name
+unique
 ~~~~~~~~~~~~~
 
 \note The validation type is derived from the part of the configuration string,
