@@ -28,7 +28,7 @@ class Application {
   private $request = null;
   private $response = null;
 
-  private $debug = true;
+  private $debug = false;
 
   private static $logger = null;
 
@@ -73,6 +73,7 @@ class Application {
    */
   public function initialize($defaultController='', $defaultContext='', $defaultAction='login') {
     $config = ObjectFactory::getInstance('configuration');
+    $this->debug = $config->getBooleanValue('debug', 'Application');
 
     // create the Request and Response instances
     $this->request = ObjectFactory::getInstance('request');
