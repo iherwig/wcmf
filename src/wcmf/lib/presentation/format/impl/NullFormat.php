@@ -15,7 +15,7 @@ use wcmf\lib\presentation\Response;
 use wcmf\lib\presentation\format\Format;
 
 /**
- * NullFormat passes through the original request and response objects
+ * NullFormat transfers the original request and response objects
  * without modifying or transforming them.
  *
  * @author ingo herwig <ingo@wemove.com>

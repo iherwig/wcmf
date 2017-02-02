@@ -16,7 +16,7 @@ use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 use wcmf\lib\presentation\Response;
 
 /**
- * JsonFormat realizes the JSON request/response format. All data will
+ * JsonFormat implements the JSON request/response format. All data will
  * be serialized using the json_encode method except for Nodes.
  * Nodes are serialized into an array before encoding (see JsonFormat::serializeValue)
  * using the NodeSerializer class.
@@ -24,7 +24,7 @@ use wcmf\lib\presentation\Response;
  *
  * JsonFormat collects the response data from all executed controllers
  * into one response array and returns it all at once at the end of
- * script execution. This prevents from having multiple junks of json
+ * script execution. This prevents from having multiple chunks of JSON
  * from each controller response that can't be decoded by clients.
  *
  * @author ingo herwig <ingo@wemove.com>

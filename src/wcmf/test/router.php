@@ -31,6 +31,8 @@ else {
     $application->run($request);
   }
   catch (Exception $ex) {
+    file_put_contents(__DIR__.DIRECTORY_SEPARATOR."router-error.txt",
+            $ex->getMessage()."\n".$ex->getTraceAsString()."\nRequest:\n".$request->__toString());
     try {
       $application->handleException($ex);
     }

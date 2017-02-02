@@ -113,6 +113,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
         'content' => $content,
         'type' => $type
     );
+    $this->setFormat('download');
   }
 
   /**

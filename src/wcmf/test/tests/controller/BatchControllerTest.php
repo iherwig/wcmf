@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2016 wemove digital solutions GmbH
+ * Copyright (C) 2005-2017 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -10,6 +10,7 @@
  */
 namespace wcmf\test\tests\controller;
 
+use app\src\controller\SimpleBatchController;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 use wcmf\test\lib\ArrayDataSet;
@@ -81,7 +82,11 @@ class BatchControllerTest extends ControllerTestCase {
         array('continue', null, null, null, null, 'done', true),
     );
     $data = array('download' => true);
+    ob_start(function($buffer) {
+      return '';
+    });
     $this->process($expectations, $data);
+    ob_end_clean();
 
     TestUtil::endSession();
   }
@@ -145,7 +150,7 @@ class BatchControllerTest extends ControllerTestCase {
     $this->assertEquals($expectation[5], $response->getAction());
     $this->assertEquals($expectation[6], $file !== null);
     if ($file) {
-      $this->assertEquals(1, preg_match('/class SimpleBatchController extends BatchController/', $file['content']));
+      $this->assertEquals(SimpleBatchController::TEST_CONTENT, $file['content']);
     }
   }
 }

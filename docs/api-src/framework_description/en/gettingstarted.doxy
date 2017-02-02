@@ -42,7 +42,7 @@ The following screenshots show the list and detail view of an _Author_ entity ty
 To run the wCMF default application you will need the following:
 
 - Web server (e.g. Apache)
-- PHP
+- PHP >= 5.6
 - MySQL
 - [Composer](https://getcomposer.org/)
 - [Apache Ant](http://ant.apache.org/) for code generation and deployment

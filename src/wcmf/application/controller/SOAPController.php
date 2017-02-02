@@ -70,11 +70,11 @@ class SOAPController extends Controller {
     // invoke the service
     $server->service(file_get_contents("php://input"));
 
-    // NOTE: the response is not used, because the SoapServer::service method
-    // returns the data to the client but we need to make sure that there is
-    // no further processing/formatting
+    // set the response
     $response = $this->getResponse();
-    $response->setFormat('null');
+    $response->setFormat('generic');
+    $response->setHeaders($server->getResponseHeaders());
+    $response->setValue('body', $server->getResponsePayload());
   }
 
   /**

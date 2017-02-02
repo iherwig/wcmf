@@ -35,6 +35,8 @@ class SoapServer extends \nusoap_server {
    * Constructor
    */
   public function __construct() {
+    //$this->debugLevel = 9;
+    //$this->debug_flag = true;
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
@@ -98,12 +100,34 @@ class SoapServer extends \nusoap_server {
     }
     try {
       $oldErrorReporting = error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+      // call service method, but suppress output
+      ob_start();
       parent::service($data);
+      ob_end_clean();
       error_reporting($oldErrorReporting);
+      if (self::$logger->isDebugEnabled()) {
+        self::$logger->debug($this->response);
+      }
     }
     catch (\Exception $ex) {
       $this->handleException($ex);
     }
+  }
+
+  /**
+   * Get the response headers after a call to the service method
+   * @return Array
+   */
+  public function getResponseHeaders() {
+    return $this->outgoing_headers;
+  }
+
+  /**
+   * Get the response payload after a call to the service method
+   * @return String
+   */
+  public function getResponsePayload() {
+    return trim(str_replace(join('\r\n', $this->outgoing_headers), '', $this->response));
   }
 
   /**

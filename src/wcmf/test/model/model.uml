@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_krkH0LQGEeOIMOFxCilDfw" name="root">
@@ -508,6 +508,16 @@
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_862SGKprEeaGbp23C_zkpg" name="Formats">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_XyZewOjfEeaJLM6lYHrCpQ" name="generic" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XyZewejfEeaJLM6lYHrCpQ" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_XyZewujfEeaJLM6lYHrCpQ" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_XyZew-jfEeaJLM6lYHrCpQ" value="$genericFormat"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_X00goOjfEeaJLM6lYHrCpQ" name="download" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_X00goejfEeaJLM6lYHrCpQ" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_X00goujfEeaJLM6lYHrCpQ" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_X00go-jfEeaJLM6lYHrCpQ" value="$downloadFormat"/>
+                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_862SGaprEeaGbp23C_zkpg" name="html" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_862SGqprEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_862SG6prEeaGbp23C_zkpg" value="1"/>
@@ -527,6 +537,20 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_862SJqprEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_862SJ6prEeaGbp23C_zkpg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_862SKKprEeaGbp23C_zkpg" value="$nullFormat"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_ueKFAOjfEeaJLM6lYHrCpQ" name="GenericFormat">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_ueKFAejfEeaJLM6lYHrCpQ" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ueKFAujfEeaJLM6lYHrCpQ" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ueKFA-jfEeaJLM6lYHrCpQ" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_ueKFBOjfEeaJLM6lYHrCpQ" value="wcmf\lib\presentation\format\impl\GenericFormat"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_ugTaEOjfEeaJLM6lYHrCpQ" name="DownloadFormat">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_ugTaEejfEeaJLM6lYHrCpQ" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ugTaEujfEeaJLM6lYHrCpQ" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ugTaE-jfEeaJLM6lYHrCpQ" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_ugTaFOjfEeaJLM6lYHrCpQ" value="wcmf\lib\presentation\format\impl\DownloadFormat"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_862SKaprEeaGbp23C_zkpg" name="HtmlFormat">
@@ -2325,4 +2349,6 @@
   <Chronos:ChiController xmi:id="_w6fpEC03EeSZcOHv2Y7Ocg" base_Class="_w2-bAC03EeSZcOHv2Y7Ocg"/>
   <Chronos:ChiSystem xmi:id="_874z0KprEeaGbp23C_zkpg" plattform="wcmf" config="persistence.ini" base_Class="_861EAaprEeaGbp23C_zkpg"/>
   <Chronos:ChiActionKey xmi:id="_Jlru8LRvEeOfbtYsPp7Oyg" action="changePassword" base_Association="_IWuBc7RvEeOfbtYsPp7Oyg"/>
+  <Chronos:ChiSystem xmi:id="_ueNIUOjfEeaJLM6lYHrCpQ" plattform="wcmf" config="presentation.ini" base_Class="_ueKFAOjfEeaJLM6lYHrCpQ"/>
+  <Chronos:ChiSystem xmi:id="_ugUoMOjfEeaJLM6lYHrCpQ" plattform="wcmf" config="presentation.ini" base_Class="_ugTaEOjfEeaJLM6lYHrCpQ"/>
 </xmi:XMI>

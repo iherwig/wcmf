@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2016 wemove digital solutions GmbH
+ * Copyright (C) 2005-2017 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -11,6 +11,7 @@
 namespace app\src\controller;
 
 use wcmf\application\controller\BatchController;
+use wcmf\lib\io\FileUtil;
 
 /**
  * SimpleBatchController is used for testing.
@@ -18,6 +19,8 @@ use wcmf\application\controller\BatchController;
  * @author ingo herwig <ingo@wemove.com>
  */
 class SimpleBatchController extends BatchController {
+
+  const TEST_CONTENT = 'TEST CONTENT';
 
   /**
    * @see BatchController::getWorkPackage()
@@ -43,7 +46,9 @@ class SimpleBatchController extends BatchController {
    */
   protected function getDownloadFile() {
     $download = $this->getRequestValue('download');
-    return $download !== null ? __FILE__ : null;
+    $filename = FileUtil::realpath('download.txt');
+    file_put_contents($filename, self::TEST_CONTENT);
+    return $download !== null ? $filename : null;
   }
 
   protected function firstPackage($oids) {

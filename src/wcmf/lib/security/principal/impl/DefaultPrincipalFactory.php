@@ -68,7 +68,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
         $this->permissionManager->removeTempPermission($tmpPerm);
       }
     }
-    return $this->users[$login];
+    return $login == AnonymousUser::USER_GROUP_NAME ? new AnonymousUser() : $this->users[$login];
   }
 
   /**

@@ -17,7 +17,7 @@ use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
- * HierarchicalFormat maybe used as base class for formats that
+ * HierarchicalFormat is used as base class for formats that
  * are able to represent hierarchical data like JSON or XML. This format
  * automatically iterates over data when de-/serializing and uses template
  * methods to implement the specific format.

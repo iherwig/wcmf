@@ -15,8 +15,8 @@ use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 use wcmf\lib\presentation\Response;
 
 /**
- * SoapFormat realizes the SOAP request/response format. Nodes are serialized
- * into an array (the nusoap library creates the XML)
+ * SoapFormat implements the SOAP request/response format. Nodes are serialized
+ * into an array (the nusoap library creates the XML).
  *
  * @author ingo herwig <ingo@wemove.com>
  */

@@ -18,7 +18,7 @@ use wcmf\lib\presentation\Response;
 use wcmf\lib\util\StringUtil;
 
 /**
- * HtmlFormat realizes the HTML request/response format. Since all data
+ * HtmlFormat implements the HTML request/response format. Since all data
  * from the external representation arrives in form fields, grouping of values
  * has to be done via the field names. So Nodes are represented by their values
  * whose field names are of the form value-`name`-`oid`. All of these

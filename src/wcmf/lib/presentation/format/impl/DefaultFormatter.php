@@ -22,8 +22,6 @@ use wcmf\lib\presentation\Response;
  */
 class DefaultFormatter implements Formatter {
 
-  private static $headersSent = false;
-
   private $formats = array();
 
   /**
@@ -51,7 +49,7 @@ class DefaultFormatter implements Formatter {
     $firstFormat = null;
     foreach ($this->formats as $name => $instance) {
       $firstFormat = $firstFormat == null ? $name : $firstFormat;
-      if (strpos($mimeType, $instance->getMimeType()) !== false) {
+      if (strpos($instance->getMimeType(), $mimeType) !== false) {
         return $name;
       }
     }
@@ -79,21 +77,6 @@ class DefaultFormatter implements Formatter {
    * @see Formatter::serialize()
    */
   public function serialize(Response $response) {
-    self::$headersSent = headers_sent();
-
-    // if the response has a file, we send it and return
-    $file = $response->getFile();
-    if ($file) {
-      self::sendHeader("Content-Type: ".$file['type']);
-      if ($file['isDownload']) {
-        self::sendHeader('Content-Disposition: attachment; filename="'.basename($file['filename']).'"');
-      }
-      self::sendHeader("Pragma: no-cache");
-      self::sendHeader("Expires: 0");
-      echo $file['content'];
-      return;
-    }
-
     // handle caching
     $responseSent = false;
     $cacheId = $response->getCacheId();
@@ -113,8 +96,8 @@ class DefaultFormatter implements Formatter {
 
       // send caching headers
       session_cache_limiter("public");
-      self::sendHeader("Last-Modified: ".($lastModified->format("D, d M Y H:i:s")." GMT")." GMT");
-      self::sendHeader("ETag: \"".$etag."\"");
+      $response->setHeader("Last-Modified", $lastModified->format("D, d M Y H:i:s")." GMT");
+      $response->setHeader("ETag", $etag);
 
       // check if page has changed and send 304 if not
       if (($ifModifiedSinceHeader !== false && strtotime($ifModifiedSinceHeader) == $lastModifiedTs) ||
@@ -133,24 +116,10 @@ class DefaultFormatter implements Formatter {
         throw new ConfigurationException("No response format defined for ".$response->__toString());
       }
       $format = $this->getFormat($formatName);
-      self::sendHeader("Content-Type: ".$format->getMimeType()."; charset=utf-8");
-      foreach ($response->getHeaders() as $name => $value) {
-        self::sendHeader($name.': '.$value);
-      }
       $format->serialize($response);
     }
 
     http_response_code($response->getStatus());
-  }
-
-  /**
-   * Send the given header
-   * @param $header
-   */
-  protected function sendHeader($header) {
-    if (!self::$headersSent) {
-      header($header);
-    }
   }
 }
 ?>

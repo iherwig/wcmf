@@ -73,7 +73,7 @@ class FileUtil {
     }
     else {
       // try detect image mime type
-      $imageInfo = getimagesize($file);
+      $imageInfo = @getimagesize($file);
       $fileType = isset($imageInfo['mime']) ? $imageInfo['mime'] : '';
     }
     return (is_string($fileType) && !empty($fileType)) ? $fileType : $defaultType;
