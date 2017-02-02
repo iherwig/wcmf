@@ -28,6 +28,7 @@ class SoapServer extends \nusoap_server {
   const TNS = 'http://wcmf.sourceforge.net';
 
   private $application = null;
+  private $serverResponse = '';
 
   private static $logger = null;
 
@@ -101,12 +102,15 @@ class SoapServer extends \nusoap_server {
     try {
       $oldErrorReporting = error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
       // call service method, but suppress output
-      ob_start();
+      ob_start(function($buffer) {
+        $this->serverResponse = $buffer;
+        return '';
+      });
       parent::service($data);
       ob_end_clean();
       error_reporting($oldErrorReporting);
       if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug($this->response);
+        self::$logger->debug($this->serverResponse);
       }
     }
     catch (\Exception $ex) {
@@ -119,7 +123,14 @@ class SoapServer extends \nusoap_server {
    * @return Array
    */
   public function getResponseHeaders() {
-    return $this->outgoing_headers;
+    $headerStrings = headers_list();
+    header_remove();
+    $headers = array();
+    foreach ($headerStrings as $header) {
+      list($name, $value) = explode(':', $header, 2);
+      $headers[trim($name)] = trim($value);
+    }
+    return $headers;
   }
 
   /**
@@ -127,7 +138,7 @@ class SoapServer extends \nusoap_server {
    * @return String
    */
   public function getResponsePayload() {
-    return trim(str_replace(join('\r\n', $this->outgoing_headers), '', $this->response));
+    return $this->serverResponse;
   }
 
   /**
