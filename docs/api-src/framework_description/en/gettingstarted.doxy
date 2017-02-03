@@ -98,7 +98,7 @@ $ composer create-project wcmf/wcmf-default-app wcmf-default-app
 To get the __latest development version__ use the following command:
 
 ~~~~~~~~~~~~~
-$ composer create-project wcmf/wcmf-default-app wcmf-default-app dev-develop
+$ composer create-project wcmf/wcmf-default-app wcmf-default-app dev-master
 ~~~~~~~~~~~~~
 
 ### Model the domain ### {#app_model}
