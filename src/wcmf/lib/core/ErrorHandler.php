@@ -18,6 +18,7 @@ namespace wcmf\lib\core;
  */
 class ErrorHandler {
 
+  // fatal errors that can be handled with a user defined function
   private static $FATAL_ERRORS = array(E_USER_ERROR => '', E_RECOVERABLE_ERROR => '');
 
   private static $logger = null;
@@ -27,6 +28,7 @@ class ErrorHandler {
    */
   public function __construct() {
     set_error_handler(array($this, 'handleError'));
+    set_exception_handler(array($this, 'handleException'));
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
@@ -49,7 +51,7 @@ class ErrorHandler {
   }
 
   /**
-   * Actual error handling method
+   * Error handler
    * @param $errno
    * @param $errstr
    * @param $errfile
@@ -60,16 +62,24 @@ class ErrorHandler {
   public function handleError($errno, $errstr, $errfile, $errline) {
     $errorIsEnabled = (bool)($errno & ini_get('error_reporting'));
 
-    // -- FATAL ERROR
+    // FATAL ERROR
     if(isset(self::$FATAL_ERRORS[$errno]) && $errorIsEnabled) {
       throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 
-    // -- NON-FATAL ERROR/WARNING/NOTICE
+    // NON-FATAL ERROR/WARNING/NOTICE
     else if($errorIsEnabled) {
       $info = $errstr." in ".$errfile." on line ".$errline;
       self::$logger->logByErrorType($errno, $info);
     }
+  }
+
+  /**
+   * Exception handler
+   * @param $ex
+   */
+  public function handleException($ex) {
+    self::$logger->error($ex);
   }
 }
 ?>

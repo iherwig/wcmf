@@ -46,7 +46,7 @@ class SimpleBatchController extends BatchController {
    */
   protected function getDownloadFile() {
     $download = $this->getRequestValue('download');
-    $filename = FileUtil::realpath('download.txt');
+    $filename = FileUtil::realpath(WCMF_BASE.'app/cache/download.txt');
     file_put_contents($filename, self::TEST_CONTENT);
     return $download !== null ? $filename : null;
   }

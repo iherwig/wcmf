@@ -15,7 +15,6 @@ register_shutdown_function("cleanup");
 function setup() {
   @unlink(WCMF_BASE.'app/test-db.sq3');
   @unlink('router-error.txt');
-  @unlink('download.txt');
   $fileUtil = new FileUtil();
   $fileUtil->mkdirRec(WCMF_BASE.'app/public');
   $fileUtil->emptyDir(WCMF_BASE.'app/cache');

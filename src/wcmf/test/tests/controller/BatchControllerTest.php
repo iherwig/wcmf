@@ -119,7 +119,11 @@ class BatchControllerTest extends ControllerTestCase {
         array('continue', null, null, null, null, 'done', true),
     );
     $data = array('oneCall' => true, 'download' => true);
+    ob_start(function($buffer) {
+      return '';
+    });
     $this->process($expectations, $data);
+    ob_end_clean();
 
     TestUtil::endSession();
   }
