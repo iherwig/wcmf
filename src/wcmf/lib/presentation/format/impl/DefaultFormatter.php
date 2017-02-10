@@ -49,7 +49,8 @@ class DefaultFormatter implements Formatter {
     $firstFormat = null;
     foreach ($this->formats as $name => $instance) {
       $firstFormat = $firstFormat == null ? $name : $firstFormat;
-      if (strpos($mimeType, $instance->getMimeType()) !== false) {
+      $formatMimeType = $instance->getMimeType();
+      if (strlen($formatMimeType) > 0 && strpos($mimeType, $formatMimeType) !== false) {
         return $name;
       }
     }
