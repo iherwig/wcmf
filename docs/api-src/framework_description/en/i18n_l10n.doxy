@@ -50,7 +50,7 @@ and they are replaced in the order of the values passed into the
 
 ~~~~~~~~~~~~~{.php}
 $textId = 'Logged in as %0% since %1%';
-$parameters = array($username, $date);
+$parameters = [$username, $date];
 
 // retrieve the translation
 $message = ObjectFactory::getInstance('Message');
@@ -91,7 +91,7 @@ the values are the translations in the appropriate language.
 <em>messages_en.php</em>
 
 ~~~~~~~~~~~~~{.php}
-$messages_en = array();
+$messages_en = [];
 $messages_en['%0% selected'] = '';
 $messages_en['Author'] = '';
 $messages_en['Book'] = '';
@@ -100,7 +100,7 @@ $messages_en['Book'] = '';
 <em>messages_de.php</em>
 
 ~~~~~~~~~~~~~{.php}
-$messages_de = array();
+$messages_de = [];
 $messages_de['%0% selected'] = '%0% ausgewählt';
 $messages_de['Author'] = 'Autor';
 $messages_de['Book'] = 'Buch';

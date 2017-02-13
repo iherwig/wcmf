@@ -47,10 +47,10 @@ $password = $request->getValue('password');
 
 try {
   // try to login using the credentials
-  $authUser = $this->_authenticationManager->login(array(
+  $authUser = $this->_authenticationManager->login([
     'login' => $login,
     'password' => $password
-  ));
+  ]);
 }
 catch (Exception $ex) {
   Log::error("Could not log in: ".$ex, __CLASS__);
@@ -299,10 +299,9 @@ $userType = 'app.src.model.wcmf.User';
 // set up a temporary permission to read the user instance for the given login
 $permissionManager->addTempPermission($userType, '', PersistenceAction::READ);
 
-$user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE,
-            array(
-                new Criteria($userType, 'login', '=', $login)
-            ), null);
+$user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE, [
+            new Criteria($userType, 'login', '=', $login)
+        ], null);
 
 // remove the temporary permission
 $permissionManager->removeTempPermission($userType, '', PersistenceAction::READ);

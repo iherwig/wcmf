@@ -352,17 +352,17 @@ log level for the
 \link wcmf::lib::presentation::Controller `Controller`\endlink class to `DEBUG`:
 
 ~~~~~~~~~~~~~{.php}
-return array(
-  'rootLogger' => array(
+return [
+  'rootLogger' => [
     'level' => 'ERROR',
-    'appenders' => array('dailyFile', 'echo'),
-  ),
+    'appenders' => ['dailyFile', 'echo'],
+  ],
 
-  'loggers' => array(
-    'wcmf.lib.presentation.Controller' => array('level' => 'DEBUG', 'appenders' => array('dailyFile')),
-  ),
+  'loggers' => [
+    'wcmf.lib.presentation.Controller' => ['level' => 'DEBUG', 'appenders' => ['dailyFile']],
+  ],
 
   ...
-);
+];
 ~~~~~~~~~~~~~
 */

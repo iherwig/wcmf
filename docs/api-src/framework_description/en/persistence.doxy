@@ -271,17 +271,17 @@ instances may be sorted by using \link wcmf::lib::model::NodeComparator `NodeCom
 in the following way:
 
 ~~~~~~~~~~~~~{.php}
-$nodeList = array(...);
+$nodeList = [...];
 
 // set up a comparator for node type and created date
-$sortCriteria = array(
+$sortCriteria = [
   NodeComparator::ATTRIB_TYPE => NodeComparator::SORTTYPE_ASC,
   'created' => NodeComparator::SORTTYPE_DESC
-);
+];
 $comparator = new NodeComparator($sortCriteria);
 
 // sort node list
-usort($nodeList, array($comparator, 'compare'));
+usort($nodeList, [$comparator, 'compare']);
 ~~~~~~~~~~~~~
 
 #### Pagination #### {#pers_pagination}
@@ -312,8 +312,8 @@ $pagingInfo = new PagingInfo(25);
 $pagingInfo->setOffset(50);
 
 // load Author and Publisher instances ordered by creation date
-$types = array('Author', 'Publisher');
-$order = array('created');
+$types = ['Author', 'Publisher'];
+$order = ['created'];
 $objects = ObjectFactory::getInstance('persistenceFacade')->loadObjects($types, BuildDepth::SINGLE, null, $order, $pagingInfo);
 ~~~~~~~~~~~~~
 
@@ -324,10 +324,10 @@ To search objects in the store the
 method may be used. It allows to set the conditions that loaded objects should match.
 
 ~~~~~~~~~~~~~{.php}
-$criteria = array(
+$criteria = [
   new Criteria("Article", "title", "LIKE", "A%"),
   new Criteria("Article", "year", ">=", "2014")
-)
+]
 
 // load all Article instances with titles starting with A and release date 2014 or later
 $articles = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Article", BuildDepth::SINGLE, $criteria);

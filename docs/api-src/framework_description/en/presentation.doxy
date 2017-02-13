@@ -338,7 +338,7 @@ situations:
 
 ~~~~~~~~~~~~~{.php}
 $response->addError(ApplicationError::get('PARAMETER_INVALID',
-  array('invalidParameters' => array('type'))));
+  ['invalidParameters' => ['type']]));
 ~~~~~~~~~~~~~
 
 ### Long running requests ### {#pres_longrequest}
@@ -595,12 +595,12 @@ class PersistenceEventListener {
   public function __construct(EventListener $eventListener) {
     $this->_eventListener = $eventListener;
     $this->_eventListener->addListener(PersistenceEvent::NAME,
-      array($this, 'persisted'));
+      [$this, 'persisted']);
   }
 
   public function __destruct() {
     $this->_eventListener->removeListener(PersistenceEvent::NAME,
-      array($this, 'persisted'));
+      [this, 'persisted']);
   }
 
   /**
