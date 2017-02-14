@@ -380,6 +380,8 @@ class RESTController extends Controller {
     $response = $this->getResponse();
     if (!$subResponse->hasErrors()) {
       $response->clearValues();
+      $response->setHeaders($subResponse->getHeaders());
+      $response->setStatus($subResponse->getStatus());
       if ($subResponse->hasValue('object')) {
         $object = $subResponse->getValue('object');
         if ($object != null) {
@@ -397,7 +399,6 @@ class RESTController extends Controller {
           $this->setLocationHeaderFromOid($oidStr);
         }
       }
-      $response->setStatus($subResponse->getStatus());
     }
     else {
       // in case of error, return default response

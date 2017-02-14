@@ -203,10 +203,10 @@ abstract class AbstractUser extends Node implements User {
    */
   public function validateValue($name, $value) {
     parent::validateValue($name, $value);
+    $message = ObjectFactory::getInstance('message');
 
     // validate the login property
     if ($name == 'login') {
-      $message = ObjectFactory::getInstance('message');
       if (strlen(trim($value)) == 0) {
         throw new ValidationException($name, $value, $message->getText("The user requires a login name"));
       }
