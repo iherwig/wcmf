@@ -165,10 +165,10 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
     $mainConfig = $configFiles[0];
     $config = new InifileConfiguration(dirname($mainConfig).'/');
     $config->addConfiguration(basename($mainConfig));
-    return array(
+    return [
       'instance' => $config,
       'file' => $mainConfig
-    );
+    ];
   }
 }
 ?>

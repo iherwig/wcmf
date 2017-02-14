@@ -38,10 +38,10 @@ class Node extends DefaultPersistentObject {
   const RELATION_STATE_INITIALIZED = -3;
   const RELATION_STATE_LOADED = -4;
 
-  private $relationStates = array();
+  private $relationStates = [];
 
-  private $addedNodes = array();
-  private $deletedNodes = array();
+  private $addedNodes = [];
+  private $deletedNodes = [];
   private $orderedNodes = null;
 
   private static $parentGetValueMethod = null;
@@ -75,7 +75,7 @@ class Node extends DefaultPersistentObject {
       return parent::getValueNames();
     }
     else {
-      $names = array();
+      $names = [];
       $namesAll = parent::getValueNames();
       $mapper = $this->getMapper();
       foreach ($namesAll as $name) {
@@ -123,7 +123,7 @@ class Node extends DefaultPersistentObject {
     $mapper = $this->getMapper();
     if ($mapper->hasRelation($name)) {
       if (!is_array($value)) {
-        $value = array($value);
+        $value = [$value];
       }
       // clean the value
       parent::setValue($name, null, true, false);
@@ -168,7 +168,7 @@ class Node extends DefaultPersistentObject {
   public static function filter(array $nodeList, ObjectId $oid=null, $type=null, $values=null,
           $properties=null, $useRegExp=true) {
 
-    $returnArray = array();
+    $returnArray = [];
     for ($i=0, $count=sizeof($nodeList); $i<$count; $i++) {
       $curNode = $nodeList[$i];
       if ($curNode instanceof PersistentObject) {
@@ -229,8 +229,8 @@ class Node extends DefaultPersistentObject {
     foreach ($mapper->getRelations() as $curRelationDesc) {
       $valueName = $curRelationDesc->getOtherRole();
       // use parent getters to avoid loading relations
-      $existingValue = self::$parentGetValueMethod->invokeArgs($this, array($valueName));
-      $newValue = self::$parentGetValueMethod->invokeArgs($object, array($valueName));
+      $existingValue = self::$parentGetValueMethod->invokeArgs($this, [$valueName]);
+      $newValue = self::$parentGetValueMethod->invokeArgs($object, [$valueName]);
       if ($newValue != null) {
         if ($curRelationDesc->isMultiValued()) {
           $mergeResult = self::mergeObjectLists($existingValue, $newValue);
@@ -253,14 +253,14 @@ class Node extends DefaultPersistentObject {
   protected static function mergeObjectLists($list1, $list2) {
     // ensure arrays
     if (!is_array($list1)) {
-      $list1 = array();
+      $list1 = [];
     }
     if (!is_array($list2)) {
-      $list2 = array();
+      $list2 = [];
     }
     // create hashtables for better search performance
-    $list1Map = array();
-    $added = array();
+    $list1Map = [];
+    $added = [];
     foreach ($list1 as $curObject) {
       $list1Map[$curObject->getOID()->__toString()] = $curObject;
     }
@@ -278,7 +278,7 @@ class Node extends DefaultPersistentObject {
         $list1Map[$curOidStr] = $curObject;
       }
     }
-    return array('result' => array_values($list1Map), 'added' => $added);
+    return ['result' => array_values($list1Map), 'added' => $added];
   }
 
   /**
@@ -315,10 +315,10 @@ class Node extends DefaultPersistentObject {
 
     $value = $other;
     $oldValue = parent::getValue($role);
-    $addedNodes = array(); // this array contains the other node or nothing
+    $addedNodes = []; // this array contains the other node or nothing
     if (!$relDesc || $relDesc->isMultiValued()) {
       // make sure that the value is an array if multivalued
-      $mergeResult = self::mergeObjectLists($oldValue, array($value));
+      $mergeResult = self::mergeObjectLists($oldValue, [$value]);
       $value = $mergeResult['result'];
       $addedNodes = $mergeResult['added'];
     }
@@ -330,7 +330,7 @@ class Node extends DefaultPersistentObject {
     // remember the addition
     if (sizeof($addedNodes) > 0) {
       if (!isset($this->addedNodes[$role])) {
-        $this->addedNodes[$role] = array();
+        $this->addedNodes[$role] = [];
       }
       $this->addedNodes[$role][] = $other;
     }
@@ -401,7 +401,7 @@ class Node extends DefaultPersistentObject {
 
     // remember the deletion
     if (!isset($this->deletedNodes[$role])) {
-      $this->deletedNodes[$role] = array();
+      $this->deletedNodes[$role] = [];
     }
     $this->deletedNodes[$role][] = $other->getOID();
     $this->setState(PersistentOBject::STATE_DIRTY);
@@ -435,11 +435,11 @@ class Node extends DefaultPersistentObject {
    * @param $role Role name of the Node instances (optional)
    */
   public function setNodeOrder(array $orderedList, array $movedList=null, $role=null) {
-    $this->orderedNodes = array(
+    $this->orderedNodes = [
         'ordered' => $orderedList,
         'moved' => $movedList,
         'role' => $role
-    );
+    ];
     $this->setState(PersistentOBject::STATE_DIRTY);
   }
 
@@ -523,10 +523,10 @@ class Node extends DefaultPersistentObject {
       // we are only looking for nodes that are in memory already
       $nodes = parent::getValue($role);
       if (!is_array($nodes)) {
-        $nodes = array($nodes);
+        $nodes = [$nodes];
       }
       // sort out proxies
-      $children = array();
+      $children = [];
       foreach($nodes as $curNode) {
         if ($curNode instanceof PersistentObject) {
           $children[] = $curNode;
@@ -540,11 +540,11 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
-   * Get possible chilren of this node type (independent of existing children).
+   * Get possible children of this node type (independent of existing children).
    * @return An Array with role names as keys and RelationDescription instances as values.
    */
   public function getPossibleChildren() {
-    $result = array();
+    $result = [];
     $relations = $this->getRelations('child');
     foreach ($relations as $curRelation) {
       $result[$curRelation->getOtherRole()] = $curRelation;
@@ -648,10 +648,10 @@ class Node extends DefaultPersistentObject {
       // we are only looking for nodes that are in memory already
       $nodes = parent::getValue($role);
       if (!is_array($nodes)) {
-        $nodes = array($nodes);
+        $nodes = [$nodes];
       }
       // sort out proxies
-      $parents = array();
+      $parents = [];
       foreach($nodes as $curNode) {
         if ($curNode instanceof PersistentObject) {
           $parents[] = $curNode;
@@ -669,7 +669,7 @@ class Node extends DefaultPersistentObject {
    * @return An Array with role names as keys and RelationDescription instances as values.
    */
   public function getPossibleParents() {
-    $result = array();
+    $result = [];
     $relations = $this->getRelations('parent');
     foreach ($relations as $curRelation) {
       $result[$curRelation->getOtherRole()] = $curRelation;
@@ -711,7 +711,7 @@ class Node extends DefaultPersistentObject {
     foreach ($roles as $curRole) {
       if (isset($this->relationStates[$curRole]) &&
               $this->relationStates[$curRole] != Node::RELATION_STATE_LOADED) {
-        $relatives = array();
+        $relatives = [];
 
         // resolve proxies if the relation is already initialized
         if ($this->relationStates[$curRole] == Node::RELATION_STATE_INITIALIZED) {
@@ -763,7 +763,7 @@ class Node extends DefaultPersistentObject {
    * @return An array containing the relatives.
    */
   public function getRelatives($hierarchyType, $memOnly=true) {
-    $relatives = array();
+    $relatives = [];
     $relations = $this->getRelations($hierarchyType);
     foreach ($relations as $curRelation) {
       $curRelatives = null;
@@ -777,7 +777,7 @@ class Node extends DefaultPersistentObject {
         continue;
       }
       if (!is_array($curRelatives)) {
-        $curRelatives = array($curRelatives);
+        $curRelatives = [$curRelatives];
       }
       foreach ($curRelatives as $curRelative) {
         if ($curRelative instanceof PersistentObjectProxy && $memOnly) {

@@ -31,7 +31,7 @@ use wcmf\lib\presentation\Response;
  */
 class JsonFormat extends HierarchicalFormat {
 
-  private static $jsonData = array();
+  private static $jsonData = [];
   private static $jsonUsed = false;
   private static $logger = null;
 

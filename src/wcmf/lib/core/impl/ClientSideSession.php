@@ -34,7 +34,6 @@ class ClientSideSession implements Session {
 
   private $cookiePrefix = '';
 
-  private $token = null;
   private $key = null;
 
   /**

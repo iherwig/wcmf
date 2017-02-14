@@ -31,9 +31,9 @@ use wcmf\lib\persistence\StateChangeEvent;
  */
 class DefaultPersistenceFacade implements PersistenceFacade {
 
-  private $mappers = array();
-  private $simpleToFqNames = array();
-  private $createdOIDs = array();
+  private $mappers = [];
+  private $simpleToFqNames = [];
+  private $createdOIDs = [];
   private $eventManager = null;
   private $currentTransaction = null;
   private $logStrategy = null;
@@ -49,7 +49,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $this->logStrategy = $logStrategy;
     // register as change listener to track the created oids, after save
     $this->eventManager->addListener(StateChangeEvent::NAME,
-            array($this, 'stateChanged'));
+            [$this, 'stateChanged']);
   }
 
   /**
@@ -57,7 +57,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function __destruct() {
     $this->eventManager->removeListener(StateChangeEvent::NAME,
-            array($this, 'stateChanged'));
+            [$this, 'stateChanged']);
   }
 
   /**
@@ -128,7 +128,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::load()
    */
   public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
-    if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE))) {
+    if ($buildDepth < 0 && !in_array($buildDepth, [BuildDepth::INFINITE, BuildDepth::SINGLE])) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
     // check if the object is already part of the transaction
@@ -147,7 +147,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @see PersistenceFacade::create()
    */
   public function create($type, $buildDepth=BuildDepth::SINGLE) {
-    if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE, BuildDepth::REQUIRED))) {
+    if ($buildDepth < 0 && !in_array($buildDepth, [BuildDepth::INFINITE, BuildDepth::SINGLE, BuildDepth::REQUIRED])) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
 
@@ -251,14 +251,14 @@ class DefaultPersistenceFacade implements PersistenceFacade {
         }
       }
 
-      $tmpResult = array();
+      $tmpResult = [];
       for ($i=0, $countI=$numTypes; $i<$countI; $i++) {
         // collect n objects from each type
         $type = $typeOrTypes[$i];
         $mapper = $this->getMapper($type);
 
         // use type specific criteria
-        $typeCriteria = array();
+        $typeCriteria = [];
         if ($criteria != null) {
           foreach ($criteria as $criterion) {
             if ($this->getFullyQualifiedType($criterion->getType()) == $type) {
@@ -278,7 +278,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       // sort
       if ($orderby != null) {
         $comparator = new NodeComparator($orderby);
-        usort($tmpResult, array($comparator, 'compare'));
+        usort($tmpResult, [$comparator, 'compare']);
       }
 
       // truncate
@@ -381,7 +381,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       $object = $event->getObject();
       $type = $object->getType();
       if (!array_key_exists($type, $this->createdOIDs)) {
-        $this->createdOIDs[$type] = array();
+        $this->createdOIDs[$type] = [];
       }
       $this->createdOIDs[$type][] = $object->getOID();
     }

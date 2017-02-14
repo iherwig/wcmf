@@ -110,7 +110,7 @@ class AnonymousUser implements User {
    * @see User::getRoles()
    */
   public function getRoles() {
-    return array(self::USER_GROUP_NAME);
+    return [self::USER_GROUP_NAME];
   }
 }
 ?>

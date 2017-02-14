@@ -28,23 +28,23 @@ class PersistentFacadeTest extends DatabaseTestCase {
   private $numChapters = 100;
 
   protected function getDataSet() {
-    $chapters = array();
+    $chapters = [];
     for ($i=0; $i<$this->numChapters; $i++) {
       $chapters[] = array('id' => $i, 'sortkey' => $i);
     }
 
     return new ArrayDataSet(array(
       'DBSequence' => array(
-        array('table' => ''),
+        ['table' => ''],
       ),
       'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
       ),
       'NMUserRole' => array(
-        array('fk_user_id' => 0, 'fk_role_id' => 0),
+        ['fk_user_id' => 0, 'fk_role_id' => 0],
       ),
       'Role' => array(
-        array('id' => 0, 'name' => 'administrators'),
+        ['id' => 0, 'name' => 'administrators'],
       ),
       'Chapter' => $chapters,
       // mixed paging

@@ -124,7 +124,7 @@ class HtmlFormat extends AbstractFormat {
     if (!(strpos($name, 'value') == 0)) {
       return null;
     }
-    $def = array();
+    $def = [];
     $fieldDelimiter = StringUtil::escapeForRegex(self::$inputFieldNameDelimiter);
     $pieces = preg_split('/'.$fieldDelimiter.'/', $name);
     if (sizeof($pieces) != 3) {

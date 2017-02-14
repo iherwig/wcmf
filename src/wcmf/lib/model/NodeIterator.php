@@ -50,8 +50,8 @@ class NodeIterator implements \Iterator {
    */
   public function __construct($node, $aggregationKinds=array()) {
     $this->end = false;
-    $this->nodeList = array();
-    $this->processedOidList = array();
+    $this->nodeList = [];
+    $this->processedOidList = [];
     $this->currentNode = $node;
     $this->startNode = $node;
     $this->aggregationKinds = $aggregationKinds;
@@ -81,7 +81,7 @@ class NodeIterator implements \Iterator {
     $this->processedOidList[] = $this->currentNode->getOID()->__toString();
 
     // collect navigable children for the given aggregation kinds
-    $childrenArray = array();
+    $childrenArray = [];
     $mapper = $this->currentNode->getMapper();
     $relations = $mapper->getRelations('child');
     $followAll = sizeof($this->aggregationKinds) == 0;
@@ -90,7 +90,7 @@ class NodeIterator implements \Iterator {
       if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->aggregationKinds))) {
         $childValue = $this->currentNode->getValue($relation->getOtherRole());
         if ($childValue != null) {
-          $children = $relation->isMultiValued() ? $childValue : array($childValue);
+          $children = $relation->isMultiValued() ? $childValue : [$childValue];
           foreach ($children as $child) {
             $childrenArray[] = $child;
           }
@@ -125,8 +125,8 @@ class NodeIterator implements \Iterator {
    */
   public function rewind() {
     $this->end = false;
-    $this->nodeList = array();
-    $this->processedOidList = array();
+    $this->nodeList = [];
+    $this->processedOidList = [];
     $this->currentNode = $this->startNode;
   }
 

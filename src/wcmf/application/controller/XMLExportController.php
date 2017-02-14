@@ -246,7 +246,7 @@ class XMLExportController extends BatchController {
     }
     // no iterator, no oid, finish
     if ($iterator == null) {
-      $this->addWorkPackage($message->getText('Finish'), 1, array(null), 'finishExport');
+      $this->addWorkPackage($message->getText('Finish'), 1, [null], 'finishExport');
       return;
     }
 
@@ -284,7 +284,7 @@ class XMLExportController extends BatchController {
     }
     else {
       // finish
-      $this->addWorkPackage($message->getText('Finish'), 1, array(null), 'finishExport');
+      $this->addWorkPackage($message->getText('Finish'), 1, [null], 'finishExport');
     }
   }
 

@@ -36,7 +36,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
   private static $dummyIdPattern = 'wcmf[A-Za-z0-9]{32}';
   private static $idPattern = null;
   private static $delimiterPattern = null;
-  private static $numPkKeys = array();
+  private static $numPkKeys = [];
 
   private static $nullOID = null;
 
@@ -57,7 +57,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
     $this->fqType = $type != 'NULL' ? $persistenceFacade->getFullyQualifiedType($type) : 'NULL';
 
     // get given primary keys
-    $this->id = !is_array($id) ? array($id) : $id;
+    $this->id = !is_array($id) ? [$id] : $id;
 
     // add dummy ids for missing primary key values
     $numPKs = self::getNumberOfPKs($type);
@@ -176,7 +176,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
     }
 
     // get the ids from the oid
-    $ids = array();
+    $ids = [];
     $nextPart = array_pop($oidParts);
     while($nextPart !== null && preg_match(self::$idPattern, $nextPart) == 1) {
       $intNextPart = (int)$nextPart;
@@ -196,11 +196,11 @@ class ObjectId implements \Serializable, \JsonSerializable {
     // get the prefix
     $prefix = join(self::DELIMITER, $oidParts);
 
-    return array(
+    return [
       'type' => $type,
       'id' => $ids,
       'prefix' => $prefix
-    );
+    ];
   }
 
   /**

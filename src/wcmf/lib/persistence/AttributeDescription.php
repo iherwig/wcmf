@@ -19,7 +19,7 @@ class AttributeDescription {
 
   protected $name = '';
   protected $type = 'String';
-  protected $tags = array();
+  protected $tags = [];
   protected $defaultValue = null;
   protected $validateType = '';
   protected $validateDescription = '';
@@ -94,8 +94,8 @@ class AttributeDescription {
    * @return An array of names
    */
   public function getPropertyNames() {
-    return array('name', 'type', 'tags', 'defaultValue', 'validateType',
-      'validateDescription', 'isEditable', 'inputType', 'displayType');
+    return ['name', 'type', 'tags', 'defaultValue', 'validateType',
+      'validateDescription', 'isEditable', 'inputType', 'displayType'];
   }
 
   /**

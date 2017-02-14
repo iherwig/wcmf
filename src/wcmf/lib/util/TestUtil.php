@@ -106,11 +106,11 @@ class TestUtil {
     }
     $cmd = sprintf('php -S %s:%d -t %s %s', SERVER_HOST, SERVER_PORT, $documentRoot, $router);
 
-    $descriptorspec = array(
-      0 => array('pipe', 'r'), // stdin
-      1 => array('pipe', 'w'), // stdout
-      2 => array('pipe', 'a') // stderr
-    );
+    $descriptorspec = [
+      0 => ['pipe', 'r'], // stdin
+      1 => ['pipe', 'w'], // stdout
+      2 => ['pipe', 'a'] // stderr
+    ];
     $pipes = null;
     if (self::isWindows()) {
       $resource = proc_open("start /B ".$cmd, $descriptorspec, $pipes);

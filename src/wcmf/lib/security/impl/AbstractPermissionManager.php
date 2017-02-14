@@ -35,7 +35,7 @@ class AbstractPermissionManager {
   const RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY = 'entity.instance.property';
   const RESOURCE_TYPE_OTHER = 'other';
 
-  private $tempPermissions = array();
+  private $tempPermissions = [];
   private $tempPermissionIndex = 0;
 
   private static $logger = null;
@@ -156,7 +156,7 @@ class AbstractPermissionManager {
 
               if ($parents != null) {
                 if (!$parentRelation->isMultiValued()) {
-                  $parents = array($parents);
+                  $parents = [$parents];
                 }
                 foreach ($parents as $parent) {
                   $authorized = $this->authorize($parent->getOID(), $context, $action);
@@ -277,13 +277,13 @@ class AbstractPermissionManager {
       // defaults to other
       $resourceType = self::RESOURCE_TYPE_OTHER;
     }
-    return array(
+    return [
       'resourceType' => $resourceType,
       'oid' => $oid,
       'type' => $type,
       'oidProperty' => $oidProperty,
       'typeProperty' => $typeProperty
-    );
+    ];
   }
 
   /**
@@ -299,16 +299,16 @@ class AbstractPermissionManager {
     if (strlen($val) == 0) {
       return null;
     }
-    $result = array(
+    $result = [
       'default' => null,
-      'allow' => array(),
-      'deny' => array(),
-    );
+      'allow' => [],
+      'deny' => [],
+    ];
 
     $roleValues = explode(" ", $val);
     foreach ($roleValues as $roleValue) {
       $roleValue = trim($roleValue);
-      $matches = array();
+      $matches = [];
       preg_match('/^([+-]?)(.+)$/', $roleValue, $matches);
       if (sizeof($matches) > 0) {
         $prefix = $matches[1];
@@ -462,7 +462,7 @@ class AbstractPermissionManager {
    * @see PermissionManager::clearTempPermissions()
    */
   public function clearTempPermissions() {
-    $this->tempPermissions = array();
+    $this->tempPermissions = [];
   }
 }
 ?>

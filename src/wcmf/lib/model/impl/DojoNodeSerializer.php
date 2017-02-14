@@ -71,7 +71,7 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
     $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
 
-    $remainingData = array();
+    $remainingData = [];
 
     $mapper = $node->getMapper();
     foreach($data as $key => $value) {
@@ -92,7 +92,7 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
       $parent->addNode($node, $role);
     }
 
-    return array('node' => $node, 'data' => $remainingData);
+    return ['node' => $node, 'data' => $remainingData];
   }
 
   /**
@@ -102,7 +102,7 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
     if (!($node instanceof Node)) {
       return null;
     }
-    $curResult = array();
+    $curResult = [];
     $curResult['oid'] = $node->getOID()->__toString();
 
     // serialize attributes
@@ -122,14 +122,14 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
         // serialize the nodes
         $isMultiValued = $relation->isMultiValued();
         if ($isMultiValued) {
-          $curResult[$role] = array();
+          $curResult[$role] = [];
           foreach ($relatedNodes as $relatedNode) {
             if ($relatedNode instanceof PersistentObjectProxy || in_array($role, $rolesToRefOnly)) {
               // add the reference to the relation attribute
-              $curResult[$role][] = array('$ref' => $relatedNode->getOID()->__toString());
+              $curResult[$role][] = ['$ref' => $relatedNode->getOID()->__toString()];
             }
             else {
-              $curResult[$role][] = $this->serializeNode($relatedNode, array($relation->getThisRole()));
+              $curResult[$role][] = $this->serializeNode($relatedNode, [$relation->getThisRole()]);
             }
           }
         }
@@ -137,10 +137,10 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
           $relatedNode = $relatedNodes;
           if ($relatedNode instanceof PersistentObjectProxy || in_array($role, $rolesToRefOnly)) {
             // add the reference to the relation attribute
-            $curResult[$role] = array('$ref' => $relatedNode->getOID()->__toString());
+            $curResult[$role] = ['$ref' => $relatedNode->getOID()->__toString()];
           }
           else {
-            $curResult[$role] = $this->serializeNode($relatedNode, array($relation->getThisRole()));
+            $curResult[$role] = $this->serializeNode($relatedNode, [$relation->getThisRole()]);
           }
         }
       }

@@ -29,7 +29,7 @@ use wcmf\lib\util\StringUtil;
  */
 class ConfigListStrategy implements ListStrategy {
 
-  private $lists = array();
+  private $lists = [];
 
   /**
    * @see ListStrategy::getList
@@ -44,7 +44,7 @@ class ConfigListStrategy implements ListStrategy {
     if (!isset($this->lists[$listKey])) {
       $config = ObjectFactory::getInstance('configuration');
       $map = $config->getSection($section);
-      $result = array();
+      $result = [];
       $message = ObjectFactory::getInstance('message');
       foreach ($map as $key => $value) {
         $result[$key] = $message->getText($value, null, $language);

@@ -36,12 +36,12 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
 
   private $oid = null;                // object identifier
   private $type = '';                 // the object type
-  private $data = array();            // associative array holding the data
-  private $properties = array();      // associative array holding the object properties
-  private $valueProperties = array(); // associative array holding the value properties
+  private $data = [];            // associative array holding the data
+  private $properties = [];      // associative array holding the object properties
+  private $valueProperties = []; // associative array holding the value properties
   private $state = self::STATE_CLEAN; // the state of the PersistentObject
-  private $changedAttributes = array(); // used to track changes, see setValue method
-  private $originalData = array();    // data provided to the initialize method
+  private $changedAttributes = []; // used to track changes, see setValue method
+  private $originalData = [];    // data provided to the initialize method
   private $mapper = null;             // mapper instance
 
   private static $nullMapper = null;
@@ -72,7 +72,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
     }
 
     // get default data
-    $data = array();
+    $data = [];
     $attributeDescriptions = $this->getMapper()->getAttributes();
     foreach($attributeDescriptions as $curAttributeDesc) {
       $data[$curAttributeDesc->getName()] = $curAttributeDesc->getDefaultValue();
@@ -271,7 +271,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * Recalculate the object id
    */
   private function updateOID() {
-    $pkValues = array();
+    $pkValues = [];
     // collect the values of the primary keys and compose the oid from them
     $pkNames = $this->getMapper()->getPkNames();
     foreach ($pkNames as $pkName) {
@@ -430,11 +430,11 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
     }
     $validateType = $this->getValueProperty($name, 'validate_type');
     if (($validateType == '' || Validator::validate($value, $validateType,
-            array('entity' => $this, 'value' => $name)))) {
+            ['entity' => $this, 'value' => $name]))) {
       return;
     }
     // construct the error message
-    $errorMessage = ObjectFactory::getInstance('message')->getText("The value of '%0%' (%1%) is invalid.", array($name, $value));
+    $errorMessage = ObjectFactory::getInstance('message')->getText("The value of '%0%' (%1%) is invalid.", [$name, $value]);
 
     // use configured message if existing
     $validateDescription = $this->getValueProperty($name, 'validate_description');
@@ -462,7 +462,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * @see PersistentObject::getIndispensableObjects()
    */
   public function getIndispensableObjects() {
-    return array();
+    return [];
   }
 
   /**
@@ -527,7 +527,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    */
   public function setValueProperty($name, $property, $value) {
     if (!isset($this->valueProperties[$name])) {
-      $this->valueProperties[$name] = array();
+      $this->valueProperties[$name] = [];
     }
     $this->valueProperties[$name][$property] = $value;
   }
@@ -536,7 +536,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * @see PersistentObject::getValuePropertyNames()
    */
   public function getValuePropertyNames($name) {
-    $result = array();
+    $result = [];
     $mapper = $this->getMapper();
     if ($mapper->hasAttribute($name)) {
       $attr = $mapper->getAttribute($name);
@@ -553,7 +553,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   public function getValueNames($excludeTransient=false) {
     if ($excludeTransient) {
       // get only value names from mapper
-      $names = array();
+      $names = [];
       $attributes = $this->getMapper()->getAttributes();
       foreach ($attributes as $attribute) {
         $names[] = $attribute->getName();

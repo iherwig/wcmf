@@ -133,10 +133,10 @@ class SearchIndexController extends BatchController {
       $oids = $persistenceFacade->getOIDs($type);
       $oidLists = array_chunk($oids, self::$OPTIMIZE_FREQ);
       for ($i=0, $count=sizeof($oidLists); $i<$count; $i++) {
-        $this->addWorkPackage($this->getMessage()->getText('Indexing %0% %1% objects, starting from %2%., ', array(sizeof($oids), $type, ($i*self::$OPTIMIZE_FREQ+1))),
+        $this->addWorkPackage($this->getMessage()->getText('Indexing %0% %1% objects, starting from %2%., ', [sizeof($oids), $type, ($i*self::$OPTIMIZE_FREQ+1)]),
                 $nodesPerCall, $oidLists[$i], 'index');
         $this->addWorkPackage($this->getMessage()->getText('Optimizing index'),
-                1, array(0), 'optimize');
+                1, [0], 'optimize');
       }
     }
   }
@@ -158,7 +158,7 @@ class SearchIndexController extends BatchController {
 
     if ($this->getStepNumber() == $this->getNumberOfSteps()) {
       $this->addWorkPackage($this->getMessage()->getText('Optimizing index'),
-              1, array(0), 'optimize');
+              1, [0], 'optimize');
     }
   }
 

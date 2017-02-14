@@ -104,14 +104,14 @@ class DefaultSession implements Session {
    * @see Session::clear()
    */
   public function clear() {
-    $_SESSION = array();
+    $_SESSION = [];
   }
 
   /**
    * @see Session::destroy()
    */
   public function destroy() {
-    $_SESSION = array();
+    $_SESSION = [];
     @session_destroy();
   }
 

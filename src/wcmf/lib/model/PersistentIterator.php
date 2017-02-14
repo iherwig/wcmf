@@ -53,8 +53,8 @@ class PersistentIterator implements \Iterator {
     $this->session = $session;
 
     $this->end = false;
-    $this->oidList = array();
-    $this->processedOidList = array();
+    $this->oidList = [];
+    $this->processedOidList = [];
     $this->currentOid = $oid;
     $this->startOid = $oid;
     $this->currentDepth = 0;
@@ -66,8 +66,8 @@ class PersistentIterator implements \Iterator {
    * Save the iterator state to the session
    */
   public function save() {
-    $state = array('end' => $this->end, 'oidList' => $this->oidList, 'processedOidList' => $this->processedOidList,
-      'currentOID' => $this->currentOid, 'currentDepth' => $this->currentDepth, 'aggregationKinds' => $this->aggregationKinds);
+    $state = ['end' => $this->end, 'oidList' => $this->oidList, 'processedOidList' => $this->processedOidList,
+      'currentOID' => $this->currentOid, 'currentDepth' => $this->currentDepth, 'aggregationKinds' => $this->aggregationKinds];
     $this->session->set($this->id, $state);
   }
 
@@ -130,7 +130,7 @@ class PersistentIterator implements \Iterator {
     $node = $this->persistenceFacade->load($this->currentOid);
 
     // collect navigable children for the given aggregation kinds
-    $childOIDs = array();
+    $childOIDs = [];
     $mapper = $node->getMapper();
     $relations = $mapper->getRelations('child');
     $followAll = sizeof($this->aggregationKinds) == 0;
@@ -139,7 +139,7 @@ class PersistentIterator implements \Iterator {
       if ($relation->getOtherNavigability() && ($followAll || in_array($aggregationKind, $this->aggregationKinds))) {
         $childValue = $node->getValue($relation->getOtherRole());
         if ($childValue != null) {
-          $children = $relation->isMultiValued() ? $childValue : array($childValue);
+          $children = $relation->isMultiValued() ? $childValue : [$childValue];
           foreach ($children as $child) {
             $childOIDs[] = $child->getOID();
           }
@@ -175,8 +175,8 @@ class PersistentIterator implements \Iterator {
    */
   public function rewind() {
     $this->end = false;
-    $this->oidList= array();
-    $this->processedOidList = array();
+    $this->oidList= [];
+    $this->processedOidList = [];
     $this->currentOid = $this->startOid;
     $this->currentDepth = 0;
   }
@@ -195,7 +195,7 @@ class PersistentIterator implements \Iterator {
    */
   protected function addToQueue($oidList, $depth) {
     for ($i=sizeOf($oidList)-1; $i>=0; $i--) {
-      $this->oidList[] = array($oidList[$i], $depth);
+      $this->oidList[] = [$oidList[$i], $depth];
     }
   }
 }

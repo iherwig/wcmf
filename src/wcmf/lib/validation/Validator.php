@@ -35,10 +35,10 @@ class Validator {
   public static function validate($value, $validateDesc, $context=null) {
 
     // get validator list
-    $validators = array();
+    $validators = [];
 
     // split validateTypeDesc by commas and colons (separates validateType from options)
-    $validateDescParts = array();
+    $validateDescParts = [];
     preg_match_all('/\{(?:[^{}]|(?R))+\}|[^{}:,\s]+/', $validateDesc, $validateDescParts);
     // combine validateType and options again
     foreach ($validateDescParts[0] as $validateDescPart) {

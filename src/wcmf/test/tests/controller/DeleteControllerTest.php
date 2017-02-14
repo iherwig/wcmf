@@ -37,28 +37,28 @@ class DeleteControllerTest extends ControllerTestCase {
   }
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
-        array('table' => ''),
-      ),
-      'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
-        array('id' => 1, 'login' => 'user1', 'name' => 'User 1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => ''),
-      ),
-      'NMUserRole' => array(
-        array('fk_user_id' => 0, 'fk_role_id' => 0),
-      ),
-      'Role' => array(
-        array('id' => 0, 'name' => 'administrators'),
-      ),
-      'Book' => array(
-        array('id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''),
-      ),
-      'Lock' => array(
-      ),
-      'Translation' => array(
-      ),
-    ));
+    return new ArrayDataSet([
+      'DBSequence' => [
+        ['table' => ''],
+      ],
+      'User' => [
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
+        ['id' => 1, 'login' => 'user1', 'name' => 'User 1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => ''],
+      ],
+      'NMUserRole' => [
+        ['fk_user_id' => 0, 'fk_role_id' => 0],
+      ],
+      'Role' => [
+        ['id' => 0, 'name' => 'administrators'],
+      ],
+      'Book' => [
+        ['id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''],
+      ],
+      'Lock' => [
+      ],
+      'Translation' => [
+      ],
+    ]);
   }
 
   /**
@@ -70,9 +70,9 @@ class DeleteControllerTest extends ControllerTestCase {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
     // simulate a delete call
-    $data = array(
+    $data = [
       'oid' => $oid
-    );
+    ];
     $response = $this->runRequest('delete', $data);
 
     // test
@@ -108,10 +108,10 @@ class DeleteControllerTest extends ControllerTestCase {
     $transaction->commit();
 
     // simulate a delete call
-    $data = array(
+    $data = [
       'oid' => $oid->__toString(),
       'language' => 'de'
-    );
+    ];
     $response = $this->runRequest('delete', $data);
 
     // tests
@@ -124,7 +124,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $translations = $query->execute(BuildDepth::SINGLE);
     $this->assertTrue(sizeof($translations) > 0, "Not all translations are deleted");
 
-    $translationsDe = Node::filter($translations, null, null, array('language' => 'de'), null, false);
+    $translationsDe = Node::filter($translations, null, null, ['language' => 'de'], null, false);
     $this->assertEquals(0, sizeof($translationsDe), "All translations 'de' are deleted");
 
     TestUtil::endSession();
@@ -149,9 +149,9 @@ class DeleteControllerTest extends ControllerTestCase {
     $transaction->commit();
 
     // simulate a delete call
-    $data = array(
+    $data = [
       'oid' => $oid->__toString()
-    );
+    ];
     $response = $this->runRequest('delete', $data);
 
     // test

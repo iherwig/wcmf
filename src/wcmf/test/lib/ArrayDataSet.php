@@ -13,14 +13,14 @@ namespace wcmf\test\lib;
 //\PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 class ArrayDataSet extends \PHPUnit_Extensions_Database_DataSet_AbstractDataSet {
-  protected $tables = array();
+  protected $tables = [];
 
   /**
    * @param array $data
    */
   public function __construct(array $data) {
     foreach ($data AS $tableName => $rows) {
-      $columns = array();
+      $columns = [];
       if (isset($rows[0])) {
         $columns = array_keys($rows[0]);
       }

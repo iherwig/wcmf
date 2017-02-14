@@ -53,10 +53,8 @@ class SoapServer extends \nusoap_server {
         'array',
         '',
         'SOAP-ENC:Array',
-        array(),
-        array(
-          array('ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'xsd:string[]')
-        ),
+        [],
+        [['ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'xsd:string[]']],
         'xsd:string'
     );
 
@@ -66,20 +64,17 @@ class SoapServer extends \nusoap_server {
         'array',
         '',
         'SOAP-ENC:Array',
-        array(),
-        array(
-            array('ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'tns:SearchResultItem[]')
-        ),
+        [],
+        [['ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'tns:SearchResultItem[]']],
         'tns:SearchResultItem'
     );
 
-    $this->wsdl->addComplexType('SearchResultItem', 'complexType', 'struct', 'sequence', '',
-        array(
-            'type' => array('name' => 'type', 'type' => 'xsd:string'),
-            'oid' => array('name' => 'oid', 'type' => 'xsd:string'),
-            'displayValue' => array('name' => 'displayValue', 'type' => 'xsd:string'),
-            'summary' => array('name' => 'summary', 'type' => 'xsd:string')
-        )
+    $this->wsdl->addComplexType('SearchResultItem', 'complexType', 'struct', 'sequence', '', [
+        'type' => ['name' => 'type', 'type' => 'xsd:string'],
+        'oid' => ['name' => 'oid', 'type' => 'xsd:string'],
+        'displayValue' => ['name' => 'displayValue', 'type' => 'xsd:string'],
+        'summary' => ['name' => 'summary', 'type' => 'xsd:string']
+      ]
     );
 
     // initialize application
@@ -125,7 +120,7 @@ class SoapServer extends \nusoap_server {
   public function getResponseHeaders() {
     $headerStrings = headers_list();
     header_remove();
-    $headers = array();
+    $headers = [];
     foreach ($headerStrings as $header) {
       list($name, $value) = explode(':', $header, 2);
       $headers[trim($name)] = trim($value);
@@ -167,24 +162,24 @@ class SoapServer extends \nusoap_server {
     $request->setAction('actionSet');
     $request->setFormat('soap');
     $request->setResponseFormat('null');
-    $request->setValues(array(
-      'data' => array(
-        'action1' => array(
+    $request->setValues([
+      'data' => [
+        'action1' => [
           'action' => 'login',
-          'params' => array(
+          'params' => [
             'user' => $authHeader['Username'],
             'password' => $authHeader['Password']['!']
-          )
-        ),
-        'action2' => array(
-            'action' => $action,
-            'params' => $params
-        ),
-        'action3' => array(
+          ]
+        ],
+        'action2' => [
+          'action' => $action,
+          'params' => $params
+        ],
+        'action3' => [
           'action' => 'logout'
-        )
-      )
-    ));
+        ]
+      ]
+    ]);
 
     // run the application
     $actionResponse = ObjectFactory::getInstance('response');

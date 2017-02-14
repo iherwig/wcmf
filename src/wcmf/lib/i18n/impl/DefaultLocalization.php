@@ -144,7 +144,7 @@ class DefaultLocalization implements Localization {
           $role = $relation->getOtherRole();
           $childValue = $object->getValue($role);
           if ($childValue != null) {
-            $children = $relation->isMultiValued() ? $childValue : array($childValue);
+            $children = $relation->isMultiValued() ? $childValue : [$childValue];
             foreach ($children as $child) {
               // don't resolve proxies
               if (!($child instanceof PersistentObjectProxy) && $child->getProperty(__CLASS__.'.loaded') !== true) {

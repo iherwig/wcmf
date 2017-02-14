@@ -47,7 +47,7 @@ class FileListStrategy implements ListStrategy {
     $pattern = isset($options['pattern']) ? '/'.$options['pattern'].'/' : '/./';
 
     $fileUtil = new FileUtil();
-    $list = array();
+    $list = [];
     foreach ($paths as $path) {
       $recursive = preg_match('/\/\*$/', $path);
       if ($recursive) {

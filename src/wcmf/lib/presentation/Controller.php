@@ -322,7 +322,7 @@ abstract class Controller {
       $language = $this->request->getValue('language');
       if (!in_array($language, array_keys($this->localization->getSupportedLanguages()))) {
         $this->response->addError(ApplicationError::get('PARAMETER_INVALID',
-                array('invalidParameters' => array('language'))));
+                ['invalidParameters' => ['language']]));
         return false;
       }
     }
@@ -386,7 +386,7 @@ abstract class Controller {
     $sessionVarname = get_class($this);
     $localValues = $this->session->get($sessionVarname, null);
     if ($localValues == null) {
-      $localValues = array();
+      $localValues = [];
     }
     $localValues[$key] = $value;
     $this->session->set($sessionVarname, $localValues);

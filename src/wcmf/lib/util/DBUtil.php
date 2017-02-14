@@ -33,20 +33,18 @@ class DBUtil {
 
       try {
         // create new connection
-        $pdoParams = array(
-          PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        );
+        $pdoParams = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
         if ($connectionParams['dbType'] == 'mysql') {
           $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
         }
-        $params = array(
+        $params = [
           'host' => $connectionParams['dbHostName'],
           'username' => $connectionParams['dbUserName'],
           'password' => $connectionParams['dbPassword'],
           'database' => $connectionParams['dbName'],
           'driver' => 'Pdo_'.ucfirst($connectionParams['dbType']),
           'driver_options' => $pdoParams
-        );
+        ];
         if (!empty($connectionParams['dbPort'])) {
           $params['port'] = $connectionParams['dbPort'];
         }

@@ -34,14 +34,14 @@ class FileUtil {
 
     // check if the file was uploaded
     if (!is_uploaded_file($mediaFile['tmp_name'])) {
-      $msg = $message->getText("Possible file upload attack: filename %0%.", array($mediaFile['name']));
+      $msg = $message->getText("Possible file upload attack: filename %0%.", [$mediaFile['name']]);
       throw new IOException($msg);
     }
 
     // check mime type
     if ($mimeTypes != null && !in_array($mediaFile['type'], $mimeTypes)) {
       throw new IOException($message->getText("File '%0%' has wrong mime type: %1%. Allowed types: %2%.",
-        array($mediaFile['name'], $mediaFile['type'], join(", ", $mimeTypes))));
+        [$mediaFile['name'], $mediaFile['type'], join(", ", $mimeTypes)]));
     }
 
     // check if we need a new name
@@ -53,7 +53,7 @@ class FileUtil {
     }
     $result = move_uploaded_file($mediaFile['tmp_name'], $destName);
     if ($result === false) {
-      throw new IOException("Failed to move %0% to %1%.", array($mediaFile['tmp_name'], $destName));
+      throw new IOException("Failed to move %0% to %1%.", [$mediaFile['tmp_name'], $destName]);
     }
     $filename = basename($destName);
     return $filename;
@@ -102,9 +102,9 @@ class FileUtil {
     }
     if (!is_dir($directory)) {
       $message = ObjectFactory::getInstance('message');
-      throw new IllegalArgumentException($message->getText("The directory '%0%' does not exist.", array($directory)));
+      throw new IllegalArgumentException($message->getText("The directory '%0%' does not exist.", [$directory]));
     }
-    $result = array();
+    $result = [];
     $d = dir($directory);
     $d->rewind();
     while(false !== ($file = $d->read())) {
@@ -142,10 +142,10 @@ class FileUtil {
     }
     if (!is_dir($directory)) {
       $message = ObjectFactory::getInstance('message');
-      throw new IllegalArgumentException($message->getText("The directory '%0%' does not exist.", array($directory)));
+      throw new IllegalArgumentException($message->getText("The directory '%0%' does not exist.", [$directory]));
     }
 
-    $result = array();
+    $result = [];
     $d = dir($directory);
     $d->rewind();
     // iterate over all files
@@ -184,7 +184,7 @@ class FileUtil {
     }
     if (!is_dir($source)) {
       $message = ObjectFactory::getInstance('message');
-      throw new IllegalArgumentException($message->getText("Cannot copy %0% (it's neither a file nor a directory).", array($source)));
+      throw new IllegalArgumentException($message->getText("Cannot copy %0% (it's neither a file nor a directory).", [$source]));
     }
     self::copyRecDir($source, $dest);
   }
@@ -248,7 +248,7 @@ class FileUtil {
     }
     $path = str_replace("\\", "/", $path);
     $parts = array_filter(explode("/", $path), 'strlen');
-    $absolutes = array();
+    $absolutes = [];
     foreach ($parts as $part) {
       if ('.' == $part) {
         continue;

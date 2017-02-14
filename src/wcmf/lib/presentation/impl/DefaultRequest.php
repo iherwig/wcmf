@@ -122,15 +122,17 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     }
 
     // get client info error for logging
-    $clientInfo = array('ip' => $_SERVER['REMOTE_ADDR'],
-        'agent' => $_SERVER['HTTP_USER_AGENT'],
-        'referrer' => $_SERVER['HTTP_REFERER']);
+    $clientInfo = [
+      'ip' => $_SERVER['REMOTE_ADDR'],
+      'agent' => $_SERVER['HTTP_USER_AGENT'],
+      'referrer' => $_SERVER['HTTP_REFERER']
+    ];
 
     // check if the requested route matches any configured route
     if (sizeof($matchingRoutes) == 0) {
       throw new ApplicationException($this, $this->getResponse(),
               ApplicationError::get('ROUTE_NOT_FOUND', array_merge(
-                      $clientInfo, array('route' => $requestPath))));
+                      $clientInfo, ['route' => $requestPath])));
     }
 
     // get the best matching route
@@ -145,14 +147,14 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if ($allowedMethods != null && !in_array($requestMethod, $allowedMethods)) {
       throw new ApplicationException($this, $this->getResponse(),
               ApplicationError::get('METHOD_NOT_ALLOWED', array_merge(
-                      $clientInfo, array('method' => $requestMethod, 'route' => $requestPath))));
+                      $clientInfo, ['method' => $requestMethod, 'route' => $requestPath])));
     }
 
     // get request parameters from route
     $pathRequestData = $route['parameters'];
 
     // get other request data
-    $requestData = array();
+    $requestData = [];
     switch ($requestMethod) {
       case 'GET':
         $requestData = $_GET;
@@ -225,7 +227,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * @return Array of arrays with keys 'numPathParameters', 'parameters', 'methods'
    */
   protected function getMatchingRoutes($requestPath) {
-    $matchingRoutes = array();
+    $matchingRoutes = [];
     $defaultValuePattern = '([^/]+)';
 
     $config = ObjectFactory::getInstance('configuration');
@@ -241,7 +243,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         }
 
         // extract parameters from route definition and prepare as regex pattern
-        $params = array();
+        $params = [];
         $routePattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match)
                 use($defaultValuePattern, &$params) {
           // a variable may be either defined by {name} or by {name|pattern} where
@@ -255,13 +257,13 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         }, $route);
 
         // replace wildcard character and slashes
-        $routePattern = str_replace(array('*', '/'), array('.*', '\/'), $routePattern);
+        $routePattern = str_replace(['*', '/'], ['.*', '\/'], $routePattern);
 
         // try to match the current request path
         if (self::$logger->isDebugEnabled()) {
           self::$logger->debug("Check path: ".$route." -> ".$routePattern);
         }
-        $matches = array();
+        $matches = [];
         if (preg_match('/^'.$routePattern.'\/?$/', $requestPath, $matches)) {
           if (self::$logger->isDebugEnabled()) {
             self::$logger->debug("Match");
@@ -270,7 +272,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           array_shift($matches);
 
           // collect request variables
-          $requestParameters = array();
+          $requestParameters = [];
 
           // 1. path variables
           for ($i=0, $count=sizeof($params); $i<$count; $i++) {
@@ -278,17 +280,17 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           }
 
           // 2. parameters from route configuration (overriding path parameters)
-          $requestDefData = array();
+          $requestDefData = [];
           parse_str($requestDef, $requestDefData);
           $requestParameters = array_merge($requestParameters, $requestDefData);
 
           // store match
-          $matchingRoutes[] = array(
+          $matchingRoutes[] = [
             'route' => $route,
             'numPathParameters' => (preg_match('/\*/', $route) ? PHP_INT_MAX : sizeof($params)),
             'parameters' => $requestParameters,
             'methods' => $allowedMethods
-          );
+          ];
         }
       }
     }
@@ -328,7 +330,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * @return Associative array
    */
   private static function getAllHeaders() {
-    $headers = array();
+    $headers = [];
     foreach ($_SERVER as $name => $value) {
       if (substr($name, 0, 5) == 'HTTP_') {
         $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
@@ -355,7 +357,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     if (!$source) {
       return;
     }
-    $keys = array();
+    $keys = [];
 
     $source = preg_replace_callback(
       '/
@@ -377,7 +379,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     );
 
     if (!$keep) {
-      $target = array();
+      $target = [];
     }
 
     parse_str($source, $data);

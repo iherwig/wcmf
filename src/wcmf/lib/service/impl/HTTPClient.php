@@ -51,11 +51,10 @@ class HTTPClient implements RemotingClient {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
     $this->serverUrl = $serverUrl;
-    $this->client = new Zend_Http_Client($this->serverUrl, array(
-        'keepalive' => true,
-        'timeout' => 3600
-      )
-    );
+    $this->client = new Zend_Http_Client($this->serverUrl, [
+      'keepalive' => true,
+      'timeout' => 3600
+    ]);
     $this->client->setMethod(Zend_Http_Client::POST);
     $this->client->setCookieJar();
     $this->user = $user;
@@ -132,12 +131,10 @@ class HTTPClient implements RemotingClient {
     if ($this->user) {
       $request = ObjectFactory::getNewInstance('request');
       $request->setAction('login');
-      $request->setValues(
-        array(
-          'login' => $this->user['login'],
-          'password' => $this->user['password']
-        )
-      );
+      $request->setValues([
+        'login' => $this->user['login'],
+        'password' => $this->user['password']
+      ]);
       $response = $this->doRemoteCall($request, true);
       if ($response->getValue('success')) {
         $this->sessionId = $response->getValue('sid');

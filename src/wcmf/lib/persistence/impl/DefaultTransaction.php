@@ -37,17 +37,17 @@ class DefaultTransaction implements Transaction {
   private $id = '';
   private $isActive = false;
   private $isInCommit = false;
-  private $observedObjects = array();
+  private $observedObjects = [];
 
-  protected $newObjects = array();
-  protected $dirtyObjects = array();
-  protected $deletedObjects = array();
-  protected $detachedObjects = array();
+  protected $newObjects = [];
+  protected $dirtyObjects = [];
+  protected $deletedObjects = [];
+  protected $detachedObjects = [];
 
   /**
    * Contains all loaded objects no matter which state they have
    */
-  protected $loadedObjects = array();
+  protected $loadedObjects = [];
 
   /**
    * Constructor
@@ -63,8 +63,7 @@ class DefaultTransaction implements Transaction {
     $this->eventManager = $eventManager;
 
     $this->id = __CLASS__.'_'.ObjectId::getDummyId();
-    $this->eventManager->addListener(StateChangeEvent::NAME,
-      array($this, 'stateChanged'));
+    $this->eventManager->addListener(StateChangeEvent::NAME, [$this, 'stateChanged']);
     self::$isInfoEnabled = self::$logger->isInfoEnabled();
     self::$isDebugEnabled = self::$logger->isDebugEnabled();
   }
@@ -73,8 +72,7 @@ class DefaultTransaction implements Transaction {
    * Destructor.
    */
   public function __destruct() {
-    $this->eventManager->removeListener(StateChangeEvent::NAME,
-      array($this, 'stateChanged'));
+    $this->eventManager->removeListener(StateChangeEvent::NAME, [$this, 'stateChanged']);
   }
 
   /**
@@ -98,7 +96,7 @@ class DefaultTransaction implements Transaction {
       self::$logger->info("Commit transaction");
     }
     $this->isInCommit = true;
-    $changedOids = array();
+    $changedOids = [];
     if ($this->isActive) {
       $knowTypes = $this->persistenceFacade->getKnownTypes();
       try {
@@ -343,24 +341,24 @@ class DefaultTransaction implements Transaction {
     foreach ($this->newObjects as $object) {
       unset($this->observedObjects[$object->getOID()->__toString()]);
     }
-    $this->newObjects = array();
+    $this->newObjects = [];
 
     foreach ($this->dirtyObjects as $object) {
       unset($this->observedObjects[$object->getOID()->__toString()]);
     }
-    $this->dirtyObjects = array();
+    $this->dirtyObjects = [];
 
     foreach ($this->deletedObjects as $object) {
       unset($this->observedObjects[$object->getOID()->__toString()]);
     }
-    $this->deletedObjects = array();
+    $this->deletedObjects = [];
 
     foreach ($this->loadedObjects as $object) {
       unset($this->observedObjects[$object->getOID()->__toString()]);
     }
-    $this->loadedObjects = array();
+    $this->loadedObjects = [];
 
-    $this->detachedObjects = array();
+    $this->detachedObjects = [];
   }
 
   /**
@@ -368,8 +366,8 @@ class DefaultTransaction implements Transaction {
    * @return Map of oid changes (key: oid string before commit, value: oid string after commit)
    */
   protected function processInserts() {
-    $changedOids = array();
-    $pendingInserts = array();
+    $changedOids = [];
+    $pendingInserts = [];
     $insertOids = array_keys($this->newObjects);
     while (sizeof($insertOids) > 0) {
       $key = array_shift($insertOids);

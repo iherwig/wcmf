@@ -31,7 +31,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
   private $permissionManager = null;
   private $userType = null;
   private $roleType = null;
-  private $users = array();
+  private $users = [];
 
   private $roleRelationNames = null;
 
@@ -60,9 +60,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
         $tmpPerm = $this->permissionManager->addTempPermission($this->userType, '', PersistenceAction::READ);
       }
       $user = $this->persistenceFacade->loadFirstObject($this->userType, BuildDepth::SINGLE,
-                  array(
-                      new Criteria($this->userType, 'login', '=', $login)
-                  ), null);
+                  [new Criteria($this->userType, 'login', '=', $login)], null);
       $this->users[$login] = $user;
       if ($useTempPermission) {
         $this->permissionManager->removeTempPermission($tmpPerm);
@@ -81,7 +79,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
 
     // initialize role relation definition
     if ($this->roleRelationNames == null) {
-      $this->roleRelationNames = array();
+      $this->roleRelationNames = [];
       $mapper = $user->getMapper();
       foreach ($mapper->getRelationsByType($this->roleType) as $relation) {
         $this->roleRelationNames[] = $relation->getOtherRole();
@@ -110,9 +108,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
     }
 
     $role = $this->persistenceFacade->loadFirstObject($this->roleType, BuildDepth::SINGLE,
-                array(
-                    new Criteria($this->roleType, 'name', '=', $name)
-                ), null);
+                [new Criteria($this->roleType, 'name', '=', $name)], null);
 
     if ($useTempPermission) {
       $this->permissionManager->removeTempPermission($tmpPerm);

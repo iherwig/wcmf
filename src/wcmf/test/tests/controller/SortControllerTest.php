@@ -28,44 +28,44 @@ class SortControllerTest extends ControllerTestCase {
   }
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
-        array('table' => ''),
-      ),
-      'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
-      ),
-      'NMUserRole' => array(
-        array('fk_user_id' => 0, 'fk_role_id' => 0),
-      ),
-      'Role' => array(
-        array('id' => 0, 'name' => 'administrators'),
-      ),
-      'Author' => array(
-        array('id' => 100),
-      ),
-      'Chapter' => array(
-        array('id' => 203, 'fk_author_id' => 100, 'sortkey' => 203.0, 'sortkey_author' => 203.0),
-        array('id' => 204, 'fk_author_id' => 100, 'sortkey' => 204.0, 'sortkey_author' => 204.0),
-        array('id' => 205, 'fk_author_id' => 100, 'sortkey' => 205.0, 'sortkey_author' => 205.0),
-      ),
-      'Book' => array(
-        array('id' => 303),
-        array('id' => 304),
-        array('id' => 305),
-        array('id' => 306),
-      ),
-      'NMBookBook' => array(
-        array('id' => 403, 'fk_referencedbook_id' => 304, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 403.0),
-        array('id' => 404, 'fk_referencedbook_id' => 305, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 404.0),
-        array('id' => 405, 'fk_referencedbook_id' => 306, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 405.0),
-      ),
-      'Image' => array(
-        array('id' => 503, 'fk_chapter_id' => 203, 'sortkey' => 205.0, 'sortkey_normalchapter' => 205.0),
-        array('id' => 504, 'fk_chapter_id' => 203, 'sortkey' => 204.0, 'sortkey_normalchapter' => 204.0),
-        array('id' => 505, 'fk_chapter_id' => 203, 'sortkey' => 203.0, 'sortkey_normalchapter' => 203.0),
-      )
-    ));
+    return new ArrayDataSet([
+      'DBSequence' => [
+        ['table' => ''],
+      ],
+      'User' => [
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
+      ],
+      'NMUserRole' => [
+        ['fk_user_id' => 0, 'fk_role_id' => 0],
+      ],
+      'Role' => [
+        ['id' => 0, 'name' => 'administrators'],
+      ],
+      'Author' => [
+        ['id' => 100],
+      ],
+      'Chapter' => [
+        ['id' => 203, 'fk_author_id' => 100, 'sortkey' => 203.0, 'sortkey_author' => 203.0],
+        ['id' => 204, 'fk_author_id' => 100, 'sortkey' => 204.0, 'sortkey_author' => 204.0],
+        ['id' => 205, 'fk_author_id' => 100, 'sortkey' => 205.0, 'sortkey_author' => 205.0],
+      ],
+      'Book' => [
+        ['id' => 303],
+        ['id' => 304],
+        ['id' => 305],
+        ['id' => 306],
+      ],
+      'NMBookBook' => [
+        ['id' => 403, 'fk_referencedbook_id' => 304, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 403.0],
+        ['id' => 404, 'fk_referencedbook_id' => 305, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 404.0],
+        ['id' => 405, 'fk_referencedbook_id' => 306, 'fk_referencingbook_id' => 303, 'sortkey_referencingbook' => 405.0],
+      ],
+      'Image' => [
+        ['id' => 503, 'fk_chapter_id' => 203, 'sortkey' => 205.0, 'sortkey_normalchapter' => 205.0],
+        ['id' => 504, 'fk_chapter_id' => 203, 'sortkey' => 204.0, 'sortkey_normalchapter' => 204.0],
+        ['id' => 505, 'fk_chapter_id' => 203, 'sortkey' => 203.0, 'sortkey_normalchapter' => 203.0],
+      ]
+    ]);
   }
 
   /**
@@ -78,10 +78,10 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testChapterOrder([203, 204, 205]));
 
     // simulate a movebefore call
-    $data = array(
+    $data = [
       'insertOid' => 'Chapter:205',
       'referenceOid' => 'Chapter:203'
-    );
+    ];
     $this->runRequest('moveBefore', $data);
 
     // test
@@ -100,10 +100,10 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testChapterOrder([203, 204, 205]));
 
     // simulate a movebefore call
-    $data = array(
+    $data = [
       'insertOid' => 'Chapter:205',
       'referenceOid' => 'Chapter:204'
-    );
+    ];
     $this->runRequest('moveBefore', $data);
 
     // test
@@ -122,10 +122,10 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testChapterOrder([203, 204, 205]));
 
     // simulate a movebefore call
-    $data = array(
+    $data = [
       'insertOid' => 'Chapter:203',
       'referenceOid' => 'ORDER_BOTTOM'
-    );
+    ];
     $this->runRequest('moveBefore', $data);
 
     // test
@@ -144,12 +144,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Author:100',
       'insertOid' => 'Chapter:205',
       'referenceOid' => 'Chapter:203',
       'role' => 'Chapter'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test
@@ -168,12 +168,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Author:100',
       'insertOid' => 'Chapter:205',
       'referenceOid' => 'Chapter:204',
       'role' => 'Chapter'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test
@@ -192,12 +192,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Author:100',
       'insertOid' => 'Chapter:203',
       'referenceOid' => 'ORDER_BOTTOM',
       'role' => 'Chapter'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test
@@ -216,10 +216,10 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testImageOrder([503, 504, 505]));
 
     // simulate a movebefore call
-    $data = array(
+    $data = [
       'insertOid' => 'Image:505',
       'referenceOid' => 'Image:503'
-    );
+    ];
     $this->runRequest('moveBefore', $data);
 
     // test
@@ -238,10 +238,10 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testImageOrder([503, 504, 505]));
 
     // simulate a movebefore call
-    $data = array(
+    $data = [
       'insertOid' => 'Image:505',
       'referenceOid' => 'Image:504'
-    );
+    ];
     $this->runRequest('moveBefore', $data);
 
     // test
@@ -260,10 +260,10 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testImageOrder([503, 504, 505]));
 
     // simulate a movebefore call
-    $data = array(
+    $data = [
       'insertOid' => 'Image:503',
       'referenceOid' => 'ORDER_BOTTOM'
-    );
+    ];
     $this->runRequest('moveBefore', $data);
 
     // test
@@ -282,12 +282,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Chapter:203',
       'insertOid' => 'Image:505',
       'referenceOid' => 'Image:503',
       'role' => 'NormalImage'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test
@@ -306,12 +306,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Chapter:203',
       'insertOid' => 'Image:505',
       'referenceOid' => 'Image:504',
       'role' => 'NormalImage'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test
@@ -330,12 +330,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Chapter:203',
       'insertOid' => 'Image:503',
       'referenceOid' => 'ORDER_BOTTOM',
       'role' => 'NormalImage'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test
@@ -354,12 +354,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testNMBookOrder([304, 305, 306], 303));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Book:303',
       'insertOid' => 'Book:306',
       'referenceOid' => 'Book:304',
       'role' => 'ReferencedBook'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test
@@ -378,12 +378,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testNMBookOrder([304, 305, 306], 303));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Book:303',
       'insertOid' => 'Book:306',
       'referenceOid' => 'Book:305',
       'role' => 'ReferencedBook'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test
@@ -402,12 +402,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->assertTrue($this->testNMBookOrder([304, 305, 306], 303));
 
     // simulate a insertbefore call
-    $data = array(
+    $data = [
       'containerOid' => 'Book:303',
       'insertOid' => 'Book:304',
       'referenceOid' => 'ORDER_BOTTOM',
       'role' => 'ReferencedBook'
-    );
+    ];
     $this->runRequest('insertBefore', $data);
 
     // test

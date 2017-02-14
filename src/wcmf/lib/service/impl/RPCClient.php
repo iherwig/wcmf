@@ -53,7 +53,7 @@ class RPCClient implements RemotingClient {
     // initialize the session variable for storing session
     $session = ObjectFactory::getInstance('session');
     if (!$session->exist(self::SIDS_SESSION_VARNAME)) {
-      $var = array();
+      $var = [];
       $session->set(self::SIDS_SESSION_VARNAME, $var);
     }
     $this->user = $user;
@@ -91,10 +91,10 @@ class RPCClient implements RemotingClient {
     $request->setResponseFormat('json');
     $serializedRequest = base64_encode(serialize($request));
 
-    $arguments = array(
+    $arguments = [
       $serializedRequest,
       $sessionId
-    );
+    ];
     $currentDir = getcwd();
     chdir(dirname($this->serverCli));
     if (self::$logger->isDebugEnabled()) {
@@ -141,12 +141,10 @@ class RPCClient implements RemotingClient {
     if ($this->user) {
       $request = ObjectFactory::getNewInstance('request');
       $request->setAction('login');
-      $request->setValues(
-        array(
-          'login' => $this->user['login'],
-          'password' => $this->user['password']
-        )
-      );
+      $request->setValues([
+        'login' => $this->user['login'],
+        'password' => $this->user['password']
+      ]);
       $response = $this->doRemoteCall($request, true);
       if ($response->getValue('success')) {
         // store the session id in the session

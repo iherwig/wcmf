@@ -20,14 +20,14 @@ use wcmf\lib\core\EventManager;
  */
 class DefaultEventManager implements EventManager {
 
-  private $listeners = array();
+  private $listeners = [];
 
   /**
    * @see EventManager::addListener()
    */
   public function addListener($eventName, $callback) {
     if (!isset($this->listeners[$eventName])) {
-      $this->listeners[$eventName] = array();
+      $this->listeners[$eventName] = [];
     }
     $this->listeners[$eventName][] = $callback;
   }
@@ -37,7 +37,7 @@ class DefaultEventManager implements EventManager {
    */
   public function removeListener($eventName, $callback) {
     if (isset($this->listeners[$eventName])) {
-      $listeners = array();
+      $listeners = [];
       for ($i=0, $count=sizeof($this->listeners[$eventName]); $i<$count; $i++) {
         $curCallback = $this->listeners[$eventName][$i];
         if ($curCallback != $callback) {

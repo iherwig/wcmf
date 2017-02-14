@@ -50,24 +50,24 @@ class ValueListProvider {
     $strategy = self::getListStrategy($decodedDefinition['type']);
 
     // add empty item, if defined
-    $items = array();
+    $items = [];
     if (isset($decodedDefinition['emptyItem'])) {
       $emtpyItemText = $decodedDefinition['emptyItem'];
-      $items[] = array(
-          'key' => null,
-          'value' => ObjectFactory::getInstance('message')->getText($emtpyItemText, null, $language)
-      );
+      $items[] = [
+        'key' => null,
+        'value' => ObjectFactory::getInstance('message')->getText($emtpyItemText, null, $language)
+      ];
     }
 
     // build list
     foreach($strategy->getList($decodedDefinition, $language) as $key => $value) {
-      $items[] = array('key' => $key, 'value' => $value);
+      $items[] = ['key' => $key, 'value' => $value];
     }
 
-    return array(
+    return [
       'items' => $items,
       'isStatic' => $strategy->isStatic($decodedDefinition)
-    );
+    ];
   }
 
   /**

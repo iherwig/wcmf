@@ -41,7 +41,7 @@ class ActionKey {
    */
   public static function parseKey($actionKey) {
     list($resource, $context, $action) = explode(self::$actionDelimiter, $actionKey);
-    return array('resource' => $resource, 'context' => $context, 'action' => $action);
+    return ['resource' => $resource, 'context' => $context, 'action' => $action];
   }
 
   /**

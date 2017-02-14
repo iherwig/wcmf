@@ -27,7 +27,7 @@ class DeleteOperation extends PersistenceOperation {
    *          which the operation will be executed
    */
   public function __construct($entityType, array $criteria) {
-    parent::__construct($entityType, array(), $criteria);
+    parent::__construct($entityType, [], $criteria);
   }
 }
 ?>

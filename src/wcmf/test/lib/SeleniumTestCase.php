@@ -23,16 +23,16 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
   /**
    * @see http://getbootstrap.com/css/#grid-media-queries
    */
-  private $displayWidths = array(
-      /* Extra small devices (phones, less than 768px) */
-      'xsmall'  => 480,
-      /* Small devices (tablets, 768px and up) */
-      'small' => 768,
-      /* Medium devices (desktops, 992px and up) */
-      'medium' => 992,
-      /* Large devices (large desktops, 1200px and up) */
-      'large' => 1200,
-  );
+  private $displayWidths = [
+    /* Extra small devices (phones, less than 768px) */
+    'xsmall'  => 480,
+    /* Small devices (tablets, 768px and up) */
+    'small' => 768,
+    /* Medium devices (desktops, 992px and up) */
+    'medium' => 992,
+    /* Large devices (large desktops, 1200px and up) */
+    'large' => 1200,
+  ];
   private $width = 1024;
 
   private $databaseTester;

@@ -30,7 +30,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
   private static $cacheKey = 'keys';
 
   private $entityType = null;
-  private $valueMap = array();
+  private $valueMap = [];
   private $id = null;
 
   private $isLoadingKeys = false;
@@ -40,7 +40,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    */
   public function __construct() {
     ObjectFactory::getInstance('eventManager')->addListener(PersistenceEvent::NAME,
-      array($this, 'keyChanged'));
+            [$this, 'keyChanged']);
   }
 
   /**
@@ -48,7 +48,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    */
   public function __destruct() {
     ObjectFactory::getInstance('eventManager')->removeListener(PersistenceEvent::NAME,
-      array($this, 'keyChanged'));
+            [$this, 'keyChanged']);
   }
 
   /**
@@ -110,7 +110,7 @@ class PersistenceActionKeyProvider implements ActionKeyProvider {
    * @return Associative array with action keys as keys
    */
   protected function getAllKeyValues() {
-    $keys = array();
+    $keys = [];
     // add temporary permission to allow to read entitys
     $this->isLoadingKeys = true;
     $permissionManager = ObjectFactory::getInstance('permissionManager');

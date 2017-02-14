@@ -67,14 +67,14 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
         $result = '';
 
         // parse urls and group resources by extension and minified state
-        $resources = array();
+        $resources = [];
         $urls = StringUtil::getUrls($content);
         foreach ($urls as $url) {
           $parts = pathinfo($url);
           $extension = strtolower($parts['extension']);
           $min = preg_match('/\.min$/', $parts['filename']);
           if (!isset($resources[$extension])) {
-            $resources[$extension] = array('min' => array(), 'src' => array());
+            $resources[$extension] = ['min' => [], 'src' => []];
           }
           $resources[$extension][$min ? 'min' : 'src'][] = $url;
         }
@@ -94,15 +94,15 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
           $cachePathRel = $cacheRootRel.$cacheFile;
 
           // create filters
-          $filters = array();
+          $filters = [];
           if ($type == 'css') {
             $filters[] = new CssRewriteFilter();
           }
-          $minFilters = array_merge($filters, array(new MinFilter($type)));
+          $minFilters = array_merge($filters, [new MinFilter($type)]);
 
           // create string assets from files (sourcePath and targetPath must be
           // set correctly in order to make CssRewriteFilter work)
-          $minAssets = array();
+          $minAssets = [];
           foreach ($files['min'] as $file) {
              $asset = new FileAsset($file, $filters, '', $file);
              $asset->setTargetPath($cachePathRel);

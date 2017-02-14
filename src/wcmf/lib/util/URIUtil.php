@@ -116,7 +116,7 @@ class URIUtil {
     $absUrl = self::makeAbsolute($pathFromA, $path.$pathFromScriptToA);
     $relUrl = self::makeRelative($absUrl, $path);
 
-    return array('absolute' => $absUrl, 'relative' => $relUrl);
+    return ['absolute' => $absUrl, 'relative' => $relUrl];
   }
 
   /**
@@ -169,9 +169,7 @@ class URIUtil {
    * @param $paths Path to normalize or array of paths
    */
   private static function normalizeSlashes($paths) {
-    return preg_replace(
-            array("/\\\\/"), array('/'),
-            $paths);
+    return preg_replace(["/\\\\/"], ['/'], $paths);
   }
 
   /**
@@ -179,7 +177,7 @@ class URIUtil {
    * @param $paths Path to normalize or array of paths
    */
   private static function removeProtocols($paths) {
-    return preg_replace(array("/^[^:]{1}:/"), array(''), $paths);
+    return preg_replace(["/^[^:]{1}:/"], [''], $paths);
   }
 
   /**
@@ -187,7 +185,7 @@ class URIUtil {
    * @param $paths Path to normalize or array of paths
    */
   private static function normalizePaths($paths) {
-    $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+    $re = ['#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#'];
     for ($n=1; $n>0; $paths=preg_replace($re, '/', $paths, -1, $n)) {}
     return $paths;
   }

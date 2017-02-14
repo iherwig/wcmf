@@ -48,20 +48,20 @@ class ArrayOutputStrategy implements OutputStrategy {
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    $content = array();
+    $content = [];
     $content['oid'] = $obj->getOID();
     $content['type'] = $obj->getType();
-    $content['properties'] = array();
+    $content['properties'] = [];
     foreach($obj->getPropertyNames() as $name) {
       $content['properties'][$name] = $this->writeValue($obj->getProperty($name));
     }
-    $content['values'] = array();
+    $content['values'] = [];
     foreach($obj->getValueNames() as $name) {
-      $content['values'][$name] = array();
+      $content['values'][$name] = [];
       $value = $this->writeValue($obj->getValue($name));
       $content['values'][$name]['value'] = $value;
       if ($this->writeValueProperties) {
-        $content['values'][$name]['properties'] = array();
+        $content['values'][$name]['properties'] = [];
         foreach($obj->getValuePropertyNames($name) as $propertyName) {
           $content['values'][$name]['properties'][$propertyName] = $this->writeValue($obj->getValueProperty($name, $propertyname));
         }
@@ -77,7 +77,7 @@ class ArrayOutputStrategy implements OutputStrategy {
   private function writeValue($value) {
     $content = '';
     if (is_array($value)) {
-      $content = array();
+      $content = [];
       for ($i=0; $i<sizeof($value); $i++) {
         $content[] = utf8_encode($value[$i]);
       }

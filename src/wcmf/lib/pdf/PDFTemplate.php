@@ -43,7 +43,7 @@ class PDFTemplate {
 
   private $pdf = null;
   private $tpl = null;
-  private $pages = array();
+  private $pages = [];
   private $cycle = false;
   private $data = null;
 

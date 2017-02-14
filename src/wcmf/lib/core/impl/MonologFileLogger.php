@@ -43,7 +43,7 @@ class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger 
 
   private static $defaultLevel = Logger::ERROR;
   private static $logTarget = '';
-  private static $levels = array();
+  private static $levels = [];
 
   /**
    * Constructor
@@ -64,7 +64,7 @@ class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger 
 
     $output = "[%datetime%] %level_name%: %channel%:%extra.line%: %message%\n";
     $formatter = new LineFormatter($output, null, true);
-    $processor = new IntrospectionProcessor($level, array(__CLASS__));
+    $processor = new IntrospectionProcessor($level, [__CLASS__]);
     if ($this->isStreamTarget(self::$logTarget)) {
       $handler = new StreamHandler(self::$logTarget, $level);
     }
@@ -75,7 +75,7 @@ class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger 
     $handler->setFormatter($formatter);
     $handler->pushProcessor($processor);
 
-    $this->monologLogger = new Logger($name, array($handler));
+    $this->monologLogger = new Logger($name, [$handler]);
   }
 
   /**
@@ -177,7 +177,7 @@ class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger 
 
     // log levels
     self::$levels = isset($config[self::LOGGER_SECTION_NAME]) ?
-            $config[self::LOGGER_SECTION_NAME] : array();
+            $config[self::LOGGER_SECTION_NAME] : [];
     foreach (self::$levels as $key => $val) {
       self::$levels[$key] = constant('Monolog\Logger::'.strtoupper($val));
     }

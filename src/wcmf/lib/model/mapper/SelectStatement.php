@@ -28,9 +28,9 @@ class SelectStatement extends Select {
 
   protected $id = null;
   protected $type = null;
-  protected $parameters = array();
-  protected $meta = array();
-  protected $cachedSql = array();
+  protected $parameters = [];
+  protected $meta = [];
+  protected $cachedSql = [];
 
   private $adapter = null;
 
@@ -187,7 +187,7 @@ class SelectStatement extends Select {
     }
     else {
       // add column to join
-      $joins = array();
+      $joins = [];
       foreach ($this->joins->getJoins() as $join) {
         if ($join['name'] == $joinName || in_array($joinName, array_keys($join['name']))) {
           $join['columns'] += $columns;
@@ -261,7 +261,7 @@ class SelectStatement extends Select {
    */
 
   public function __sleep() {
-    return array('id', 'type', 'meta', 'cachedSql', 'specifications');
+    return ['id', 'type', 'meta', 'cachedSql', 'specifications'];
   }
 
   public function __wakeup() {

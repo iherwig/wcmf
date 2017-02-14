@@ -52,7 +52,7 @@ abstract class AbstractRole extends Node implements Role {
       $principalFactory = ObjectFactory::getInstance('principalFactory');
       $role = $principalFactory->getRole($value);
       if ($role != null && $role->getOID() != $this->getOID()) {
-        throw new ValidationException($name, $value, $message->getText("The role '%0%' already exists", array($value)));
+        throw new ValidationException($name, $value, $message->getText("The role '%0%' already exists", [$value]));
       }
     }
   }

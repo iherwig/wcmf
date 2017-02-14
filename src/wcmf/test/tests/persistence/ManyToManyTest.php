@@ -30,20 +30,20 @@ class ManyToManyTest extends DatabaseTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'DBSequence' => array(
-        array('table' => ''),
+        ['table' => ''],
       ),
       'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
         array('id' => 50, 'login' => 'user1', 'active' => 1, 'super_user' => 0, 'config' => ''),
         array('id' => 60, 'login' => 'user2', 'active' => 1, 'super_user' => 0, 'config' => ''),
       ),
       'Role' => array(
-        array('id' => 0, 'name' => 'administrators'),
+        ['id' => 0, 'name' => 'administrators'],
         array('id' => 51, 'name' => 'group1'),
         array('id' => 61, 'name' => 'group2'),
       ),
       'NMUserRole' => array(
-        array('fk_user_id' => 0, 'fk_role_id' => 0),
+        ['fk_user_id' => 0, 'fk_role_id' => 0],
         array('fk_user_id' => 50, 'fk_role_id' => 51),
       ),
     ));

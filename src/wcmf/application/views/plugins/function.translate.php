@@ -26,7 +26,7 @@ use wcmf\lib\core\ObjectFactory;
  * @return String
  */
 function smarty_function_translate($params, Smarty_Internal_Template $template) {
-  $variables = array();
+  $variables = [];
   foreach (array_keys($params) as $key) {
     if (preg_match("/^r[0-9]+$/", $key)) {
       $variables[] = $params[$key];

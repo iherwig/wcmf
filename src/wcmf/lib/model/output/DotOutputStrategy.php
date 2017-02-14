@@ -29,8 +29,8 @@ class DotOutputStrategy implements OutputStrategy {
   private $fp = 0;
   private $fileOk = false; // indicates if we can write to the file
   private $nodeIndex = 0;
-  private $nodeIndexMap = array();
-  private $writtenNodes = array();
+  private $nodeIndexMap = [];
+  private $writtenNodes = [];
 
   private $nodeStyle = '';
   private $edgeStyle = '';

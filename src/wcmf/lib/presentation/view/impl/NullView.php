@@ -35,7 +35,7 @@ class NullView implements View {
    * @see View::getValues()
    */
   public function getValues() {
-    return array();
+    return [];
   }
 
   /**

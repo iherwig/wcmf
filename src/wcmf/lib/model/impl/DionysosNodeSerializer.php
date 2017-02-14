@@ -37,14 +37,14 @@ use wcmf\lib\persistence\PersistenceFacade;
  */
 class DionysosNodeSerializer extends AbstractNodeSerializer {
 
-  private static $NODE_KEYS = array(
+  private static $NODE_KEYS = [
       'className',
       'oid',
       'isReference',
       'lastChange',
       'attributes'
-  );
-  private $serializedOIDs = array();
+  ];
+  private $serializedOIDs = [];
   private $persistenceFacade = null;
 
   /**
@@ -118,7 +118,7 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
         unset($data[$key]);
       }
     }
-    return array('node' => $node, 'data' => $data);
+    return ['node' => $node, 'data' => $data];
   }
 
   /**
@@ -128,7 +128,7 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
     if (!($node instanceof Node)) {
       return null;
     }
-    $curResult = array();
+    $curResult = [];
     $curResult['className'] = $node->getType();
     $curResult['oid'] = $node->getOID()->__toString();
     $curResult['lastChange'] = strtotime($node->getValue('modified'));
@@ -145,7 +145,7 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
 
       // serialize attributes
       // use NodeValueIterator to iterate over all Node values
-      $values = array();
+      $values = [];
       $valueIter = new NodeValueIterator($node, false);
       foreach($valueIter as $valueName => $value) {
         $values[$valueName] = $value;
@@ -162,7 +162,7 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
           // serialize the nodes
           $isMultiValued = $relation->isMultiValued();
           if ($isMultiValued) {
-            $curResult['attributes'][$role] = array();
+            $curResult['attributes'][$role] = [];
             foreach ($relatedNodes as $relatedNode) {
               $data = $this->serializeNode($relatedNode);
               if ($data != null) {

@@ -22,7 +22,7 @@ use wcmf\lib\presentation\Response;
  */
 class DefaultFormatter implements Formatter {
 
-  private $formats = array();
+  private $formats = [];
 
   /**
    * Constructor

@@ -19,7 +19,7 @@ namespace wcmf\lib\core;
 class ErrorHandler {
 
   // fatal errors that can be handled with a user defined function
-  private static $FATAL_ERRORS = array(E_USER_ERROR => '', E_RECOVERABLE_ERROR => '');
+  private static $FATAL_ERRORS = [E_USER_ERROR => '', E_RECOVERABLE_ERROR => ''];
 
   private static $logger = null;
 

@@ -52,7 +52,7 @@ class NullMapper implements PersistenceMapper {
    * @see PersistenceMapper::getPkNames()
    */
   public function getPkNames() {
-    return array();
+    return [];
   }
 
   /**
@@ -80,7 +80,7 @@ class NullMapper implements PersistenceMapper {
    * @see PersistenceMapper::getRelations()
    */
   public function getRelations($hierarchyType='all') {
-    return array();
+    return [];
   }
 
   /**
@@ -101,14 +101,14 @@ class NullMapper implements PersistenceMapper {
    * @see PersistenceMapper::getRelationsByType()
    */
   public function getRelationsByType($type) {
-    return array();
+    return [];
   }
 
   /**
    * @see PersistenceMapper::getAttributes()
    */
   public function getAttributes(array $tags=array(), $matchMode='all') {
-    return array();
+    return [];
   }
 
   /**
@@ -143,7 +143,7 @@ class NullMapper implements PersistenceMapper {
    * @see PersistenceMapper::getProperties()
    */
   public function getProperties() {
-    return array();
+    return [];
   }
 
   /**
@@ -157,14 +157,14 @@ class NullMapper implements PersistenceMapper {
    * @see PersistenceMapper::getSortkey()
    */
   public function getSortkey($roleName=null) {
-    return array();
+    return [];
   }
 
   /**
    * @see PersistenceMapper::getDefaultOrder()
    */
   public function getDefaultOrder($roleName=null) {
-    return array();
+    return [];
   }
 
   /**
@@ -195,7 +195,7 @@ class NullMapper implements PersistenceMapper {
    * @see PersistenceFacade::getOIDs()
    */
   public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    return array();
+    return [];
   }
 
   /**
@@ -203,7 +203,7 @@ class NullMapper implements PersistenceMapper {
    */
   public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null) {
-    return array();
+    return [];
   }
 
   /**
@@ -211,7 +211,7 @@ class NullMapper implements PersistenceMapper {
    */
   public function loadRelation(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
     PagingInfo $pagingInfo=null) {
-    return array();
+    return [];
   }
 
   /**

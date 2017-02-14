@@ -237,7 +237,7 @@ class DefaultLockHandler implements LockHandler {
     if ($this->session->exist(self::SESSION_VARNAME)) {
       return $this->session->get(self::SESSION_VARNAME);
     }
-    return array();
+    return [];
   }
 
   /**

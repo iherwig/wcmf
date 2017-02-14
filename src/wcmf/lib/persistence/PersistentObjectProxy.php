@@ -109,7 +109,7 @@ class PersistentObjectProxy implements PersistentObject {
    * @see PersistentObject::getMapper()
    */
   public function getMapper() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
@@ -124,112 +124,112 @@ class PersistentObjectProxy implements PersistentObject {
    * @see PersistentObject::setOID()
    */
   public function setOID(ObjectId $oid) {
-    return $this->__call(__FUNCTION__, array($oid));
+    return $this->__call(__FUNCTION__, [$oid]);
   }
 
   /**
    * @see PersistentObject::getState()
    */
   public function getState() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::setState()
    */
   public function setState($state) {
-    return $this->__call(__FUNCTION__, array($state));
+    return $this->__call(__FUNCTION__, [$state]);
   }
 
   /**
    * @see PersistentObject::delete()
    */
   public function delete() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::__clone()
    */
   public function __clone() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::copyValues()
    */
   public function copyValues(PersistentObject $object, $copyPkValues=true) {
-    return $this->__call(__FUNCTION__, array($object, $copyPkValues));
+    return $this->__call(__FUNCTION__, [$object, $copyPkValues]);
   }
 
   /**
    * @see PersistentObject::mergeValues()
    */
   public function mergeValues(PersistentObject $object) {
-    return $this->__call(__FUNCTION__, array($object));
+    return $this->__call(__FUNCTION__, [$object]);
   }
 
   /**
    * @see PersistentObject::clearValues()
    */
   public function clearValues() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::afterCreate()
    */
   public function afterCreate() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::beforeInsert()
    */
   public function beforeInsert() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::afterInsert()
    */
   public function afterInsert() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::afterLoad()
    */
   public function afterLoad() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::beforeUpdate()
    */
   public function beforeUpdate() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::afterUpdate()
    */
   public function afterUpdate() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::beforeDelete()
    */
   public function beforeDelete() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::afterDelete()
    */
   public function afterDelete() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
@@ -247,112 +247,112 @@ class PersistentObjectProxy implements PersistentObject {
         return $ids[$i];
       }
     }
-    return $this->__call(__FUNCTION__, array($name));
+    return $this->__call(__FUNCTION__, [$name]);
   }
 
   /**
    * @see PersistentObject::setValue()
    */
   public function setValue($name, $value, $forceSet=false, $trackChange=true) {
-    return $this->__call(__FUNCTION__, array($name, $value, $forceSet, $trackChange));
+    return $this->__call(__FUNCTION__, [$name, $value, $forceSet, $trackChange]);
   }
 
   /**
    * @see PersistentObject::hasValue()
    */
   public function hasValue($name) {
-    return $this->__call(__FUNCTION__, array($name));
+    return $this->__call(__FUNCTION__, [$name]);
   }
 
   /**
    * @see PersistentObject::removeValue()
    */
   public function removeValue($name) {
-    return $this->__call(__FUNCTION__, array($name));
+    return $this->__call(__FUNCTION__, [$name]);
   }
 
   /**
    * @see PersistentObject::validateValues()
    */
   public function validateValues() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::validateValue()
    */
   public function validateValue($name, $value) {
-    return $this->__call(__FUNCTION__, array($name, $value));
+    return $this->__call(__FUNCTION__, [$name, $value]);
   }
 
   /**
    * @see PersistentObject::getChangedValues()
    */
   public function getChangedValues() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::getOriginalValues()
    */
   public function getOriginalValues() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::getIndispensableObjects()
    */
   public function getIndispensableObjects() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::getProperty()
    */
   public function getProperty($name) {
-    return $this->__call(__FUNCTION__, array($name));
+    return $this->__call(__FUNCTION__, [$name]);
   }
 
   /**
    * @see PersistentObject::setProperty()
    */
   public function setProperty($name, $value) {
-    return $this->__call(__FUNCTION__, array($name, $value));
+    return $this->__call(__FUNCTION__, [$name, $value]);
   }
 
   /**
    * @see PersistentObject::getPropertyNames()
    */
   public function getPropertyNames() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**
    * @see PersistentObject::getValueProperty()
    */
   public function getValueProperty($name, $property) {
-    return $this->__call(__FUNCTION__, array($name, $property));
+    return $this->__call(__FUNCTION__, [$name, $property]);
   }
 
   /**
    * @see PersistentObject::setValueProperty()
    */
   public function setValueProperty($name, $property, $value) {
-    return $this->__call(__FUNCTION__, array($name, $property, $value));
+    return $this->__call(__FUNCTION__, [$name, $property, $value]);
   }
 
   /**
    * @see PersistentObject::getValuePropertyNames()
    */
   public function getValuePropertyNames($name) {
-    return $this->__call(__FUNCTION__, array($name));
+    return $this->__call(__FUNCTION__, [$name]);
   }
 
   /**
    * @see PersistentObject::getValueNames()
    */
   public function getValueNames($excludeTransient=false) {
-    return $this->__call(__FUNCTION__, array($excludeTransient));
+    return $this->__call(__FUNCTION__, [$excludeTransient]);
   }
 
   /**
@@ -367,7 +367,7 @@ class PersistentObjectProxy implements PersistentObject {
    * @see PersistentObject::dump()
    */
   public function dump() {
-    return $this->__call(__FUNCTION__, array());
+    return $this->__call(__FUNCTION__, []);
   }
 
   /**

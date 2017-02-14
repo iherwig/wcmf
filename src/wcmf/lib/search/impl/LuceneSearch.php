@@ -58,7 +58,7 @@ class LuceneSearch implements IndexedSearch {
     }
     // listen to object change events
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
-      array($this, 'stateChanged'));
+      [$this, 'stateChanged']);
   }
 
   /**
@@ -67,7 +67,7 @@ class LuceneSearch implements IndexedSearch {
   public function __destruct() {
     $this->commitIndex(false);
     ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
-      array($this, 'stateChanged'));
+      [$this, 'stateChanged']);
   }
 
   /**
@@ -129,7 +129,7 @@ class LuceneSearch implements IndexedSearch {
    * @see Search::find()
    */
   public function find($searchTerm, PagingInfo $pagingInfo=null) {
-    $results = array();
+    $results = [];
     $index = $this->getIndex(false);
     if ($index) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -157,7 +157,7 @@ class LuceneSearch implements IndexedSearch {
                 $value = $this->encodeValue($value, $inputType);
                 if (strlen($value) > 0) {
                   $highlighted = @$query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
-                  $matches = array();
+                  $matches = [];
                   if (preg_match($highlightedRegex, $highlighted, $matches)) {
                     $hitStr = $matches[3];
                     $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
@@ -169,11 +169,11 @@ class LuceneSearch implements IndexedSearch {
                 }
               }
             }
-            $results[$oidStr] = array(
-                'oid' => $oidStr,
-                'score' => $hit->score,
-                'summary' => $summary
-            );
+            $results[$oidStr] = [
+              'oid' => $oidStr,
+              'score' => $hit->score,
+              'summary' => $summary
+            ];
           }
         }
       }

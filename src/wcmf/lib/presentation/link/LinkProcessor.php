@@ -41,7 +41,7 @@ class LinkProcessor {
     if (!$node) {
       return;
     }
-    $invalidURLs = array();
+    $invalidURLs = [];
     $logger = LogManager::getLogger(__CLASS__);
 
     // iterate over all node values
@@ -92,7 +92,7 @@ class LinkProcessor {
           $logger->error("Invalid URL found: ".$url);
           $oidStr = $currentNode->getOID()->__toString();
           if (!isset($invalidURLs[$oidStr])) {
-            $invalidURLs[] = array();
+            $invalidURLs[] = [];
           }
           $invalidURLs[$oidStr][] = $url;
           $value = self::replaceUrl($value, $url, '#', $type);

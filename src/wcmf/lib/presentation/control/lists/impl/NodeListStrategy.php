@@ -49,7 +49,7 @@ class NodeListStrategy implements ListStrategy {
 
     $isSingleType = sizeof($types) == 1;
 
-    $list = array();
+    $list = [];
     foreach ($types as $type) {
       $query = new StringQuery($type);
       if (isset($options['query'])) {

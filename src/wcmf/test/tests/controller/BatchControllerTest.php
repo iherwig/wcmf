@@ -35,12 +35,12 @@ class BatchControllerTest extends ControllerTestCase {
 
   protected function getDataSet() {
     return new ArrayDataSet(array(
-      'DBSequence' => array(
-        array('table' => ''),
-      ),
-      'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
-      ),
+      'DBSequence' => [
+        ['table' => ''],
+      ],
+      'User' => [
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
+      ],
     ));
   }
 
@@ -50,16 +50,16 @@ class BatchControllerTest extends ControllerTestCase {
   public function testProcess() {
     TestUtil::startSession('admin', 'admin');
 
-    $expectations = array(
-        // next action, step number, number of steps, display text for next step, result value from controller, result action, file in response
-        array('simpleBatch', 0, 5, 'Package 1 1-2/5 ...', null, 'progress', false),
-        array('continue', 1, 5, 'Package 1 3-4/5 ...', 'P1-1,2', 'progress', false),
-        array('continue', 2, 5, 'Package 1 5/5 ...', 'P1-3,4', 'progress', false),
-        array('continue', 3, 5, 'Package 2 1-3/5 ...', 'P1-5', 'progress', false),
-        array('continue', 4, 5, 'Package 2 4-5/5 ...', 'P2-6,7,8', 'progress', false),
-        array('continue', 5, 5, 'Done', 'P2-9,10', 'done', false),
-    );
-    $data = array();
+    $expectations = [
+      // next action, step number, number of steps, display text for next step, result value from controller, result action, file in response
+      ['simpleBatch', 0, 5, 'Package 1 1-2/5 ...', null, 'progress', false],
+      ['continue', 1, 5, 'Package 1 3-4/5 ...', 'P1-1,2', 'progress', false],
+      ['continue', 2, 5, 'Package 1 5/5 ...', 'P1-3,4', 'progress', false],
+      ['continue', 3, 5, 'Package 2 1-3/5 ...', 'P1-5', 'progress', false],
+      ['continue', 4, 5, 'Package 2 4-5/5 ...', 'P2-6,7,8', 'progress', false],
+      ['continue', 5, 5, 'Done', 'P2-9,10', 'done', false],
+    ];
+    $data = [];
     $this->process($expectations, $data);
 
     TestUtil::endSession();
@@ -71,17 +71,17 @@ class BatchControllerTest extends ControllerTestCase {
   public function testProcessWithDownload() {
     TestUtil::startSession('admin', 'admin');
 
-    $expectations = array(
-        // next action, step number, number of steps, display text for next step, result value from controller, result action, file in response
-        array('simpleBatch', 0, 5, 'Package 1 1-2/5 ...', null, 'progress', false),
-        array('continue', 1, 5, 'Package 1 3-4/5 ...', 'P1-1,2', 'progress', false),
-        array('continue', 2, 5, 'Package 1 5/5 ...', 'P1-3,4', 'progress', false),
-        array('continue', 3, 5, 'Package 2 1-3/5 ...', 'P1-5', 'progress', false),
-        array('continue', 4, 5, 'Package 2 4-5/5 ...', 'P2-6,7,8', 'progress', false),
-        array('continue', 5, 5, 'Done', 'P2-9,10', 'download', false),
-        array('continue', null, null, null, null, 'done', true),
-    );
-    $data = array('download' => true);
+    $expectations = [
+      // next action, step number, number of steps, display text for next step, result value from controller, result action, file in response
+      ['simpleBatch', 0, 5, 'Package 1 1-2/5 ...', null, 'progress', false],
+      ['continue', 1, 5, 'Package 1 3-4/5 ...', 'P1-1,2', 'progress', false],
+      ['continue', 2, 5, 'Package 1 5/5 ...', 'P1-3,4', 'progress', false],
+      ['continue', 3, 5, 'Package 2 1-3/5 ...', 'P1-5', 'progress', false],
+      ['continue', 4, 5, 'Package 2 4-5/5 ...', 'P2-6,7,8', 'progress', false],
+      ['continue', 5, 5, 'Done', 'P2-9,10', 'download', false],
+      ['continue', null, null, null, null, 'done', true],
+    ];
+    $data = ['download' => true];
     ob_start(function($buffer) {
       return '';
     });
@@ -97,11 +97,11 @@ class BatchControllerTest extends ControllerTestCase {
   public function testOneCall() {
     TestUtil::startSession('admin', 'admin');
 
-    $expectations = array(
-        // next action, step number, number of steps, display text for next step, result value from controller, result action, file in response
-        array('simpleBatch', 1, 5, 'Package 1 3-4/5 ...', 'P1-1,2', 'done', false),
-    );
-    $data = array('oneCall' => true);
+    $expectations = [
+      // next action, step number, number of steps, display text for next step, result value from controller, result action, file in response
+      ['simpleBatch', 1, 5, 'Package 1 3-4/5 ...', 'P1-1,2', 'done', false],
+    ];
+    $data = ['oneCall' => true];
     $this->process($expectations, $data);
 
     TestUtil::endSession();
@@ -113,12 +113,12 @@ class BatchControllerTest extends ControllerTestCase {
   public function testOneCallWithDownload() {
     TestUtil::startSession('admin', 'admin');
 
-    $expectations = array(
-        // next action, step number, number of steps, display text for next step, result value from controller, result action, file in response
-        array('simpleBatch', 1, 5, 'Package 1 3-4/5 ...', 'P1-1,2', 'download', false),
-        array('continue', null, null, null, null, 'done', true),
-    );
-    $data = array('oneCall' => true, 'download' => true);
+    $expectations = [
+      // next action, step number, number of steps, display text for next step, result value from controller, result action, file in response
+      ['simpleBatch', 1, 5, 'Package 1 3-4/5 ...', 'P1-1,2', 'download', false],
+      ['continue', null, null, null, null, 'done', true],
+    ];
+    $data = ['oneCall' => true, 'download' => true];
     ob_start(function($buffer) {
       return '';
     });

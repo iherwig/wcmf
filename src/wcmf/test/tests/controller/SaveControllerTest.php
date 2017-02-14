@@ -35,27 +35,27 @@ class SaveControllerTest extends ControllerTestCase {
   }
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
-        array('table' => ''),
-      ),
-      'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
-      ),
-      'NMUserRole' => array(
-        array('fk_user_id' => 0, 'fk_role_id' => 0),
-      ),
-      'Role' => array(
-        array('id' => 0, 'name' => 'administrators'),
-      ),
-      'Book' => array(
-        array('id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''),
-      ),
-      'Lock' => array(
-      ),
-      'Translation' => array(
-      ),
-    ));
+    return new ArrayDataSet([
+      'DBSequence' => [
+        ['table' => ''],
+      ],
+      'User' => [
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
+      ],
+      'NMUserRole' => [
+        ['fk_user_id' => 0, 'fk_role_id' => 0],
+      ],
+      'Role' => [
+        ['id' => 0, 'name' => 'administrators'],
+      ],
+      'Book' => [
+        ['id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''],
+      ],
+      'Lock' => [
+      ],
+      'Translation' => [
+      ],
+    ]);
   }
 
   /**
@@ -70,9 +70,9 @@ class SaveControllerTest extends ControllerTestCase {
     $testObj = $persistenceFacade->load($oid);
     $persistenceFacade->getTransaction()->detach($testObj->getOID());
     $testObj->setValue('name', 'AdministratorModified');
-    $data = array(
+    $data = [
       $oid->__toString() => $testObj
-    );
+    ];
     $response = $this->runRequest('update', $data);
 
     // test
@@ -94,10 +94,10 @@ class SaveControllerTest extends ControllerTestCase {
     $testObj = $persistenceFacade->load($oid);
     $persistenceFacade->getTransaction()->detach($testObj->getOID());
     $testObj->setValue('title', 'title [de]');
-    $data = array(
+    $data = [
       $oid->__toString() => $testObj,
       'language' => 'de'
-    );
+    ];
     $response = $this->runRequest('update', $data);
 
     // test
@@ -119,10 +119,10 @@ class SaveControllerTest extends ControllerTestCase {
     $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $testObj->setValue('login', 'user');
     $testObj->setValue('password', 'user');
-    $data = array(
+    $data = [
       'className' => self::TEST_TYPE1,
       $testObj->getOid()->__toString() => $testObj
-    );
+    ];
     $response = $this->runRequest('create', $data);
 
     // test
@@ -146,11 +146,11 @@ class SaveControllerTest extends ControllerTestCase {
     $testObj = $persistenceFacade->create($type, BuildDepth::SINGLE);
     $testObj->setValue('login', 'user [de]');
     $testObj->setValue('password', 'user');
-    $data = array(
+    $data = [
       'className' => self::TEST_TYPE1,
       $testObj->getOid()->__toString() => $testObj,
       'language' => 'de'
-    );
+    ];
     $response = $this->runRequest('create', $data);
 
     // test (can't insert translations for non existing objects)

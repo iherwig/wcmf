@@ -27,7 +27,7 @@ use wcmf\lib\persistence\PersistenceFacade;
  */
 class SoapNodeSerializer extends AbstractNodeSerializer {
 
-  private $serializedOIDs = array();
+  private $serializedOIDs = [];
   private $persistenceFacade = null;
 
   /**
@@ -70,7 +70,7 @@ class SoapNodeSerializer extends AbstractNodeSerializer {
     $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
 
-    $remainingData = array();
+    $remainingData = [];
 
     $foundNodeAttribute = false;
     $mapper = $node->getMapper();
@@ -98,7 +98,7 @@ class SoapNodeSerializer extends AbstractNodeSerializer {
       $parent->addNode($node, $role);
     }
 
-    return array('node' => $node, 'data' => $remainingData);
+    return ['node' => $node, 'data' => $remainingData];
   }
 
   /**
@@ -108,7 +108,7 @@ class SoapNodeSerializer extends AbstractNodeSerializer {
     if (!($node instanceof Node)) {
       return null;
     }
-    $curResult = array();
+    $curResult = [];
     $oidStr = $node->getOID()->__toString();
     $curResult['oid'] = $oidStr;
 
@@ -130,7 +130,7 @@ class SoapNodeSerializer extends AbstractNodeSerializer {
         $relatedNodes = $node->getValue($role);
         if ($relatedNodes) {
           // serialize the nodes
-          $curResult[$role] = array();
+          $curResult[$role] = [];
           $isMultiValued = $relation->isMultiValued();
           if ($isMultiValued) {
             foreach ($relatedNodes as $relatedNode) {

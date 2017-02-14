@@ -39,8 +39,8 @@ abstract class AbstractMapper implements PersistenceMapper {
 
   private $logStrategy = null;
 
-  private $attributeNames = array();
-  private $relationNames = array();
+  private $attributeNames = [];
+  private $relationNames = [];
 
   private static $logger = null;
 
@@ -249,7 +249,7 @@ abstract class AbstractMapper implements PersistenceMapper {
     $tx = $this->persistenceFacade->getTransaction();
 
     // remove oids for which the user is not authorized
-    $result = array();
+    $result = [];
     for ($i=0, $count=sizeof($oids); $i<$count; $i++) {
       $oid = $oids[$i];
       if ($this->checkAuthorization($oid, PersistenceAction::READ)) {
@@ -271,7 +271,7 @@ abstract class AbstractMapper implements PersistenceMapper {
     $tx = $this->persistenceFacade->getTransaction();
 
     // remove objects for which the user is not authorized
-    $result = array();
+    $result = [];
     for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
       $object = $objects[$i];
       if ($this->checkAuthorization($object->getOID(), PersistenceAction::READ)) {
@@ -298,9 +298,9 @@ abstract class AbstractMapper implements PersistenceMapper {
 
     // remove objects for which the user is not authorized
     if ($relatedObjects != null) {
-      $result = array();
+      $result = [];
       foreach ($relatedObjects as $oidStr => $curObjects) {
-        $curResult = array();
+        $curResult = [];
         for ($i=0, $count=sizeof($curObjects); $i<$count; $i++) {
           $object = $curObjects[$i];
           if ($this->checkAuthorization($object->getOID(), PersistenceAction::READ)) {
@@ -346,7 +346,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   protected function authorizationFailedError($resource, $action) {
     // when reading only log the error to avoid errors on the display
     $msg = ObjectFactory::getInstance('message')->
-            getText("Authorization failed for action '%0%' on '%1%'.", array($action, $resource));
+            getText("Authorization failed for action '%0%' on '%1%'.", [$action, $resource]);
     if ($action == PersistenceAction::READ) {
       self::$logger->error($msg."\n".ErrorHandler::getStackTrace());
     }

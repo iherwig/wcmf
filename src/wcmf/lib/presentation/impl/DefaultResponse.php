@@ -107,12 +107,12 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
       $content = file_get_contents($filename);
       $type = FileUtil::getMimeType($filename);
     }
-    $this->file = array(
-        'isDownload' => $isDownload,
-        'filename' => $filename,
-        'content' => $content,
-        'type' => $type
-    );
+    $this->file = [
+      'isDownload' => $isDownload,
+      'filename' => $filename,
+      'content' => $content,
+      'type' => $type
+    ];
     $this->setFormat('download');
   }
 

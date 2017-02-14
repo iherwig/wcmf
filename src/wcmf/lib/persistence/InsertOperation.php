@@ -26,7 +26,7 @@ class InsertOperation extends PersistenceOperation {
    * @param $values An array of attribute/value pairs to apply
    */
   public function __construct($entityType, array $values) {
-    parent::__construct($entityType, $values, array());
+    parent::__construct($entityType, $values, []);
   }
 }
 ?>

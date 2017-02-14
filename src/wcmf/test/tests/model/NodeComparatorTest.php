@@ -22,7 +22,7 @@ use wcmf\test\lib\BaseTestCase;
  */
 class NodeComparatorTest extends BaseTestCase {
 
-  private $nodes = array();
+  private $nodes = [];
 
   protected function setUp() {
     parent::setUp();

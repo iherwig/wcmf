@@ -42,7 +42,7 @@ class StringUtil {
   public static function cropString($text, $length=100, $suffix='…', $isHTML=true) {
     $i = 0;
     $simpleTags=array('br'=>true,'hr'=>true,'input'=>true,'image'=>true,'link'=>true,'meta'=>true);
-    $tags = array();
+    $tags = [];
     if($isHTML) {
       preg_match_all('/<[^>]+>([^<]*)/', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
       foreach($m as $o) {
@@ -171,7 +171,7 @@ class StringUtil {
    * @return An array of strings
    */
   public static function quotesplit($string) {
-    $r = array();
+    $r = [];
     $p = 0;
     $l = strlen($string);
     while ($p < $l) {
@@ -237,7 +237,7 @@ class StringUtil {
    * @return Array
    */
   public static function splitQuoted($string, $delim='/ /', $quoteChr='"', $preserve=false){
-    $resArr = array();
+    $resArr = [];
     $n = 0;
     $expEncArr = explode($quoteChr, $string);
     foreach($expEncArr as $encItem) {
@@ -280,8 +280,8 @@ class StringUtil {
    * @return The escaped string
    */
   public static function escapeForRegex($string) {
-    $patterns = array('/\//', '/\^/', '/\./', '/\$/', '/\|/', '/\(/', '/\)/', '/\[/', '/\]/', '/\*/', '/\+/', '/\?/', '/\{/', '/\}/');
-    $replace = array('\/', '\^', '\.', '\$', '\|', '\(', '\)', '\[', '\]', '\*', '\+', '\?', '\{', '\}');
+    $patterns = ['/\//', '/\^/', '/\./', '/\$/', '/\|/', '/\(/', '/\)/', '/\[/', '/\]/', '/\*/', '/\+/', '/\?/', '/\{/', '/\}/'];
+    $replace = ['\/', '\^', '\.', '\$', '\|', '\(', '\)', '\[', '\]', '\*', '\+', '\?', '\{', '\}'];
 
     return preg_replace($patterns, $replace, $string);
   }
@@ -315,8 +315,8 @@ class StringUtil {
    * @return string Filtered string with replaced "nice" characters.
    */
   public static function slug($string) {
-    $search = array('Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß');
-    $replace = array('AE', 'OE', 'UE', 'ae', 'oe', 'ue', 'ss');
+    $search = ['Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß'];
+    $replace = ['AE', 'OE', 'UE', 'ae', 'oe', 'ue', 'ss'];
     $string = str_replace($search, $replace, $string);
     return strtolower(trim(preg_replace('~[^0-9a-z]+~i', '-',
             html_entity_decode(preg_replace('~&([a-z]{1,2})(?:acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1',

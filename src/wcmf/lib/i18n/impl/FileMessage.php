@@ -21,11 +21,11 @@ use wcmf\lib\io\FileUtil;
  *
  * For example the messages_de file could have the following content:
  * @code
- * $messages = array(
+ * $messages = [
  *   'up' => 'hoch',
  *   'down' => 'runter',
  *   ...
- * );
+ * ];
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -38,7 +38,7 @@ class FileMessage implements Message {
   /**
    * Cache for loaded translations
    */
-  private $translations = array();
+  private $translations = [];
 
   /**
    * Constructor
@@ -103,7 +103,7 @@ class FileMessage implements Message {
         $this->translations[$lang] = ${"messages_$lang"};
       }
       else {
-        $this->translations[$lang] = array();
+        $this->translations[$lang] = [];
       }
     }
     return $this->translations[$lang];

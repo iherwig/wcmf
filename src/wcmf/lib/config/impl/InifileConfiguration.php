@@ -29,16 +29,16 @@ use wcmf\lib\util\StringUtil;
  */
 class InifileConfiguration implements Configuration, WritableConfiguration {
 
-  private $configArray = array(); // an assoziate array that holds sections with keys with values
-  private $comments = array(); // an assoziate array that holds the comments/blank lines in the file
-                                // (each comment is attached to the following section/key)
-                                // the key ';' holds the comments at the end of the file
-  private $lookupTable = array(); // an assoziate array that has lowercased section or section:key
-                                   // keys and array(section, key) values for fast lookup
+  private $configArray = []; // an assoziate array that holds sections with keys with values
+  private $comments = []; // an assoziate array that holds the comments/blank lines in the file
+                          // (each comment is attached to the following section/key)
+                          // the key ';' holds the comments at the end of the file
+  private $lookupTable = []; // an assoziate array that has lowercased section or section:key
+                             // keys and [section, key] values for fast lookup
 
   private $isModified = false;
-  private $addedFiles = array(); // files added to the configuration
-  private $containedFiles = array(); // all included files (also by config include)
+  private $addedFiles = []; // files added to the configuration
+  private $containedFiles = []; // all included files (also by config include)
 
   private $configPath = null;
   private $configExtension = 'ini';
@@ -175,7 +175,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       // process self
       $configArray = $this->configMerge($configArray, $content, true);
     }
-    return array('config' => $configArray, 'files' => $parsedFiles);
+    return ['config' => $configArray, 'files' => $parsedFiles];
   }
 
   /**
@@ -246,9 +246,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   public function getDirectoryValue($key, $section) {
     $value = $this->getValue($key, $section);
     $isArray = is_array($value);
-    $values = !$isArray ? array($value) : $value;
+    $values = !$isArray ? [$value] : $value;
 
-    $result = array();
+    $result = [];
     foreach ($values as $path) {
       $absPath = WCMF_BASE.$path;
       $result[] = $this->fileUtil->realpath($absPath).'/';
@@ -263,9 +263,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   public function getFileValue($key, $section) {
     $value = $this->getValue($key, $section);
     $isArray = is_array($value);
-    $values = !$isArray ? array($value) : $value;
+    $values = !$isArray ? [$value] : $value;
 
-    $result = array();
+    $result = [];
     foreach ($values as $path) {
       $absPath = WCMF_BASE.$path;
       $result[] = $this->fileUtil->realpath(dirname($absPath)).'/'.basename($absPath);
@@ -392,7 +392,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     // create section if requested and determine section name
     if ($lookupEntrySection == null && $createSection) {
       $section = trim($section);
-      $this->configArray[$section] = array();
+      $this->configArray[$section] = [];
       $finalSectionName = $section;
     }
     else {
@@ -519,7 +519,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     if (!file_exists($filename)) {
       throw new ConfigurationException('The config file '.$filename.' does not exist.');
     }
-    $configArray = array();
+    $configArray = [];
     $sectionName = '';
     $lines = file($filename);
     $commentsPending = '';
@@ -533,7 +533,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
       if($line[0] == '[' && $line[strlen($line)-1] == ']') {
         $sectionName = substr($line, 1, strlen($line)-2);
-        $configArray[$sectionName] = array();
+        $configArray[$sectionName] = [];
 
         // store comments/blank lines for section
         $this->comments[$line] = $commentsPending;
@@ -562,7 +562,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * (comma separated values enclosed by curly brackets) into array values.
    */
   protected function processValues() {
-    array_walk_recursive($this->configArray, array($this, 'processValue'));
+    array_walk_recursive($this->configArray, [$this, 'processValue']);
   }
 
   /**
@@ -580,7 +580,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       // make arrays
       if(preg_match("/^{.*}$/", $value)) {
         $arrayValues = StringUtil::quotesplit(substr($value, 1, -1));
-        $value = array();
+        $value = [];
         foreach ($arrayValues as $arrayValue) {
           $value[] = trim($arrayValue);
         }
@@ -741,15 +741,15 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Build the internal lookup table
    */
   protected function buildLookupTable() {
-    $this->lookupTable = array();
+    $this->lookupTable = [];
     foreach ($this->configArray as $section => $entry) {
       // create section entry
       $lookupSectionKey = strtolower($section.':');
-      $this->lookupTable[$lookupSectionKey] = array($section);
+      $this->lookupTable[$lookupSectionKey] = [$section];
       // create key entries
       foreach ($entry as $key => $value) {
         $lookupKey = strtolower($lookupSectionKey.$key);
-        $this->lookupTable[$lookupKey] = array($section, $key);
+        $this->lookupTable[$lookupKey] = [$section, $key];
       }
     }
   }

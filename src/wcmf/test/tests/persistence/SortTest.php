@@ -31,16 +31,16 @@ class SortTest extends DatabaseTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'DBSequence' => array(
-        array('table' => ''),
+        ['table' => ''],
       ),
       'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
       ),
       'NMUserRole' => array(
-        array('fk_user_id' => 0, 'fk_role_id' => 0),
+        ['fk_user_id' => 0, 'fk_role_id' => 0],
       ),
       'Role' => array(
-        array('id' => 0, 'name' => 'administrators'),
+        ['id' => 0, 'name' => 'administrators'],
       ),
       'Publisher' => array(
         array('id' => 12345),
@@ -88,8 +88,8 @@ class SortTest extends DatabaseTestCase {
     // get the existing order
     $chapter1 = $persistenceFacade->load(ObjectId::parse($this->chapterOidStr));
     $subChapters1 = $chapter1->getValue("SubChapter");
-    $orderedChapters = array();
-    $chapterOids = array();
+    $orderedChapters = [];
+    $chapterOids = [];
     for ($i=0, $count=sizeof($subChapters1); $i<$count; $i++) {
       $orderedChapters[] = $subChapters1[$i];
       $chapterOids[] = $subChapters1[$i]->getOID()->__toString();
@@ -121,8 +121,8 @@ class SortTest extends DatabaseTestCase {
     // get the existing order
     $publisher1 = $persistenceFacade->load(ObjectId::parse($this->publisherOidStr));
     $authors1 = $publisher1->getValue("Author");
-    $orderedAuthors = array();
-    $authorOids = array();
+    $orderedAuthors = [];
+    $authorOids = [];
     for ($i=0, $count=sizeof($authors1); $i<$count; $i++) {
       $orderedAuthors[] = $authors1[$i];
       $authorOids[] = $authors1[$i]->getOID()->__toString();
@@ -154,8 +154,8 @@ class SortTest extends DatabaseTestCase {
     // get the existing order
     $chapter1 = $persistenceFacade->load(ObjectId::parse($this->chapterOidStr), 1);
     $children1 = $chapter1->getChildren();
-    $orderedChildren = array();
-    $childOids = array();
+    $orderedChildren = [];
+    $childOids = [];
     for ($i=0, $count=sizeof($children1); $i<$count; $i++) {
       $orderedChildren[] = $children1[$i];
       $childOids[] = $children1[$i]->getOID()->__toString();

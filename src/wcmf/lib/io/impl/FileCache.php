@@ -36,7 +36,7 @@ class FileCache implements Cache {
   public function __construct() {
     $this->fileUtil = new FileUtil();
     ObjectFactory::getInstance('eventManager')->addListener(ConfigChangeEvent::NAME,
-      array($this, 'configChanged'));
+      [$this, 'configChanged']);
   }
 
   /**
@@ -44,7 +44,7 @@ class FileCache implements Cache {
    */
   public function __destruct() {
     ObjectFactory::getInstance('eventManager')->removeListener(ConfigChangeEvent::NAME,
-      array($this, 'configChanged'));
+      [$this, 'configChanged']);
   }
 
   /**
@@ -134,7 +134,7 @@ class FileCache implements Cache {
         $this->cache[$section] = unserialize(file_get_contents($file));
       }
       else {
-        $this->cache[$section] = array();
+        $this->cache[$section] = [];
       }
     }
   }

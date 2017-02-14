@@ -63,7 +63,7 @@ class DefaultFactory implements Factory {
    * Interfaces that must be implemented by the given instances used
    * in the framework.
    */
-  protected $requiredInterfaces = array(
+  protected $requiredInterfaces = [
       'eventManager' =>          'wcmf\lib\core\EventManager',
       'logger' =>                'wcmf\lib\core\Logger',
       'logManager' =>            'wcmf\lib\core\LogManager',
@@ -87,19 +87,19 @@ class DefaultFactory implements Factory {
       'principalFactory' =>      'wcmf\lib\security\principal\PrincipalFactory',
       'user' =>                  'wcmf\lib\security\principal\User',
       'role' =>                  'wcmf\lib\security\principal\Role',
-  );
+  ];
 
   /**
    * The registry for already created instances
    */
-  protected $instances = array();
+  protected $instances = [];
 
   /**
    * The Configuration instance that holds the instance definitions
    */
   protected $configuration = null;
 
-  protected $currentStack = array();
+  protected $currentStack = [];
 
   /**
    * Constructor.
@@ -182,7 +182,7 @@ class DefaultFactory implements Factory {
    * @see Factory::clear()
    */
   public function clear() {
-    $this->instances = array();
+    $this->instances = [];
   }
 
   /**
@@ -224,7 +224,7 @@ class DefaultFactory implements Factory {
       if (class_exists($className)) {
 
         // collect constructor parameters
-        $cParams = array();
+        $cParams = [];
         $refClass = new \ReflectionClass($className);
         if ($refClass->hasMethod('__construct')) {
           $refConstructor = new \ReflectionMethod($className, '__construct');
@@ -348,7 +348,7 @@ class DefaultFactory implements Factory {
     }
     // special treatments, if value is an array
     if (is_array($value)) {
-      $result = array();
+      $result = [];
       $containsInstance = false;
       // check for variables
       foreach ($value as $val) {

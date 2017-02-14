@@ -60,11 +60,11 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
     }
     // initialize session variables
     if (!$this->session->exist(self::PROXY_OBJECTS_SESSION_VARNAME)) {
-      $proxies = array();
+      $proxies = [];
       $this->session->set(self::PROXY_OBJECTS_SESSION_VARNAME, $proxies);
     }
     if (!$this->session->exist(self::REMOTE_OBJECTS_SESSION_VARNAME)) {
-      $objs = array();
+      $objs = [];
       $this->session->set(self::REMOTE_OBJECTS_SESSION_VARNAME, $objs);
     }
     $this->remotingServer = new RemotingServer();
@@ -146,7 +146,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
   public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
 
     $tmpResult = parent::loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
-    $result = array();
+    $result = [];
     foreach($tmpResult as $obj) {
       if ($obj && $this->isResolvingProxies() && strlen($umi = $obj->getValue('umi')) > 0) {
         // store proxy for later reference
@@ -189,7 +189,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
         $oldState = $persistenceFacade->isResolvingProxies();
         $persistenceFacade->setResolveProxies(false);
       }
-      $proxy = $persistenceFacade->loadFirstObject($umi->getType(), $buildDepth, array($umi->getType().'.umi' => $umi->toString()));
+      $proxy = $persistenceFacade->loadFirstObject($umi->getType(), $buildDepth, [$umi->getType().'.umi' => $umi->toString()]);
       if ($isRemoteCapableFacade) {
         $persistenceFacade->setResolveProxies($oldState);
       }
@@ -228,14 +228,12 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
       // create the request
       $request = ObjectFactory::getNewInstance('request');
       $request->setAction('display');
-      $request->setValues(
-        array(
-          'oid' => $oid->toString(),
-          'depth' => "".$buildDepth,
-          'omitMetaData' => true,
-          'translateValues' => $this->isTranslatingValues
-        )
-      );
+      $request->setValues([
+        'oid' => $oid->toString(),
+        'depth' => "".$buildDepth,
+        'omitMetaData' => true,
+        'translateValues' => $this->isTranslatingValues
+      ]);
       self::$logger->debug("Request:\n".$request->toString());
 
       // do the remote call
@@ -333,7 +331,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
     $umiStr = $umi->toString();
     $objects = $this->session->get($varName);
     if (!isset($objects[$umiStr])) {
-      $objects[$umiStr] = array();
+      $objects[$umiStr] = [];
     }
     $objects[$umiStr][$buildDepth] = $obj;
     $this->session->set($varName, $objects);
@@ -397,7 +395,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    * @return The array of umis
    */
   protected function makeUmis($oids, $umiPrefix) {
-    $result = array();
+    $result = [];
     foreach ($oids as $oid) {
       if (strlen($oid->getPrefix()) == 0) {
         $umi = new ObjectId($oid->getType(), $oid->getId(), $umiPrefix);

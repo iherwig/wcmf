@@ -27,7 +27,7 @@ use wcmf\lib\presentation\Response;
 abstract class AbstractFormat implements Format {
 
   private $headersSent = false;
-  private $deserializedNodes = array();
+  private $deserializedNodes = [];
 
   /**
    * @see Format::deserialize()

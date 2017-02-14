@@ -33,29 +33,29 @@ class PermissionControllerTest extends ControllerTestCase {
   }
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
-        array('table' => ''),
-      ),
-      'User' => array(
-        array('id' => 0, 'login' => 'admin', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => 'permissions.ini'),
-        array('id' => 1, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => 'permissions.ini')
-      ),
-      'NMUserRole' => array(
-        array('fk_user_id' => 0, 'fk_role_id' => 0),
-        array('fk_user_id' => 1, 'fk_role_id' => 1),
-      ),
-      'Role' => array(
-        array('id' => 0, 'name' => 'administrators'),
-        array('id' => 1, 'name' => 'tester'),
-      ),
-      'Permission' => array(
-        array('id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users -administrators'),
-      ),
-      'Chapter' => array(
-        array('id' => 111),
-      )
-    ));
+    return new ArrayDataSet([
+      'DBSequence' => [
+        ['table' => ''],
+      ],
+      'User' => [
+        ['id' => 0, 'login' => 'admin', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => 'permissions.ini'],
+        ['id' => 1, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => 'permissions.ini']
+      ],
+      'NMUserRole' => [
+        ['fk_user_id' => 0, 'fk_role_id' => 0],
+        ['fk_user_id' => 1, 'fk_role_id' => 1],
+      ],
+      'Role' => [
+        ['id' => 0, 'name' => 'administrators'],
+        ['id' => 1, 'name' => 'tester'],
+      ],
+      'Permission' => [
+        ['id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users -administrators'],
+      ],
+      'Chapter' => [
+        ['id' => 111],
+      ]
+    ]);
   }
 
   /**
@@ -64,7 +64,7 @@ class PermissionControllerTest extends ControllerTestCase {
   public function testCheckPermissionsAdmin() {
     TestUtil::startSession('admin', 'admin');
 
-    $operations = array(
+    $operations = [
       'app.src.model.wcmf.User??read',
       'app.src.model.wcmf.User??update',
       'app.src.model.wcmf.User??create',
@@ -77,12 +77,12 @@ class PermissionControllerTest extends ControllerTestCase {
       'app.src.model.Publisher??update',
       'app.src.model.Publisher??create',
       'app.src.model.Publisher??delete',
-    );
+    ];
 
     // simulate check permissions call
-    $data = array(
+    $data = [
       'operations' => $operations
-    );
+    ];
     $response = $this->runRequest('checkPermissions', $data);
 
     // test
@@ -111,7 +111,7 @@ class PermissionControllerTest extends ControllerTestCase {
   public function testCheckPermissionsTester() {
     TestUtil::startSession('admin', 'admin');
 
-    $operations = array(
+    $operations = [
       'app.src.model.wcmf.User??read',
       'app.src.model.wcmf.User??update',
       'app.src.model.wcmf.User??create',
@@ -124,13 +124,13 @@ class PermissionControllerTest extends ControllerTestCase {
       'app.src.model.Publisher??update',
       'app.src.model.Publisher??create',
       'app.src.model.Publisher??delete',
-    );
+    ];
 
     // simulate check permissions call
-    $data = array(
+    $data = [
       'operations' => $operations,
       'user' => 'userPermTest'
-    );
+    ];
     $response = $this->runRequest('checkPermissionsOfUser', $data);
 
     // test
@@ -160,9 +160,9 @@ class PermissionControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // simulate get permissions call
-    $data = array(
+    $data = [
       'operation' => 'app.src.model.wcmf.User??read'
-    );
+    ];
     $response = $this->runRequest('getPermissions', $data);
 
     // test
@@ -183,20 +183,20 @@ class PermissionControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // simulate set permissions call
-    $data = array(
+    $data = [
       'operation' => 'app.src.model.wcmf.User??read',
-      'permissions' => array(
-        'allow' => array('administrators'),
-        'deny' => array('tester'),
+      'permissions' => [
+        'allow' => ['administrators'],
+        'deny' => ['tester'],
         'default' => true
-      )
-    );
+      ]
+    ];
     $response = $this->runRequest('setPermissions', $data);
 
     // test
-    $data = array(
+    $data = [
       'operation' => 'app.src.model.wcmf.User??read'
-    );
+    ];
     $response = $this->runRequest('getPermissions', $data);
     $result = $response->getValue('result');
     $this->assertEquals(1, sizeof($result['allow']));
@@ -215,9 +215,9 @@ class PermissionControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // simulate get permissions call
-    $data = array(
+    $data = [
       'operation' => 'Chapter:111?test?delete'
-    );
+    ];
     $response = $this->runRequest('getPermissions', $data);
 
     // test
@@ -227,16 +227,16 @@ class PermissionControllerTest extends ControllerTestCase {
     $this->assertTrue($result['default']);
 
     // simulate set permissions call
-    $data = array(
+    $data = [
       'operation' => 'Chapter:111?test?delete',
       'permissions' => null
-    );
+    ];
     $response = $this->runRequest('setPermissions', $data);
 
     // test
-    $data = array(
+    $data = [
       'operation' => 'Chapter:111?test?delete'
-    );
+    ];
     $response = $this->runRequest('getPermissions', $data);
     $result = $response->getValue('result');
     $this->assertNull($result);
@@ -253,10 +253,10 @@ class PermissionControllerTest extends ControllerTestCase {
     $oid = 'app.src.model.Chapter:111';
 
     // simulate get permissions of user call
-    $data = array(
-      'operations' => array($oid.'??delete'),
+    $data = [
+      'operations' => [$oid.'??delete'],
       'user' => 'admin'
-    );
+    ];
     $response = $this->runRequest('checkPermissionsOfUser', $data);
 
     // test
@@ -265,22 +265,22 @@ class PermissionControllerTest extends ControllerTestCase {
     $this->assertTrue($result['app.src.model.Chapter:111??delete']);
 
     // simulate set permissions call
-    $data = array(
+    $data = [
       'operation' => $oid.'??delete',
-      'permissions' => array(
-        'allow' => array(),
-        'deny' => array('administrators'),
+      'permissions' => [
+        'allow' => [],
+        'deny' => ['administrators'],
         'default' => true
-      )
-    );
+      ]
+    ];
     $response = $this->runRequest('setPermissions', $data);
 
     // test
     // simulate get permissions of user call
-    $data = array(
-      'operations' => array($oid.'??delete'),
+    $data = [
+      'operations' => [$oid.'??delete'],
       'user' => 'admin'
-    );
+    ];
     $response = $this->runRequest('checkPermissionsOfUser', $data);
 
     // test

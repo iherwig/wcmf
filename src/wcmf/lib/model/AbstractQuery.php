@@ -104,7 +104,7 @@ abstract class AbstractQuery {
     $loadOidsOnly = ($buildDepth === false);
 
     // execute the query
-    $result = array();
+    $result = [];
     if ($loadOidsOnly) {
       $data = $mapper->select($selectStmt, $pagingInfo);
 

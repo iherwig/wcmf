@@ -23,8 +23,7 @@ class DefaultRequestListener {
    */
   public function __construct(EventManager $eventManager, PersistenceFacade $persistenceFacade) {
     $this->eventManager = $eventManager;
-    $this->eventManager->addListener(ApplicationEvent::NAME,
-      array($this, 'listen'));
+    $this->eventManager->addListener(ApplicationEvent::NAME, [$this, 'listen']);
     $this->persistenceFacade = $persistenceFacade;
   }
 
@@ -32,8 +31,7 @@ class DefaultRequestListener {
    * Destructor
    */
   public function __destruct() {
-    $this->eventManager->removeListener(ApplicationEvent::NAME,
-      array($this, 'listen'));
+    $this->eventManager->removeListener(ApplicationEvent::NAME, [$this, 'listen']);
   }
 
   /**

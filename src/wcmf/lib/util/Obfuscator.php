@@ -77,7 +77,7 @@ class Obfuscator {
    */
   private function ensureStorage() {
     if (!$this->session->exist(self::$VALUES_VARNAME)) {
-      $values = array();
+      $values = [];
       $this->session->set(self::$VALUES_VARNAME, $values);
     }
   }

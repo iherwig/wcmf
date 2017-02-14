@@ -66,7 +66,7 @@ class AuditingOutputStrategy implements OutputStrategy {
           // get original values
           $orignialValues = $obj->getOriginalValues();
           // collect differences
-          $values = array();
+          $values = [];
           $valueNames = $obj->getValueNames(true);
           foreach($valueNames as $name) {
             $values[$name]['name'] = $name;

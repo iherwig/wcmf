@@ -24,7 +24,7 @@ use wcmf\lib\model\Node;
  * $node = $persistenceFacade->load(ObjectId::parse($oidStr), 1);
  * $children = $node->getChildren();
  * $comparator = new NodeSortkeyComparator($node, $children);
- * usort($children, array($comparator, 'compare'));
+ * usort($children, [$comparator, 'compare']);
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -32,7 +32,7 @@ use wcmf\lib\model\Node;
 class NodeSortkeyComparator {
 
   private $referenceNode;
-  private $oidRoleMap = array();
+  private $oidRoleMap = [];
 
   /**
    * Constructor

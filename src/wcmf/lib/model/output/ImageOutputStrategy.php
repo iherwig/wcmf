@@ -295,7 +295,7 @@ class ImageOutputStrategy implements OutputStrategy {
       $x2 = $this->map[$poid]->x * $this->xscale + $this->labelDim['right'] - $this->labelDim['left'] + $this->border + 1;
       $y2 = $this->map[$poid]->y * $this->yscale + ($this->labelDim['bottom'] - $this->labelDim['top'])/2 + $this->border;
     }
-    return array(new Position($x1, $y1, 0), new Position($x2, $y2, 0));
+    return [new Position($x1, $y1, 0), new Position($x2, $y2, 0)];
   }
 }
 ?>

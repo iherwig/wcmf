@@ -50,9 +50,9 @@ class StringQuery extends ObjectQuery {
    * @return StringQuery
    */
   public static function fromRql($type, $query) {
-    $operatorMap = array('eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
-        'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp', '=' => '=');
-    $combineMap = array('|' => 'OR', '&' => 'AND');
+    $operatorMap = ['eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
+        'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp', '=' => '='];
+    $combineMap = ['|' => 'OR', '&' => 'AND'];
     $mapper = self::getMapper($type);
     $stringQuery = new StringQuery($type);
     foreach ($operatorMap as $rqlOp => $sqlOp) {
@@ -111,9 +111,9 @@ class StringQuery extends ObjectQuery {
       // get all referenced types/roles from the condition and translate
       // attributes to column names
       $conditionString = $this->condition;
-      $otherRoles = array();
+      $otherRoles = [];
       $tokens = StringUtil::splitQuoted($conditionString, "/[\s=<>()!]+/", "'", true);
-      $operators = array('and', 'or', 'not', 'like', 'regexp', 'is', 'null', 'in');
+      $operators = ['and', 'or', 'not', 'like', 'regexp', 'is', 'null', 'in'];
       foreach ($tokens as $token) {
         if (strlen($token) > 0) {
           if (!in_array(strtolower($token), $operators)) {
@@ -220,7 +220,7 @@ class StringQuery extends ObjectQuery {
 
     $table = $mapper->getRealTableName();
     $column = $attributeDescription->getColumn();
-    return array($table, $column);
+    return [$table, $column];
   }
 }
 ?>

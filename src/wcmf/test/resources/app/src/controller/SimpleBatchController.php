@@ -28,13 +28,13 @@ class SimpleBatchController extends BatchController {
   protected function getWorkPackage($number) {
     if ($number == 0) {
       $oids = range(1, 5);
-      return array('name' => 'Package 1',
-          'size' => 2, 'oids' => $oids, 'callback' => 'firstPackage');
+      return ['name' => 'Package 1',
+          'size' => 2, 'oids' => $oids, 'callback' => 'firstPackage'];
     }
     if ($number == 1) {
       $oids = range(6, 10);
-      return array('name' => 'Package 2',
-          'size' => 3, 'oids' => $oids, 'callback' => 'secondPackage');
+      return ['name' => 'Package 2',
+          'size' => 3, 'oids' => $oids, 'callback' => 'secondPackage'];
     }
     else {
       return null;

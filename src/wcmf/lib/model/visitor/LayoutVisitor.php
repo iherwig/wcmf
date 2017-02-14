@@ -27,7 +27,7 @@ class LayoutVisitor extends Visitor
   const MAPTYPE_HORIZONTAL = 0;
   const MAPTYPE_VERTICAL = 1;
 
-  private $map = array();
+  private $map = [];
 
   /**
    * Constructor.

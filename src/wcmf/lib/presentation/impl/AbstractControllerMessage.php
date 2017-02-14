@@ -54,22 +54,22 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * The message headers
    */
-  private $headers = array();
+  private $headers = [];
 
   /**
    * Key value pairs of data contained in this message.
    */
-  private $values = array();
+  private $values = [];
 
   /**
    * Key value pairs of user defined properties contained in this message.
    */
-  private $properties = array();
+  private $properties = [];
 
   /**
    * A list of errors associated with this message.
    */
-  private $errors = array();
+  private $errors = [];
 
   /**
    * Constructor
@@ -182,7 +182,7 @@ abstract class AbstractControllerMessage implements ControllerMessage {
    * @see ControllerMessage::clearHeaders()
    */
   public function clearHeaders() {
-    $this->headers = array();
+    $this->headers = [];
   }
 
   /**
@@ -212,11 +212,11 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   public function getValue($name, $default=null, $validateDesc=null) {
     if ($this->hasValue($name)) {
       $value = $this->values[$name];
-      if ($validateDesc === null || Validator::validate($value, $validateDesc, array('request' => $this))) {
+      if ($validateDesc === null || Validator::validate($value, $validateDesc, ['request' => $this])) {
         return $value;
       }
       throw new ValidationException($name, $value,
-          ObjectFactory::getInstance('message')->getText("The value of '%0%' (%1%) is invalid.", array($name, $value)));
+          ObjectFactory::getInstance('message')->getText("The value of '%0%' (%1%) is invalid.", [$name, $value]));
     }
     else {
       return $default;
@@ -253,7 +253,7 @@ abstract class AbstractControllerMessage implements ControllerMessage {
    * @see ControllerMessage::clearValues()
    */
   public function clearValues() {
-    $this->values = array();
+    $this->values = [];
   }
 
   /**
@@ -305,7 +305,7 @@ abstract class AbstractControllerMessage implements ControllerMessage {
    * @see ControllerMessage::clearErrors()
    */
   public function clearErrors() {
-    $this->errors = array();
+    $this->errors = [];
   }
 
   /**

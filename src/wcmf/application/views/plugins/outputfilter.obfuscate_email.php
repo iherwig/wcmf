@@ -30,10 +30,10 @@ function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $
       // $matches[4] contains the text between the opening and closing <a> tag
 
       $address = $matches[2];
-      $obfuscated_address = str_replace(array(".","@"), array(" dot ", " at "), $address);
+      $obfuscated_address = str_replace(array(".","@"), [" dot ", " at "], $address);
       $extra = trim($matches[1]." ".$matches[3]);
       $text = $matches[4];
-      $obfuscated_text = str_replace(array(".","@"), array(" dot ", " at "), $text);
+      $obfuscated_text = str_replace(array(".","@"), [" dot ", " at "], $text);
 
       $string = "var e; if (e = document.getElementById('obfuscated_email_".$obfuscated_email_count."')) e.style.display = 'none';\n";
       $string .= "document.write('<a href=\"mailto:".$address."\" ".$extra.">".$text."</a>');";

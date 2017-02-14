@@ -31,7 +31,7 @@ class PermissionsTest extends DatabaseTestCase {
   protected function getDataSet() {
     return new ArrayDataSet(array(
       'DBSequence' => array(
-        array('table' => ''),
+        ['table' => ''],
       ),
       'User' => array(
         array('id' => 555, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => 'permissions.ini')

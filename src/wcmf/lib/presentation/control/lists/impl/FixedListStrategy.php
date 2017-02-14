@@ -57,7 +57,7 @@ class FixedListStrategy implements ListStrategy {
     }
 
     // translate values
-    $result = array();
+    $result = [];
       $message = ObjectFactory::getInstance('message');
     foreach ($items as $key => $value) {
       $result[$key] = $message->getText($value, null, $language);

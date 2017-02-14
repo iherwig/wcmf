@@ -39,8 +39,8 @@ use wcmf\lib\service\impl\RPCClient;
  */
 class RemotingServer {
 
-  private $clients = array();
-  private $users = array();
+  private $clients = [];
+  private $users = [];
 
   /**
    * Send a request to the server identified by serverKey.
@@ -91,10 +91,10 @@ class RemotingServer {
       $config = ObjectFactory::getInstance('configuration');
       $remoteUser = $config->getValue($serverKey, 'remoteuser');
       if (is_array($remoteUser) && sizeof($remoteUser) == 2) {
-        $this->users[$serverKey] = array(
+        $this->users[$serverKey] = [
           'login' => $remoteUser[0],
           'password' => $remoteUser[1]
-        );
+        ];
       }
       else {
         throw new IllegialConfigurationException(

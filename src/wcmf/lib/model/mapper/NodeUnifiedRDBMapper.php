@@ -165,7 +165,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
         $movedLookup = $movedList != null ? array_reduce($movedList, function($result, $item) {
           $result[$item->getOID()->__toString()] = true;
           return $result;
-        }, array()) : array();
+        }, []) : [];
         $role = $nodeOrder['role'];
         $defaultRelationDesc = $role != null ? $containerMapper->getRelation($role) : null;
         for ($i=0, $count=sizeof($orderedList); $i<$count; $i++) {
@@ -304,7 +304,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $tableName = $this->getRealTableName();
 
     // id parameters
-    $parameters = array();
+    $parameters = [];
     $idPlaceholder = ':'.$tableName.'_'.$thisAttr->getName();
     for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
       $dbid = $otherObjectProxies[$i]->getValue($relationDescription->getIdName());
@@ -317,7 +317,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     // statement
     $selectStmt = $this->getRelationStatement($thisAttr, $parameters,
           $otherObjectProxies, $otherRole, $criteria, $orderby, $pagingInfo);
-    return array($selectStmt, $relationDescription->getIdName(), $relationDescription->getFkName());
+    return [$selectStmt, $relationDescription->getIdName(), $relationDescription->getFkName()];
   }
 
   /**
@@ -331,7 +331,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $tableName = $this->getRealTableName();
 
     // id parameters
-    $parameters = array();
+    $parameters = [];
     $idPlaceholder = ':'.$tableName.'_'.$thisAttr->getName();
     for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
       $fkValue = $otherObjectProxies[$i]->getValue($relationDescription->getFkName());
@@ -344,7 +344,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     // statement
     $selectStmt = $this->getRelationStatement($thisAttr, $parameters,
           $otherObjectProxies, $otherRole, $criteria, $orderby, $pagingInfo);
-    return array($selectStmt, $relationDescription->getFkName(), $relationDescription->getIdName());
+    return [$selectStmt, $relationDescription->getFkName(), $relationDescription->getIdName()];
 
   }
 
@@ -399,7 +399,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $nmTablename = $nmMapper->getRealTableName();
 
     // id parameters
-    $parameters = array();
+    $parameters = [];
     $idPlaceholder = ':'.$nmTablename.'_'.$otherFkAttr->getName();
     for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
       $dbid = $otherObjectProxies[$i]->getValue($thisRelationDesc->getIdName());
@@ -422,7 +422,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
       $joinCond = $nmTablename.'.'.$thisFkAttr->getName().'='.$tableName.'.'.$thisIdAttr->getName();
-      $joinColumns = array();
+      $joinColumns = [];
       $selectStmt->where($this->quoteIdentifier($nmTablename).'.'.
               $this->quoteIdentifier($otherFkAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
       // order (in this case we use the order of the many to many objects)
@@ -453,7 +453,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // set parameters
     $selectStmt->setParameters($parameters);
-    return array($selectStmt, $thisRelationDesc->getIdName(), self::INTERNAL_VALUE_PREFIX.'id');
+    return [$selectStmt, $thisRelationDesc->getIdName(), self::INTERNAL_VALUE_PREFIX.'id'];
   }
 
   /**
@@ -465,9 +465,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // operations
     $insertOp = new InsertOperation($this->getType(), $values);
-    $operations = array(
-        $insertOp
-    );
+    $operations = [$insertOp];
     return $operations;
   }
 
@@ -483,9 +481,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // operations
     $updateOp = new UpdateOperation($this->getType(), $values, $pkCriteria);
-    $operations = array(
-        $updateOp
-    );
+    $operations = [$updateOp];
     return $operations;
   }
 
@@ -498,9 +494,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     // operations
     $deleteOp = new DeleteOperation($this->getType(), $pkCriteria);
-    $operations = array(
-        $deleteOp
-    );
+    $operations = [$deleteOp];
     return $operations;
   }
 
@@ -514,7 +508,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
   protected function addColumns(SelectStatement $selectStmt, $tableName, $attributes=null) {
     // columns
     $attributeDescs = $this->getAttributes();
-    $columns = array();
+    $columns = [];
     foreach($attributeDescs as $curAttributeDesc) {
       $name = $curAttributeDesc->getName();
       if (($attributes == null || in_array($name, $attributes)) && !($curAttributeDesc instanceof ReferenceDescription)) {
@@ -536,7 +530,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    */
   protected function addReferences(SelectStatement $selectStmt, $tableName) {
     // collect all references first
-    $references = array();
+    $references = [];
     foreach($this->getReferences() as $curReferenceDesc) {
       $referencedType = $curReferenceDesc->getOtherType();
       $referencedValue = $curReferenceDesc->getOtherName();
@@ -550,8 +544,8 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
         if ($otherAttributeDesc instanceof RDBAttributeDescription) {
           // set up the join definition if not already defined
           if (!isset($references[$otherTable])) {
-            $references[$otherTable] = array();
-            $references[$otherTable]['attributes'] = array();
+            $references[$otherTable] = [];
+            $references[$otherTable]['attributes'] = [];
 
             $tableNameQ = $tableName;
             $otherTableQ = $otherTable.'Ref';
@@ -601,7 +595,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @return Array of placeholder/value pairs
    */
   protected function addCriteria(SelectStatement $selectStmt, $criteria, $tableName) {
-    $parameters = array();
+    $parameters = [];
     if ($criteria != null) {
       foreach ($criteria as $criterion) {
         if ($criterion instanceof Criteria) {
@@ -629,9 +623,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @param $defaultOrder The default order definition to use, if orderby is null (@see PersistenceMapper::getDefaultOrder())
    */
   protected function addOrderBy(SelectStatement $selectStmt, $orderby, $tableName, $defaultOrder) {
-    $orderbyFinal = array();
+    $orderbyFinal = [];
     if ($orderby == null) {
-      $orderby = array();
+      $orderby = [];
       // use default ordering
       if ($defaultOrder && sizeof($defaultOrder) > 0) {
         foreach ($defaultOrder as $orderDef) {
@@ -649,7 +643,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @return Array of placeholder/value pairs
    */
   protected function getParameters($criteria, $tableName) {
-    $parameters = array();
+    $parameters = [];
     if ($criteria != null) {
       foreach ($criteria as $criterion) {
         if ($criterion instanceof Criteria) {
@@ -674,7 +668,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @return Associative array
    */
   protected function getPersistentValues(PersistentObject $object) {
-    $values = array();
+    $values = [];
 
     // attribute definitions
     $attributeDescs = $this->getAttributes();
@@ -753,7 +747,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
 
     $criteria1 = new Criteria($nmType, $thisFkAttr->getName(), "=", $thisId);
     $criteria2 = new Criteria($nmType, $otherFkAttr->getName(), "=", $otherId);
-    $criteria = array($criteria1, $criteria2);
+    $criteria = [$criteria1, $criteria2];
     $nmObjects = $nmMapper->loadObjects($nmType, BuildDepth::SINGLE, $criteria);
 
     if ($includeTransaction) {
@@ -778,7 +772,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @see RDBMapper::createPKCondition()
    */
   protected function createPKCondition(ObjectId $oid) {
-    $criterias = array();
+    $criterias = [];
     $type = $this->getType();
     $pkNames = $this->getPKNames();
     $ids = $oid->getId();
@@ -795,7 +789,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    */
   protected function getForeignKeyRelations() {
     if ($this->fkRelations == null) {
-      $this->fkRelations = array();
+      $this->fkRelations = [];
       $relationDescs = $this->getRelations();
       foreach($relationDescs as $relationDesc) {
         if ($relationDesc instanceof RDBManyToOneRelationDescription) {

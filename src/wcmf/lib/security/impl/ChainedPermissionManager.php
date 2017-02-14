@@ -19,7 +19,7 @@ use wcmf\lib\security\PermissionManager;
  */
 class ChainedPermissionManager extends AbstractPermissionManager implements PermissionManager {
 
-  private $managers = array();
+  private $managers = [];
 
   /**
    * Set the PermissionManager instances to delegate to.

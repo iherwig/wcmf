@@ -101,7 +101,7 @@ class ConcurrencyController extends Controller {
       return false;
     }
     $lockType = $request->getValue('type', Lock::TYPE_OPTIMISTIC);
-    if (!in_array($lockType, array(Lock::TYPE_OPTIMISTIC, Lock::TYPE_PESSIMISTIC))) {
+    if (!in_array($lockType, [Lock::TYPE_OPTIMISTIC, Lock::TYPE_PESSIMISTIC])) {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
         ['invalidParameters' => ['type']]));
     }

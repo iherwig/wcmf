@@ -21,7 +21,7 @@ use wcmf\lib\io\FileUtil;
  */
 class I18nUtil {
 
-  private static $result = array();
+  private static $result = [];
   private static $baseDir = '';
 
   /**
@@ -80,19 +80,19 @@ class I18nUtil {
    * use method signatures, that support parameters.
    */
   public static function getMessagesFromFile($file) {
-    $result = array();
+    $result = [];
     if (file_exists($file) && realpath($file) != __FILE__) {
       $fh = fopen($file, "r");
       $content = fread($fh, filesize ($file));
       fclose($fh);
-      $messagePatterns = array(
-          '->getText\(([\'"])(.*?)\\1',    // usage in PHP code, e.g. $message->getText("Text to translate")
-          'Dict\.translate\(([\'"])(.*?)\\3', // usage in JS code, e.g. Dict.translate("Text to translate")
-          '\{translate:(.*?)[\|\}]', // usage in dojo template, e.g. {translate:Text to translate}, {translate:Text to translate|...}
-          '\{translate.*? text=([\'"])(.*?)\\6', // usage in Smarty template, e.g. {translate text="Text to translate"}
-      );
+      $messagePatterns = [
+        '->getText\(([\'"])(.*?)\\1',    // usage in PHP code, e.g. $message->getText("Text to translate")
+        'Dict\.translate\(([\'"])(.*?)\\3', // usage in JS code, e.g. Dict.translate("Text to translate")
+        '\{translate:(.*?)[\|\}]', // usage in dojo template, e.g. {translate:Text to translate}, {translate:Text to translate|...}
+        '\{translate.*? text=([\'"])(.*?)\\6', // usage in Smarty template, e.g. {translate text="Text to translate"}
+      ];
       preg_match_all('/'.join('|', $messagePatterns).'/i', $content, $matchesTmp);
-      $matches = array();
+      $matches = [];
       // filter out empty and duplicates
       foreach(array_merge($matchesTmp[2], $matchesTmp[4], $matchesTmp[5], $matchesTmp[7]) as $match) {
         if ($match != '' && !in_array($match, $matches)) {
@@ -133,7 +133,7 @@ class I18nUtil {
     // write header
     $header = <<<EOT
 <?php
-\$messages_{$language} = array();
+\$messages_{$language} = [];
 \$messages_{$language}[''] = '';
 EOT;
     fwrite($fh, $header."\n");

@@ -33,24 +33,24 @@ class ListControllerTest extends ControllerTestCase {
   }
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
-        array('table' => ''),
-      ),
-      'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
-      ),
-      'NMUserRole' => array(
-        array('fk_user_id' => 0, 'fk_role_id' => 0),
-      ),
-      'Role' => array(
-        array('id' => 0, 'name' => 'administrators'),
-      ),
-      'Lock' => array(
-      ),
-      'Translation' => array(
-      ),
-    ));
+    return new ArrayDataSet([
+      'DBSequence' => [
+        ['table' => ''],
+      ],
+      'User' => [
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
+      ],
+      'NMUserRole' => [
+        ['fk_user_id' => 0, 'fk_role_id' => 0],
+      ],
+      'Role' => [
+        ['id' => 0, 'name' => 'administrators'],
+      ],
+      'Lock' => [
+      ],
+      'Translation' => [
+      ],
+    ]);
   }
 
   /**
@@ -62,9 +62,9 @@ class ListControllerTest extends ControllerTestCase {
 
     // simulate a simple list call
     $type = $oid->getType();
-    $data = array(
+    $data = [
       'className' => $type
-    );
+    ];
     $response = $this->runRequest('list', $data);
 
     // test
@@ -94,10 +94,10 @@ class ListControllerTest extends ControllerTestCase {
 
     // simulate a localized display call
     $type = $oid->getType();
-    $data = array(
+    $data = [
       'className' => $type,
       'language' => 'de'
-    );
+    ];
     $response = $this->runRequest('list', $data);
 
     // test

@@ -111,15 +111,15 @@ class ObjectQuery extends AbstractQuery {
   private $id = '';
   private $typeNode = null;
   private $isTypeNodeInQuery = false;
-  private $rootNodes = array();
-  private $conditions = array();
-  private $groups = array();
-  private $groupedOIDs = array();
-  private $processedNodes = array();
-  private $involvedTypes = array();
+  private $rootNodes = [];
+  private $conditions = [];
+  private $groups = [];
+  private $groupedOIDs = [];
+  private $processedNodes = [];
+  private $involvedTypes = [];
   private $aliasCounter = 1;
-  private $observedObjects = array();
-  private $parameterOrder = array();
+  private $observedObjects = [];
+  private $parameterOrder = [];
 
   /**
    * Constructor.
@@ -133,15 +133,15 @@ class ObjectQuery extends AbstractQuery {
     $this->rootNodes[] = $this->typeNode;
     $this->id = $queryId == null ? SelectStatement::NO_CACHE : $queryId;
     ObjectFactory::getInstance('eventManager')->addListener(ValueChangeEvent::NAME,
-      array($this, 'valueChanged'));
+      [$this, 'valueChanged']);
   }
 
   /**
-   * Desctructor.
+   * Destructor.
    */
   public function __destruct() {
     ObjectFactory::getInstance('eventManager')->removeListener(ValueChangeEvent::NAME,
-      array($this, 'valueChanged'));
+      [$this, 'valueChanged']);
   }
 
   /**
@@ -212,7 +212,7 @@ class ObjectQuery extends AbstractQuery {
 
       // replace the typeNode, the first time a node template of the query type is registered
       if ($template->getType() == $this->typeNode->getType() && !$this->isTypeNodeInQuery) {
-        $newRootNodes = array($template);
+        $newRootNodes = [$template];
         foreach($this->rootNodes as $node) {
           if ($node != $this->typeNode) {
             $newRootNodes[] = $node;
@@ -234,7 +234,7 @@ class ObjectQuery extends AbstractQuery {
    * @param $combineOperator One of the Criteria::OPERATOR constants that precedes the group (default: _Criteria::OPERATOR_AND_)
    */
   public function makeGroup($templates, $combineOperator=Criteria::OPERATOR_AND) {
-    $this->groups[] = array('tpls' => $templates, self::PROPERTY_COMBINE_OPERATOR => $combineOperator);
+    $this->groups[] = ['tpls' => $templates, self::PROPERTY_COMBINE_OPERATOR => $combineOperator];
     // store grouped nodes in an extra array to separate them from the others
     for ($i=0; $i<sizeof($templates); $i++) {
       if ($templates[$i] != null) {
@@ -385,7 +385,7 @@ class ObjectQuery extends AbstractQuery {
     foreach ($mapper->getRelations() as $relationDescription) {
       $children = $tpl->getValue($relationDescription->getOtherRole());
       if ($children != null && !is_array($children)) {
-        $children = array($children);
+        $children = [$children];
       }
       for($i=0, $count=sizeof($children); $i<$count; $i++) {
         $curChild = $children[$i];
@@ -406,7 +406,7 @@ class ObjectQuery extends AbstractQuery {
                 $joinCondition = $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
                         $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
 
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, array());
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, []);
               }
               elseif ($relationDescription instanceof RDBOneToManyRelationDescription) {
                 $idAttr = $mapper->getAttribute($relationDescription->getIdName());
@@ -414,7 +414,7 @@ class ObjectQuery extends AbstractQuery {
                 $joinCondition = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
                         $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
 
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, array());
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, []);
               }
               elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
                 $thisRelationDescription = $relationDescription->getThisEndRelation();
@@ -432,8 +432,8 @@ class ObjectQuery extends AbstractQuery {
                 $joinCondition2 = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$otherIdAttr->getColumn().' = '.
                         $nmMapper->getRealTableName().'.'.$otherFkAttr->getColumn();
 
-                $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, array());
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, array());
+                $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, []);
+                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, []);
 
                 // register the nm type
                 $this->involvedTypes[$nmMapper->getType()] = true;
@@ -530,9 +530,9 @@ class ObjectQuery extends AbstractQuery {
    * @return Array
    */
   protected function getParameters($criteria, array $parameterOrder) {
-    $parameters = array();
+    $parameters = [];
     // flatten conditions
-    $criteriaFlat = array();
+    $criteriaFlat = [];
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     foreach ($criteria as $key => $curCriteria) {
       foreach ($curCriteria as $criterion) {
@@ -571,9 +571,9 @@ class ObjectQuery extends AbstractQuery {
    * Reset internal variables. Must be called after buildQuery
    */
   protected function resetInternals() {
-    $this->processedNodes = array();
-    $this->parameterOrder = array();
-    $this->involvedTypes = array();
+    $this->processedNodes = [];
+    $this->parameterOrder = [];
+    $this->involvedTypes = [];
     $this->aliasCounter = 1;
   }
 
@@ -604,7 +604,7 @@ class ObjectQuery extends AbstractQuery {
       $tpl->setProperty(self::PROPERTY_TABLE_NAME, $tableName);
     }
 
-    return array('name' => $mapperTableName, 'alias' => $tableName);
+    return ['name' => $mapperTableName, 'alias' => $tableName];
   }
 
   /**
@@ -644,7 +644,7 @@ class ObjectQuery extends AbstractQuery {
       $oid = $object->getOID()->__toString();
       // store change in internal array to have it when constructing the query
       if (!isset($this->conditions[$oid])) {
-        $this->conditions[$oid] = array();
+        $this->conditions[$oid] = [];
       }
       $this->conditions[$oid][$name] = $newValue;
     }

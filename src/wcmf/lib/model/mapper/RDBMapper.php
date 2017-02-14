@@ -49,8 +49,8 @@ use Zend\Db\TableGateway\TableGateway;
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   private static $SEQUENCE_CLASS = 'DBSequence';
-  private static $adapters = array();      // registry for adapters, key: connId
-  private static $inTransaction = array(); // registry for transaction status (boolean), key: connId
+  private static $adapters = [];      // registry for adapters, key: connId
+  private static $inTransaction = []; // registry for transaction status (boolean), key: connId
   private static $isDebugEnabled = false;
   private static $logger = null;
 
@@ -68,7 +68,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   private $idUpdateStmt = null;
 
   // keeps track of currently loading relations to avoid circular loading
-  private $loadingRelations = array();
+  private $loadingRelations = [];
 
   const INTERNAL_VALUE_PREFIX = '_mapper_internal_';
 
@@ -96,7 +96,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * PDO throws an exception if tried to be (un-)serialized.
    */
   public function __sleep() {
-    return array('connectionParams', 'dbPrefix');
+    return ['connectionParams', 'dbPrefix'];
   }
 
   /**
@@ -133,8 +133,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       isset($this->connectionParams['dbUserName']) && isset($this->connectionParams['dbPassword']) &&
       isset($this->connectionParams['dbName'])) {
 
-      $this->connId = join(',', array($this->connectionParams['dbType'], $this->connectionParams['dbHostName'],
-          $this->connectionParams['dbUserName'], $this->connectionParams['dbPassword'], $this->connectionParams['dbName']));
+      $this->connId = join(',', [$this->connectionParams['dbType'], $this->connectionParams['dbHostName'],
+          $this->connectionParams['dbUserName'], $this->connectionParams['dbPassword'], $this->connectionParams['dbName']]);
 
       // reuse an existing adapter if possible
       if (isset(self::$adapters[$this->connId])) {
@@ -147,9 +147,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           $dbType = strtolower($this->connectionParams['dbType']);
 
           // create new connection
-          $pdoParams = array(
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-          );
+          $pdoParams = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
           // driver specific
           switch ($dbType) {
             case 'mysql':
@@ -166,14 +164,14 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
               break;
           }
 
-          $params = array(
+          $params = [
             'hostname' => $this->connectionParams['dbHostName'],
             'username' => $this->connectionParams['dbUserName'],
             'password' => $this->connectionParams['dbPassword'],
             'database' => $this->connectionParams['dbName'],
             'driver' => 'Pdo_'.ucfirst($this->connectionParams['dbType']),
             'driver_options' => $pdoParams
-          );
+          ];
 
           if (!empty($this->connectionParams['dbPort'])) {
             $params['port'] = $this->connectionParams['dbPort'];
@@ -234,7 +232,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       if (sizeof($rows) == 0) {
         $this->idInsertStmt->execute();
         $this->idInsertStmt->closeCursor();
-        $rows = array(array('id' => 1));
+        $rows = [['id' => 1]];
       }
       $id = $rows[0]['id'];
       $this->idUpdateStmt->execute();
@@ -331,7 +329,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         }
         // return empty array, if page size <= 0
         if ($pagingInfo->getPageSize() <= 0) {
-          return array();
+          return [];
         }
       }
       if (self::$isDebugEnabled) {
@@ -369,7 +367,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $tableName = $this->getRealTableName();
 
     // translate value names to columns
-    $translatedValues = array();
+    $translatedValues = [];
     foreach($operation->getValues() as $name => $value) {
       $attrDesc = $this->getAttribute($name);
       if ($attrDesc) {
@@ -378,7 +376,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     }
 
     // transform criteria
-    $where = array();
+    $where = [];
     foreach ($operation->getCriteria() as $criterion) {
       list($criteriaCondition) = $this->renderCriteria($criterion, null, $tableName);
       $where[] = $criteriaCondition;
@@ -466,18 +464,18 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   private function initRelations() {
     if ($this->relations == null) {
-      $this->relations = array();
+      $this->relations = [];
       $this->relations['byrole'] = $this->getRelationDescriptions();
-      $this->relations['bytype'] = array();
-      $this->relations['parent'] = array();
-      $this->relations['child'] = array();
-      $this->relations['undefined'] = array();
-      $this->relations['nm'] = array();
+      $this->relations['bytype'] = [];
+      $this->relations['parent'] = [];
+      $this->relations['child'] = [];
+      $this->relations['undefined'] = [];
+      $this->relations['nm'] = [];
 
       foreach ($this->relations['byrole'] as $role => $desc) {
         $otherType = $desc->getOtherType();
         if (!isset($this->relations['bytype'][$otherType])) {
-          $this->relations['bytype'][$otherType] = array();
+          $this->relations['bytype'][$otherType] = [];
         }
         $this->relations['bytype'][$otherType][] = $desc;
         $this->relations['bytype'][$this->persistenceFacade->getSimpleType($otherType)][] = $desc;
@@ -507,7 +505,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   public function getAttributes(array $tags=array(), $matchMode='all') {
     $this->initAttributes();
-    $result = array();
+    $result = [];
     if (sizeof($tags) == 0) {
       $result = array_values($this->attributes['byname']);
     }
@@ -548,9 +546,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   private function initAttributes() {
     if ($this->attributes == null) {
-      $this->attributes = array();
+      $this->attributes = [];
       $this->attributes['byname'] = $this->getAttributeDescriptions();
-      $this->attributes['refs'] = array();
+      $this->attributes['refs'] = [];
       foreach ($this->attributes['byname'] as $name => $attrDesc) {
         if ($attrDesc instanceof ReferenceDescription) {
           $this->attributes['refs'][] = $attrDesc;
@@ -621,7 +619,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    */
   public function constructOID($data) {
     $pkNames = $this->getPkNames();
-    $ids = array();
+    $ids = [];
     foreach ($pkNames as $pkName) {
       $ids[] = $data[$pkName];
     }
@@ -670,7 +668,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         $condition .= $valueStr;
       }
     }
-    return array($condition, $placeholder);
+    return [$condition, $placeholder];
   }
 
   /**
@@ -697,7 +695,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @note The type parameter is not used here because this class only constructs one type
    */
   protected function createImpl($type, $buildDepth=BuildDepth::SINGLE) {
-    if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::SINGLE, BuildDepth::REQUIRED))) {
+    if ($buildDepth < 0 && !in_array($buildDepth, [BuildDepth::SINGLE, BuildDepth::REQUIRED])) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
     // create the object
@@ -726,7 +724,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
           else {
             $childObject = $this->persistenceFacade->create($curRelationDesc->getOtherType(), $newBuildDepth);
           }
-          $object->setValue($curRelationDesc->getOtherRole(), array($childObject), true, false);
+          $object->setValue($curRelationDesc->getOtherRole(), [$childObject], true, false);
         }
       }
     }
@@ -867,7 +865,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     if ($this->adapter == null) {
       $this->connect();
     }
-    $oids = array();
+    $oids = [];
 
     // create query
     $selectStmt = $this->getSelectSQL($criteria, null, $this->getPkNames(), $orderby, $pagingInfo);
@@ -905,7 +903,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @return Array of PersistentObject instances
    */
   protected function loadObjectsFromQueryParts($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    if ($buildDepth < 0 && !in_array($buildDepth, array(BuildDepth::INFINITE, BuildDepth::SINGLE))) {
+    if ($buildDepth < 0 && !in_array($buildDepth, [BuildDepth::INFINITE, BuildDepth::SINGLE])) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
 
@@ -928,7 +926,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     if ($this->adapter == null) {
       $this->connect();
     }
-    $objects = array();
+    $objects = [];
 
     $data = $this->select($selectStmt, $pagingInfo);
     if (sizeof($data) == 0) {
@@ -949,7 +947,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $this->addRelatedObjects($objects, $buildDepth);
 
     // attach objects to the transaction
-    $attachedObjects = array();
+    $attachedObjects = [];
     for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
       $attachedObject = $tx->attach($objects[$i]);
       // don't return objects that are to be deleted by the current transaction
@@ -1063,7 +1061,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     if (self::$isDebugEnabled) {
       self::$logger->debug("Load relation: ".$role);
     }
-    $relatives = array();
+    $relatives = [];
     if (sizeof($objects) == 0) {
       return $relatives;
     }
@@ -1078,7 +1076,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
 
       // load related objects from other mapper
-      $relatedObjects = array();
+      $relatedObjects = [];
       $thisRole = $otherRelationDescription->getThisRole();
       $thisRelationDescription = $otherMapper->getRelationImpl($thisRole, true);
       if ($thisRelationDescription->getOtherNavigability() == true) {
@@ -1087,11 +1085,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       }
     }
     // group relatedObjects by original objects
-    $relativeMap = array();
+    $relativeMap = [];
     foreach ($relatedObjects as $relatedObject) {
       $key = $relatedObject->getValue($relValueName);
       if (!isset($relativeMap[$key])) {
-        $relativeMap[$key] = array();
+        $relativeMap[$key] = [];
       }
       $relativeMap[$key][] = ($buildDepth != BuildDepth::PROXIES_ONLY) ? $relatedObject :
               new PersistentObjectProxy($relatedObject->getOID());
@@ -1106,7 +1104,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     foreach ($objects as $object) {
       $oidStr = $object->getOID()->__toString();
       $key = $object->getValue($objValueName);
-      $relatives[$oidStr] = isset($relativeMap[$key]) ? $relativeMap[$key] : array();
+      $relatives[$oidStr] = isset($relativeMap[$key]) ? $relativeMap[$key] : [];
     }
     return $relatives;
   }

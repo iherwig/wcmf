@@ -37,15 +37,15 @@ class NodeUtil {
    * @return An array of PathDescription instances
    */
   public static function getConnections($type, $otherRole, $otherType, $hierarchyType='all') {
-    $paths = array();
+    $paths = [];
     self::getConnectionsImpl($type, $otherRole, $otherType, $hierarchyType, $paths);
     $minLength = -1;
-    $shortestPaths = array();
+    $shortestPaths = [];
     foreach ($paths as $curPath) {
       $curLength = $curPath->getPathLength();
       if ($minLength == -1 || $minLength > $curLength) {
         $minLength = $curLength;
-        $shortestPaths = array($curPath);
+        $shortestPaths = [$curPath];
       }
       elseif ($curLength == $minLength) {
         $shortestPaths[] = $curPath;
@@ -166,7 +166,7 @@ class NodeUtil {
       $node = $localization->loadTranslation($node, $language);
     }
 
-    $displayArray = array();
+    $displayArray = [];
     $displayValuesNames = $node->getProperty('displayValues');
     if (sizeof($displayValuesNames) > 0) {
       $mapper = $node->getMapper();
