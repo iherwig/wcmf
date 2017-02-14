@@ -47,7 +47,7 @@ use wcmf\lib\security\PermissionManager;
  */
 class SearchController extends ListController {
 
-  private $hits = array();
+  private $hits = [];
   private $search = null;
 
   /**
@@ -91,14 +91,14 @@ class SearchController extends ListController {
     // search with searchterm (even if empty) if no query is given
     $this->hits = $this->search->find($queryCondition, $pagingInfo);
 
-    $oids = array();
+    $oids = [];
     foreach ($this->hits as $hit) {
       $oids[] = ObjectId::parse($hit['oid']);
     }
 
     // load the objects
     $persistenceFacade = $this->getPersistenceFacade();
-    $objects = array();
+    $objects = [];
     foreach($oids as $oid) {
       if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
         $obj = $persistenceFacade->load($oid);
@@ -128,12 +128,12 @@ class SearchController extends ListController {
     $request = $this->getRequest();
     if ($request->hasValue('sortFieldName')) {
       $sortDir = $request->hasValue('sortDirection') ? $request->getValue('sortDirection') : 'asc';
-      $sortCriteria = array(
+      $sortCriteria = [
          $request->getValue('sortFieldName') => $sortDir == 'asc' ?
               NodeComparator::SORTTYPE_ASC : NodeComparator::SORTTYPE_DESC
-      );
+      ];
       $comparator = new NodeComparator($sortCriteria);
-      usort($nodes, array($comparator, 'compare'));
+      usort($nodes, [$comparator, 'compare']);
     }
   }
 }

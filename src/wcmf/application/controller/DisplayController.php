@@ -51,7 +51,7 @@ class DisplayController extends Controller {
     $oid = ObjectId::parse($request->getValue('oid'));
     if(!$oid) {
       $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => array($request->getValue('oid')))));
+        ['invalidOids' => [$request->getValue('oid')]]));
       return false;
     }
     if($request->hasValue('depth')) {
@@ -98,7 +98,7 @@ class DisplayController extends Controller {
 
     // translate values if requested
     if ($request->getBooleanValue('translateValues')) {
-      $nodes = array($node);
+      $nodes = [$node];
       if ($this->isLocalizedRequest()) {
         NodeUtil::translateValues($nodes, $request->getValue('language'));
       }

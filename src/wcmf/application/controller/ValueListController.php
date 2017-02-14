@@ -47,7 +47,7 @@ class ValueListController extends Controller {
     $response = $this->getResponse();
     if(!$request->hasValue('listDef')) {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
-        array('invalidParameters' => array('listDef'))));
+        ['invalidParameters' => ['listDef']]));
       return false;
     }
     if (!$this->checkLanguageParameter()) {
@@ -86,14 +86,14 @@ class ValueListController extends Controller {
     }
 
     $list = ValueListProvider::getList($listDef, $language);
-    $items = array();
+    $items = [];
     for($i=0, $count=sizeof($list['items']); $i<$count; $i++) {
       $item = $list['items'][$i];
       $value = $item['key'];
       $displayText = $item['value'];
       if ((!$hasDisplayTextFilter || preg_match($displayTextFilter, $displayText)) &&
               (!$hasValueFilter || $valueFilter == $value)) {
-        $items[] = array('oid' => $i, 'value' => $value, 'displayText' => $displayText);
+        $items[] = ['oid' => $i, 'value' => $value, 'displayText' => $displayText];
       }
     }
 

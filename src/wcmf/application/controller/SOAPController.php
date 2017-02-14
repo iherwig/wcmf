@@ -60,7 +60,7 @@ class SOAPController extends Controller {
 
     // register search method
     $server->register('search',
-      array('query' => 'xsd:string'), array('return' => 'tns:SearchResultList'),
+      ['query' => 'xsd:string'], ['return' => 'tns:SearchResultList'],
       $server::TNS, $server->wsdl->endpoint.'#search', 'document', 'literal'
     );
 
@@ -84,14 +84,14 @@ class SOAPController extends Controller {
    */
   public static function search($query) {
     global $server;
-    $response = $server->doCall('search', array('query' => $query));
-    $result = array();
+    $response = $server->doCall('search', ['query' => $query]);
+    $result = [];
     foreach ($response->getValue('list') as $item) {
-      $result[] = array('type' => $item['type'], 'oid' => $item['oid'],
+      $result[] = ['type' => $item['type'], 'oid' => $item['oid'],
         'displayValue' => $item['displayValue'], 'summary' => $item['summary']
-      );
+      ];
     }
-    return array('return' => $result);
+    return ['return' => $result];
   }
 }
 ?>

@@ -78,22 +78,22 @@ class SaveController extends Controller {
     $message = $this->getMessage();
 
     // array of all involved nodes
-    $nodeArray = array();
+    $nodeArray = [];
 
     // array of oids to actually save
-    $saveOids = array();
+    $saveOids = [];
 
     // array of oids to insert (subset of saveOids)
-    $insertOids = array();
+    $insertOids = [];
 
     // start the persistence transaction
     $transaction = $persistenceFacade->getTransaction();
     $transaction->begin();
     try {
       // store all invalid parameters for later reference
-      $invalidOids = array();
-      $invalidAttributeNames = array();
-      $invalidAttributeValues = array();
+      $invalidOids = [];
+      $invalidAttributeNames = [];
+      $invalidAttributeValues = [];
       $needCommit = false;
       $curNode = null;
 
@@ -202,8 +202,8 @@ class SaveController extends Controller {
                 }
               }
               catch(ValidationException $ex) {
-                $invalidAttributeValues[] = array('oid' => $curOidStr,
-                  'parameter' => $curValueName, 'message' => $ex->getMessage());
+                $invalidAttributeValues[] = ['oid' => $curOidStr,
+                  'parameter' => $curValueName, 'message' => $ex->getMessage()];
               }
             }
 
@@ -222,15 +222,15 @@ class SaveController extends Controller {
       // add errors to the response
       if (sizeof($invalidOids) > 0) {
         $response->addError(ApplicationError::get('OID_INVALID',
-          array('invalidOids' => $invalidOids)));
+          ['invalidOids' => $invalidOids]));
       }
       if (sizeof($invalidAttributeNames) > 0) {
         $response->addError(ApplicationError::get('ATTRIBUTE_NAME_INVALID',
-          array('invalidAttributeNames' => $invalidAttributeNames)));
+          ['invalidAttributeNames' => $invalidAttributeNames]));
       }
       if (sizeof($invalidAttributeValues) > 0) {
         $response->addError(ApplicationError::get('ATTRIBUTE_VALUE_INVALID',
-          array('invalidAttributeValues' => $invalidAttributeValues)));
+          ['invalidAttributeValues' => $invalidAttributeValues]));
       }
 
       // commit changes
@@ -249,7 +249,7 @@ class SaveController extends Controller {
               if (isset($insertOids[$curOidStr])) {
                 // translations are only allowed for existing objects
                 $response->addError(ApplicationError::get('PARAMETER_INVALID',
-                  array('invalidParameters' => array('language'))));
+                  ['invalidParameters' => ['language']]));
               }
               else {
                 // store a translation for localized data
@@ -272,13 +272,13 @@ class SaveController extends Controller {
     catch (PessimisticLockException $ex) {
       $lock = $ex->getLock();
       $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
-        array('lockedOids' => array($lock->getObjectId()->__toString()))));
+        ['lockedOids' => [$lock->getObjectId()->__toString()]]));
       $transaction->rollback();
     }
     catch (OptimisticLockException $ex) {
       $currentState = $ex->getCurrentState();
       $response->addError(ApplicationError::get('CONCURRENT_UPDATE',
-        array('currentState' => $currentState)));
+        ['currentState' => $currentState]));
       $transaction->rollback();
     }
     catch (\Exception $ex) {
@@ -320,14 +320,14 @@ class SaveController extends Controller {
       // upload request -> see if upload was succesfull
       if ($data['tmp_name'] == 'none') {
         $response->addError(ApplicationError::get('GENERAL_ERROR',
-          array('message' => $message->getText("Upload failed for %0%.", array($data['name'])))));
+          ['message' => $message->getText("Upload failed for %0%.", [$data['name']])]));
         return null;
       }
 
       // check if file was actually uploaded
       if (!is_uploaded_file($data['tmp_name'])) {
-        $message = $message->getText("Possible file upload attack: filename %0%.", array($data['name']));
-        $response->addError(ApplicationError::get('GENERAL_ERROR', array('message' => $message)));
+        $message = $message->getText("Possible file upload attack: filename %0%.", [$data['name']]);
+        $response->addError(ApplicationError::get('GENERAL_ERROR', ['message' => $message]));
         return null;
       }
 

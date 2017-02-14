@@ -81,7 +81,7 @@ class CSVExportController extends BatchController {
         !$this->getPersistenceFacade()->isKnownType($request->getValue('className')))
       {
         $response->addError(ApplicationError::get('PARAMETER_INVALID',
-          array('invalidParameters' => array('className'))));
+          ['invalidParameters' => ['className']]));
         return false;
       }
       // check for permission to read instances of className
@@ -111,8 +111,8 @@ class CSVExportController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      return array('name' => $this->getMessage()->getText('Initialization'),
-          'size' => 1, 'oids' => array(1), 'callback' => 'initExport');
+      return ['name' => $this->getMessage()->getText('Initialization'),
+          'size' => 1, 'oids' => [1], 'callback' => 'initExport'];
     }
   }
 
@@ -157,7 +157,7 @@ class CSVExportController extends BatchController {
     $sortArray = null;
     $orderBy = $this->getRequestValue('sortFieldName');
     if (strlen($orderBy) > 0) {
-      $sortArray = array($orderBy." ".$this->getRequestValue('sortDirection'));
+      $sortArray = [$orderBy." ".$this->getRequestValue('sortDirection')];
     }
 
     // get object ids of all nodes to export
@@ -180,7 +180,7 @@ class CSVExportController extends BatchController {
     // create work packages for nodes
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     $this->addWorkPackage(
-            $message->getText('Exporting %0%', array($type)),
+            $message->getText('Exporting %0%', [$type]),
             $nodesPerCall, $oids, 'exportNodes');
   }
 

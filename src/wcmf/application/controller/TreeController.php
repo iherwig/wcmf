@@ -68,7 +68,7 @@ class TreeController extends Controller {
     }
 
     // create response
-    $responseObjects = array();
+    $responseObjects = [];
     for ($i=0, $count=sizeof($objects); $i<$count; $i++) {
       $object = $objects[$i];
       if ($this->isVisible($object)) {
@@ -94,10 +94,10 @@ class TreeController extends Controller {
     // check read permission on type
     $type = $oid->getType();
     if (!$permissionManager->authorize($type, '', PersistenceAction::READ)) {
-      return array();
+      return [];
     }
 
-    $objectsTmp = array();
+    $objectsTmp = [];
     if ($this->isRootTypeNode($oid)) {
       // load instances of type
       $objectsTmp = $persistenceFacade->loadObjects($type, BuildDepth::SINGLE);
@@ -113,7 +113,7 @@ class TreeController extends Controller {
     }
 
     // check read permission on instances
-    $objects = array();
+    $objects = [];
     foreach ($objectsTmp as $object) {
       if ($permissionManager->authorize($object->getOID(), '', PersistenceAction::READ)) {
         $objects[] = $object;
@@ -148,12 +148,12 @@ class TreeController extends Controller {
     $oid = $node->getOID();
     $isFolder = $oid->containsDummyIds();
     $hasChildren = $this->isRootTypeNode($oid) || sizeof($node->getNumChildren()) > 0;
-    return array(
+    return [
       'oid' => $node->getOID()->__toString(),
       'displayText' => $displayText,
       'isFolder' => $isFolder,
       'hasChildren' => $hasChildren
-    );
+    ];
   }
 
   /**
@@ -206,7 +206,7 @@ class TreeController extends Controller {
     // filter types by read permission
     $permissionManager = $this->getPermissionManager();
     $persistenceFacade = $this->getPersistenceFacade();
-    $nodes = array();
+    $nodes = [];
     foreach($types as $type) {
       if ($permissionManager->authorize($type, '', PersistenceAction::READ)) {
         $node = $persistenceFacade->create($type, BuildDepth::SINGLE);

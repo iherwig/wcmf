@@ -86,7 +86,7 @@ class CopyController extends BatchController {
       }
 
       // initialize session variables
-      $this->setLocalSessionValue(self::OBJECT_MAP_VAR, array());
+      $this->setLocalSessionValue(self::OBJECT_MAP_VAR, []);
       $this->setLocalSessionValue(self::ACTION_VAR, $request->getAction());
 
       // reset iterator
@@ -107,14 +107,14 @@ class CopyController extends BatchController {
       $oid = ObjectId::parse($request->getValue('oid'));
       if(!$oid) {
         $response->addError(ApplicationError::get('OID_INVALID',
-          array('invalidOids' => array($request->getValue('oid')))));
+          ['invalidOids' => [$request->getValue('oid')]]));
         return false;
       }
       if($request->hasValue('targetoid')) {
         $targetoid = ObjectId::parse($request->getValue('targetoid'));
         if(!$targetoid) {
           $response->addError(ApplicationError::get('OID_INVALID',
-            array('invalidOids' => array($request->getValue('targetoid')))));
+            ['invalidOids' => [$request->getValue('targetoid')]]));
           return false;
         }
       }
@@ -168,7 +168,7 @@ class CopyController extends BatchController {
     $name .= ': '.$request->getValue('oid');
 
     if ($number == 0) {
-      return array('name' => $name, 'size' => 1, 'oids' => array(1), 'callback' => 'startProcess');
+      return ['name' => $name, 'size' => 1, 'oids' => [1], 'callback' => 'startProcess'];
     }
     else {
       return null;
@@ -218,8 +218,8 @@ class CopyController extends BatchController {
     else if ($action == 'copy') {
       // with copy action, we need to attach a copy of the Node to the new target,
       // the children need to be loaded and treated in the same way too
-      $iterator = new PersistentIterator(self::ITERATOR_ID_VAR, $persistenceFacade, $session, $nodeOID,
-              array('composite'));
+      $iterator = new PersistentIterator(self::ITERATOR_ID_VAR, $persistenceFacade,
+              $session, $nodeOID, ['composite']);
       $iterator->save();
 
       // copy the first node in order to reduce the number of calls for a single copy
@@ -239,9 +239,8 @@ class CopyController extends BatchController {
         if (StringUtil::getBoolean($this->getRequestValue('recursive')) && $iterator->valid()) {
           $iterator->save();
 
-          $name = $this->getMessage()->getText('Copying tree: continue with %0%',
-                  array($iterator->current()));
-          $this->addWorkPackage($name, 1, array(null), 'copyNodes');
+          $name = $this->getMessage()->getText('Copying tree: continue with %0%', [$iterator->current()]);
+          $this->addWorkPackage($name, 1, [null], 'copyNodes');
         }
         else {
           // set the result and finish
@@ -286,9 +285,8 @@ class CopyController extends BatchController {
       // proceed with current iterator
       $iterator->save();
 
-      $name = $this->getMessage()->getText('Copying tree: continue with %0%',
-              array($iterator->current()));
-      $this->addWorkPackage($name, 1, array(null), 'copyNodes');
+      $name = $this->getMessage()->getText('Copying tree: continue with %0%', [$iterator->current()]);
+      $this->addWorkPackage($name, 1, [null], 'copyNodes');
     }
     else {
       // set the result and finish
@@ -353,7 +351,7 @@ class CopyController extends BatchController {
         $otherRole = $relation->getOtherRole();
         $relativeValue = $node->getValue($otherRole);
         $relatives = $relation->isMultiValued() ? $relativeValue :
-                ($relativeValue != null ? array($relativeValue) : array());
+                ($relativeValue != null ? [$relativeValue] : []);
         foreach ($relatives as $relative) {
           $copiedRelative = $this->getCopy($relative->getOID());
           if ($copiedRelative != null) {

@@ -85,22 +85,21 @@ class MediaController extends Controller {
     $response->setValue('rootPath', $rootPath);
 
     if ($request->getAction() == "browseMedia") {
-      $opts = array(
+      $opts = [
         // 'debug' => true,
-        'roots' => array(
-          array(
+        'roots' => [[
             'driver' => 'LocalFileSystem',
             'path' => str_replace('/', DIRECTORY_SEPARATOR, rtrim($rootPath, '/')),
             'URL' => $rootUrl,
             'alias' => 'Media',
             'tmbBgColor' => 'transparent',
             'startPath' => str_replace('/', DIRECTORY_SEPARATOR, rtrim($absDirectory, '/'))
-          )
-        ),
-        'bind' => array(
-          'rename rm paste' => array($this, 'onFileMoved')
-        )
-      );
+          ]
+        ],
+        'bind' => [
+          'rename rm paste' => [$this, 'onFileMoved']
+        ]
+      ];
 
       // run elFinder
       $connector = new \elFinderConnector(new \elFinder($opts));

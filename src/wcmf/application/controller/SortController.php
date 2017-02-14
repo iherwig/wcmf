@@ -77,13 +77,13 @@ class SortController extends Controller {
     $insertOid = ObjectId::parse($request->getValue('insertOid'));
     if (!$insertOid) {
       $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => array($request->getValue('insertOid')))));
+        ['invalidOids' => [$request->getValue('insertOid')]]));
       return false;
     }
     $referenceOid = ObjectId::parse($request->getValue('referenceOid'));
     if (!$referenceOid && !$isOrderBottom) {
       $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => array($request->getValue('referenceOid')))));
+        ['invalidOids' => [$request->getValue('referenceOid')]]));
       return false;
     }
 
@@ -108,7 +108,7 @@ class SortController extends Controller {
       $containerOid = ObjectId::parse($request->getValue('containerOid'));
       if(!$containerOid) {
         $response->addError(ApplicationError::get('OID_INVALID',
-          array('invalidOids' => array($request->getValue('containerOid')))));
+          ['invalidOids' => [$request->getValue('containerOid')]]));
         return false;
       }
 
@@ -165,8 +165,8 @@ class SortController extends Controller {
     $referenceObject = $isOrderBottom ? new NullNode() : $persistenceFacade->load($referenceOid);
 
     // check object existence
-    $objectMap = array('insertOid' => $insertObject,
-        'referenceOid' => $referenceObject);
+    $objectMap = ['insertOid' => $insertObject,
+        'referenceOid' => $referenceObject];
     if ($this->checkObjects($objectMap)) {
       // determine the sort key
       $mapper = $insertObject->getMapper();
@@ -210,9 +210,9 @@ class SortController extends Controller {
     $containerObject = $persistenceFacade->load($containerOid);
 
     // check object existence
-    $objectMap = array('insertOid' => $insertObject,
+    $objectMap = ['insertOid' => $insertObject,
         'referenceOid' => $referenceObject,
-        'containerOid' => $containerObject);
+        'containerOid' => $containerObject];
     if ($this->checkObjects($objectMap)) {
       $role = $request->getValue('role');
       $originalChildren = $containerObject->getValue($role);
@@ -222,7 +222,7 @@ class SortController extends Controller {
         $containerObject->addNode($insertObject, $role);
       }
       // reorder the children list
-      $orderedChildren = array();
+      $orderedChildren = [];
       foreach ($originalChildren as $curChild) {
         $oid = $curChild->getOID();
         if ($oid == $referenceOid) {
@@ -237,7 +237,7 @@ class SortController extends Controller {
       if ($isOrderBottom) {
         $orderedChildren[] = $insertObject;
       }
-      $containerObject->setNodeOrder($orderedChildren, array($insertObject), $role);
+      $containerObject->setNodeOrder($orderedChildren, [$insertObject], $role);
     }
   }
 
@@ -253,7 +253,7 @@ class SortController extends Controller {
     $tpl = $query->getObjectTemplate($type);
     $tpl->setValue($sortkeyName, Criteria::asValue($sortDirection == 'ASC' ? '<' : '>', $sortkeyValue), true);
     $pagingInfo = new PagingInfo(1, true);
-    $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$sortDirection), $pagingInfo);
+    $objects = $query->execute(BuildDepth::SINGLE, [$sortkeyName." ".$sortDirection], $pagingInfo);
     return sizeof($objects) > 0 ? $objects[0] : null;
   }
 
@@ -267,7 +267,7 @@ class SortController extends Controller {
     $query = new ObjectQuery($type);
     $pagingInfo = new PagingInfo(1, true);
     $invSortDir = $sortDirection == 'ASC' ? 'DESC' : 'ASC';
-    $objects = $query->execute(BuildDepth::SINGLE, array($sortkeyName." ".$invSortDir), $pagingInfo);
+    $objects = $query->execute(BuildDepth::SINGLE, [$sortkeyName." ".$invSortDir], $pagingInfo);
     return sizeof($objects) > 0 ? $objects[0] : null;
   }
 
@@ -280,7 +280,7 @@ class SortController extends Controller {
    */
   protected function checkObjects($objectMap) {
     $response = $this->getResponse();
-    $invalidOids = array();
+    $invalidOids = [];
     foreach ($objectMap as $parameterName => $object) {
       if ($object == null) {
         $invalidOids[] = $parameterName;
@@ -288,7 +288,7 @@ class SortController extends Controller {
     }
     if (sizeof($invalidOids) > 0) {
       $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => $invalidOids)));
+        ['invalidOids' => $invalidOids]));
       return false;
     }
     return true;

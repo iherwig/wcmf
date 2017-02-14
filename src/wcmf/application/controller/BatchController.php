@@ -80,7 +80,7 @@ abstract class BatchController extends Controller {
   const PACKAGES_VAR = 'packages';
 
   private $curStep = null;
-  private $workPackages = array();
+  private $workPackages = [];
 
   /**
    * @see Controller::initialize()
@@ -104,7 +104,7 @@ abstract class BatchController extends Controller {
       // initialize session variables
       $this->setLocalSessionValue(self::ONE_CALL_VAR, $request->getBooleanValue('oneCall', false));
       $this->setLocalSessionValue(self::REQUEST_VAR, $request->getValues());
-      $this->setLocalSessionValue(self::PACKAGES_VAR, array());
+      $this->setLocalSessionValue(self::PACKAGES_VAR, []);
       $this->setLocalSessionValue(self::STEP_VAR, 0);
       $this->setLocalSessionValue(self::NUM_STEPS_VAR, 0);
       $this->setLocalSessionValue(self::DOWNLOAD_STEP_VAR, false);
@@ -218,7 +218,7 @@ abstract class BatchController extends Controller {
     $counter = 1;
     $total = sizeof($oids);
     while(sizeof($oids) > 0) {
-      $items = array();
+      $items = [];
       for($i=0; $i<$size && sizeof($oids)>0; $i++) {
         $nextItem = array_shift($oids);
         $items[] = sprintf('%s', $nextItem);
@@ -236,10 +236,12 @@ abstract class BatchController extends Controller {
         $statusText = $stepsText.'/'.$total;
       }
 
-      $curWorkPackage = array('name' => $name.' '.$statusText,
-                         'oids' => $items,
-                         'callback' => $callback,
-                         'args' => $args);
+      $curWorkPackage = [
+        'name' => $name.' '.$statusText,
+        'oids' => $items,
+        'callback' => $callback,
+        'args' => $args
+      ];
       $workPackages[] = $curWorkPackage;
       $counter += $size;
     }
@@ -271,7 +273,7 @@ abstract class BatchController extends Controller {
       $oid = ObjectId::parse($oidStr);
       return $oid != null ? $oid : $oidStr;
     }, $curWorkPackageDef['oids']);
-    call_user_func(array($this, $curWorkPackageDef['callback']), $oids, $curWorkPackageDef['args']);
+    call_user_func([$this, $curWorkPackageDef['callback']], $oids, $curWorkPackageDef['args']);
   }
 
   /**

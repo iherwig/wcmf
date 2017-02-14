@@ -99,7 +99,7 @@ class SearchIndexController extends BatchController {
     if ($number == 0) {
       if ($this->search instanceof IndexedSearch) {
         // get all types to index
-        $types = array();
+        $types = [];
         $persistenceFacade = $this->getPersistenceFacade();
         foreach ($persistenceFacade->getKnownTypes() as $type) {
           $tpl = $persistenceFacade->create($type);
@@ -108,8 +108,8 @@ class SearchIndexController extends BatchController {
           }
         }
         $this->search->resetIndex();
-        return array('name' => $this->getMessage()->getText('Collect objects'),
-            'size' => 1, 'oids' => $types, 'callback' => 'collect');
+        return ['name' => $this->getMessage()->getText('Collect objects'),
+            'size' => 1, 'oids' => $types, 'callback' => 'collect'];
       }
       else {
         // no index to be updated

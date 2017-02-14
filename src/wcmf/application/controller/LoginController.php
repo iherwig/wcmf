@@ -99,7 +99,7 @@ class LoginController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     if ($request->getAction() == 'login') {
-      $invalidParameters = array();
+      $invalidParameters = [];
       if(!$request->hasValue('user')) {
         $invalidParameters[] = 'user';
       }
@@ -109,7 +109,7 @@ class LoginController extends Controller {
 
       if (sizeof($invalidParameters) > 0) {
         $response->addError(ApplicationError::get('PARAMETER_INVALID',
-          array('invalidParameters' => $invalidParameters)));
+          ['invalidParameters' => $invalidParameters]));
         return false;
       }
     }
@@ -127,10 +127,10 @@ class LoginController extends Controller {
     if ($request->getAction() == 'login') {
       // try to login
       try {
-        $authUser = $this->authenticationManager->login(array(
+        $authUser = $this->authenticationManager->login([
             'login' => $request->getValue('user'),
             'password' => $request->getValue('password')
-        ));
+        ]);
       }
       catch (\Exception $ex) {
         $authUser = null;
@@ -143,7 +143,7 @@ class LoginController extends Controller {
         $session->setAuthUser($authUser->getLogin());
 
         // return role names of the user
-        $roleNames = array();
+        $roleNames = [];
         $roles = $authUser->getRoles();
         for ($i=0, $count=sizeof($roles); $i<$count; $i++) {
           $roleNames[] = $roles[$i]->getName();

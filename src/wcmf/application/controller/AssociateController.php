@@ -67,13 +67,13 @@ class AssociateController extends Controller {
     $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
     if(!$sourceOid) {
       $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => array($request->getValue('sourceOid')))));
+        ['invalidOids' => [$request->getValue('sourceOid')]]));
       return false;
     }
     $targetOid = ObjectId::parse($request->getValue('targetOid'));
     if(!$targetOid) {
       $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => array($request->getValue('targetOid')))));
+        ['invalidOids' => [$request->getValue('targetOid')]]));
       return false;
     }
 
@@ -148,11 +148,11 @@ class AssociateController extends Controller {
       else {
         if ($sourceNode == null) {
           $response->addError(ApplicationError::get('OID_INVALID',
-            array('invalidOids' => array('sourceOid'))));
+                  ['invalidOids' => ['sourceOid']]));
         }
         if ($targetNode == null) {
           $response->addError(ApplicationError::get('OID_INVALID',
-            array('invalidOids' => array('targetOid'))));
+                  ['invalidOids' => ['targetOid']]));
         }
       }
       $transaction->commit();

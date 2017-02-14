@@ -102,10 +102,10 @@ class PermissionController extends Controller {
   protected function validate() {
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $invalidParameters = array();
+    $invalidParameters = [];
     if ($request->getAction() == 'createPermission' || $request->getAction() == 'removePermission' ||
              $request->getAction() == 'getPermissions' || $request->getAction() == 'setPermissions') {
-      foreach (array('operation') as $param) {
+      foreach (['operation'] as $param) {
         if(!$request->hasValue($param)) {
           $invalidParameters[] = $param;
         }
@@ -127,7 +127,7 @@ class PermissionController extends Controller {
 
     if (sizeof($invalidParameters) > 0) {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
-        array('invalidParameters' => $invalidParameters)));
+        ['invalidParameters' => $invalidParameters]));
       return false;
     }
     return true;
@@ -145,8 +145,8 @@ class PermissionController extends Controller {
 
     // process actions
     if (strpos($action, 'check') === 0) {
-      $result = array();
-      $operations = $request->hasValue('operations') ? $request->getValue('operations') : array();
+      $result = [];
+      $operations = $request->hasValue('operations') ? $request->getValue('operations') : [];
       $user = $action == 'checkPermissionsOfUser' ? $request->getValue('user') : null;
 
       foreach($operations as $operation) {

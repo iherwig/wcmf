@@ -33,14 +33,14 @@ class ControllerChainTest extends ControllerTestCase {
   }
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
-        array('table' => ''),
-      ),
-      'User' => array(
-        array('id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''),
-      ),
-    ));
+    return new ArrayDataSet([
+      'DBSequence' => [
+        ['table' => ''],
+      ],
+      'User' => [
+        ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
+      ],
+    ]);
   }
 
   /**
@@ -50,9 +50,7 @@ class ControllerChainTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // simulate calc call
-    $data = array(
-      'value' => 2
-    );
+    $data = ['value' => 2];
     $response = $this->runRequest('calc', $data, false);
 
     // test
@@ -70,9 +68,7 @@ class ControllerChainTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // simulate calc call
-    $data = array(
-      'value' => 2
-    );
+    $data = ['value' => 2];
     $response = $this->runRequest('calcChain', $data, false);
 
     // test
@@ -90,9 +86,7 @@ class ControllerChainTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // simulate calc call
-    $data = array(
-      'value' => 2
-    );
+    $data = ['value' => 2];
     $response = $this->runRequest('calcChainBreak', $data, false);
 
     // test
@@ -110,9 +104,7 @@ class ControllerChainTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // simulate calc call
-    $data = array(
-      'value' => 2
-    );
+    $data = ['value' => 2];
     $response = $this->runRequest('calcExecuteSubAction', $data, false);
 
     // test

@@ -60,7 +60,7 @@ class ListController extends Controller {
       !$this->getPersistenceFacade()->isKnownType($request->getValue('className')))
     {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
-        array('invalidParameters' => array('className'))));
+        ['invalidParameters' => ['className']]));
       return false;
     }
     // check for permission to read instances of className
@@ -120,13 +120,13 @@ class ListController extends Controller {
     $sortArray = null;
     $orderBy = $request->getValue('sortFieldName');
     if (strlen($orderBy) > 0) {
-      $sortArray = array($orderBy." ".$request->getValue('sortDirection'));
+      $sortArray = [$orderBy." ".$request->getValue('sortDirection')];
     }
     // get the objects
     $objects = $this->getObjects($className, $query, $sortArray, $pagingInfo);
 
     // collect the nodes
-    $nodes = array();
+    $nodes = [];
     for($i=0,$count=sizeof($objects); $i<$count; $i++) {
       $curObject = $objects[$i];
 
@@ -170,7 +170,7 @@ class ListController extends Controller {
   protected function getObjects($type, $queryCondition, $sortArray, $pagingInfo) {
     $persistenceFacade = $this->getPersistenceFacade();
     if (!$persistenceFacade->isKnownType($type)) {
-      return array();
+      return [];
     }
 
     $request = $this->getRequest();

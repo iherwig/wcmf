@@ -73,7 +73,7 @@ class BatchDisplayController extends BatchController {
       }
 
       // initialize session variables
-      $this->setLocalSessionValue(self::REGISTRY_VAR, array());
+      $this->setLocalSessionValue(self::REGISTRY_VAR, []);
 
       // reset iterator
       PersistentIterator::reset(self::ITERATOR_ID_VAR, $session);
@@ -92,7 +92,7 @@ class BatchDisplayController extends BatchController {
       $oid = ObjectId::parse($request->getValue('oid'));
       if(!$oid) {
         $response->addError(ApplicationError::get('OID_INVALID',
-          array('invalidOids' => array($request->getValue('oid')))));
+          ['invalidOids' => [$request->getValue('oid')]]));
         return false;
       }
       if (!$this->checkLanguageParameter()) {
@@ -108,8 +108,8 @@ class BatchDisplayController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      return array('name' => $this->getMessage()->getText('Loading'),
-          'size' => 1, 'oids' => array(1), 'callback' => 'startProcess');
+      return ['name' => $this->getMessage()->getText('Loading'),
+          'size' => 1, 'oids' => [1], 'callback' => 'startProcess'];
     }
     else {
       return null;
@@ -141,8 +141,8 @@ class BatchDisplayController extends BatchController {
       $iterator->save();
 
       $name = $this->getMessage()->getText('Loading tree: continue with %0%',
-              array($iterator->current()));
-      $this->addWorkPackage($name, 1, array(null), 'loadNodes');
+              [$iterator->current()]);
+      $this->addWorkPackage($name, 1, [null], 'loadNodes');
     }
     else {
       // set the result and finish
@@ -184,8 +184,8 @@ class BatchDisplayController extends BatchController {
       $iterator->save();
 
       $name = $this->getMessage()->getText('Loading tree: continue with %0%',
-              array($iterator->current()));
-      $this->addWorkPackage($name, 1, array(null), 'loadNodes');
+              [$iterator->current()]);
+      $this->addWorkPackage($name, 1, [null], 'loadNodes');
     }
     else {
       // set the result and finish
@@ -229,7 +229,7 @@ class BatchDisplayController extends BatchController {
 
     // translate values if requested
     if ($translateValues) {
-      $nodes = array($node);
+      $nodes = [$node];
       if ($this->isLocalizedRequest()) {
         NodeUtil::translateValues($nodes, $language);
       }
@@ -279,7 +279,7 @@ class BatchDisplayController extends BatchController {
   protected function addNodeToResponse(Node $node) {
     $response = $this->getResponse();
     if (!$response->hasValue('list')) {
-      $objects = array();
+      $objects = [];
       $response->setValue('list', $objects);
     }
 

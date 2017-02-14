@@ -134,7 +134,7 @@ class XMLExportController extends BatchController {
 
       // initialize session variables
       $this->setLocalSessionValue(self::LAST_INDENT_VAR, 0);
-      $this->setLocalSessionValue(self::TAGS_TO_CLOSE_VAR, array());
+      $this->setLocalSessionValue(self::TAGS_TO_CLOSE_VAR, []);
 
       // reset iterator
       PersistentIterator::reset($this->ITERATOR_ID_VAR, $session);
@@ -148,8 +148,8 @@ class XMLExportController extends BatchController {
    */
   protected function getWorkPackage($number) {
     if ($number == 0) {
-      return array('name' => $this->getMessage()->getText('Initialization'),
-          'size' => 1, 'oids' => array(1), 'callback' => 'initExport');
+      return ['name' => $this->getMessage()->getText('Initialization'),
+          'size' => 1, 'oids' => [1], 'callback' => 'initExport'];
     }
     else {
       return null;
@@ -193,7 +193,7 @@ class XMLExportController extends BatchController {
     fclose($fileHandle);
 
     // get root types from ini file
-    $rootOIDs = array();
+    $rootOIDs = [];
     $config = $this->getConfiguration();
     $rootTypes = $config->getValue('rootTypes', 'application');
     if (is_array($rootTypes)) {
@@ -208,13 +208,13 @@ class XMLExportController extends BatchController {
     $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
 
     // empty exported oids
-    $tmp = array();
+    $tmp = [];
     $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $tmp);
 
     // create work package for first root node
     $this->addWorkPackage(
-            $this->getMessage()->getText('Exporting tree: start with %0%', array($nextOID)),
-            1, array($nextOID), 'exportNodes');
+            $this->getMessage()->getText('Exporting tree: start with %0%', [$nextOID]),
+            1, [$nextOID], 'exportNodes');
   }
 
   /**
@@ -272,15 +272,15 @@ class XMLExportController extends BatchController {
       // delete iterator to start with new root oid
       PersistentIterator::reset($this->ITERATOR_ID_VAR, $session);
 
-      $name = $message->getText('Exporting tree: start with %0%', array($nextOID));
-      $this->addWorkPackage($name, 1, array($nextOID), 'exportNodes');
+      $name = $message->getText('Exporting tree: start with %0%', [$nextOID]);
+      $this->addWorkPackage($name, 1, [$nextOID], 'exportNodes');
     }
     elseif ($iterator->valid()) {
       // proceed with current iterator
       $iterator->save();
 
-      $name = $message->getText('Exporting tree: continue with %0%', array($iterator->current()));
-      $this->addWorkPackage($name, 1, array(null), 'exportNodes');
+      $name = $message->getText('Exporting tree: continue with %0%', [$iterator->current()]);
+      $this->addWorkPackage($name, 1, [null], 'exportNodes');
     }
     else {
       // finish
@@ -389,7 +389,7 @@ class XMLExportController extends BatchController {
 
       // remember end tag if not closed
       if ($hasUnvisitedChildren) {
-        $closeTag = array("name" => $elementName, "indent" => $curIndent);
+        $closeTag = ["name" => $elementName, "indent" => $curIndent];
         array_unshift($tagsToClose, $closeTag);
       }
       else {
@@ -416,14 +416,14 @@ class XMLExportController extends BatchController {
   protected function getNumUnvisitedChildren(Node $node) {
     $exportedOids = $this->cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
 
-    $childOIDs = array();
+    $childOIDs = [];
     $mapper = $node->getMapper();
     $relations = $mapper->getRelations('child');
     foreach ($relations as $relation) {
       if ($relation->getOtherNavigability()) {
         $childValue = $node->getValue($relation->getOtherRole());
         if ($childValue != null) {
-          $children = $relation->isMultiValued() ? $childValue : array($childValue);
+          $children = $relation->isMultiValued() ? $childValue : [$childValue];
           foreach ($children as $child) {
             $childOIDs[] = $child->getOID();
           }
@@ -446,7 +446,7 @@ class XMLExportController extends BatchController {
    * @note Subclasses may overrite this for special application requirements
    */
   protected function formatValue($value) {
-    return htmlentities(str_replace(array("\r", "\n"), array("", ""), nl2br($value)), ENT_QUOTES);
+    return htmlentities(str_replace(["\r", "\n"], ["", ""], nl2br($value)), ENT_QUOTES);
   }
 }
 ?>

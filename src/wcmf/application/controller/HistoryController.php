@@ -53,8 +53,8 @@ class HistoryController extends ListController {
     $persistenceFacade = $this->getPersistenceFacade();
 
     // find types with attributes created, creator, modified, last_editor
-    $requiredAttributes = array('created', 'creator', 'modified', 'last_editor');
-    $types = array();
+    $requiredAttributes = ['created', 'creator', 'modified', 'last_editor'];
+    $types = [];
     foreach ($persistenceFacade->getKnownTypes() as $type) {
       $mapper = $persistenceFacade->getMapper($type);
       $matches = true;
@@ -72,9 +72,9 @@ class HistoryController extends ListController {
     // load objects
     // NOTE: we always get last changed objects and sort by requested value later
     $historyItems = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE,
-            null, array('modified DESC'), $pagingInfo);
+            null, ['modified DESC'], $pagingInfo);
 
-    $objects = array();
+    $objects = [];
     foreach($historyItems as $historyItem) {
       if ($permissionManager->authorize($historyItem->getOID(), '', PersistenceAction::READ)) {
         $objects[] = $historyItem;
@@ -104,12 +104,12 @@ class HistoryController extends ListController {
     $request = $this->getRequest();
     if ($request->hasValue('sortFieldName')) {
       $sortDir = $request->hasValue('sortDirection') ? $request->getValue('sortDirection') : 'asc';
-      $sortCriteria = array(
+      $sortCriteria = [
          $request->getValue('sortFieldName') => $sortDir == 'asc' ?
               NodeComparator::SORTTYPE_ASC : NodeComparator::SORTTYPE_DESC
-      );
+      ];
       $comparator = new NodeComparator($sortCriteria);
-      usort($nodes, array($comparator, 'compare'));
+      usort($nodes, [$comparator, 'compare']);
     }
   }
 }

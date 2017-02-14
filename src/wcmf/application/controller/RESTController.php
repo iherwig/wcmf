@@ -77,14 +77,14 @@ class RESTController extends Controller {
       !$this->getPersistenceFacade()->isKnownType($request->getValue('className')))
     {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
-        array('invalidParameters' => array('className'))));
+        ['invalidParameters' => ['className']]));
       return false;
     }
     if ($request->hasHeader('Position')) {
       $position = $request->getHeader('Position');
       if (!preg_match('/^before /', $position) && !preg_match('/^last$/', $position)) {
         $response->addError(ApplicationError::get('PARAMETER_INVALID',
-          array('invalidParameters' => array('Position'))));
+          ['invalidParameters' => ['Position']]));
         return false;
       }
     }

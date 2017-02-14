@@ -97,13 +97,13 @@ class ConcurrencyController extends Controller {
     $oid = ObjectId::parse($request->getValue('oid'));
     if(!$oid) {
       $response->addError(ApplicationError::get('OID_INVALID',
-        array('invalidOids' => array($request->getValue('oid')))));
+        ['invalidOids' => [$request->getValue('oid')]]));
       return false;
     }
     $lockType = $request->getValue('type', Lock::TYPE_OPTIMISTIC);
     if (!in_array($lockType, array(Lock::TYPE_OPTIMISTIC, Lock::TYPE_PESSIMISTIC))) {
       $response->addError(ApplicationError::get('PARAMETER_INVALID',
-        array('invalidParameters' => array('type'))));
+        ['invalidParameters' => ['type']]));
     }
     return true;
   }
@@ -130,7 +130,7 @@ class ConcurrencyController extends Controller {
     }
     catch (PessimisticLockException $ex) {
       $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
-        array('lockedOids' => array($oid->__toString()))));
+        ['lockedOids' => [$oid->__toString()]]));
     }
 
     $response->setValue('oid', $oid);

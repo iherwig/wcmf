@@ -90,14 +90,14 @@ class MultipleActionController extends Controller {
       foreach($data as $key => $value) {
         if (!is_array($value)) {
           $response->addError(ApplicationError::get('PARAMETER_INVALID',
-            array('invalidParameters' => array('data.'.$key))));
+            ['invalidParameters' => ['data.'.$key]]));
           return false;
         }
       }
     }
     else {
       $response->addError(ApplicationError::get('PARAMETER_MISSING',
-        array('missingParameters' => array('data'))));
+        ['missingParameters' => ['data']]));
       return false;
     }
     return true;
@@ -112,12 +112,11 @@ class MultipleActionController extends Controller {
     $response = $this->getResponse();
     $logger = $this->getLogger();
 
-    $results = array();
+    $results = [];
     $data = $request->getValue('data');
     $actions = array_keys($data);
     $numActions = sizeof($actions);
-    $errors = array();
-    $exceptions = array();
+    $exceptions = [];
 
     for($i=0; $i<$numActions; $i++) {
       $actionId = $actions[$i];
@@ -156,7 +155,7 @@ class MultipleActionController extends Controller {
       }
 
       // collect the result
-      $results[$actionId] = $responsePart != null ? $responsePart->getValues() : array();
+      $results[$actionId] = $responsePart != null ? $responsePart->getValues() : [];
     }
     if ($logger->isDebugEnabled()) {
       $logger->debug($results);
