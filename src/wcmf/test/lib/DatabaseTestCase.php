@@ -50,7 +50,7 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
     self::$frameworkReady = false;
   }
 
-  protected function executeSql($type, $sql, $parameters=array()) {
+  protected function executeSql($type, $sql, $parameters=[]) {
     return ObjectFactory::getInstance('persistenceFacade')->getMapper($type)->executeSql($sql, $parameters);
   }
 }

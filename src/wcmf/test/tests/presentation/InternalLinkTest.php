@@ -22,12 +22,12 @@ use wcmf\lib\presentation\link\InternalLink;
 class InternalLinkTest extends BaseTestCase {
 
   public function testMakeLink() {
-    $link = InternalLink::makeLink(new ObjectId("Publisher", array(12)));
+    $link = InternalLink::makeLink(new ObjectId("Publisher", [12]));
     $this->assertEquals("link://app.src.model.Publisher:12", $link);
   }
 
   public function testMakeAnchorLink() {
-    $link = InternalLink::makeAnchorLink(new ObjectId("Publisher", array(12)), new ObjectId("Book", array(13)), "book");
+    $link = InternalLink::makeAnchorLink(new ObjectId("Publisher", [12]), new ObjectId("Book", [13]), "book");
     $this->assertEquals("link://app.src.model.Publisher:12/app.src.model.Book:13#book", $link);
   }
 

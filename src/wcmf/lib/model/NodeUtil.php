@@ -65,7 +65,7 @@ class NodeUtil {
    * @param $currentPath Internal use only
    */
   protected static function getConnectionsImpl($type, $otherRole, $otherType,
-          $hierarchyType, array &$result=array(), array $currentPath=array()) {
+          $hierarchyType, array &$result=[], array $currentPath=[]) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = $persistenceFacade->getMapper($type);
 

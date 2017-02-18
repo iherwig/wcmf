@@ -28,29 +28,29 @@ class TransactionTest extends DatabaseTestCase {
   private $authorOidStr = 'Author:12345';
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
+      ],
+      'User' => [
         ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
-      ),
-      'NMUserRole' => array(
+      ],
+      'NMUserRole' => [
         ['fk_user_id' => 0, 'fk_role_id' => 0],
-      ),
-      'Role' => array(
+      ],
+      'Role' => [
         ['id' => 0, 'name' => 'administrators'],
-      ),
-      'Publisher' => array(
-        array('id' => 12345),
-      ),
-      'NMPublisherAuthor' => array(
-        array('id' => 123451, 'fk_publisher_id' => 12345, 'fk_author_id' => 12345),
-      ),
-      'Author' => array(
-        array('id' => 12345),
-      ),
-    ));
+      ],
+      'Publisher' => [
+        ['id' => 12345],
+      ],
+      'NMPublisherAuthor' => [
+        ['id' => 123451, 'fk_publisher_id' => 12345, 'fk_author_id' => 12345],
+      ],
+      'Author' => [
+        ['id' => 12345],
+      ],
+    ]);
   }
 
   public function testSimple() {

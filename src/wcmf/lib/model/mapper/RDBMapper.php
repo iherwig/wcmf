@@ -291,7 +291,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @return If the query is a select, an array of associative arrays containing the selected data,
    * the number of affected rows else
    */
-  public function executeSql($sql, $parameters=array()) {
+  public function executeSql($sql, $parameters=[]) {
     if ($this->adapter == null) {
       $this->connect();
     }
@@ -503,7 +503,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::getAttributes()
    */
-  public function getAttributes(array $tags=array(), $matchMode='all') {
+  public function getAttributes(array $tags=[], $matchMode='all') {
     $this->initAttributes();
     $result = [];
     if (sizeof($tags) == 0) {
@@ -699,7 +699,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
     // create the object
-    $object = $this->createObjectFromData(array());
+    $object = $this->createObjectFromData([]);
 
     // recalculate build depth for the next generation
     $newBuildDepth = $buildDepth;
@@ -811,7 +811,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
         // load related objects
         $otherType = $relationDesc->getOtherType();
         $otherMapper = $this->persistenceFacade->getMapper($otherType);
-        $allObjects = $this->loadRelationImpl(array($proxy), $relationDesc->getOtherRole());
+        $allObjects = $this->loadRelationImpl([$proxy], $relationDesc->getOtherRole());
         $oidStr = $proxy->getOID()->__toString();
         if (isset($allObjects[$oidStr])) {
           foreach($allObjects[$oidStr] as $object) {

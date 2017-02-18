@@ -47,7 +47,7 @@ class PersistentIterator implements \Iterator {
   public function __construct($id, PersistenceFacade $persistenceFacade,
           Session $session,
           ObjectId $oid,
-          $aggregationKinds=array()) {
+          $aggregationKinds=[]) {
     $this->id = $id;
     $this->persistenceFacade = $persistenceFacade;
     $this->session = $session;

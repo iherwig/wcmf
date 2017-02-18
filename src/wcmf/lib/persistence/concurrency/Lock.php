@@ -96,8 +96,8 @@ class Lock implements \Serializable {
   }
 
   public function serialize() {
-    return serialize(array($this->type, serialize($this->objectId),
-        $this->login, $this->created, serialize($this->currentState)));
+    return serialize([$this->type, serialize($this->objectId),
+        $this->login, $this->created, serialize($this->currentState)]);
   }
 
   public function unserialize($data) {

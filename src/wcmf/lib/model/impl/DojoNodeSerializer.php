@@ -98,7 +98,7 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
   /**
    * @see NodeSerializer::serializeNode
    */
-  public function serializeNode($node, $rolesToRefOnly=array()) {
+  public function serializeNode($node, $rolesToRefOnly=[]) {
     if (!($node instanceof Node)) {
       return null;
     }

@@ -244,7 +244,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
         $umiPrefix = $umi->getPrefix();
         $iter = new NodeIterator($obj);
         foreach($iter as $oid => $curNode) {
-          $oids = $this->makeUmis(array($curNode->getOID()), $umiPrefix);
+          $oids = $this->makeUmis([$curNode->getOID()], $umiPrefix);
           $curNode->setOID($oids[0]);
           // TODO implement this for new Node class
           /*

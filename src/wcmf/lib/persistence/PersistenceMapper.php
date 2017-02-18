@@ -105,7 +105,7 @@ interface PersistenceMapper {
    * @param $matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags (default: 'all')
    * @return Array of AttributeDescription instances
    */
-  public function getAttributes(array $tags=array(), $matchMode='all');
+  public function getAttributes(array $tags=[], $matchMode='all');
 
   /**
    * Check if a named attribute is defined.

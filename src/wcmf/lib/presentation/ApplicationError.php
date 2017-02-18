@@ -24,9 +24,9 @@ use wcmf\lib\util\StringUtil;
 
  * @code
  * $message = ObjectFactory::getInstance('message');
- * define('GENERAL_ERROR', serialize(array('GENERAL_ERROR', ApplicationError::LEVEL_ERROR, 400,
+ * define('GENERAL_ERROR', serialize(['GENERAL_ERROR', ApplicationError::LEVEL_ERROR, 400,
  *   $message->getText('An unspecified error occured.')
- * )));
+ * ]));
  * @endcode
  *
  * To use the error in the code:
@@ -181,105 +181,105 @@ class ApplicationError {
   private static function predefine() {
     if (!self::$predefined) {
       $message = ObjectFactory::getInstance('message');
-      define('GENERAL_WARNING', serialize(array('GENERAL_WARNING', ApplicationError::LEVEL_WARNING, 400,
+      define('GENERAL_WARNING', serialize(['GENERAL_WARNING', ApplicationError::LEVEL_WARNING, 400,
         $message->getText('An unspecified warning occured.')
-      )));
-      define('GENERAL_ERROR', serialize(array('GENERAL_ERROR', ApplicationError::LEVEL_ERROR, 500,
+      ]));
+      define('GENERAL_ERROR', serialize(['GENERAL_ERROR', ApplicationError::LEVEL_ERROR, 500,
         $message->getText('An unspecified error occured.')
-      )));
-      define('GENERAL_FATAL', serialize(array('GENERAL_FATAL', ApplicationError::LEVEL_FATAL, 500,
+      ]));
+      define('GENERAL_FATAL', serialize(['GENERAL_FATAL', ApplicationError::LEVEL_FATAL, 500,
         $message->getText('An unspecified fatal error occured.')
-      )));
+      ]));
 
-      define('ACTION_INVALID', serialize(array('ACTION_INVALID', ApplicationError::LEVEL_ERROR, 404,
+      define('ACTION_INVALID', serialize(['ACTION_INVALID', ApplicationError::LEVEL_ERROR, 404,
         $message->getText('The requested action is unknown.')
-      )));
-      define('SESSION_INVALID', serialize(array('SESSION_INVALID', ApplicationError::LEVEL_ERROR, 401,
+      ]));
+      define('SESSION_INVALID', serialize(['SESSION_INVALID', ApplicationError::LEVEL_ERROR, 401,
         $message->getText('The session is invalid.')
-      )));
-      define('PARAMETER_MISSING', serialize(array('PARAMETER_MISSING', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('PARAMETER_MISSING', serialize(['PARAMETER_MISSING', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('One or more parameters are missing.')
-      )));
-      define('PARAMETER_INVALID', serialize(array('PARAMETER_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('PARAMETER_INVALID', serialize(['PARAMETER_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('One or more parameters are invalid.')
-      )));
-      define('OID_INVALID', serialize(array('OID_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('OID_INVALID', serialize(['OID_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('One or more object ids are invalid.')
-      )));
-      define('CLASS_NAME_INVALID', serialize(array('CLASS_NAME_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('CLASS_NAME_INVALID', serialize(['CLASS_NAME_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('One or more classes are invalid.')
-      )));
+      ]));
 
-      define('AUTHENTICATION_FAILED', serialize(array('AUTHENTICATION_FAILED', ApplicationError::LEVEL_ERROR, 401,
+      define('AUTHENTICATION_FAILED', serialize(['AUTHENTICATION_FAILED', ApplicationError::LEVEL_ERROR, 401,
         $message->getText('Authentication failed.')
-      )));
-      define('PERMISSION_DENIED', serialize(array('PERMISSION_DENIED', ApplicationError::LEVEL_ERROR, 403,
+      ]));
+      define('PERMISSION_DENIED', serialize(['PERMISSION_DENIED', ApplicationError::LEVEL_ERROR, 403,
         $message->getText('The user does not have the permission to perform this action.')
-      )));
+      ]));
 
-      define('LIMIT_NEGATIVE', serialize(array('LIMIT_NEGATIVE', ApplicationError::LEVEL_WARNING, 400,
+      define('LIMIT_NEGATIVE', serialize(['LIMIT_NEGATIVE', ApplicationError::LEVEL_WARNING, 400,
         $message->getText('The passed limit is a negative number.')
-      )));
-      define('OFFSET_OUT_OF_BOUNDS', serialize(array('OFFSET_OUT_OF_BOUNDS', ApplicationError::LEVEL_WARNING, 400,
+      ]));
+      define('OFFSET_OUT_OF_BOUNDS', serialize(['OFFSET_OUT_OF_BOUNDS', ApplicationError::LEVEL_WARNING, 400,
         $message->getText('The passed offset is negative or greater than the number of entries matching the parameters.')
-      )));
-      define('SORT_FIELD_UNKNOWN', serialize(array('SORT_FIELD_UNKNOWN', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('SORT_FIELD_UNKNOWN', serialize(['SORT_FIELD_UNKNOWN', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The passed sortFieldName is no valid attribute of the passed class.')
-      )));
-      define('SORT_DIRECTION_UNKNOWN', serialize(array('SORT_DIRECTION_UNKNOWN', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('SORT_DIRECTION_UNKNOWN', serialize(['SORT_DIRECTION_UNKNOWN', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The passed sortDirection has an invalid value.')
-      )));
+      ]));
 
-      define('DEPTH_INVALID', serialize(array('DEPTH_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      define('DEPTH_INVALID', serialize(['DEPTH_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The passed depth is a negative number other than -1.')
-      )));
+      ]));
 
-      define('ATTRIBUTE_NAME_INVALID', serialize(array('ATTRIBUTE_NAME_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      define('ATTRIBUTE_NAME_INVALID', serialize(['ATTRIBUTE_NAME_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The attribute name passed cannot be found in the selected class.')
-      )));
-      define('ATTRIBUTE_VALUE_INVALID', serialize(array('ATTRIBUTE_VALUE_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('ATTRIBUTE_VALUE_INVALID', serialize(['ATTRIBUTE_VALUE_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The attribute value passed is invalid for the attribute.')
-      )));
-      define('CONCURRENT_UPDATE', serialize(array('CONCURRENT_UPDATE', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('CONCURRENT_UPDATE', serialize(['CONCURRENT_UPDATE', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The server detected a concurrent update.')
-      )));
+      ]));
 
-      define('ROLE_INVALID', serialize(array('ROLE_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      define('ROLE_INVALID', serialize(['ROLE_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The role passed cannot be found in the selected source class.')
-      )));
-      define('ASSOCIATION_INVALID', serialize(array('ASSOCIATION_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('ASSOCIATION_INVALID', serialize(['ASSOCIATION_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('There is no association between the source and the target class.')
-      )));
-      define('ASSOCIATION_NOT_FOUND', serialize(array('ASSOCIATION_NOT_FOUND', ApplicationError::LEVEL_WARNING, 400,
+      ]));
+      define('ASSOCIATION_NOT_FOUND', serialize(['ASSOCIATION_NOT_FOUND', ApplicationError::LEVEL_WARNING, 400,
         $message->getText('No current association matching the input parameters can be found.')
-      )));
+      ]));
 
-      define('SEARCH_NOT_SUPPORTED', serialize(array('SEARCH_NOT_SUPPORTED', ApplicationError::LEVEL_ERROR, 400,
+      define('SEARCH_NOT_SUPPORTED', serialize(['SEARCH_NOT_SUPPORTED', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('There selected class does not support searching.')
-      )));
+      ]));
 
-      define('ORDER_UNDEFINED', serialize(array('ORDER_UNDEFINED', ApplicationError::LEVEL_WARNING, 400,
+      define('ORDER_UNDEFINED', serialize(['ORDER_UNDEFINED', ApplicationError::LEVEL_WARNING, 400,
         $message->getText('There is no order defined for the root object.')
-      )));
+      ]));
 
-      define('REFERENCE_INVALID', serialize(array('REFERENCE_INVALID', ApplicationError::LEVEL_ERROR, 400,
+      define('REFERENCE_INVALID', serialize(['REFERENCE_INVALID', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('There reference object cannot be found in the container object.')
-      )));
-      define('ORDER_NOT_SUPPORTED', serialize(array('ORDER_NOT_SUPPORTED', ApplicationError::LEVEL_ERROR, 400,
+      ]));
+      define('ORDER_NOT_SUPPORTED', serialize(['ORDER_NOT_SUPPORTED', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The container class does not support ordered references.')
-      )));
+      ]));
 
-      define('CLASSES_DO_NOT_MATCH', serialize(array('CLASSES_DO_NOT_MATCH', ApplicationError::LEVEL_ERROR, 400,
+      define('CLASSES_DO_NOT_MATCH', serialize(['CLASSES_DO_NOT_MATCH', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The classes of insertOid and referenceOid do not match.')
-      )));
+      ]));
 
-      define('HISTORY_NOT_SUPPORTED', serialize(array('HISTORY_NOT_SUPPORTED', ApplicationError::LEVEL_ERROR, 400,
+      define('HISTORY_NOT_SUPPORTED', serialize(['HISTORY_NOT_SUPPORTED', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('There selected class does not support history.')
-      )));
+      ]));
 
-      define('OBJECT_IS_LOCKED', serialize(array('OBJECT_IS_LOCKED', ApplicationError::LEVEL_ERROR, 400,
+      define('OBJECT_IS_LOCKED', serialize(['OBJECT_IS_LOCKED', ApplicationError::LEVEL_ERROR, 400,
         $message->getText('The object is currently locked by another user.')
-      )));
+      ]));
 
       self::$predefined = true;
     }

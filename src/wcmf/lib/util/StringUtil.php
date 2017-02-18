@@ -41,7 +41,7 @@ class StringUtil {
    */
   public static function cropString($text, $length=100, $suffix='…', $isHTML=true) {
     $i = 0;
-    $simpleTags=array('br'=>true,'hr'=>true,'input'=>true,'image'=>true,'link'=>true,'meta'=>true);
+    $simpleTags=['br'=>true,'hr'=>true,'input'=>true,'image'=>true,'link'=>true,'meta'=>true];
     $tags = [];
     if($isHTML) {
       preg_match_all('/<[^>]+>([^<]*)/', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);

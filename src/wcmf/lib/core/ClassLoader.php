@@ -30,7 +30,7 @@ class ClassLoader {
     }
     $baseDir = preg_replace('/\/\/$/', '/', $baseDir.'/');
     $this->baseDir = $baseDir;
-    spl_autoload_register(array($this, 'load'), true, true);
+    spl_autoload_register([$this, 'load'], true, true);
   }
 
   /**

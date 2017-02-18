@@ -32,26 +32,26 @@ class LocalizationTest extends DatabaseTestCase {
   const TRANSLATION_TYPE = 'Translation';
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
+      ],
+      'User' => [
         ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
-      ),
-      'NMUserRole' => array(
+      ],
+      'NMUserRole' => [
         ['fk_user_id' => 0, 'fk_role_id' => 0],
-      ),
-      'Role' => array(
+      ],
+      'Role' => [
         ['id' => 0, 'name' => 'administrators'],
-      ),
-      'Book' => array(
-        array('id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''),
-        array('id' => 302, 'title' => '', 'description' => '', 'year' => ''),
-      ),
-      'Translation' => array(
-      ),
-    ));
+      ],
+      'Book' => [
+        ['id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''],
+        ['id' => 302, 'title' => '', 'description' => '', 'year' => ''],
+      ],
+      'Translation' => [
+      ],
+    ]);
   }
 
   public function testGetDefaultLanguage() {
@@ -89,7 +89,7 @@ class LocalizationTest extends DatabaseTestCase {
 
     // there must be no translation for the object in the translation table
     $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())));
+           [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())]);
     $this->assertEquals(0, sizeof($oids),
       "There must be no translation for the object in the translation table");
 
@@ -141,8 +141,8 @@ class LocalizationTest extends DatabaseTestCase {
     // there must be no translation for the untranslatable value in the translation table
     $transaction->begin();
     $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
-      new Criteria(self::TRANSLATION_TYPE, "attribute", "=", "year")));
+           [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
+            new Criteria(self::TRANSLATION_TYPE, "attribute", "=", "year")]);
     $this->assertEquals(0, sizeof($oids),
       "There must be no translation for the untranslatable value in the translation table");
     $transaction->rollback();
@@ -170,7 +170,7 @@ class LocalizationTest extends DatabaseTestCase {
     // there must be no translation for the default language in the translation table
     $transaction->begin();
     $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())));
+            [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())]);
     $this->assertEquals(0, sizeof($oids),
       "There must be no translation for the default language in the translation table");
     $transaction->rollback();
@@ -199,7 +199,7 @@ class LocalizationTest extends DatabaseTestCase {
     // there must be translations for the untranslated values in the translation table
     $transaction->begin();
     $oids2 = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())));
+            [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())]);
     $this->assertTrue(sizeof($oids2) > 0,
       "There must be translations for the untranslated values in the translation table");
     $transaction->rollback();
@@ -233,8 +233,8 @@ class LocalizationTest extends DatabaseTestCase {
     // there must be only one entry in the translation table
     $transaction->begin();
     $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
-      new Criteria(self::TRANSLATION_TYPE, "attribute", "=", "title")));
+            [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
+             new Criteria(self::TRANSLATION_TYPE, "attribute", "=", "title")]);
     $this->assertEquals(1, sizeof($oids),
       "There must be only one entry in the translation table");
     $transaction->rollback();
@@ -306,14 +306,14 @@ class LocalizationTest extends DatabaseTestCase {
     // there must be no entry in the translation table for the deleted language
     $transaction->begin();
     $oids1 = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
-        new Criteria(self::TRANSLATION_TYPE, "language", "=", "de")));
+            [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
+             new Criteria(self::TRANSLATION_TYPE, "language", "=", "de")]);
     $this->assertEquals(0, sizeof($oids1),
       "There must be no entry in the translation table for the deleted language");
     // there must be entries in the translation table for the not deleted language
     $oids2 = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
-        new Criteria(self::TRANSLATION_TYPE, "language", "=", "it")));
+            [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString()),
+             new Criteria(self::TRANSLATION_TYPE, "language", "=", "it")]);
     $this->assertTrue(sizeof($oids2) > 0,
       "There must be entries in the translation table for the not deleted language");
 
@@ -334,7 +334,7 @@ class LocalizationTest extends DatabaseTestCase {
     // there must be no entry in the translation table for the object
     $transaction->begin();
     $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())));
+            [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())]);
     $this->assertEquals(0, sizeof($oids),
       "There must be no entry in the translation table for the object");
     $transaction->rollback();
@@ -386,12 +386,12 @@ class LocalizationTest extends DatabaseTestCase {
     // there must be no entries in the translation table for the deleted language
     $transaction->begin();
     $oids1 = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "language", "=", "de")));
+            [new Criteria(self::TRANSLATION_TYPE, "language", "=", "de")]);
     $this->assertEquals(0, sizeof($oids1),
       "There must be no entries in the translation table for the deleted language");
     // there must be entries in the translation table for the not deleted language
     $oids2 = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
-            array(new Criteria(self::TRANSLATION_TYPE, "language", "=", "it")));
+            [new Criteria(self::TRANSLATION_TYPE, "language", "=", "it")]);
     $this->assertTrue(sizeof($oids2) > 0,
       "There must be entries in the translation table for the not deleted language");
     $transaction->rollback();

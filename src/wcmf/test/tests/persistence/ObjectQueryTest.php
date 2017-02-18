@@ -26,19 +26,19 @@ use wcmf\test\lib\DatabaseTestCase;
 class ObjectQueryTest extends DatabaseTestCase {
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
+      ],
+      'User' => [
         ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
-      ),
-      'Chapter' => array(
-        array('id' => 300, 'name' => 'Chapter A'),
-        array('id' => 301, 'name' => 'Chapter B'),
-        array('id' => 302, 'name' => 'Chapter C'),
-      ),
-    ));
+      ],
+      'Chapter' => [
+        ['id' => 300, 'name' => 'Chapter A'],
+        ['id' => 301, 'name' => 'Chapter B'],
+        ['id' => 302, 'name' => 'Chapter C'],
+      ],
+    ]);
   }
 
   public function testSimple() {
@@ -83,7 +83,7 @@ class ObjectQueryTest extends DatabaseTestCase {
 
   public function testOrderby() {
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."3");
-    $sql = $query->getQueryString(BuildDepth::SINGLE, array('name ASC', 'created DESC'));
+    $sql = $query->getQueryString(BuildDepth::SINGLE, ['name ASC', 'created DESC']);
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` ".
       "FROM `Author` AS `Author` ORDER BY `Author`.`name` ASC, `Author`.`created` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
@@ -179,7 +179,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $authorTpl = $query->getObjectTemplate('Author');
     $authorTpl->setValue("name", Criteria::asValue("=", "Author")); // explicit LIKE
     $publisherTpl->addNode($authorTpl);
-    $sql = $query->getQueryString(BuildDepth::SINGLE, array('sortkey_publisher DESC'));
+    $sql = $query->getQueryString(BuildDepth::SINGLE, ['sortkey_publisher DESC']);
     $expected = "SELECT DISTINCT `Publisher`.`id` AS `id`, `Publisher`.`name` AS `name`, `Publisher`.`created` AS `created`, `Publisher`.`creator` AS `creator`, `Publisher`.`modified` AS `modified`, `Publisher`.`last_editor` AS `last_editor`, ".
       "`NMPublisherAuthor`.`sortkey_publisher` AS `sortkey_publisher` ".
       "FROM `Publisher` AS `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
@@ -218,7 +218,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $chapterTpl3->setValue("name", Criteria::asValue("LIKE", "Chapter 1%"));
     $chapterTpl4 = $query->getObjectTemplate('Chapter', null, Criteria::OPERATOR_OR);
     $chapterTpl4->setValue("creator", Criteria::asValue("=", "admin"));
-    $query->makeGroup(array(&$chapterTpl3, &$chapterTpl4), Criteria::OPERATOR_AND);
+    $query->makeGroup([&$chapterTpl3, &$chapterTpl4], Criteria::OPERATOR_AND);
 
     $authorTpl1->addNode($chapterTpl1, 'Chapter');
     $authorTpl1->addNode($chapterTpl2, 'Chapter');

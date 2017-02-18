@@ -68,7 +68,7 @@ class StringQuery extends ObjectQuery {
 
         $replace = $typeAttr.' '.$sqlOp.' ';
         if ($rqlOp == 'in' && !$isNumber) {
-          $replace .= '('.join(',', array_map(array($mapper, 'quoteValue'), explode(',', $value))).')';
+          $replace .= '('.join(',', array_map([$mapper, 'quoteValue'], explode(',', $value))).')';
         }
         else {
           $replace .= $isNumber ? $value : $mapper->quoteValue($value);

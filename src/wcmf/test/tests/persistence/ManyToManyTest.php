@@ -28,25 +28,25 @@ use wcmf\lib\util\TestUtil;
 class ManyToManyTest extends DatabaseTestCase {
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
+      ],
+      'User' => [
         ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
-        array('id' => 50, 'login' => 'user1', 'active' => 1, 'super_user' => 0, 'config' => ''),
-        array('id' => 60, 'login' => 'user2', 'active' => 1, 'super_user' => 0, 'config' => ''),
-      ),
-      'Role' => array(
+        ['id' => 50, 'login' => 'user1', 'active' => 1, 'super_user' => 0, 'config' => ''],
+        ['id' => 60, 'login' => 'user2', 'active' => 1, 'super_user' => 0, 'config' => ''],
+      ],
+      'Role' => [
         ['id' => 0, 'name' => 'administrators'],
-        array('id' => 51, 'name' => 'group1'),
-        array('id' => 61, 'name' => 'group2'),
-      ),
-      'NMUserRole' => array(
+        ['id' => 51, 'name' => 'group1'],
+        ['id' => 61, 'name' => 'group2'],
+      ],
+      'NMUserRole' => [
         ['fk_user_id' => 0, 'fk_role_id' => 0],
-        array('fk_user_id' => 50, 'fk_role_id' => 51),
-      ),
-    ));
+        ['fk_user_id' => 50, 'fk_role_id' => 51],
+      ],
+    ]);
   }
 
   public function testRelation() {
@@ -103,8 +103,8 @@ class ManyToManyTest extends DatabaseTestCase {
     $roleId = 61;
 
     $transaction->begin();
-    $user = $persistenceFacade->load(new ObjectId('User', array($userId)), 1);
-    $role = $persistenceFacade->load(new ObjectId('Role', array($roleId)), 1);
+    $user = $persistenceFacade->load(new ObjectId('User', [$userId]), 1);
+    $role = $persistenceFacade->load(new ObjectId('Role', [$roleId]), 1);
     $this->assertEquals(0, sizeof($user->getFirstChild('Role', null, null)), "No connection yet");
     $this->assertEquals(0, sizeof($role->getFirstChild('User', null, null)), "No connection yet");
 

@@ -24,22 +24,22 @@ use wcmf\test\lib\DatabaseTestCase;
 class StringQueryTest extends DatabaseTestCase {
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
+      ],
+      'User' => [
         ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
-      ),
-      'Author' => array(
-        array('id' => 100, 'name' => 'ingo', 'creator' => 'admin'),
-      ),
-      'Chapter' => array(
-        array('id' => 300, 'name' => 'Chapter A'),
-        array('id' => 301, 'name' => 'Chapter B'),
-        array('id' => 302, 'name' => 'Chapter C'),
-      ),
-    ));
+      ],
+      'Author' => [
+        ['id' => 100, 'name' => 'ingo', 'creator' => 'admin'],
+      ],
+      'Chapter' => [
+        ['id' => 300, 'name' => 'Chapter A'],
+        ['id' => 301, 'name' => 'Chapter B'],
+        ['id' => 302, 'name' => 'Chapter C'],
+      ],
+    ]);
   }
 
   public function testSimple() {

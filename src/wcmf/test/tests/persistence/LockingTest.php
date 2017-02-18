@@ -31,20 +31,20 @@ class LockingTest extends DatabaseTestCase {
   private $bookOidStr = 'Book:777';
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
-        array('id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => ''),
-        array('id' => 666, 'login' => 'user2', 'password' => '$2y$10$.q/JnbXAWDI8pZUqZmjON.YbZsSeQCLgh3aKMYC/Nmsx5VMRti8v.', 'active' => 1, 'super_user' => 0, 'config' => ''),
-      ),
-      'Book' => array(
-        array('id' => 777),
-      ),
-      'Lock' => array(
-      ),
-    ));
+      ],
+      'User' => [
+        ['id' => 555, 'login' => 'user1', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => ''],
+        ['id' => 666, 'login' => 'user2', 'password' => '$2y$10$.q/JnbXAWDI8pZUqZmjON.YbZsSeQCLgh3aKMYC/Nmsx5VMRti8v.', 'active' => 1, 'super_user' => 0, 'config' => ''],
+      ],
+      'Book' => [
+        ['id' => 777],
+      ],
+      'Lock' => [
+      ],
+    ]);
   }
 
   public function testPessimisticLock() {

@@ -40,7 +40,7 @@ class Application {
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
-    ob_start(array($this, "outputHandler"));
+    ob_start([$this, "outputHandler"]);
     new ErrorHandler();
   }
 

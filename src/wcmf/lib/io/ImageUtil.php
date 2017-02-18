@@ -106,7 +106,7 @@ class ImageUtil {
             }
           }
         }
-        $srcset[] = preg_replace(array('/ /', '/,/'), ['%20', '%2C'], $resizedFile).
+        $srcset[] = preg_replace(['/ /', '/,/'], ['%20', '%2C'], $resizedFile).
                 ' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
       }
     }

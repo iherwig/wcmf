@@ -27,7 +27,7 @@ interface Factory {
    * dynamic instance properties (optional)
    * @return Object
    */
-  public function getInstance($name, $dynamicConfiguration=array());
+  public function getInstance($name, $dynamicConfiguration=[]);
 
   /**
    * Get a new instance from the configuration. Instances created with this method are not shared.
@@ -37,7 +37,7 @@ interface Factory {
    * dynamic instance properties (optional)
    * @return Object
    */
-  public function getNewInstance($name, $dynamicConfiguration=array());
+  public function getNewInstance($name, $dynamicConfiguration=[]);
 
   /**
    * Create an instance of a class. Instances created with this method are not shared.
@@ -46,7 +46,7 @@ interface Factory {
    * dynamic instance properties (optional)
    * @return Object
    */
-  public function getInstanceOf($class, $dynamicConfiguration=array());
+  public function getInstanceOf($class, $dynamicConfiguration=[]);
 
   /**
    * Register a shared instance with a given name.

@@ -23,7 +23,7 @@ trait ControllerMethods {
    */
   protected function doExecute($method=null) {
     if (method_exists($this, $method)) {
-      call_user_func(array($this, $method));
+      call_user_func([$this, $method]);
     }
     else {
       throw new \Exception("The method '".$method."' is not defined in class ".get_class($this));

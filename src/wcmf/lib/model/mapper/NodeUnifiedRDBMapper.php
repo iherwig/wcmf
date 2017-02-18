@@ -239,7 +239,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       // table
       $tableName = $this->getRealTableName();
       if ($alias != null) {
-        $selectStmt->from(array($alias => $tableName));
+        $selectStmt->from([$alias => $tableName]);
         $tableName = $alias;
       }
       else {
@@ -581,7 +581,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
     // add references from each referenced table
     foreach($references as $otherTable => $curReference) {
-      $selectStmt->join(array($otherTable.'Ref' => $otherTable), $curReference['joinCond'],
+      $selectStmt->join([$otherTable.'Ref' => $otherTable], $curReference['joinCond'],
               $curReference['attributes'], SelectStatement::JOIN_LEFT);
     }
     return $selectStmt;

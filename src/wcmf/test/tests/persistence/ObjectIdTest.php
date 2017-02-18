@@ -27,7 +27,7 @@ class ObjectIdTest extends BaseTestCase {
             "The oid is 'app.src.model.wcmf.User:10'");
 
     // multiple primary keys
-    $oid2 = new ObjectId('NMUserRole', array(10, 11));
+    $oid2 = new ObjectId('NMUserRole', [10, 11]);
     $this->assertEquals('app.src.model.wcmf.NMUserRole:10:11', $oid2->__toString(),
             "The oid is 'app.src.model.wcmf.NMUserRole:10:11'");
   }

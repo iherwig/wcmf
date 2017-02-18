@@ -25,32 +25,32 @@ use wcmf\test\lib\DatabaseTestCase;
 class NodeUtilTest extends DatabaseTestCase {
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-    ));
+    return new ArrayDataSet([
+    ]);
   }
 
   public function testGetConnection() {
     $paths1 = NodeUtil::getConnections('Author', null, 'Image', 'child');
     $this->assertEquals(2, sizeof($paths1));
-    $endRoles1 = array($paths1[0]->getEndRole(), $paths1[1]->getEndRole());
+    $endRoles1 = [$paths1[0]->getEndRole(), $paths1[1]->getEndRole()];
     $this->assertContains('TitleImage', $endRoles1);
     $this->assertContains('NormalImage', $endRoles1);
 
     $paths2 = NodeUtil::getConnections('Author', null, 'Image', 'all');
     $this->assertEquals(2, sizeof($paths2));
-    $endRoles2 = array($paths2[0]->getEndRole(), $paths2[1]->getEndRole());
+    $endRoles2 = [$paths2[0]->getEndRole(), $paths2[1]->getEndRole()];
     $this->assertContains('TitleImage', $endRoles2);
     $this->assertContains('NormalImage', $endRoles2);
 
     $paths3 = NodeUtil::getConnections('Image', 'Author', null, 'parent');
     $this->assertEquals(2, sizeof($paths3));
-    $startRoles3 = array($paths3[0]->getStartRole(), $paths3[1]->getStartRole());
+    $startRoles3 = [$paths3[0]->getStartRole(), $paths3[1]->getStartRole()];
     $this->assertContains('TitleImage', $startRoles3);
     $this->assertContains('NormalImage', $startRoles3);
 
     $paths4 = NodeUtil::getConnections('Chapter', null, 'Chapter', 'all');
     $this->assertEquals(2, sizeof($paths4));
-    $endRoles4 = array($paths4[0]->getEndRole(), $paths4[1]->getEndRole());
+    $endRoles4 = [$paths4[0]->getEndRole(), $paths4[1]->getEndRole()];
     $this->assertContains('ParentChapter', $endRoles4);
     $this->assertContains('SubChapter', $endRoles4);
 

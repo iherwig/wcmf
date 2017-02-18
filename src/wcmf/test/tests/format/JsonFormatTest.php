@@ -27,20 +27,20 @@ class JsonFormatTest extends BaseTestCase {
 
   public function testDeserializeSimple() {
     $message = ObjectFactory::getNewInstance('request');
-    $message->setValues(array(
+    $message->setValues([
                 'string' => 'abc',
                 'integer' => 123,
                 'boolean' => true,
-                'array' => array(
+                'array' => [
                     'string' => 'def',
                     'integer' => 456,
                     'boolean' => false,
-                    'array' => array(
+                    'array' => [
                         'string' => 'ghi',
                         'integer' => 789
-                    )
-                )
-            ));
+                    ]
+                ]
+            ]);
 
     $format = $this->createFormat();
     $format->deserialize($message);
@@ -67,14 +67,14 @@ class JsonFormatTest extends BaseTestCase {
 
   public function testDeserializeNodeSimple() {
     $message = ObjectFactory::getNewInstance('request');
-    $message->setValues(array(
+    $message->setValues([
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'oid' => 'app.src.model.Book:123',
                 'lastChange' => 1234567890,
-                'attributes' => array(
+                'attributes' => [
                     'title' => 'Matrix - The Original'
-                )
-            ));
+                ]
+            ]);
 
     $format = $this->createFormat();
     $format->deserialize($message);
@@ -96,50 +96,50 @@ class JsonFormatTest extends BaseTestCase {
 
   public function testDeserializeNodeHierarchy() {
     $message = ObjectFactory::getNewInstance('request');
-    $message->setValues(array(
+    $message->setValues([
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
                 'oid' => 'app.src.model.Book:123',
                 'lastChange' => 1234567890,
-                'attributes' => array(
+                'attributes' => [
                     'title' => 'Matrix - The Original',
-                    'Chapter' => array(
-                        array(
+                    'Chapter' => [
+                        [
                             'oid' => 'app.src.model.Chapter:1',
-                            'attributes' => array(
+                            'attributes' => [
                                 'name' => 'Chapter 1',
-                                'SubChapter' => array(
-                                    array(
+                                'SubChapter' => [
+                                    [
                                         'oid' => 'app.src.model.Chapter:3',
-                                        'attributes' => array(
+                                        'attributes' => [
                                             'name' => 'Chapter 3'
-                                        )
-                                    )
-                                )
-                            )
-                        ),
-                        array(
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
                             'oid' => 'app.src.model.Chapter:2',
-                            'attributes' => array(
+                            'attributes' => [
                                 'name' => 'Chapter 2',
-                                'NormalImage' => array(
-                                    array(
+                                'NormalImage' => [
+                                    [
                                         'oid' => 'app.src.model.Image:12',
-                                        'attributes' => array(
+                                        'attributes' => [
                                             'file' => 'image.png'
-                                        )
-                                    )
-                                ),
-                                'Author' => array(
+                                        ]
+                                    ]
+                                ],
+                                'Author' => [
                                     'oid' => 'app.src.model.Author:1',
-                                    'attributes' => array(
+                                    'attributes' => [
                                         'name' => 'Unknown'
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            ));
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
 
     $format = $this->createFormat();
     $format->deserialize($message);
@@ -171,32 +171,31 @@ class JsonFormatTest extends BaseTestCase {
 
   public function testDeserializeNodeList() {
     $message = ObjectFactory::getNewInstance('request');
-    $message->setValues(array(
+    $message->setValues([
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
-                'list' => array(
+                'list' => [
                     'type' => 'Chapter',
-                    'content' => array(
-                        'contentType' => 'Chapter',
-                        array(
+                    'content' => [
+                        'contentType' => 'Chapter', [
                             'oid' => 'app.src.model.Chapter:1',
-                            'attributes' => array(
+                            'attributes' => [
                                 'name' => 'Chapter 1'
-                            )
-                        ),
-                        array(
+                            ]
+                        ], [
                             'oid' => 'app.src.model.Chapter:2',
-                            'attributes' => array(
+                            'attributes' => [
                                 'name' => 'Chapter 2'
-                            )
-                        ),
-                        array(
+                            ]
+                        ], [
                             'oid' => 'app.src.model.Chapter:3',
-                            'attributes' => array(
+                            'attributes' => [
                                 'name' => 'Chapter 3'
-                            )
-                        )
-                    )
-                    )));
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
 
     $format = $this->createFormat();
     $format->deserialize($message);
@@ -219,20 +218,20 @@ class JsonFormatTest extends BaseTestCase {
 
   public function testSerializeSimple() {
     $message = ObjectFactory::getNewInstance('response');
-    $message->setValues(array(
+    $message->setValues([
                 'string' => 'abc',
                 'integer' => 123,
                 'boolean' => true,
-                'array' => array(
+                'array' => [
                     'string' => 'def',
                     'integer' => 456,
                     'boolean' => false,
-                    'array' => array(
+                    'array' => [
                         'string' => 'ghi',
                         'integer' => 789
-                    )
-                )
-            ));
+                    ]
+                ]
+            ]);
 
     $format = $this->createFormat();
     $format->serialize($message);
@@ -258,15 +257,15 @@ class JsonFormatTest extends BaseTestCase {
   }
 
   public function testSerializeNodeSimple() {
-    $book = new Book(new ObjectId('Book', array(123)));
+    $book = new Book(new ObjectId('Book', [123]));
     $book->setValue('title', 'Matrix - The Original');
     $book->setValue('modified', '2011-10-01 00:01:01');
 
     $message = ObjectFactory::getNewInstance('response');
-    $message->setValues(array(
+    $message->setValues([
                 'app.src.model.Book:123' => $book,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
-            ));
+            ]);
 
     $format = $this->createFormat();
     $format->serialize($message);
@@ -286,21 +285,21 @@ class JsonFormatTest extends BaseTestCase {
   }
 
   public function testSerializeNodeHierarchy() {
-    $book1 = new Book(new ObjectId('Book', array(123)));
+    $book1 = new Book(new ObjectId('Book', [123]));
     $book1->setValue('title', 'Matrix - The Original');
     $book1->setValue('modified', 1234567890);
 
-    $chapter11 = new Chapter(new ObjectId('Chapter', array(1)));
+    $chapter11 = new Chapter(new ObjectId('Chapter', [1]));
     $chapter11->setValue('name', 'Chapter 1');
-    $chapter12 = new Chapter(new ObjectId('Chapter', array(2)));
+    $chapter12 = new Chapter(new ObjectId('Chapter', [2]));
     $chapter12->setValue('name', 'Chapter 2');
-    $chapter13 = new Chapter(new ObjectId('Chapter', array(3)));
+    $chapter13 = new Chapter(new ObjectId('Chapter', [3]));
     $chapter13->setValue('name', 'Chapter 3');
 
-    $image1 = new Image(new ObjectId('Image', array(12)));
+    $image1 = new Image(new ObjectId('Image', [12]));
     $image1->setValue('file', 'image.png');
 
-    $author1 = new Author(new ObjectId('Author', array(1)));
+    $author1 = new Author(new ObjectId('Author', [1]));
     $author1->setValue('name', 'Unknown');
 
     $chapter11->addNode($chapter13, 'SubChapter');
@@ -311,10 +310,10 @@ class JsonFormatTest extends BaseTestCase {
     $book1->addNode($chapter12, 'Chapter');
 
     $message = ObjectFactory::getNewInstance('response');
-    $message->setValues(array(
+    $message->setValues([
                 'app.src.model.Book:123' => $book1,
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966'
-        ));
+        ]);
 
     $format = $this->createFormat();
     $format->serialize($message);
@@ -359,20 +358,20 @@ class JsonFormatTest extends BaseTestCase {
   }
 
   public function testSerializeNodeList() {
-    $chapter1 = new Chapter(new ObjectId('Chapter', array(1)));
+    $chapter1 = new Chapter(new ObjectId('Chapter', [1]));
     $chapter1->setValue('name', 'Chapter 1');
-    $chapter2 = new Chapter(new ObjectId('Chapter', array(2)));
+    $chapter2 = new Chapter(new ObjectId('Chapter', [2]));
     $chapter2->setValue('name', 'Chapter 2');
-    $chapter3 = new Chapter(new ObjectId('Chapter', array(3)));
+    $chapter3 = new Chapter(new ObjectId('Chapter', [3]));
     $chapter3->setValue('name', 'Chapter 3');
 
-    $list1 = array('type' => 'Chapter',
-        'content' => array('contentType' => 'Chapter', $chapter1, $chapter2, $chapter3));
+    $list1 = ['type' => 'Chapter',
+        'content' => ['contentType' => 'Chapter', $chapter1, $chapter2, $chapter3]];
 
     $message = ObjectFactory::getNewInstance('response');
-    $message->setValues(array(
+    $message->setValues([
                 'sid' => 'cd65fec9bce4d7ec74e341a9031f8966',
-                'list' => $list1));
+                'list' => $list1]);
 
     $format = $this->createFormat();
     $format->serialize($message);
@@ -400,7 +399,7 @@ class JsonFormatTest extends BaseTestCase {
   private function createFormat() {
     $serializer = ObjectFactory::getInstanceOf('wcmf\lib\model\impl\DionysosNodeSerializer');
     return ObjectFactory::getInstanceOf('wcmf\lib\presentation\format\impl\JsonFormat',
-            array('serializer' => $serializer));
+            ['serializer' => $serializer]);
   }
 }
 ?>

@@ -29,39 +29,39 @@ class SortTest extends DatabaseTestCase {
   private $publisherOidStr = 'Publisher:12345';
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
+      ],
+      'User' => [
         ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
-      ),
-      'NMUserRole' => array(
+      ],
+      'NMUserRole' => [
         ['fk_user_id' => 0, 'fk_role_id' => 0],
-      ),
-      'Role' => array(
+      ],
+      'Role' => [
         ['id' => 0, 'name' => 'administrators'],
-      ),
-      'Publisher' => array(
-        array('id' => 12345),
-      ),
-      'NMPublisherAuthor' => array(
-        array('id' => 123451, 'fk_publisher_id' => 12345, 'fk_author_id' => 123454, 'sortkey_publisher' => 123454),
-        array('id' => 123452, 'fk_publisher_id' => 12345, 'fk_author_id' => 123455, 'sortkey_publisher' => 123455),
-        array('id' => 123453, 'fk_publisher_id' => 12345, 'fk_author_id' => 123456, 'sortkey_publisher' => 123456),
-      ),
-      'Author' => array(
-        array('id' => 123454),
-        array('id' => 123455),
-        array('id' => 123456),
-      ),
-      'Chapter' => array(
-        array('id' => 12345, 'fk_chapter_id' => null, 'sortkey_parentchapter' => null, 'sortkey' => null),
-        array('id' => 123454, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123454, 'sortkey' => 123454),
-        array('id' => 123455, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123455, 'sortkey' => 123455),
-        array('id' => 123456, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123456, 'sortkey' => 123456),
-      ),
-    ));
+      ],
+      'Publisher' => [
+        ['id' => 12345],
+      ],
+      'NMPublisherAuthor' => [
+        ['id' => 123451, 'fk_publisher_id' => 12345, 'fk_author_id' => 123454, 'sortkey_publisher' => 123454],
+        ['id' => 123452, 'fk_publisher_id' => 12345, 'fk_author_id' => 123455, 'sortkey_publisher' => 123455],
+        ['id' => 123453, 'fk_publisher_id' => 12345, 'fk_author_id' => 123456, 'sortkey_publisher' => 123456],
+      ],
+      'Author' => [
+        ['id' => 123454],
+        ['id' => 123455],
+        ['id' => 123456],
+      ],
+      'Chapter' => [
+        ['id' => 12345, 'fk_chapter_id' => null, 'sortkey_parentchapter' => null, 'sortkey' => null],
+        ['id' => 123454, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123454, 'sortkey' => 123454],
+        ['id' => 123455, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123455, 'sortkey' => 123455],
+        ['id' => 123456, 'fk_chapter_id' => 12345, 'sortkey_parentchapter' => 123456, 'sortkey' => 123456],
+      ],
+    ]);
   }
 
   public function testDefaultOrder() {
@@ -171,7 +171,7 @@ class SortTest extends DatabaseTestCase {
     $chapter2 = $persistenceFacade->load(ObjectId::parse($this->chapterOidStr), 1);
     $children2 = $chapter2->getChildren();
     $comparator = new NodeSortkeyComparator($chapter2, $children2);
-    usort($children2, array($comparator, 'compare'));
+    usort($children2, [$comparator, 'compare']);
     $this->assertEquals($childOids[sizeof($childOids)-1], $children2[0]->getOID()->__toString());
     $this->assertEquals($childOids[0], $children2[1]->getOID()->__toString());
     $transaction->rollback();

@@ -30,7 +30,7 @@ use wcmf\lib\model\Node;
  * usort($nodeList, [$comparator, 'compare']);
  *
  * // sort by multiple attributes with direction
- * $comparator = new NodeComparator(array('creator DESC', 'created ASC'));
+ * $comparator = new NodeComparator(['creator DESC', 'created ASC']);
  * usort($nodeList, [$comparator, 'compare']);
  *
  * // more complex example with different attributes

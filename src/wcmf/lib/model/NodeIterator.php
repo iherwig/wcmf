@@ -48,7 +48,7 @@ class NodeIterator implements \Iterator {
    * @param $aggregationKinds Array of aggregation kind values of relations to follow
    *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
-  public function __construct($node, $aggregationKinds=array()) {
+  public function __construct($node, $aggregationKinds=[]) {
     $this->end = false;
     $this->nodeList = [];
     $this->processedOidList = [];

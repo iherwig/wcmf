@@ -63,7 +63,7 @@ class CalcController extends Controller {
     $response = $this->getResponse();
     $response->setAction('ok');
     // use original request data + stack
-    $data = array_merge(array('stack' => $response->getValue('stack')), $request->getValues());
+    $data = array_merge(['stack' => $response->getValue('stack')], $request->getValues());
     $this->internalRedirect('continue', '', $data);
   }
 

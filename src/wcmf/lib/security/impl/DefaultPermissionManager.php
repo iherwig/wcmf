@@ -48,12 +48,12 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
       self::$logger = LogManager::getLogger(__CLASS__);
     }
     $this->actionKeyProvider = new PersistenceActionKeyProvider();
-    $this->actionKeyProvider->setValueMap(array(
+    $this->actionKeyProvider->setValueMap([
         'resource' => 'resource',
         'context' => 'context',
         'action' => 'action',
         'value' => 'roles',
-    ));
+    ]);
   }
 
   /**
@@ -146,8 +146,8 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
     elseif ($permission) {
       $value = $permission->getValue('roles');
       // remove role from value
-      $newValue = preg_replace('/ +/', ' ', str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
-                    PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value));
+      $newValue = preg_replace('/ +/', ' ', str_replace([PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
+                    PermissionManager::PERMISSION_MODIFIER_DENY.$role], "", $value));
       if (strlen($newValue) > 0) {
         $permission->setValue('roles', trim($newValue." ".$permVal));
       }

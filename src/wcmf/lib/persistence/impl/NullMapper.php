@@ -107,7 +107,7 @@ class NullMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::getAttributes()
    */
-  public function getAttributes(array $tags=array(), $matchMode='all') {
+  public function getAttributes(array $tags=[], $matchMode='all') {
     return [];
   }
 

@@ -76,10 +76,10 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
     $window = $this->currentWindow();
 
     // set window size
-    $window->size(array(
+    $window->size([
       'width' => $this->width,
-      'height' => 768)
-    );
+      'height' => 768
+    ]);
   }
 
   protected function setDisplay($size) {

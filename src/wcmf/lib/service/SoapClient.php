@@ -47,7 +47,7 @@ class SoapClient extends \SoapClient {
    * @param $method
    * @param $params (optional, default: empty array)
    */
-  public function call($method, $params=array()) {
+  public function call($method, $params=[]) {
     $header = $this->generateWSSecurityHeader($this->user, $this->password);
     $response = $this->__soapCall($method, sizeof($params) > 0 ? [$params] : [], null, $header);
     // in document/literal style the "return" parameter holds the result

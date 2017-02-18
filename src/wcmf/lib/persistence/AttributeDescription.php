@@ -68,7 +68,7 @@ class AttributeDescription {
    * @param $matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags (default: 'all')
    * @return True if the attribute tags satisfy the match mode, false else
    */
-  public function matchTags(array $tags=array(), $matchMode='all') {
+  public function matchTags(array $tags=[], $matchMode='all') {
     $numGivenTags = sizeof($tags);
     if (sizeof($numGivenTags) == 0) {
       return true;

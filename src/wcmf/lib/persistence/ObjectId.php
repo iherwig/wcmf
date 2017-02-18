@@ -51,7 +51,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
    * @note If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
    */
-  public function __construct($type, $id=array(), $prefix=null) {
+  public function __construct($type, $id=[], $prefix=null) {
     $this->prefix = $prefix;
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $this->fqType = $type != 'NULL' ? $persistenceFacade->getFullyQualifiedType($type) : 'NULL';

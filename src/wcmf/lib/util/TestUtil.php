@@ -170,10 +170,10 @@ class TestUtil {
   public static function startSession($user, $password) {
     $session = ObjectFactory::getInstance('session');
     $authManager = ObjectFactory::getInstance('authenticationManager');
-    $authUser = $authManager->login(array(
+    $authUser = $authManager->login([
         'login' => $user,
         'password' => $password
-    ));
+    ]);
     if ($authUser) {
       $session->clear();
       $session->setAuthUser($authUser->getLogin());

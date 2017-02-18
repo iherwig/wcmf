@@ -27,29 +27,29 @@ class SoapTest extends DatabaseTestCase {
   }
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
+      ],
+      'User' => [
         ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
-      ),
-      'NMUserRole' => array(
+      ],
+      'NMUserRole' => [
         ['fk_user_id' => 0, 'fk_role_id' => 0],
-      ),
-      'Role' => array(
+      ],
+      'Role' => [
         ['id' => 0, 'name' => 'administrators'],
-      ),
-      'Publisher' => array(
-        array('id' => 200, 'name' => 'Test Publisher'),
-      ),
-      'NMPublisherAuthor' => array(
-        array('id' => 201, 'fk_publisher_id' => 200, 'fk_author_id' => 202),
-      ),
-      'Author' => array(
-        array('id' => 202, 'name' => 'Test Author'),
-      )
-    ));
+      ],
+      'Publisher' => [
+        ['id' => 200, 'name' => 'Test Publisher'],
+      ],
+      'NMPublisherAuthor' => [
+        ['id' => 201, 'fk_publisher_id' => 200, 'fk_author_id' => 202],
+      ],
+      'Author' => [
+        ['id' => 202, 'name' => 'Test Author'],
+      ]
+    ]);
   }
 
   protected function setUp() {
@@ -70,17 +70,17 @@ class SoapTest extends DatabaseTestCase {
   public function testSearch() {
     $this->markTestIncomplete('Relies on lucene search.');
 
-    $options = array('trace' => 1, 'exceptions' => 0);
+    $options = ['trace' => 1, 'exceptions' => 0];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
-    $params = array('query' => 'Test');
+    $params = ['query' => 'Test'];
     $result = $client->call("search", $params);
     $this->assertFalse($result instanceof \SoapFault);
     $this->assertEquals(1, sizeof($result));
   }
 
   public function testList() {
-    $options = array('trace' => 1, 'exceptions' => 0);
+    $options = ['trace' => 1, 'exceptions' => 0];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $result = $client->call("getAuthorList");
@@ -93,10 +93,10 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testRead() {
-    $options = array('trace' => 1, 'exceptions' => 0);
+    $options = ['trace' => 1, 'exceptions' => 0];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
-    $params = array('oid' => 'app.src.model.Author:202', 'depth' => 1);
+    $params = ['oid' => 'app.src.model.Author:202', 'depth' => 1];
     $result = $client->call("readAuthor", $params);
 
     $this->assertFalse($result instanceof \SoapFault);
@@ -112,7 +112,7 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testUpdate() {
-    $options = array('trace' => 1, 'exceptions' => 0);
+    $options = ['trace' => 1, 'exceptions' => 0];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
@@ -126,7 +126,7 @@ class SoapTest extends DatabaseTestCase {
     $author->Chapter = [];
     $author->Publisher = [];
 
-    $params = array('Author' => $author);
+    $params = ['Author' => $author];
     $result = $client->call("updateAuthor", $params);
     $this->assertFalse($result instanceof \SoapFault);
 
@@ -135,7 +135,7 @@ class SoapTest extends DatabaseTestCase {
 
     // test read updated object
     $oid = $result->oid;
-    $params2 = array('oid' => $oid, 'depth' => 0);
+    $params2 = ['oid' => $oid, 'depth' => 0];
     $result2 = $client->call("readAuthor", $params2);
 
     $this->assertFalse($result2 instanceof \SoapFault);
@@ -144,7 +144,7 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testCreate() {
-    $options = array('trace' => 1, 'exceptions' => 0);
+    $options = ['trace' => 1, 'exceptions' => 0];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
@@ -158,7 +158,7 @@ class SoapTest extends DatabaseTestCase {
     $author->Chapter = [];
     $author->Publisher = [];
 
-    $params = array('Author' => $author);
+    $params = ['Author' => $author];
     $result = $client->call("createAuthor", $params);
     $this->assertFalse($result instanceof \SoapFault);
 
@@ -166,7 +166,7 @@ class SoapTest extends DatabaseTestCase {
 
     // test read new object
     $oid = $result->oid;
-    $params2 = array('oid' => $oid, 'depth' => 0);
+    $params2 = ['oid' => $oid, 'depth' => 0];
     $result2 = $client->call("readAuthor", $params2);
 
     $this->assertFalse($result2 instanceof \SoapFault);
@@ -175,10 +175,10 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testDelete() {
-    $options = array('trace' => 1, 'exceptions' => 0);
+    $options = ['trace' => 1, 'exceptions' => 0];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
-    $params = array('oid' => 'app.src.model.Author:202');
+    $params = ['oid' => 'app.src.model.Author:202'];
     $result = $client->call("deleteAuthor", $params);
     $this->assertFalse($result instanceof \SoapFault);
 
@@ -186,7 +186,7 @@ class SoapTest extends DatabaseTestCase {
 
     // test read deleted object
     $oid = $result;
-    $params2 = array('oid' => $oid, 'depth' => 0);
+    $params2 = ['oid' => $oid, 'depth' => 0];
     $result2 = $client->call("readAuthor", $params2);
 
     $this->assertFalse($result2 instanceof \SoapFault);

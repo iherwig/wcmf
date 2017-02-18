@@ -154,7 +154,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @return Associative array with keys 'config' (configuration array) and 'files'
    * (array of parsed files)
    */
-  protected function processFile($filename, $configArray=array(), $parsedFiles=array()) {
+  protected function processFile($filename, $configArray=[], $parsedFiles=[]) {
     // avoid circular includes
     if (!in_array($filename, $parsedFiles)) {
       $parsedFiles[] = $filename;

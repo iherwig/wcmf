@@ -29,43 +29,43 @@ use wcmf\test\lib\DatabaseTestCase;
 class PermissionsTest extends DatabaseTestCase {
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
-      'DBSequence' => array(
+    return new ArrayDataSet([
+      'DBSequence' => [
         ['table' => ''],
-      ),
-      'User' => array(
-        array('id' => 555, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => 'permissions.ini')
-      ),
-      'NMUserRole' => array(
-        array('fk_user_id' => 555, 'fk_role_id' => 555),
-      ),
-      'Role' => array(
-        array('id' => 555, 'name' => 'tester'),
-      ),
-      'Author' => array(
-        array('id' => 111, 'name' => 'Author1'),
-        array('id' => 222, 'name' => 'Author2'),
-      ),
-      'Publisher' => array(
-        array('id' => 111, 'name' => 'Publisher1'),
-        array('id' => 222, 'name' => 'Publisher2'),
-      ),
-      'Book' => array(
-        array('id' => 111, 'title' => 'Book1'),
-        array('id' => 222, 'title' => 'Book2'),
-      ),
-      'Chapter' => array(
-        array('id' => 111, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 1'),
-        array('id' => 222, 'fk_chapter_id' => 111, 'fk_book_id' => null, 'name' => 'Chapter 1.1'),
-        array('id' => 333, 'fk_chapter_id' => 222, 'fk_book_id' => null, 'name' => 'Chapter 1.1.1'),
-        array('id' => 444, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 2'),
-        array('id' => 555, 'fk_chapter_id' => 111, 'fk_book_id' => null, 'name' => 'Chapter 1.2'),
-        array('id' => 666, 'fk_chapter_id' => 555, 'fk_book_id' => null, 'name' => 'Chapter 1.2.1'),
-      ),
-      'Permission' => array(
-        array('id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users -administrators'),
-      ),
-    ));
+      ],
+      'User' => [
+        ['id' => 555, 'login' => 'userPermTest', 'password' => '$2y$10$iBjiDZ8XyK1gCOV6m5lbO.2ur42K7M1zSpm.NU7u5g3mYTi2kiu02', 'active' => 1, 'super_user' => 0, 'config' => 'permissions.ini']
+      ],
+      'NMUserRole' => [
+        ['fk_user_id' => 555, 'fk_role_id' => 555],
+      ],
+      'Role' => [
+        ['id' => 555, 'name' => 'tester'],
+      ],
+      'Author' => [
+        ['id' => 111, 'name' => 'Author1'],
+        ['id' => 222, 'name' => 'Author2'],
+      ],
+      'Publisher' => [
+        ['id' => 111, 'name' => 'Publisher1'],
+        ['id' => 222, 'name' => 'Publisher2'],
+      ],
+      'Book' => [
+        ['id' => 111, 'title' => 'Book1'],
+        ['id' => 222, 'title' => 'Book2'],
+      ],
+      'Chapter' => [
+        ['id' => 111, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 1'],
+        ['id' => 222, 'fk_chapter_id' => 111, 'fk_book_id' => null, 'name' => 'Chapter 1.1'],
+        ['id' => 333, 'fk_chapter_id' => 222, 'fk_book_id' => null, 'name' => 'Chapter 1.1.1'],
+        ['id' => 444, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 2'],
+        ['id' => 555, 'fk_chapter_id' => 111, 'fk_book_id' => null, 'name' => 'Chapter 1.2'],
+        ['id' => 666, 'fk_chapter_id' => 555, 'fk_book_id' => null, 'name' => 'Chapter 1.2.1'],
+      ],
+      'Permission' => [
+        ['id' => 111, 'resource' => 'Chapter:111', 'context' => 'test', 'action' => 'delete', 'roles' => '+* +users -administrators'],
+      ],
+    ]);
   }
 
   public function testPermissionOverride() {
@@ -237,8 +237,8 @@ class PermissionsTest extends DatabaseTestCase {
     $this->assertTrue(isset($permissions['allow']));
     $this->assertTrue(isset($permissions['deny']));
     $this->assertTrue(isset($permissions['default']));
-    $this->assertEquals(array('users'), $permissions['allow']);
-    $this->assertEquals(array('administrators'), $permissions['deny']);
+    $this->assertEquals(['users'], $permissions['allow']);
+    $this->assertEquals(['administrators'], $permissions['deny']);
     $this->assertTrue($permissions['default']);
 
     TestUtil::endSession();
@@ -250,11 +250,11 @@ class PermissionsTest extends DatabaseTestCase {
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     $permissionManager = ObjectFactory::getInstance('permissionManager');
-    $permissionManager->setPermissions('Chapter:111', 'test', 'delete', array(
-      'allow' => array('tester', 'administrators'),
-      'deny' => array('users'),
+    $permissionManager->setPermissions('Chapter:111', 'test', 'delete', [
+      'allow' => ['tester', 'administrators'],
+      'deny' => ['users'],
       'default' => false
-    ));
+    ]);
     $transaction->commit();
 
     // test

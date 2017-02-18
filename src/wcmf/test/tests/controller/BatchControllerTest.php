@@ -34,14 +34,14 @@ class BatchControllerTest extends ControllerTestCase {
   }
 
   protected function getDataSet() {
-    return new ArrayDataSet(array(
+    return new ArrayDataSet([
       'DBSequence' => [
         ['table' => ''],
       ],
       'User' => [
         ['id' => 0, 'login' => 'admin', 'name' => 'Administrator', 'password' => '$2y$10$WG2E.dji.UcGzNZF2AlkvOb7158PwZpM2KxwkC6FJdKr4TQC9JXYm', 'active' => 1, 'super_user' => 1, 'config' => ''],
       ],
-    ));
+    ]);
   }
 
   /**

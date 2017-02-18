@@ -98,7 +98,7 @@ class Node extends DefaultPersistentObject {
 
       $this->relationStates[$name] = Node::RELATION_STATE_INITIALIZING;
       $mapper = $this->getMapper();
-      $allRelatives = $mapper->loadRelation(array($this), $name, BuildDepth::PROXIES_ONLY);
+      $allRelatives = $mapper->loadRelation([$this], $name, BuildDepth::PROXIES_ONLY);
       $oidStr = $this->getOID()->__toString();
       $relatives = isset($allRelatives[$oidStr]) ? $allRelatives[$oidStr] : null;
       $relDesc = $mapper->getRelation($name);
@@ -461,7 +461,7 @@ class Node extends DefaultPersistentObject {
    */
   public function loadChildren($role=null, $buildDepth=BuildDepth::SINGLE) {
     if ($role != null) {
-      $this->loadRelations(array($role), $buildDepth);
+      $this->loadRelations([$role], $buildDepth);
     }
     else {
       $this->loadRelations(array_keys($this->getPossibleChildren()), $buildDepth);
@@ -561,7 +561,7 @@ class Node extends DefaultPersistentObject {
    */
   public function loadParents($role=null, $buildDepth=BuildDepth::SINGLE) {
     if ($role != null) {
-      $this->loadRelations(array($role), $buildDepth);
+      $this->loadRelations([$role], $buildDepth);
     }
     else {
       $this->loadRelations(array_keys($this->getPossibleParents()), $buildDepth);
@@ -732,7 +732,7 @@ class Node extends DefaultPersistentObject {
         // otherwise load the objects directly
         else {
           $mapper = $this->getMapper();
-          $allRelatives = $mapper->loadRelation(array($this), $curRole, $buildDepth);
+          $allRelatives = $mapper->loadRelation([$this], $curRole, $buildDepth);
           $oidStr = $this->getOID()->__toString();
           $relatives = isset($allRelatives[$oidStr]) ? $allRelatives[$oidStr] : null;
           $relDesc = $mapper->getRelation($curRole);

@@ -27,8 +27,8 @@ class ErrorHandler {
    * Constructor.
    */
   public function __construct() {
-    set_error_handler(array($this, 'handleError'));
-    set_exception_handler(array($this, 'handleException'));
+    set_error_handler([$this, 'handleError']);
+    set_exception_handler([$this, 'handleException']);
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }

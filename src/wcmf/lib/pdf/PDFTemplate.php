@@ -29,7 +29,7 @@ use wcmf\lib\pdf\PDFPage;
  *   // set the template
  *   $template->setTemplate('include/pdf/wcmf.pdf');
  *   // render Page1 on every second template page
- *   $template->setPages(array(new Page1(), null), true);
+ *   $template->setPages([new Page1(), null], true);
  *
  *   // output the final page
  *   $downloadfile = 'wcmf.pdf';

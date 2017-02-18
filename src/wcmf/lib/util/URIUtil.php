@@ -27,7 +27,7 @@ class URIUtil {
   public static function makeRelative($absUri, $base) {
     // normalize slashes and remove drive names
     list($absUri, $base) = self::normalizePaths(
-            self::removeProtocols(self::normalizeSlashes(array($absUri, $base))));
+            self::removeProtocols(self::normalizeSlashes([$absUri, $base])));
 
     // add slash to base if missing
     if (!preg_match('/\/$/', $base)) {
@@ -64,7 +64,7 @@ class URIUtil {
    * @return String
    */
   public static function makeAbsolute($relUri, $base) {
-    list($relUri, $base) = self::normalizeSlashes(array($relUri, $base));
+    list($relUri, $base) = self::normalizeSlashes([$relUri, $base]);
 
     // return if already absolute URL
     if (parse_url($relUri, PHP_URL_SCHEME) != '') {
@@ -109,7 +109,7 @@ class URIUtil {
    * and the absolute and relative URI (as seen from the executed script) as values
    */
   public static function translate($pathFromA, $pathFromScriptToA) {
-    list($pathFromA, $pathFromScriptToA) = self::normalizeSlashes(array($pathFromA, $pathFromScriptToA));
+    list($pathFromA, $pathFromScriptToA) = self::normalizeSlashes([$pathFromA, $pathFromScriptToA]);
 
     $self = self::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $path = dirname($self).'/';

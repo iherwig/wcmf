@@ -113,7 +113,7 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::getInstance()
    */
-  public function getInstance($name, $dynamicConfiguration=array()) {
+  public function getInstance($name, $dynamicConfiguration=[]) {
     $instance = null;
     if (in_array($name, $this->currentStack)) {
       throw new \Exception("Circular dependency detected: ".join(' - ', $this->currentStack)." - [".$name."]");
@@ -141,10 +141,10 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::getNewInstance()
    */
-  public function getNewInstance($name, $dynamicConfiguration=array()) {
-    $configuration = array_merge(array(
+  public function getNewInstance($name, $dynamicConfiguration=[]) {
+    $configuration = array_merge([
         '__shared' => false
-    ), $dynamicConfiguration);
+    ], $dynamicConfiguration);
 
     $instance = $this->getInstance($name, $configuration);
     return $instance;
@@ -153,11 +153,11 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::getInstanceOf()
    */
-  public function getInstanceOf($class, $dynamicConfiguration=array()) {
-    $configuration = array_merge(array(
+  public function getInstanceOf($class, $dynamicConfiguration=[]) {
+    $configuration = array_merge([
         '__class' => $class,
         '__shared' => false
-    ), $dynamicConfiguration);
+    ], $dynamicConfiguration);
 
     $instance = $this->createInstance($class, $configuration, null);
     return $instance;

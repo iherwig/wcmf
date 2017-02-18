@@ -136,8 +136,8 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
     }
     else {
       // remove role from value
-      $newValue = preg_replace('/ +/', ' ', str_replace(array(PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
-                    PermissionManager::PERMISSION_MODIFIER_DENY.$role), "", $value));
+      $newValue = preg_replace('/ +/', ' ', str_replace([PermissionManager::PERMISSION_MODIFIER_ALLOW.$role,
+                    PermissionManager::PERMISSION_MODIFIER_DENY.$role], "", $value));
       if (strlen($newValue) > 0) {
         $configInstance->setValue($permKey, $newValue." ".$permVal, self::AUTHORIZATION_SECTION, false);
       }

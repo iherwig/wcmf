@@ -84,7 +84,7 @@ use wcmf\lib\persistence\ValueChangeEvent;
  * $recipeTpl3->setValue("name", "Salat");
  * $recipeTpl4 = $query->getObjectTemplate('Recipe', null, Criteria::OPERATOR_OR);
  * $recipeTpl4->setValue("portions", "= 4");
- * $query->makeGroup(array($recipeTpl3, $recipeTpl4), Criteria::OPERATOR_AND);
+ * $query->makeGroup([$recipeTpl3, $recipeTpl4], Criteria::OPERATOR_AND);
  *
  * $authorTpl1->addNode($recipeTpl1, 'Recipe');
  * $authorTpl1->addNode($recipeTpl2, 'Recipe');
@@ -406,7 +406,7 @@ class ObjectQuery extends AbstractQuery {
                 $joinCondition = $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
                         $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
 
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, []);
+                $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition, []);
               }
               elseif ($relationDescription instanceof RDBOneToManyRelationDescription) {
                 $idAttr = $mapper->getAttribute($relationDescription->getIdName());
@@ -414,7 +414,7 @@ class ObjectQuery extends AbstractQuery {
                 $joinCondition = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
                         $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
 
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition, []);
+                $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition, []);
               }
               elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
                 $thisRelationDescription = $relationDescription->getThisEndRelation();
@@ -433,7 +433,7 @@ class ObjectQuery extends AbstractQuery {
                         $nmMapper->getRealTableName().'.'.$otherFkAttr->getColumn();
 
                 $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, []);
-                $selectStmt->join(array($childTableName['alias'] => $childTableName['name']), $joinCondition2, []);
+                $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition2, []);
 
                 // register the nm type
                 $this->involvedTypes[$nmMapper->getType()] = true;
@@ -493,7 +493,7 @@ class ObjectQuery extends AbstractQuery {
 
           if ($orderTableName) {
             $orderAttributeFinal = $orderTableName.'.'.$orderColumnName;
-            $selectStmt->order(array($orderAttributeFinal.' '.$orderDirection));
+            $selectStmt->order([$orderAttributeFinal.' '.$orderDirection]);
             $ok = true;
           }
         }
@@ -517,7 +517,7 @@ class ObjectQuery extends AbstractQuery {
           $orderType = join('.', $orderAttributeParts);
         }
         if (!in_array($orderAttribute, $columnNames)) {
-          $selectStmt->addColumns(array($orderAttribute), $orderType);
+          $selectStmt->addColumns([$orderAttribute], $orderType);
         }
       }
     }

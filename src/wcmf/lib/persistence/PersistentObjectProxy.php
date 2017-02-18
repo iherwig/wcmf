@@ -74,7 +74,7 @@ class PersistentObjectProxy implements PersistentObject {
     if ($this->realSubject == null) {
       $this->resolve();
     }
-    return call_user_func_array(array($this->realSubject, $name), $arguments);
+    return call_user_func_array([$this->realSubject, $name], $arguments);
   }
 
   /**

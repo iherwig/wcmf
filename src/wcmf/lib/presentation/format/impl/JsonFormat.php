@@ -123,5 +123,5 @@ class JsonFormat extends HierarchicalFormat {
 }
 
 // register the output method
-register_shutdown_function(array(__NAMESPACE__.'\JsonFormat', 'printJSONResult'));
+register_shutdown_function([__NAMESPACE__.'\JsonFormat', 'printJSONResult']);
 ?>
