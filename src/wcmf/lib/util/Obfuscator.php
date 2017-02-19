@@ -23,7 +23,7 @@ use wcmf\lib\core\Session;
 class Obfuscator {
 
   // session name constants
-  private static $VALUES_VARNAME = 'Obfuscator.values';
+  const VALUES_VARNAME = 'Obfuscator.values';
 
   private $session = null;
 
@@ -48,9 +48,9 @@ class Obfuscator {
 
     // create and store the value
     $obfuscated = md5($str);
-    $values = $this->session->get(self::$VALUES_VARNAME);
+    $values = $this->session->get(self::VALUES_VARNAME);
     $values[$obfuscated] = $str;
-    $this->session->set(self::$VALUES_VARNAME, $values);
+    $this->session->set(self::VALUES_VARNAME, $values);
 
     return $obfuscated;
   }
@@ -63,7 +63,7 @@ class Obfuscator {
   public function unveil($str) {
     $this->ensureStorage();
 
-    $values = $this->session->get(self::$VALUES_VARNAME);
+    $values = $this->session->get(self::VALUES_VARNAME);
     if (isset($values[$str])) {
       return $values[$str];
     }
@@ -76,9 +76,9 @@ class Obfuscator {
    * Ensure that the session storage for the values is initialized
    */
   private function ensureStorage() {
-    if (!$this->session->exist(self::$VALUES_VARNAME)) {
+    if (!$this->session->exist(self::VALUES_VARNAME)) {
       $values = [];
-      $this->session->set(self::$VALUES_VARNAME, $values);
+      $this->session->set(self::VALUES_VARNAME, $values);
     }
   }
 }

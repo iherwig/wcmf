@@ -48,7 +48,8 @@ use Zend\Db\TableGateway\TableGateway;
  */
 abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
-  private static $SEQUENCE_CLASS = 'DBSequence';
+  const SEQUENCE_CLASS = 'DBSequence';
+
   private static $adapters = [];      // registry for adapters, key: connId
   private static $inTransaction = []; // registry for transaction status (boolean), key: connId
   private static $isDebugEnabled = false;
@@ -203,9 +204,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   protected function getNextId() {
     try {
       // get sequence table mapper
-      $sequenceMapper = $this->persistenceFacade->getMapper(self::$SEQUENCE_CLASS);
+      $sequenceMapper = $this->persistenceFacade->getMapper(self::SEQUENCE_CLASS);
       if (!($sequenceMapper instanceof RDBMapper)) {
-        throw new PersistenceException(self::$SEQUENCE_CLASS." is not mapped by RDBMapper.");
+        throw new PersistenceException(self::SEQUENCE_CLASS." is not mapped by RDBMapper.");
       }
       $sequenceTable = $sequenceMapper->getRealTableName();
       $sequenceConn = $sequenceMapper->getConnection();

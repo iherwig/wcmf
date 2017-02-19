@@ -31,8 +31,7 @@ class ImageOutputStrategy implements OutputStrategy {
   protected $img = null;
   protected $width = 0;
   protected $height = 0;
-  protected $xscale = 0;
-  protected $yscale = 0;
+  protected $scale = null;
   protected $border = 0;
   protected $bgColor = null;
   protected $txtColor = null;
@@ -48,8 +47,8 @@ class ImageOutputStrategy implements OutputStrategy {
    * @param $file The output file name.
    * @param $map The position map provided by LayoutVisitor.
    * @param $lineType The linetype to use [LINETYPE_DIRECT|LINETYPE_ROUTED] DEFAULT LINETYPE_DIRECT.
-   * @param $scale The image scale (will be xscale) DEFAULT 100.
-   * @param $aspect The image aspect (aspect = xscale/yscale) DEFAULT 0.5.
+   * @param $scale The image scale DEFAULT 100.
+   * @param $aspect The image aspect DEFAULT 0.5.
    * @param $border The image border [px] DEFAULT 50.
    * @param $usemap Name of the HTML ImageMap to write to stdout ['' means no map] DEFAULT ''.
    */
@@ -66,8 +65,8 @@ class ImageOutputStrategy implements OutputStrategy {
     $this->file = $file;
     $this->map = $map;
     $this->lineType = $lineType;
-    $this->xscale = $scale;
-    $this->yscale = $scale/$aspect;
+    $this->scale['x'] = $scale;
+    $this->scale['y'] = $scale/$aspect;
     $this->border = $border;
     $this->usemap = $usemap;
     // define label dimensions relative to connector position
@@ -93,8 +92,8 @@ class ImageOutputStrategy implements OutputStrategy {
         $this->height = $val->y;
       }
     }
-    $this->width = $this->width * $this->xscale + $this->labelDim['right'] - $this->labelDim['left'] + 2*$this->border;
-    $this->height = $this->height * $this->yscale + $this->labelDim['bottom'] - $this->labelDim['top'] + 2*$this->border;
+    $this->width = $this->width * $this->scale['x'] + $this->labelDim['right'] - $this->labelDim['left'] + 2*$this->border;
+    $this->height = $this->height * $this->scale['y'] + $this->labelDim['bottom'] - $this->labelDim['top'] + 2*$this->border;
     $this->img = ImageCreate($this->width, $this->height);
     $this->bgColor = ImageColorAllocate($this->img, 255, 255, 255);
     $this->txtColor = ImageColorAllocate($this->img, 0, 128, 192);
@@ -133,8 +132,8 @@ class ImageOutputStrategy implements OutputStrategy {
    */
   public function writeObject(PersistentObject $obj) {
     $oid = $obj->getOID();
-    $x = $this->map[$oid]->x * $this->xscale - $this->labelDim['left'] + $this->border;
-    $y = $this->map[$oid]->y * $this->yscale - $this->labelDim['top'] + $this->border;
+    $x = $this->map[$oid]->x * $this->scale['x'] - $this->labelDim['left'] + $this->border;
+    $y = $this->map[$oid]->y * $this->scale['y'] - $this->labelDim['top'] + $this->border;
 
     $statusStr = '';
     if ($obj->getState() == PersistentObject::STATE_DIRTY) {
@@ -276,24 +275,24 @@ class ImageOutputStrategy implements OutputStrategy {
     // from child...
     if ($this->map["type"] == MAPTYPE_HORIZONTAL) {
       // connect from mid top...
-      $x1 = $this->map[$oid]->x * $this->xscale + ($this->labelDim['right'] - $this->labelDim['left'])/2 + $this->border;
-      $y1 = $this->map[$oid]->y * $this->yscale + $this->border - 1;
+      $x1 = $this->map[$oid]->x * $this->scale['x'] + ($this->labelDim['right'] - $this->labelDim['left'])/2 + $this->border;
+      $y1 = $this->map[$oid]->y * $this->scale['y'] + $this->border - 1;
     }
     else {
       // connect from mid left...
-      $x1 = $this->map[$oid]->x * $this->xscale + $this->border - 1;
-      $y1 = $this->map[$oid]->y * $this->yscale + ($this->labelDim['bottom'] - $this->labelDim['top'])/2 + $this->border;
+      $x1 = $this->map[$oid]->x * $this->scale['x'] + $this->border - 1;
+      $y1 = $this->map[$oid]->y * $this->scale['y'] + ($this->labelDim['bottom'] - $this->labelDim['top'])/2 + $this->border;
     }
     // ...to parent
     if ($this->map["type"] == MAPTYPE_HORIZONTAL) {
       // ...to mid bottom
-      $x2 = $this->map[$poid]->x * $this->xscale + ($this->labelDim['right'] - $this->labelDim['left'])/2 + $this->border;
-      $y2 = $this->map[$poid]->y * $this->yscale + ($this->labelDim['bottom'] - $this->labelDim['top']) + $this->border + 1;
+      $x2 = $this->map[$poid]->x * $this->scale['x'] + ($this->labelDim['right'] - $this->labelDim['left'])/2 + $this->border;
+      $y2 = $this->map[$poid]->y * $this->scale['y'] + ($this->labelDim['bottom'] - $this->labelDim['top']) + $this->border + 1;
     }
     else {
       // ...to mid right
-      $x2 = $this->map[$poid]->x * $this->xscale + $this->labelDim['right'] - $this->labelDim['left'] + $this->border + 1;
-      $y2 = $this->map[$poid]->y * $this->yscale + ($this->labelDim['bottom'] - $this->labelDim['top'])/2 + $this->border;
+      $x2 = $this->map[$poid]->x * $this->scale['x'] + $this->labelDim['right'] - $this->labelDim['left'] + $this->border + 1;
+      $y2 = $this->map[$poid]->y * $this->scale['y'] + ($this->labelDim['bottom'] - $this->labelDim['top'])/2 + $this->border;
     }
     return [new Position($x1, $y1, 0), new Position($x2, $y2, 0)];
   }

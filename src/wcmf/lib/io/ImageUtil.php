@@ -51,7 +51,7 @@ class ImageUtil {
    * @return String
    */
   public static function getImageTag($imageFile, $widths, $type='w', $sizes='',
-          $useDataAttributes=false, $alt='', $class='', $title='', $fallbackFile,
+          $useDataAttributes=false, $alt='', $class='', $title='', $fallbackFile='',
           $generate=false) {
     // check if the image files exist
     if (!FileUtil::fileExists($imageFile)) {

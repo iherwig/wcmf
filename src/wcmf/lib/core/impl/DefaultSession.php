@@ -25,7 +25,7 @@ use wcmf\lib\util\URIUtil;
  */
 class DefaultSession implements Session {
 
-  CONST AUTH_USER_NAME = 'auth_user';
+  const AUTH_USER_NAME = 'auth_user';
 
   private $cookiePrefix = '';
 

@@ -13,16 +13,16 @@
  * Obfuscate email addresses.
  * @see http://www.phpinsider.com/smarty-forum/viewtopic.php?t=2166
  *
- * @global $obfuscated_email_count
+ * @global $obfuscatedEmailCount
  * @param $output
  * @param $template Smarty_Internal_Template
  * @return String
  */
 function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $template) {
-  $obfuscated_email_count = 0;
+  $obfuscatedEmailCount = 0;
   $output = preg_replace_callback(
     '!<a\s([^>]*)href=["\']mailto:([^"\']+)["\']([^>]*)>(.*?)</a[^>]*>!is',
-    function($matches) use (&$obfuscated_email_count) {
+    function($matches) use (&$obfuscatedEmailCount) {
       // $matches[0] contains full matched string: <a href="...">...</a>
       // $matches[1] contains additional parameters
       // $matches[2] contains the email address which was specified as href
@@ -30,20 +30,20 @@ function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $
       // $matches[4] contains the text between the opening and closing <a> tag
 
       $address = $matches[2];
-      $obfuscated_address = str_replace([".","@"], [" dot ", " at "], $address);
+      $obfuscatedAddress = str_replace([".","@"], [" dot ", " at "], $address);
       $extra = trim($matches[1]." ".$matches[3]);
       $text = $matches[4];
-      $obfuscated_text = str_replace([".","@"], [" dot ", " at "], $text);
+      $obfuscatedText = str_replace([".","@"], [" dot ", " at "], $text);
 
-      $string = "var e; if (e = document.getElementById('obfuscated_email_".$obfuscated_email_count."')) e.style.display = 'none';\n";
+      $string = "var e; if (e = document.getElementById('obfuscated_email_".$obfuscatedEmailCount."')) e.style.display = 'none';\n";
       $string .= "document.write('<a href=\"mailto:".$address."\" ".$extra.">".$text."</a>');";
-      $js_encode = '';
+      $jsEncode = '';
       for ($x=0; $x < strlen($string); $x++) {
-        $js_encode .= '%' . bin2hex($string[$x]);
+        $jsEncode .= '%' . bin2hex($string[$x]);
       }
-      $replace = '<a id="obfuscated_email_'.$obfuscated_email_count.'" href="mailto:'.$obfuscated_address.'">'.$obfuscated_text.'</a><script type="text/javascript" language="javascript">eval(unescape(\''.$js_encode.'\'))</script>';
+      $replace = '<a id="obfuscated_email_'.$obfuscatedEmailCount.'" href="mailto:'.$obfuscatedAddress.'">'.$obfuscatedText.'</a><script type="text/javascript" language="javascript">eval(unescape(\''.$jsEncode.'\'))</script>';
 
-      ++$obfuscated_email_count;
+      ++$obfuscatedEmailCount;
 
       return $replace;
     },

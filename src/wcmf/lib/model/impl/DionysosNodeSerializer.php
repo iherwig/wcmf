@@ -37,7 +37,7 @@ use wcmf\lib\persistence\PersistenceFacade;
  */
 class DionysosNodeSerializer extends AbstractNodeSerializer {
 
-  private static $NODE_KEYS = [
+  const NODE_KEYS = [
       'className',
       'oid',
       'isReference',
@@ -114,7 +114,7 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
 
     // get remaining part of data
     foreach ($data as $key => $value) {
-      if (in_array($key, self::$NODE_KEYS)) {
+      if (in_array($key, self::NODE_KEYS)) {
         unset($data[$key]);
       }
     }
