@@ -58,6 +58,10 @@ class PersistentFacadeTest extends DatabaseTestCase {
         ['id' => 7, 'created' => '2016-07-14 12:00:13'], // 14.
         ['id' => 8, 'created' => '2016-07-14 12:00:14'], // 15.
       ],
+      'NMPublisherAuthor' => [
+        ['id' => 201, 'fk_publisher_id' => 1, 'fk_author_id' => 1],
+        ['id' => 202, 'fk_publisher_id' => 2, 'fk_author_id' => 1],
+      ],
       'Author' => [
         ['id' => 1, 'created' => '2016-07-14 12:00:03'], // 4.
         ['id' => 2, 'created' => '2016-07-14 12:00:04'], // 5.
@@ -421,6 +425,20 @@ class PersistentFacadeTest extends DatabaseTestCase {
     $this->assertEquals('app.src.model.Publisher:3', $objects1[2]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:4', $objects1[3]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:5', $objects1[4]->getOID()->__toString());
+
+    TestUtil::endSession();
+  }
+
+    public function testManyToManyWithBuildDepth() {
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
+    $criteria = [new Criteria('Publisher', 'id', '<', 3)];
+
+    $publishers = $persistenceFacade->loadObjects('Publisher', 1, $criteria);
+    $this->assertEquals(2, sizeof($publishers));
+    $this->assertEquals(1, sizeof($publishers[0]->getValue('Author')));
+    $this->assertEquals(1, sizeof($publishers[1]->getValue('Author')));
 
     TestUtil::endSession();
   }

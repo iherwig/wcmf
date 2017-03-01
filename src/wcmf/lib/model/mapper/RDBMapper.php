@@ -921,9 +921,11 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
    * @param $pagingInfo A reference PagingInfo instance (optional, default: _null_)
+   * @param $originalData A reference that will receive the original database data (optional)
    * @return Array of PersistentObject instances
    */
-  public function loadObjectsFromSQL(SelectStatement $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null) {
+  public function loadObjectsFromSQL(SelectStatement $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null,
+          &$originalData=null) {
     if ($this->adapter == null) {
       $this->connect();
     }
@@ -932,6 +934,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     $data = $this->select($selectStmt, $pagingInfo);
     if (sizeof($data) == 0) {
       return $objects;
+    }
+
+    if ($originalData !== null) {
+      $originalData = $data;
     }
 
     $tx = $this->persistenceFacade->getTransaction();
@@ -1015,7 +1021,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
    * @param $buildDepth @see PersistenceFacade::loadObjects()
    */
   protected function addRelatedObjects(array $objects, $buildDepth=BuildDepth::SINGLE) {
-
     // recalculate build depth for the next generation
     $newBuildDepth = $buildDepth;
     if ($buildDepth != BuildDepth::SINGLE && $buildDepth != BuildDepth::INFINITE && $buildDepth > 0) {
@@ -1082,13 +1087,17 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $thisRelationDescription = $otherMapper->getRelationImpl($thisRole, true);
       if ($thisRelationDescription->getOtherNavigability() == true) {
         list($selectStmt, $objValueName, $relValueName) = $otherMapper->getRelationSelectSQL($objects, $thisRole, $criteria, $orderby, $pagingInfo);
-        $relatedObjects = $otherMapper->loadObjectsFromSQL($selectStmt, ($buildDepth == BuildDepth::PROXIES_ONLY) ? BuildDepth::SINGLE : $buildDepth, $pagingInfo);
+        $originalData = array();
+        $relatedObjects = $otherMapper->loadObjectsFromSQL($selectStmt, ($buildDepth == BuildDepth::PROXIES_ONLY) ? BuildDepth::SINGLE : $buildDepth, $pagingInfo, $originalData);
       }
     }
     // group relatedObjects by original objects
     $relativeMap = [];
-    foreach ($relatedObjects as $relatedObject) {
-      $key = $relatedObject->getValue($relValueName);
+    foreach ($relatedObjects as $i => $relatedObject) {
+      // NOTE: we take the key from the original data, because the corresponding values in the objects might be
+      // all the same, if the same object is related to multiple objects in a many to many relation
+      // (because only the first related object was attached to the transaction)
+      $key = $originalData[$i][$relValueName];
       if (!isset($relativeMap[$key])) {
         $relativeMap[$key] = [];
       }
