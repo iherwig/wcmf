@@ -17,6 +17,7 @@ use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\security\PermissionManager;
@@ -156,7 +157,15 @@ abstract class Controller {
 
     // log errors
     for ($i=0,$count=sizeof($errors); $i<$count; $i++) {
-      $this->logger->error($errors[$i]->__toString());
+      $error = $errors[$i];
+      $message = $error->__toString();
+      switch ($error->getLevel()) {
+        case ApplicationError::LEVEL_WARNING:
+          $this->logger->warn($message);
+          break;
+        default:
+          $this->logger->error($message);
+      }
     }
 
     if ($isDebugEnabled) {
