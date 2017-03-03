@@ -85,8 +85,8 @@ class ImageUtil {
 
       // create srcset entries
       for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
-        $width = $widths[$i];
-        if (strlen($width) > 0) {
+        $width = intval($widths[$i]);
+        if ($width > 0) {
           $resizedFile = self::makeRelative($directory.$width.'-'.$baseName);
 
           // create the cached file if requested
