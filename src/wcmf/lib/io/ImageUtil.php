@@ -86,28 +86,30 @@ class ImageUtil {
       // create srcset entries
       for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
         $width = $widths[$i];
-        $resizedFile = self::makeRelative($directory.$width.'-'.$baseName);
+        if (strlen($width) > 0) {
+          $resizedFile = self::makeRelative($directory.$width.'-'.$baseName);
 
-        // create the cached file if requested
-        if ($generate) {
-          // only if the requested width is smaller than the image width
-          if ($width < $imageInfo[0]) {
-            // if the file does not exist in the cache or is older
-            // than the source file, we create it
-            $dateOrig = @filemtime($fixedFile);
-            $dateCache = @filemtime($resizedFile);
-            if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
-              self::resizeImage($fixedFile, $resizedFile, $width);
-            }
+          // create the cached file if requested
+          if ($generate) {
+            // only if the requested width is smaller than the image width
+            if ($width < $imageInfo[0]) {
+              // if the file does not exist in the cache or is older
+              // than the source file, we create it
+              $dateOrig = @filemtime($fixedFile);
+              $dateCache = @filemtime($resizedFile);
+              if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
+                self::resizeImage($fixedFile, $resizedFile, $width);
+              }
 
-            // fallback to source file, if cached file could not be created
-            if (!file_exists($resizedFile)) {
-              $resizedFile = $imageFile;
+              // fallback to source file, if cached file could not be created
+              if (!file_exists($resizedFile)) {
+                $resizedFile = $imageFile;
+              }
             }
           }
+          $srcset[] = preg_replace(['/ /', '/,/'], ['%20', '%2C'], $resizedFile).
+                  ' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
         }
-        $srcset[] = preg_replace(['/ /', '/,/'], ['%20', '%2C'], $resizedFile).
-                ' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
       }
     }
 
