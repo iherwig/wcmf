@@ -20,7 +20,7 @@ use wcmf\lib\presentation\format\Format;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullFormat implements Format {
+class NullFormat extends AbstractFormat {
 
   /**
    * @see Format::getMimeType()
@@ -28,16 +28,6 @@ class NullFormat implements Format {
   public function getMimeType() {
     return 'null';
   }
-
-  /**
-   * @see Format::deserialize()
-   */
-  public function deserialize(Request $request) {}
-
-  /**
-   * @see Format::serialize()
-   */
-  public function serialize(Response $response) {}
 
   /**
    * @see Format::isCached()
@@ -51,6 +41,20 @@ class NullFormat implements Format {
    */
   public function getCacheDate(Response $response) {
     return null;
+  }
+
+  /**
+   * @see AbstractFormat::deserializeValues()
+   */
+  protected function deserializeValues(Request $request) {
+    return $request->getValues();
+  }
+
+  /**
+   * @see AbstractFormat::serializeValues()
+   */
+  protected function serializeValues(Response $response) {
+    return $response->getValues();
   }
 }
 ?>
