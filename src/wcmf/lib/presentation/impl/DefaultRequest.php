@@ -244,16 +244,22 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
         // extract parameters from route definition and prepare as regex pattern
         $params = [];
+        $numPatterns = 0;
         $routePattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match)
-                use($defaultValuePattern, &$params) {
+                use($defaultValuePattern, &$params, &$numPatterns) {
           // a variable may be either defined by {name} or by {name|pattern} where
           // name is the variable's name and pattern is an optional regex pattern, the
           // values should match
           $paramParts = explode('|', $match[1], 2);
           // add the variable name to the parameter list
           $params[] = $paramParts[0];
+          // check for pattern
+          $hasPattern = sizeof($paramParts) > 1;
+          if ($hasPattern) {
+            $numPatterns++;
+          }
           // return the value match pattern (defaults to defaultValuePattern)
-          return sizeof($paramParts) > 1 ? '('.$paramParts[1].')' : $defaultValuePattern;
+          return $hasPattern ? '('.$paramParts[1].')' : $defaultValuePattern;
         }, $route);
 
         // replace wildcard character and slashes
@@ -288,6 +294,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           $matchingRoutes[] = [
             'route' => $route,
             'numPathParameters' => (preg_match('/\*/', $route) ? PHP_INT_MAX : sizeof($params)),
+            'numPathPatterns' => $numPatterns,
             'parameters' => $requestParameters,
             'methods' => $allowedMethods
           ];
@@ -309,11 +316,18 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       $numParamsA = $a['numPathParameters'];
       $numParamsB = $b['numPathParameters'];
       if ($numParamsA == $numParamsB) {
-        $hasMethodA = in_array($method, $a['methods']);
-        $hasMethodB = in_array($method, $b['methods']);
-        return ($hasMethodA && !$hasMethodB) ? -1 :
-                ((!$hasMethodA && $hasMethodB) ? 1 : 0);
+        $numPatternsA = $a['numPathPatterns'];
+        $numPatternsB = $b['numPathPatterns'];
+        if ($numPatternsA == $numPatternsB) {
+          $hasMethodA = in_array($method, $a['methods']);
+          $hasMethodB = in_array($method, $b['methods']);
+          return ($hasMethodA && !$hasMethodB) ? -1 :
+                  ((!$hasMethodA && $hasMethodB) ? 1 : 0);
+        }
+        // more patterns is more specific
+        return ($numPatternsA < $numPatternsB) ? 1 : -1;
       }
+      // less parameters is more specific
       return ($numParamsA > $numParamsB) ? 1 : -1;
     });
 
@@ -321,7 +335,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       self::$logger->debug("Ordered routes:");
       self::$logger->debug($routes);
     }
-    // return most specific route (minimum number of parameters)
+    // return most specific route
     return array_shift($routes);
   }
 
