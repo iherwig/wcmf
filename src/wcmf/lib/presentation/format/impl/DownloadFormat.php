@@ -51,12 +51,15 @@ class DownloadFormat extends AbstractFormat {
    * @see Format::getResponseHeaders()
    */
   public function getResponseHeaders(Response $response) {
-    $response->setHeader("Content-Type", $file['type']);
-    if ($file['isDownload']) {
-      $response->setHeader('Content-Disposition", "attachment; filename="'.basename($file['filename']).'"');
+    $file = $response->getFile();
+    if ($file) {
+      $response->setHeader("Content-Type", $file['type']);
+      if ($file['isDownload']) {
+        $response->setHeader('Content-Disposition", "attachment; filename="'.basename($file['filename']).'"');
+      }
+      $response->setHeader("Pragma", "no-cache");
+      $response->setHeader("Expires", 0);
     }
-    $response->setHeader("Pragma", "no-cache");
-    $response->setHeader("Expires", 0);
     return $response->getHeaders();
   }
 
