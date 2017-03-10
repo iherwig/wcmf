@@ -55,7 +55,7 @@ class DownloadFormat extends AbstractFormat {
     if ($file) {
       $response->setHeader("Content-Type", $file['type']);
       if ($file['isDownload']) {
-        $response->setHeader('Content-Disposition", "attachment; filename="'.basename($file['filename']).'"');
+        $response->setHeader("Content-Disposition", 'attachment; filename="'.basename($file['filename']).'"');
       }
       $response->setHeader("Pragma", "no-cache");
       $response->setHeader("Expires", 0);
