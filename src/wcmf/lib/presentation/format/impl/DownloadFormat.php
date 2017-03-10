@@ -48,28 +48,23 @@ class DownloadFormat extends AbstractFormat {
   }
 
   /**
+   * @see Format::getResponseHeaders()
+   */
+  public function getResponseHeaders(Response $response) {
+    $response->setHeader("Content-Type", $file['type']);
+    if ($file['isDownload']) {
+      $response->setHeader('Content-Disposition", "attachment; filename="'.basename($file['filename']).'"');
+    }
+    $response->setHeader("Pragma", "no-cache");
+    $response->setHeader("Expires", 0);
+    return $response->getHeaders();
+  }
+
+  /**
    * @see AbstractFormat::deserializeValues()
    */
   protected function deserializeValues(Request $request) {
     return $request->getValues();
-  }
-
-  /**
-   * @see AbstractFormat::sendHeaders()
-   */
-  protected function sendHeaders(Response $response) {
-    $file = $response->getFile();
-    if ($file) {
-      $this->sendHeader("Content-Type: ".$file['type']);
-      if ($file['isDownload']) {
-        $this->sendHeader('Content-Disposition: attachment; filename="'.basename($file['filename']).'"');
-      }
-      $this->sendHeader("Pragma: no-cache");
-      $this->sendHeader("Expires: 0");
-    }
-    foreach ($response->getHeaders() as $name => $value) {
-      $this->sendHeader($name.": ".$value);
-    }
   }
 
   /**

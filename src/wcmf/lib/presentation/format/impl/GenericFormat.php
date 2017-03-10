@@ -51,15 +51,6 @@ class GenericFormat extends AbstractFormat {
   }
 
   /**
-   * @see AbstractFormat::sendHeaders()
-   */
-  protected function sendHeaders(Response $response) {
-    foreach ($response->getHeaders() as $name => $value) {
-      $this->sendHeader($name.": ".$value);
-    }
-  }
-
-  /**
    * @see AbstractFormat::serializeValues()
    */
   protected function serializeValues(Response $response) {

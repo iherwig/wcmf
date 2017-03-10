@@ -109,6 +109,9 @@ class DefaultFormatter implements Formatter {
       }
     }
 
+    // remove unwanted headers
+    $response->setHeader('X-Powered-By', null);
+
     // delegate serialization to the response format
     if (!$responseSent) {
       $formatName = $response->getFormat();
@@ -117,6 +120,20 @@ class DefaultFormatter implements Formatter {
         throw new ConfigurationException("No response format defined for ".$response->__toString());
       }
       $format = $this->getFormat($formatName);
+
+      // send headers
+      if (!headers_sent()) {
+        foreach ($format->getResponseHeaders($response) as $name => $value) {
+          if (strlen($value) > 0) {
+            header($name.": ".$value);
+          }
+          else {
+            header_remove($name);
+          }
+        }
+      }
+
+      // send body
       $format->serialize($response);
     }
 

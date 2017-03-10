@@ -55,5 +55,12 @@ interface Format {
    * @return DateTime or null, if not cached
    */
   public function getCacheDate(Response $response);
+
+  /**
+   * Get the response headers.
+   * @param $response The Response instance
+   * @return Associative array with header names and values
+   */
+  public function getResponseHeaders(Response $response);
 }
 ?>

@@ -26,7 +26,6 @@ use wcmf\lib\presentation\Response;
  */
 abstract class AbstractFormat implements Format {
 
-  private $headersSent = false;
   private $deserializedNodes = [];
 
   /**
@@ -42,11 +41,17 @@ abstract class AbstractFormat implements Format {
    * @see Format::serialize()
    */
   public function serialize(Response $response) {
-    $this->headersSent = headers_sent();
     $response->setValues($this->beforeSerialize($response));
-    $this->sendHeaders($response);
     $response->setValues($this->serializeValues($response));
     $response->setValues($this->afterSerialize($response));
+  }
+
+  /**
+   * @see Format::getResponseHeaders()
+   */
+  public function getResponseHeaders(Response $response) {
+    $response->setHeader("Content-Type", $this->getMimeType()."; charset=utf-8");
+    return $response->getHeaders();
   }
 
   /**
@@ -84,17 +89,6 @@ abstract class AbstractFormat implements Format {
    */
   protected function beforeSerialize(Response $response) {
     return $response->getValues();
-  }
-
-  /**
-   * Send the response headers.
-   * @param $response The response
-   */
-  protected function sendHeaders(Response $response) {
-    $this->sendHeader("Content-Type: ".$this->getMimeType()."; charset=utf-8");
-    foreach ($response->getHeaders() as $name => $value) {
-      $this->sendHeader($name.": ".$value);
-    }
   }
 
   /**
@@ -141,16 +135,6 @@ abstract class AbstractFormat implements Format {
       $this->deserializedNodes[$oidStr] = $node;
     }
     return $this->deserializedNodes[$oidStr];
-  }
-
-  /**
-   * Send the given header
-   * @param $header
-   */
-  protected function sendHeader($header) {
-    if (!$this->headersSent) {
-      header($header);
-    }
   }
 
   protected function filterValue($value, AttributeDescription $attribute) {
