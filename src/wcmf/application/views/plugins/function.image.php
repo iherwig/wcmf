@@ -86,6 +86,7 @@ use wcmf\lib\io\ImageUtil;
  *        - alt: Alternative text (optional)
  *        - class: Image class (optional)
  *        - title: Image title (optional)
+ *        - width: Width in pixels to output for the width attribute, the height attribute will be calculated according to the aspect ration (optional)
  *        - default: The default file, if src does not exist (optional)
  *        - generate: Boolean indicating whether to generate the images or not (optional, default: __false__)
  * @param $template Smarty_Internal_Template
@@ -102,8 +103,9 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
   $alt = isset($params['alt']) ? $params['alt'] : '';
   $class = isset($params['class']) ? $params['class'] : '';
   $title = isset($params['title']) ? $params['title'] : '';
+  $width = isset($params['width']) ? $params['width'] : null;
 
   return ImageUtil::getImageTag($file, $widths, $type, $sizes,
-          $useDataAttributes, $alt, $class, $title, $default, $generate);
+          $useDataAttributes, $alt, $class, $title, $width, $default, $generate);
 }
 ?>

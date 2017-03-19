@@ -46,12 +46,13 @@ class ImageUtil {
    * @param $alt Alternative text (optional)
    * @param $class Image class (optional)
    * @param $title Image title (optional)
+   * @param $width Width in pixels to output for the width attribute, the height attribute will be calculated according to the aspect ration (optional)
    * @param $fallbackFile The image file to use, if imageFile does not exist (optional)
    * @param $generate Boolean indicating whether to generate the images or not (optional, default: __false__)
    * @return String
    */
   public static function getImageTag($imageFile, $widths, $type='w', $sizes='',
-          $useDataAttributes=false, $alt='', $class='', $title='', $fallbackFile='',
+          $useDataAttributes=false, $alt='', $class='', $title='', $width=null, $fallbackFile='',
           $generate=false) {
     // check if the image files exist
     if (!FileUtil::fileExists($imageFile)) {
@@ -85,20 +86,20 @@ class ImageUtil {
 
       // create srcset entries
       for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
-        $width = intval($widths[$i]);
-        if ($width > 0) {
-          $resizedFile = self::makeRelative($directory.$width.'-'.$baseName);
+        $curWidth = intval($widths[$i]);
+        if ($curWidth > 0) {
+          $resizedFile = self::makeRelative($directory.$curWidth.'-'.$baseName);
 
           // create the cached file if requested
           if ($generate) {
             // only if the requested width is smaller than the image width
-            if ($width < $imageInfo[0]) {
+            if ($curWidth < $imageInfo[0]) {
               // if the file does not exist in the cache or is older
               // than the source file, we create it
               $dateOrig = @filemtime($fixedFile);
               $dateCache = @filemtime($resizedFile);
               if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
-                self::resizeImage($fixedFile, $resizedFile, $width);
+                self::resizeImage($fixedFile, $resizedFile, $curWidth);
               }
 
               // fallback to source file, if cached file could not be created
@@ -108,7 +109,7 @@ class ImageUtil {
             }
           }
           $srcset[] = preg_replace(['/ /', '/,/'], ['%20', '%2C'], $resizedFile).
-                  ' '.($type === 'w' ? $width.'w' : ($count-$i).'x');
+                  ' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
         }
       }
     }
@@ -120,7 +121,12 @@ class ImageUtil {
       $tag .= ' '.($useDataAttributes ? 'data-' : '').'srcset="'.join(', ', $srcset).'"'.
         ' '.(strlen($sizes) > 0 ? ($useDataAttributes ? 'data-' : '').'sizes="'.$sizes.'"' : '');
     }
-    $tag .= '>';
+    if ($width != null) {
+      $width = intval($width);
+      $height = intval($width * $imageInfo[1] / $imageInfo[0]);
+      $tag .= ' width="'.$width.'" height="'.$height.'"';
+    }
+    $tag = trim($tag).'>';
     return $tag;
   }
 
