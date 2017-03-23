@@ -10,7 +10,6 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\BuildDepth;
@@ -87,7 +86,6 @@ class TreeController extends Controller {
    * @return Array of Node instances.
    */
   protected function getChildren($oid) {
-
     $permissionManager = $this->getPermissionManager();
     $persistenceFacade = $this->getPersistenceFacade();
 
@@ -192,15 +190,15 @@ class TreeController extends Controller {
     // try request value first
     $request = $this->getRequest();
     $rootTypeVar = $request->getValue('rootTypes');
-    if ($config->hasValue('application', $rootTypeVar)) {
-      $types = $config->getValue('application', $rootTypeVar);
+    if ($config->hasValue($rootTypeVar, 'application')) {
+      $types = $config->getValue($rootTypeVar, 'application');
       if (!is_array($types)) {
         $types = null;
       }
     }
     if ($types == null) {
       // fall back to root types
-      $types = $config->hasValue('application', 'rootTypes');
+      $types = $config->hasValue('rootTypes', 'application');
     }
 
     // filter types by read permission
