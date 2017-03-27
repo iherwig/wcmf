@@ -1839,7 +1839,7 @@
                     <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ZPt15bTSEeOYkOsR5IzpsA"/>
                     <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ZPt15rTSEeOYkOsR5IzpsA" value="*"/>
                   </ownedAttribute>
-                  <ownedAttribute xmi:type="uml:Property" xmi:id="_OJOs1LTWEeOYkOsR5IzpsA" name="" type="_tM8BALTMEeOYkOsR5IzpsA" aggregation="composite" association="_OJOs07TWEeOYkOsR5IzpsA">
+                  <ownedAttribute xmi:type="uml:Property" xmi:id="_OJOs1LTWEeOYkOsR5IzpsA" name="" type="_tM8BALTMEeOYkOsR5IzpsA" aggregation="shared" association="_OJOs07TWEeOYkOsR5IzpsA">
                     <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OJOs1bTWEeOYkOsR5IzpsA"/>
                     <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OJOs1rTWEeOYkOsR5IzpsA" value="*"/>
                   </ownedAttribute>
@@ -1873,7 +1873,7 @@
                       <value xsi:nil="true"/>
                     </defaultValue>
                   </ownedAttribute>
-                  <ownedAttribute xmi:type="uml:Property" xmi:id="_l0_XhLTWEeOYkOsR5IzpsA" name="" type="_tM8BALTMEeOYkOsR5IzpsA" aggregation="composite" association="_l0_Xg7TWEeOYkOsR5IzpsA">
+                  <ownedAttribute xmi:type="uml:Property" xmi:id="_l0_XhLTWEeOYkOsR5IzpsA" name="" type="_tM8BALTMEeOYkOsR5IzpsA" aggregation="shared" association="_l0_Xg7TWEeOYkOsR5IzpsA">
                     <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_l0_XhbTWEeOYkOsR5IzpsA"/>
                     <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_l0_XhrTWEeOYkOsR5IzpsA" value="*"/>
                   </ownedAttribute>
