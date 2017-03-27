@@ -118,7 +118,7 @@ class ElementImageOutputStrategy extends ImageOutputStrategy {
                 "E: ".$properties['data_type'],
                 $color);
     // write attribs
-    $attribs = $obj->getValueNames();
+    $attribs = $obj->getValueNames(true);
     $i = 0;
     if (is_array($attribs)) {
       foreach ($attribs as $attrib) {

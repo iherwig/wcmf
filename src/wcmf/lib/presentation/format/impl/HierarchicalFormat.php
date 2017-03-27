@@ -41,7 +41,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
   }
 
   /**
-   * Deserialize the given values recursivly
+   * Deserialize the given values recursively
    * @param $values
    * @return Array
    */
@@ -78,7 +78,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
   }
 
   /**
-   * Serialize the given values recursivly
+   * Serialize the given values recursively
    * @param $values
    * @return Array
    */
@@ -89,7 +89,7 @@ abstract class HierarchicalFormat extends AbstractFormat {
     }
     else {
       foreach ($values as $key => $value) {
-        if (is_array($value) || is_object($value)) {
+        if ($value != null && !is_scalar($value)) {
           // array/object value
           $result = $this->serializeHierarchy($value);
           if (ObjectId::isValid($key)) {

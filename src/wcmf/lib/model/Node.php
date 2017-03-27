@@ -66,28 +66,6 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
-   * Get the names of all items.
-   * @param $includeRelations Boolean whether to include relations or not (default: _true_)
-   * @return An array of item names.
-   */
-  public function getValueNames($includeRelations=true) {
-    if ($includeRelations) {
-      return parent::getValueNames();
-    }
-    else {
-      $names = [];
-      $namesAll = parent::getValueNames();
-      $mapper = $this->getMapper();
-      foreach ($namesAll as $name) {
-        if (!$mapper->hasRelation($name)) {
-          $names[] = $name;
-        }
-      }
-      return $names;
-    }
-  }
-
-  /**
    * @see PersistentObject::getValue
    */
   public function getValue($name) {

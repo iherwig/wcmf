@@ -38,7 +38,7 @@ use wcmf\lib\util\Obfuscator;
  * | _in_ `sortDirection`   | The direction to sort the list. Must be either _asc_ for ascending or _desc_ for descending (optional, default: _asc_)
  * | _in_ `query`           | A query condition to be used with StringQuery::setConditionString()
  * | _in_ `translateValues` | Boolean whether list values should be translated to their display values (optional, default: _false_)
- * | _in_ `completeObjects` | Boolean whether to return all object attributes or only the display values using NodeUtil::removeNonDisplayValues (optional, default: _true_)
+ * | _in_ `completeObjects` | Boolean whether to return all object attributes or only the display values using NodeUtil::removeNonDisplayValues (optional, default: _false_)
  * | _out_ `list`           | Array of Node instances according to the given input parameters
  * | _out_ `totalCount`     | The total number of instances matching the passed parameters
  * | __Response Actions__   | |
@@ -178,7 +178,7 @@ class ListController extends Controller {
     $query = new StringQuery($type);
     $query->setConditionString($queryCondition);
     try {
-    $objects = $query->execute(BuildDepth::SINGLE, $sortArray, $pagingInfo);
+      $objects = $query->execute(BuildDepth::SINGLE, $sortArray, $pagingInfo);
     }
     catch (UnknownFieldException $ex) {
       if ($ex->getField() == $request->getValue('sortFieldName')) {
@@ -201,7 +201,7 @@ class ListController extends Controller {
     // TODO: put this into subclass ListController
 
     // remove all attributes except for display values
-    if ($request->getBooleanValue('completeObjects', true) == false) {
+    if ($request->getBooleanValue('completeObjects', false) == false) {
       for($i=0,$count=sizeof($nodes); $i<$count; $i++) {
         NodeUtil::removeNonDisplayValues($nodes[$i]);
       }
