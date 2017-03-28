@@ -11,7 +11,6 @@
 namespace wcmf\lib\persistence\impl;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\impl\NullMapper;
 use wcmf\lib\persistence\ObjectId;
