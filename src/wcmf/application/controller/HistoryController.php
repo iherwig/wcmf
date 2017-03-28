@@ -14,6 +14,8 @@ use wcmf\application\controller\ListController;
 use wcmf\lib\model\NodeComparator;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\PersistenceAction;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
  * HistoryController returns a list of last changed entity instances.
@@ -36,6 +38,14 @@ use wcmf\lib\persistence\PersistenceAction;
  * @author ingo herwig <ingo@wemove.com>
  */
 class HistoryController extends ListController {
+
+  /**
+   * @see Controller::initialize()
+   */
+  public function initialize(Request $request, Response $response) {
+    $request->setValue('completeObjects', true);
+    parent::initialize($request, $response);
+  }
 
   /**
    * @see Controller::validate()

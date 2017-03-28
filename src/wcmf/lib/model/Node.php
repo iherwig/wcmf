@@ -66,6 +66,22 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
+   * @see PersistentObject::getValueNames
+   */
+  public function getValueNames($excludeTransient=false) {
+    // exclude relations
+    $allAttributes = parent::getValueNames($excludeTransient);
+    $attributes = [];
+    $mapper = $this->getMapper();
+    foreach ($allAttributes as $attribute) {
+      if (!$mapper->hasRelation($attribute)) {
+        $attributes[] = $attribute;
+      }
+    }
+    return $attributes;
+  }
+
+  /**
    * @see PersistentObject::getValue
    */
   public function getValue($name) {
