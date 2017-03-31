@@ -61,10 +61,17 @@ class Unique implements ValidateType {
     $itemTpl = $query->getObjectTemplate($type);
     // force set to skip validation
     $itemTpl->setValue($attribute, Criteria::asValue("=", $value), true);
-    $itemList = $query->execute(false);
+    $itemOidList = $query->execute(false);
+    // exclude context entity
+    if (isset($context['entity'])) {
+      $oid = $context['entity']->getOID();
+      $itemOidList = array_filter($itemOidList, function($itemOid) use ($oid) {
+        return $itemOid != $oid;
+      });
+    }
 
     // value already exists
-    if (sizeof($itemList) > 0) {
+    if (sizeof($itemOidList) > 0) {
       return false;
     }
     return true;
