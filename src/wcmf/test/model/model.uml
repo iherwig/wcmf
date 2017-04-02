@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_krkH0LQGEeOIMOFxCilDfw" name="root">
@@ -173,9 +173,6 @@
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZ66prEeaGbp23C_zkpg" name="DELETE/session" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZ7KprEeaGbp23C_zkpg" value="action=logout"/>
-                </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZ7aprEeaGbp23C_zkpg" name="PUT/user/password" type="_agg3ALQwEeOLlbB2YLI0iw">
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZ7qprEeaGbp23C_zkpg" value="action=changePassword"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZ76prEeaGbp23C_zkpg" name="POST/permissions/check" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZ8KprEeaGbp23C_zkpg" value="action=checkPermissions"/>
@@ -1148,6 +1145,9 @@
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_g27hgLRnEeOfbtYsPp7Oyg" name="UserController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_Qvk34LRxEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
+                <ownedOperation xmi:type="uml:Operation" xmi:id="_WcMkYBeQEeejPquxoVdwSw" name="changePassword"/>
+                <ownedOperation xmi:type="uml:Operation" xmi:id="_d4qV8BeQEeejPquxoVdwSw" name="setConfigValue"/>
+                <ownedOperation xmi:type="uml:Operation" xmi:id="_mmH1UBeQEeejPquxoVdwSw" name="getConfigValue"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_g6RJYLRnEeOfbtYsPp7Oyg" name="ValueListController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_oPVt8LRxEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
@@ -1253,12 +1253,6 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_9FI09rRtEeOfbtYsPp7Oyg" value="1"/>
                 </ownedEnd>
               </packagedElement>
-              <packagedElement xmi:type="uml:Association" xmi:id="_IALmM7RuEeOfbtYsPp7Oyg" name="restReadList" memberEnd="_IALmNLRuEeOfbtYsPp7Oyg _IALmMLRuEeOfbtYsPp7Oyg">
-                <ownedEnd xmi:type="uml:Property" xmi:id="_IALmNLRuEeOfbtYsPp7Oyg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_IALmM7RuEeOfbtYsPp7Oyg">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IALmNbRuEeOfbtYsPp7Oyg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IALmNrRuEeOfbtYsPp7Oyg" value="1"/>
-                </ownedEnd>
-              </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_RXx8k_vcEeO7oqnkSuo0Ew" name="soapAction" memberEnd="_RXx8lPvcEeO7oqnkSuo0Ew _RXx8kPvcEeO7oqnkSuo0Ew">
                 <ownedEnd xmi:type="uml:Property" xmi:id="_RXx8lPvcEeO7oqnkSuo0Ew" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_RXx8k_vcEeO7oqnkSuo0Ew">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_RXx8lfvcEeO7oqnkSuo0Ew" value="1"/>
@@ -1307,11 +1301,29 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_43kL1rRuEeOfbtYsPp7Oyg" value="1"/>
                 </ownedEnd>
               </packagedElement>
-              <packagedElement xmi:type="uml:Association" xmi:id="_IWuBc7RvEeOfbtYsPp7Oyg" name="changePassword" memberEnd="_IWuBdLRvEeOfbtYsPp7Oyg _IWuBcLRvEeOfbtYsPp7Oyg">
-                <ownedEnd xmi:type="uml:Property" xmi:id="_IWuBdLRvEeOfbtYsPp7Oyg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_IWuBc7RvEeOfbtYsPp7Oyg">
+              <packagedElement xmi:type="uml:Association" xmi:id="_IWuBc7RvEeOfbtYsPp7Oyg" name="changePassword" memberEnd="_IWuBdLRvEeOfbtYsPp7Oyg _IWuBcLRvEeOfbtYsPp7Oyg" navigableOwnedEnd="_IWuBcLRvEeOfbtYsPp7Oyg">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_IWuBdLRvEeOfbtYsPp7Oyg" name="PUT/user/password" type="_3TWiULQGEeOIMOFxCilDfw" association="_IWuBc7RvEeOfbtYsPp7Oyg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IWuBdbRvEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IWuBdrRvEeOfbtYsPp7Oyg" value="1"/>
                 </ownedEnd>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_IWuBcLRvEeOfbtYsPp7Oyg" name="changePassword" type="_g27hgLRnEeOfbtYsPp7Oyg" association="_IWuBc7RvEeOfbtYsPp7Oyg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IWuBcbRvEeOfbtYsPp7Oyg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IWuBcrRvEeOfbtYsPp7Oyg" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_ob85EBeREeejPquxoVdwSw" name="setConfigValue" memberEnd="_ob_VUBeREeejPquxoVdwSw _ob_VUReREeejPquxoVdwSw" navigableOwnedEnd="_ob_VUBeREeejPquxoVdwSw">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ob-uQBeREeejPquxoVdwSw" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_ob-uQReREeejPquxoVdwSw" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_ob_VUReREeejPquxoVdwSw" name="POST/user/config/{name}" type="_3TWiULQGEeOIMOFxCilDfw" association="_ob85EBeREeejPquxoVdwSw"/>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_ob_VUBeREeejPquxoVdwSw" name="setConfigValue" type="_g27hgLRnEeOfbtYsPp7Oyg" association="_ob85EBeREeejPquxoVdwSw"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_APcjcBeSEeejPquxoVdwSw" name="getConfigValue" memberEnd="_APdKgReSEeejPquxoVdwSw _APgN0BeSEeejPquxoVdwSw" navigableOwnedEnd="_APdKgReSEeejPquxoVdwSw">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_APcjcReSEeejPquxoVdwSw" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_APdKgBeSEeejPquxoVdwSw" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_APgN0BeSEeejPquxoVdwSw" name="GET/user/config/{name}" type="_3TWiULQGEeOIMOFxCilDfw" association="_APcjcBeSEeejPquxoVdwSw"/>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_APdKgReSEeejPquxoVdwSw" name="getConfigValue" type="_g27hgLRnEeOfbtYsPp7Oyg" association="_APcjcBeSEeejPquxoVdwSw"/>
               </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_RxWv47RvEeOfbtYsPp7Oyg" name="listValues" memberEnd="_RxWv5LRvEeOfbtYsPp7Oyg _RxWv4LRvEeOfbtYsPp7Oyg">
                 <ownedEnd xmi:type="uml:Property" xmi:id="_RxWv5LRvEeOfbtYsPp7Oyg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_RxWv47RvEeOfbtYsPp7Oyg">
@@ -1401,6 +1413,12 @@
                 <ownedEnd xmi:type="uml:Property" xmi:id="_0VZyxLRvEeOfbtYsPp7Oyg" name="searchIndexController" type="_MlxgALRoEeOfbtYsPp7Oyg" association="_0VZyw7RvEeOfbtYsPp7Oyg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0VZyxbRvEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0VZyxrRvEeOfbtYsPp7Oyg" value="1"/>
+                </ownedEnd>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_IALmM7RuEeOfbtYsPp7Oyg" name="restReadList" memberEnd="_IALmNLRuEeOfbtYsPp7Oyg _IALmMLRuEeOfbtYsPp7Oyg">
+                <ownedEnd xmi:type="uml:Property" xmi:id="_IALmNLRuEeOfbtYsPp7Oyg" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_IALmM7RuEeOfbtYsPp7Oyg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IALmNbRuEeOfbtYsPp7Oyg" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IALmNrRuEeOfbtYsPp7Oyg" value="1"/>
                 </ownedEnd>
               </packagedElement>
               <packagedElement xmi:type="uml:Association" xmi:id="_f2VGoBeyEeaOuvFJPYmwBw" name="restCreate" memberEnd="_f2VGoxeyEeaOuvFJPYmwBw _f2Xi4BeyEeaOuvFJPYmwBw">
@@ -1543,10 +1561,6 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_43kL0LRuEeOfbtYsPp7Oyg" name="treeController" type="_gzTlwLRnEeOfbtYsPp7Oyg" association="_43kL07RuEeOfbtYsPp7Oyg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_43kL0bRuEeOfbtYsPp7Oyg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_43kL0rRuEeOfbtYsPp7Oyg" value="1"/>
-                </ownedAttribute>
-                <ownedAttribute xmi:type="uml:Property" xmi:id="_IWuBcLRvEeOfbtYsPp7Oyg" name="userController" type="_g27hgLRnEeOfbtYsPp7Oyg" association="_IWuBc7RvEeOfbtYsPp7Oyg">
-                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IWuBcbRvEeOfbtYsPp7Oyg" value="1"/>
-                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IWuBcrRvEeOfbtYsPp7Oyg" value="1"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_RxWv4LRvEeOfbtYsPp7Oyg" name="valueListController" type="_g6RJYLRnEeOfbtYsPp7Oyg" association="_RxWv47RvEeOfbtYsPp7Oyg">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_RxWv4bRvEeOfbtYsPp7Oyg" value="1"/>
@@ -1845,14 +1859,14 @@
                   </ownedAttribute>
                 </packagedElement>
                 <packagedElement xmi:type="uml:Class" xmi:id="_tFTvALTMEeOYkOsR5IzpsA" name="UserConfig">
-                  <ownedAttribute xmi:type="uml:Property" xmi:id="_1-0UELTREeOYkOsR5IzpsA" name="key" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <ownedAttribute xmi:type="uml:Property" xmi:id="_1-0UELTREeOYkOsR5IzpsA" name="name" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                     <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_8-2oULTREeOYkOsR5IzpsA" value="1"/>
                     <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8-2oUbTREeOYkOsR5IzpsA" value="1"/>
                     <defaultValue xmi:type="uml:LiteralString" xmi:id="_8-2oUrTREeOYkOsR5IzpsA">
                       <value xsi:nil="true"/>
                     </defaultValue>
                   </ownedAttribute>
-                  <ownedAttribute xmi:type="uml:Property" xmi:id="_2AoR8LTREeOYkOsR5IzpsA" name="val" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <ownedAttribute xmi:type="uml:Property" xmi:id="_2AoR8LTREeOYkOsR5IzpsA" name="value" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                     <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-LDVsLTREeOYkOsR5IzpsA" value="1"/>
                     <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-LDVsbTREeOYkOsR5IzpsA" value="1"/>
                     <defaultValue xmi:type="uml:LiteralString" xmi:id="_-LDVsrTREeOYkOsR5IzpsA">
@@ -2151,7 +2165,7 @@
   <Chronos:ChiNode xmi:id="_fMz4sLTNEeOYkOsR5IzpsA" base_Class="_s5AYYLTMEeOYkOsR5IzpsA" display_value="name" orderby="name"/>
   <Chronos:ChiNode xmi:id="_haVgMLTNEeOYkOsR5IzpsA" base_Class="_tCKUYLTMEeOYkOsR5IzpsA" display_value="objectid|attribute|language"/>
   <Chronos:ChiNode xmi:id="_jedUELTNEeOYkOsR5IzpsA" base_Class="_tJBxYLTMEeOYkOsR5IzpsA" display_value="login,active,super_user" orderby="name"/>
-  <Chronos:ChiNode xmi:id="_lbY60LTNEeOYkOsR5IzpsA" base_Class="_tFTvALTMEeOYkOsR5IzpsA" display_value="key"/>
+  <Chronos:ChiNode xmi:id="_lbY60LTNEeOYkOsR5IzpsA" base_Class="_tFTvALTMEeOYkOsR5IzpsA" display_value="name"/>
   <Chronos:ChiNode xmi:id="_m1UiMLTNEeOYkOsR5IzpsA" base_Class="_s_A5wLTMEeOYkOsR5IzpsA" display_value="name" orderby="name"/>
   <Chronos:ChiManyToMany xmi:id="_oMlQELTNEeOYkOsR5IzpsA" base_Class="_tM8BALTMEeOYkOsR5IzpsA" pk_name="fk_user_id|fk_role_id"/>
   <Chronos:ChiValue xmi:id="_wwXHoLTQEeOYkOsR5IzpsA" base_Property="_mWMgwLTOEeOYkOsR5IzpsA"/>
@@ -2351,4 +2365,6 @@
   <Chronos:ChiActionKey xmi:id="_Jlru8LRvEeOfbtYsPp7Oyg" action="changePassword" base_Association="_IWuBc7RvEeOfbtYsPp7Oyg"/>
   <Chronos:ChiSystem xmi:id="_ueNIUOjfEeaJLM6lYHrCpQ" plattform="wcmf" config="presentation.ini" base_Class="_ueKFAOjfEeaJLM6lYHrCpQ"/>
   <Chronos:ChiSystem xmi:id="_ugUoMOjfEeaJLM6lYHrCpQ" plattform="wcmf" config="presentation.ini" base_Class="_ugTaEOjfEeaJLM6lYHrCpQ"/>
+  <Chronos:ChiActionKey xmi:id="_3MKlEBeREeejPquxoVdwSw" action="setConfigValue" base_Association="_ob85EBeREeejPquxoVdwSw"/>
+  <Chronos:ChiActionKey xmi:id="_OTS4sBeSEeejPquxoVdwSw" action="getConfigValue" base_Association="_APcjcBeSEeejPquxoVdwSw"/>
 </xmi:XMI>
