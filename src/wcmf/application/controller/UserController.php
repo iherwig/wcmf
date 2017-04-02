@@ -15,6 +15,7 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\model\Node;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ActionMapper;
@@ -32,13 +33,12 @@ use wcmf\lib\security\principal\User;
  * <div class="controller-action">
  * <div> __Action__ _default_ </div>
  * <div>
- * Change the user's password.
- * | Parameter              | Description
- * |------------------------|-------------------------
- * | _in_ `oldpassword`     | The old password
- * | _in_ `newpassword1`    | The new password
- * | _in_ `newpassword2`    | The new password
+ * Handle actions regarding the current user
+ *
+ * For details about the parameters, see documentation of the methods.
+ *
  * | __Response Actions__   | |
+ * |------------------------|-------------------------
  * | `ok`                   | In all cases
  * </div>
  * </div>
@@ -46,6 +46,7 @@ use wcmf\lib\security\principal\User;
  * @author ingo herwig <ingo@wemove.com>
  */
 class UserController extends Controller {
+  use \wcmf\lib\presentation\ControllerMethods;
 
   private $principalFactory = null;
 
@@ -74,16 +75,20 @@ class UserController extends Controller {
   }
 
   /**
-   * @see Controller::doExecute()
+   * Change the user's password
+   *
+   * | Parameter           | Description
+   * |---------------------|----------------------
+   * | _in_ `oldpassword`  | The old password
+   * | _in_ `newpassword1` | The new password
+   * | _in_ `newpassword2` | The new password
    */
-  protected function doExecute($method=null) {
+  public function changePassword() {
     $session = $this->getSession();
     $permissionManager = $this->getPermissionManager();
     $persistenceFacade = $this->getPersistenceFacade();
     $request = $this->getRequest();
     $response = $this->getResponse();
-
-    // change password
 
     // load model
     $authUser = $this->principalFactory->getUser($session->getAuthUser());
@@ -97,7 +102,7 @@ class UserController extends Controller {
       $transaction = $persistenceFacade->getTransaction();
       $transaction->begin();
       try {
-        $this->changePassword($authUser, $request->getValue('oldpassword'),
+        $this->changePasswordImpl($authUser, $request->getValue('oldpassword'),
           $request->getValue('newpassword1'), $request->getValue('newpassword2'));
         $transaction->commit();
       }
@@ -113,6 +118,83 @@ class UserController extends Controller {
     $response->setAction('ok');
   }
 
+
+  /**
+   * Set a configuration for the user
+   *
+   * | Parameter    | Description
+   * |--------------|-----------------------------
+   * | _in_ `name`  | The configuration name
+   * | _in_ `value` | The configuration value
+   */
+  public function setConfigValue() {
+    $session = $this->getSession();
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    $persistenceFacade = $this->getPersistenceFacade();
+    $transaction = $this->getPersistenceFacade()->getTransaction();
+
+    // load model
+    $transaction->begin();
+    $authUser = $this->principalFactory->getUser($session->getAuthUser());
+    if ($authUser) {
+      $configKey = $request->getValue('name');
+      $configValue = $request->getValue('value');
+
+      // find configuration
+      $configObj = null;
+      $configList = Node::filter($authUser->getValue('UserConfig'), null, null,
+              ['name' => $configKey]);
+      if (sizeof($configList) > 0) {
+        $configObj = $configList[0];
+      }
+      else {
+        $configObj = $persistenceFacade->create('UserConfig');
+        $configObj->setValue('name', $configKey);
+        $authUser->addNode($configObj);
+      }
+
+      // set value
+      if ($configObj != null) {
+        $configObj->setValue('value', $configValue);
+      }
+    }
+    $transaction->commit();
+
+    // success
+    $response->setAction('ok');
+  }
+
+  /**
+   * Get a configuration for the user
+   *
+   * | Parameter     | Description
+   * |---------------|----------------------------
+   * | _in_ `name`   | The configuration name
+   * | _out_ `value` | The configuration value
+   */
+  public function getConfigValue() {
+    $session = $this->getSession();
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+
+    // load model
+    $authUser = $this->principalFactory->getUser($session->getAuthUser());
+    if ($authUser) {
+      $configKey = $request->getValue('name');
+
+      // find configuration
+      $configObj = null;
+      $configList = Node::filter($authUser->getValue('UserConfig'), null, null,
+              ['name' => $configKey]);
+      $configValue = sizeof($configList) > 0 ?
+              $configObj = $configList[0]->getValue('value') : null;
+      $response->setValue('value', $configValue);
+    }
+    // success
+    $response->setAction('ok');
+  }
+
   /**
    * Change a users password.
    * @param $user The User instance
@@ -120,7 +202,7 @@ class UserController extends Controller {
    * @param $newPassword The new password for the user
    * @param $newPasswordRepeated The new password of the user again
    */
-  protected function changePassword(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
+  protected function changePasswordImpl(User $user, $oldPassword, $newPassword, $newPasswordRepeated) {
     $message = $this->getMessage();
     // check old password
     if (!$user->verifyPassword($oldPassword)) {
