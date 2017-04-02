@@ -126,7 +126,7 @@ class DisplayControllerTest extends ControllerTestCase {
     $tmp1->setValue('name', 'Administrator [de]');
     $localization->saveTranslation($tmp1, 'de');
     $tmp2 = clone $testObj2;
-    $tmp2->setValue('val', 'Value [de]');
+    $tmp2->setValue('value', 'Value [de]');
     $localization->saveTranslation($tmp2, 'de');
     $transaction->commit();
 
@@ -141,7 +141,7 @@ class DisplayControllerTest extends ControllerTestCase {
     // test
     $translatedObj = $response->getValue('object');
     $translatedChild = $translatedObj->getFirstChild();
-    $this->assertEquals('Value [de]', $translatedChild->getValue('val'));
+    $this->assertEquals('Value [de]', $translatedChild->getValue('value'));
 
     TestUtil::endSession();
   }
