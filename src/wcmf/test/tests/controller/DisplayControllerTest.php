@@ -47,7 +47,7 @@ class DisplayControllerTest extends ControllerTestCase {
         ['id' => 0, 'name' => 'administrators'],
       ],
       'UserConfig' => [
-        ['id' => 0, 'key' => 'Key', 'val' => 'Value', 'fk_user_id' => 0],
+        ['id' => 0, 'name' => 'Name', 'value' => 'Value', 'fk_user_id' => 0],
       ],
       'Translation' => [
       ],
