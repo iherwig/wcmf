@@ -65,12 +65,23 @@ class FileCache implements Cache {
   }
 
   /**
+   * @see Cache::getDate()
+   */
+  public function getDate($section, $key) {
+    $this->initializeCache($section);
+    if (isset($this->cache[$section][$key])) {
+      return (new \DateTime())->setTimeStamp($this->cache[$section][$key][0]);
+    }
+    return null;
+  }
+
+  /**
    * @see Cache::get()
    */
   public function get($section, $key) {
     $this->initializeCache($section);
     if (isset($this->cache[$section][$key])) {
-      return $this->cache[$section][$key];
+      return $this->cache[$section][$key][1];
     }
     return null;
   }
@@ -80,7 +91,7 @@ class FileCache implements Cache {
    */
   public function put($section, $key, $value) {
     $this->initializeCache($section);
-    $this->cache[$section][$key] = $value;
+    $this->cache[$section][$key] = [time(), $value];
     $this->saveCache($section);
   }
 

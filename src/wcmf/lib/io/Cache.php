@@ -21,24 +21,32 @@ namespace wcmf\lib\io;
 interface Cache {
 
   /**
-   * Check if a key exists in the specified cache
-   * @param $section The caching section
+   * Check if a cache entry exists
+   * @param $section The cache section
    * @param $key The cache key
    * @return boolean
    */
   public function exists($section, $key);
 
   /**
-   * Get a value from the specified cache
-   * @param $section The caching section
+   * Get the date of the specified cache entry
+   * @param $section The cache section
+   * @param $key The cache key
+   * @return DateTime or null, if not cached
+   */
+  public function getDate($section, $key);
+
+  /**
+   * Get the value of the specified cache entry
+   * @param $section The cache section
    * @param $key The cache key
    * @return Mixed
    */
   public function get($section, $key);
 
   /**
-   * Store a value in the specified cache
-   * @param $section The caching section
+   * Store the value of the specified cache entry
+   * @param $section The cache section
    * @param $key The key
    * @param $value The value
    */
@@ -48,7 +56,7 @@ interface Cache {
    * Clear the given cache section. The wildcard char '*'
    * may be added to the section name in order to
    * clear all matching sections.
-   * @param $section The caching section
+   * @param $section The cache section
    */
   public function clear($section);
 

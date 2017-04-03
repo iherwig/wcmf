@@ -11,6 +11,7 @@
 namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\core\LogManager;
+use wcmf\lib\io\Cache;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 use wcmf\lib\presentation\Response;
@@ -31,35 +32,34 @@ use wcmf\lib\presentation\Response;
  */
 class JsonFormat extends HierarchicalFormat {
 
-  private static $jsonData = [];
-  private static $jsonUsed = false;
+  const CACHE_SECTION = 'jsonformat';
+
   private static $logger = null;
 
+  protected $cache = null;
   protected $serializer = null;
 
   /**
    * Constructor
    * @param $serializer NodeSerializer instance
+   * @param $dynamicCache Cache instance
    */
-  public function __construct(NodeSerializer $serializer) {
+  public function __construct(NodeSerializer $serializer, Cache $dynamicCache) {
     $this->serializer = $serializer;
+    $this->cache = $dynamicCache;
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
   }
 
-  public static function printJSONResult() {
-    if (self::$jsonUsed) {
-      $data = self::$jsonData;
-      if ($data !== null) {
-        $encoded = json_encode($data);
-        if (self::$logger->isDebugEnabled(__CLASS__)) {
-          self::$logger->debug($data);
-          self::$logger->debug($encoded);
-        }
-        print($encoded);
-      }
-    }
+  /**
+   * Get the cache section for a response
+   * @param Response $response
+   * @return String
+   */
+  protected function getCacheSection(Response $response) {
+    $cacheId = $response->getCacheId();
+    return self::CACHE_SECTION.'-'.$cacheId;
   }
 
   /**
@@ -73,29 +73,47 @@ class JsonFormat extends HierarchicalFormat {
    * @see Format::isCached()
    */
   public function isCached(Response $response) {
-    return false;
+    $cacheId = $response->getCacheId();
+    return $this->cache->exists($this->getCacheSection($response), $cacheId);
   }
 
   /**
    * @see Format::isCached()
    */
   public function getCacheDate(Response $response) {
-    return null;
+    $cacheId = $response->getCacheId();
+    return $this->cache->getDate($this->getCacheSection($response), $cacheId);
   }
 
   /**
    * @see HierarchicalFormat::afterSerialize()
    */
   protected function afterSerialize(Response $response) {
-    // TODO: check if merging is required for multiple actions
-    /*
-    // merge data into global data array
-    // new values override old
-    self::$jsonData = array_merge(self::$jsonData, $data);
-     */
-    self::$jsonData = $response->getValues();
-    self::$jsonUsed = true;
-    return self::$jsonData;
+    $values = $response->getValues();
+
+    $cacheId = $response->getCacheId();
+    $caching = strlen($cacheId) > 0;
+    if (!$caching || !$this->isCached($response)) {
+      // encode data
+      $encoded = json_encode($values);
+      if (self::$logger->isDebugEnabled()) {
+        self::$logger->debug($values);
+        self::$logger->debug($encoded);
+      }
+
+      // cache result
+      if ($caching) {
+        $this->cache->put($this->getCacheSection($response), $cacheId, $encoded);
+      }
+    }
+    else {
+      $encoded = $this->cache->get($this->getCacheSection($response), $cacheId);
+    }
+
+    // render
+    print($encoded);
+
+    return $values;
   }
 
   /**
@@ -121,7 +139,4 @@ class JsonFormat extends HierarchicalFormat {
     return $result;
   }
 }
-
-// register the output method
-register_shutdown_function([__NAMESPACE__.'\JsonFormat', 'printJSONResult']);
 ?>

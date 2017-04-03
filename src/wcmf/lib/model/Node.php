@@ -88,9 +88,9 @@ class Node extends DefaultPersistentObject {
     // initialize a relation value, if not done before
     $value = parent::getValue($name);
     if (isset($this->relationStates[$name]) &&
-            $this->relationStates[$name] == Node::RELATION_STATE_UNINITIALIZED) {
+            $this->relationStates[$name] == self::RELATION_STATE_UNINITIALIZED) {
 
-      $this->relationStates[$name] = Node::RELATION_STATE_INITIALIZING;
+      $this->relationStates[$name] = self::RELATION_STATE_INITIALIZING;
       $mapper = $this->getMapper();
       $allRelatives = $mapper->loadRelation([$this], $name, BuildDepth::PROXIES_ONLY);
       $oidStr = $this->getOID()->__toString();
@@ -104,7 +104,7 @@ class Node extends DefaultPersistentObject {
         $value = $relatives != null ? $relatives[0] : null;
       }
       $this->setValueInternal($name, $value);
-      $this->relationStates[$name] = Node::RELATION_STATE_INITIALIZED;
+      $this->relationStates[$name] = self::RELATION_STATE_INITIALIZED;
     }
     return $value;
   }
@@ -136,6 +136,18 @@ class Node extends DefaultPersistentObject {
       return parent::setValue($name, $value, $forceSet, $trackChange);
     }
     return true;
+  }
+
+  /**
+   * @see PersistentObject::removeValue()
+   */
+  public function removeValue($name) {
+    parent::removeValue($name);
+    // set relation state to loaded in order to prevent lazy initialization
+    $mapper = $this->getMapper();
+    if ($mapper->hasRelation($name)) {
+      $this->relationStates[$name] = self::RELATION_STATE_LOADED;
+    }
   }
 
   /**
@@ -704,11 +716,11 @@ class Node extends DefaultPersistentObject {
     $oldState = $this->getState();
     foreach ($roles as $curRole) {
       if (isset($this->relationStates[$curRole]) &&
-              $this->relationStates[$curRole] != Node::RELATION_STATE_LOADED) {
+              $this->relationStates[$curRole] != self::RELATION_STATE_LOADED) {
         $relatives = [];
 
         // resolve proxies if the relation is already initialized
-        if ($this->relationStates[$curRole] == Node::RELATION_STATE_INITIALIZED) {
+        if ($this->relationStates[$curRole] == self::RELATION_STATE_INITIALIZED) {
           $proxies = $this->getValue($curRole);
           if (is_array($proxies)) {
             foreach ($proxies as $curRelative) {
@@ -735,7 +747,7 @@ class Node extends DefaultPersistentObject {
           }
         }
         $this->setValueInternal($curRole, $relatives);
-        $this->relationStates[$curRole] = Node::RELATION_STATE_LOADED;
+        $this->relationStates[$curRole] = self::RELATION_STATE_LOADED;
       }
     }
     $this->setState($oldState);
@@ -812,7 +824,7 @@ class Node extends DefaultPersistentObject {
    */
   public function addRelation($name) {
     if (!$this->hasValue($name)) {
-      $this->relationStates[$name] = Node::RELATION_STATE_UNINITIALIZED;
+      $this->relationStates[$name] = self::RELATION_STATE_UNINITIALIZED;
       $this->setValueInternal($name, null);
     }
   }
