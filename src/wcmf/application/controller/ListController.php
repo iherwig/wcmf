@@ -39,6 +39,7 @@ use wcmf\lib\util\Obfuscator;
  * | _in_ `query`           | A query condition to be used with StringQuery::setConditionString()
  * | _in_ `translateValues` | Boolean whether list values should be translated to their display values (optional, default: _false_)
  * | _in_ `completeObjects` | Boolean whether to return all object attributes or only the display values using NodeUtil::removeNonDisplayValues (optional, default: _false_)
+ * | _in_ `values`          | Comma separated list of node values to return, if `completeObjects` is set to false (optional, default: display values)
  * | _out_ `list`           | Array of Node instances according to the given input parameters
  * | _out_ `totalCount`     | The total number of instances matching the passed parameters
  * | __Response Actions__   | |
@@ -203,7 +204,15 @@ class ListController extends Controller {
     // remove all attributes except for display values
     if ($request->getBooleanValue('completeObjects', false) == false) {
       for($i=0,$count=sizeof($nodes); $i<$count; $i++) {
-        NodeUtil::removeNonDisplayValues($nodes[$i]);
+        $node = $nodes[$i];
+        $displayValues = $request->hasValue('values') ? array_map('trim', explode(',', $request->getValue('values'))) :
+          $node->getProperty('displayValues');
+        $valueNames = $node->getValueNames();
+        foreach($valueNames as $name) {
+          if (!in_array($name, $displayValues)) {
+            $node->removeValue($name);
+          }
+        }
       }
     }
     // render values
