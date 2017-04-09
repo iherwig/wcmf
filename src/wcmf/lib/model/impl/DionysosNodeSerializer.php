@@ -15,9 +15,7 @@ use wcmf\lib\model\impl\AbstractNodeSerializer;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\model\NodeValueIterator;
-use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * DionysosNodeSerializer is used to serialize Nodes into the Dionysos format and
@@ -45,15 +43,6 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
       'attributes'
   ];
   private $serializedOIDs = [];
-  private $persistenceFacade = null;
-
-  /**
-   * Constructor
-   * @param $persistenceFacade
-   */
-  public function __construct(PersistenceFacade $persistenceFacade) {
-    $this->persistenceFacade = $persistenceFacade;
-  }
 
   /**
    * @see NodeSerializer::isSerializedNode
@@ -91,12 +80,8 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
       }
     }
 
-    // don't create all values by default (-> don't use PersistenceFacade::create() directly,
-    // just for determining the class)
-    $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
-    $node = new $class;
-    $node->setOID($oid);
-
+    // create request node
+    $node = $this->getNodeTemplate($oid);
     if (isset($data['attributes'])) {
       foreach($data['attributes'] as $key => $value) {
         $this->deserializeValue($node, $key, $value);

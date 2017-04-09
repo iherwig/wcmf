@@ -15,9 +15,7 @@ use wcmf\lib\model\impl\AbstractNodeSerializer;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\model\NodeValueIterator;
-use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * SoapNodeSerializer is used to serialize Nodes into the soap format and
@@ -28,15 +26,6 @@ use wcmf\lib\persistence\PersistenceFacade;
 class SoapNodeSerializer extends AbstractNodeSerializer {
 
   private $serializedOIDs = [];
-  private $persistenceFacade = null;
-
-  /**
-   * Constructor
-   * @param $persistenceFacade
-   */
-  public function __construct(PersistenceFacade $persistenceFacade) {
-    $this->persistenceFacade = $persistenceFacade;
-  }
 
   /**
    * @see NodeSerializer::isSerializedNode
@@ -65,13 +54,9 @@ class SoapNodeSerializer extends AbstractNodeSerializer {
       throw new IllegalArgumentException("The object id '".$oid."' is invalid");
     }
 
-    // don't create all values by default (-> don't use PersistenceFacade::create() directly,
-    // just for determining the class)
-    $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
-    $node = new $class;
-
+    // create request node
+    $node = $this->getNodeTemplate($oid);
     $remainingData = [];
-
     $foundNodeAttribute = false;
     $mapper = $node->getMapper();
     foreach($data as $key => $value) {

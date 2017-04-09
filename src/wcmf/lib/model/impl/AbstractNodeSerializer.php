@@ -12,6 +12,8 @@ namespace wcmf\lib\model\impl;
 
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeSerializer;
+use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\PersistenceFacade;
 
 /**
  * NodeSerializerBase is a base class for NodeSerialize implementations.
@@ -19,6 +21,32 @@ use wcmf\lib\model\NodeSerializer;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class AbstractNodeSerializer implements NodeSerializer {
+
+  private $persistenceFacade = null;
+
+  /**
+   * Constructor
+   * @param $persistenceFacade
+   */
+  public function __construct(PersistenceFacade $persistenceFacade) {
+    $this->persistenceFacade = $persistenceFacade;
+  }
+
+  /**
+   * Get a Node instance based on the original values to merge the deserialized values into
+   * @param $oid The object id of the Node
+   * @return Node
+   */
+  protected function getNodeTemplate($oid) {
+    // load object if existing to get the original data
+    $originalNode = $this->persistenceFacade->load($oid, BuildDepth::SINGLE);
+
+    // create the request node and copy the orignal data
+    $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
+    $node = new $class;
+    $originalNode->copyValues($node);
+    return $node;
+  }
 
   /**
    * Deserialize a node value
