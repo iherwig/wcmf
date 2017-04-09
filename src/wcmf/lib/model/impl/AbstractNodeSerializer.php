@@ -44,7 +44,9 @@ abstract class AbstractNodeSerializer implements NodeSerializer {
     // create the request node and copy the orignal data
     $class = get_class($this->persistenceFacade->create($oid->getType(), BuildDepth::SINGLE));
     $node = new $class;
-    $originalNode->copyValues($node);
+    if ($originalNode) {
+      $originalNode->copyValues($node);
+    }
     return $node;
   }
 
