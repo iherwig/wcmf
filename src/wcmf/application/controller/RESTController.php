@@ -309,13 +309,15 @@ class RESTController extends Controller {
       $subResponse = $this->executeSubAction('insertBefore');
     }
     else {
-      // add existing object to relation
-      // delegate to AssociateController
-      $subResponse = $this->executeSubAction('associate');
+      // update existing object
+      // delegate to SaveController
+      // NOTE: we need to update first, otherwise the update action might override
+      // the foreign keys changes from the associate action
+      $subResponse = $this->executeSubAction('update');
       if ($subResponse->getStatus() == 200) {
-        // and update object
-        // delegate to SaveController
-        $subResponse = $this->executeSubAction('update');
+        // and add object to relation
+        // delegate to AssociateController
+        $subResponse = $this->executeSubAction('associate');
       }
     }
 
