@@ -64,6 +64,8 @@ class StringQuery extends ObjectQuery {
                 use($rqlOp, $sqlOp, $mapper) {
           $typeAttr = $match[1];
           $value = preg_replace('/^[\'"]|[\'"]$/', '', $match[2]);
+
+          // try to determine value type
           list($typeOrRole, $attribute) = explode('.', preg_replace('/[`\(\)]/', '', $typeAttr), 2);
           $relation = $mapper->hasRelation($typeOrRole) ? $mapper->getRelation($typeOrRole) : null;
           $isNumber = false;
@@ -75,6 +77,12 @@ class StringQuery extends ObjectQuery {
             $isNumber = $attributeType == 'integer' || $attributeType == 'float';
           }
 
+          // strip slashes from regexp
+          if ($sqlOp === 'regexp') {
+            $value = preg_replace('/^\/|\/[a-zA-Z]*$/', '', $value);
+          }
+
+          // quote value according to type
           $replace = $typeAttr.' '.$sqlOp.' ';
           if ($rqlOp == 'in' && !$isNumber) {
             $replace .= '('.join(',', array_map([$mapper, 'quoteValue'], explode(',', $value))).')';
