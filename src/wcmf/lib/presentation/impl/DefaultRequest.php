@@ -161,7 +161,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         break;
       case 'POST':
       case 'PUT':
-        $requestData = $_POST;
+        $requestData = array_merge($_POST, $_FILES);
         break;
     }
 

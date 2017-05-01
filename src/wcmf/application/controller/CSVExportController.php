@@ -11,6 +11,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\ApplicationError;
@@ -65,6 +66,16 @@ class CSVExportController extends BatchController {
       if (!$request->hasValue('nodesPerCall')) {
         $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
       }
+
+      // set the cache section and directory for the download file
+      $config = $this->getConfiguration();
+      $cacheBaseDir = $config->hasValue('cacheDir', 'DynamicCache') ?
+        WCMF_BASE.$config->getValue('cacheDir', 'DynamicCache') : session_save_path();
+      $cacheSection = 'csv-export-'.uniqid().'/cache';
+      $downloadDir = $cacheBaseDir.dirname($cacheSection).'/';
+      FileUtil::mkdirRec($downloadDir);
+      $request->setValue('cacheSection', $cacheSection);
+      $request->setValue('downloadFile', $downloadDir.$request->getValue('docFile'));
     }
     // initialize parent controller after default request values are set
     parent::initialize($request, $response);
@@ -120,9 +131,7 @@ class CSVExportController extends BatchController {
    * @see BatchController::getDownloadFile()
    */
   protected function getDownloadFile() {
-    $cacheDir = session_save_path().DIRECTORY_SEPARATOR;
-    $docFile = $this->getRequestValue('docFile');
-    return $cacheDir.$docFile;
+    return $this->getRequestValue('downloadFile');
   }
 
   /**

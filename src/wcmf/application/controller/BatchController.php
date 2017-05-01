@@ -22,7 +22,7 @@ use wcmf\lib\presentation\Response;
  * to be divided into several requests to overcome resource limits and provide
  * progress information to the user.
  *
- * Conceptionally the process is divided into subactions (_work packages_),
+ * Conceptually the process is divided into sub actions (_work packages_),
  * that are called sequentially. Depending on the progress, the controller sets
  * different actions on the response as result of one execution.
  *
@@ -196,7 +196,7 @@ abstract class BatchController extends Controller {
   }
 
   /**
-   * Add a work package to session. This package will be devided into sub packages of given size.
+   * Add a work package to session. This package will be divided into sub packages of given size.
    * @param $name Display name of the package (will be supplemented by startNumber-endNumber, e.g. '1-7', '8-14', ...)
    * @param $size Size of one sub package. This defines how many of the oids will be passed to the callback in one call (e.g. '7' means pass 7 oids per call)
    * @param $oids An array of object ids (or other application specific package identifiers) that will be distributed into sub packages of given size
@@ -204,7 +204,7 @@ abstract class BatchController extends Controller {
    *      The callback method must accept the following parameters:
    *      1. array parameter (the object ids to process in the current call)
    *      2. optionally array parameter (the additional arguments)
-   * @param $args Assoziative array of additional callback arguments (application specific) (default: _null_)
+   * @param $args Associative array of additional callback arguments (application specific) (default: _null_)
    */
   protected function addWorkPackage($name, $size, $oids, $callback, $args=null) {
     $request = $this->getRequest();
@@ -318,14 +318,14 @@ abstract class BatchController extends Controller {
    * @note This function gets called on first initialization run as often until it returns null.
    * This allows to define different static work packages. If you would like to add work packages dynamically on
    * subsequent runs this may be done by directly calling the BatchController::addWorkPackage() method.
-   * @return A work packages description as assoziative array with keys 'name', 'size', 'oids', 'callback'
+   * @return A work packages description as associative array with keys 'name', 'size', 'oids', 'callback'
    *         as required for BatchController::addWorkPackage() method or null to terminate.
    */
   protected abstract function getWorkPackage($number);
 
   /**
    * Clean up after all tasks are finished.
-   * @note Suclasses may override this to do custom clean up, but should call the parent method.
+   * @note Subclasses may override this to do custom clean up, but should call the parent method.
    */
   protected function cleanup() {
     $this->clearLocalSessionValues();

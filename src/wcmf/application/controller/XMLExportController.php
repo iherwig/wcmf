@@ -53,13 +53,10 @@ use wcmf\lib\security\PermissionManager;
  * @author ingo herwig <ingo@wemove.com>
  */
 class XMLExportController extends BatchController {
-  const CACHE_SECTION = 'xmlexport';
   const CACHE_KEY_ROOT_OIDS = 'rootOids';
   const CACHE_KEY_EXPORTED_OIDS = 'exportedOids';
-
-  // session name constants
-  const LAST_INDENT_VAR = 'lastIndent';
-  const TAGS_TO_CLOSE_VAR = 'tagsToClose';
+  const CACHE_KEY_LAST_INDENT = 'lastIndent';
+  const CACHE_KEY_TAGS_TO_CLOSE = 'tagsToClose';
 
   // persistent iterator id
   const ITERATOR_ID_VAR = 'XMLExportController.iteratorid';
@@ -132,9 +129,19 @@ class XMLExportController extends BatchController {
         $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
       }
 
-      // initialize session variables
-      $this->setLocalSessionValue(self::LAST_INDENT_VAR, 0);
-      $this->setLocalSessionValue(self::TAGS_TO_CLOSE_VAR, []);
+      // set the cache section and directory for the download file
+      $config = $this->getConfiguration();
+      $cacheBaseDir = $config->hasValue('cacheDir', 'DynamicCache') ?
+        WCMF_BASE.$config->getValue('cacheDir', 'DynamicCache') : session_save_path();
+      $cacheSection = 'xml-export-'.uniqid().'/cache';
+      $downloadDir = $cacheBaseDir.dirname($cacheSection).'/';
+      FileUtil::mkdirRec($downloadDir);
+      $request->setValue('cacheSection', $cacheSection);
+      $request->setValue('downloadFile', $downloadDir.$request->getValue('docFile'));
+
+      // initialize cache
+      $this->cache->put($cacheSection, self::CACHE_KEY_LAST_INDENT, 0);
+      $this->cache->put($cacheSection, self::CACHE_KEY_TAGS_TO_CLOSE, []);
 
       // reset iterator
       PersistentIterator::reset($this->ITERATOR_ID_VAR, $session);
@@ -160,9 +167,7 @@ class XMLExportController extends BatchController {
    * @see BatchController::getDownloadFile()
    */
   protected function getDownloadFile() {
-    $cacheDir = session_save_path().DIRECTORY_SEPARATOR;
-    $docFile = $this->getRequestValue('docFile');
-    return $cacheDir.$docFile;
+    return $this->getRequestValue('downloadFile');
   }
 
   /**
@@ -177,6 +182,7 @@ class XMLExportController extends BatchController {
     $dtd = $this->getRequestValue('dtd');
     $docRootElement = $this->getRequestValue('docRootElement');
     $docLinebreak = $this->getRequestValue('docLinebreak');
+    $cacheSection = $this->getRequestValue('cacheSection');
 
     // delete export file
     if (file_exists($docFile)) {
@@ -203,13 +209,13 @@ class XMLExportController extends BatchController {
       }
     }
 
-    // store root object ids in session
+    // store root object ids in cache
     $nextOID = array_shift($rootOIDs);
-    $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
+    $this->cache->put($cacheSection, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
 
     // empty exported oids
     $tmp = [];
-    $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $tmp);
+    $this->cache->put($cacheSection, self::CACHE_KEY_EXPORTED_OIDS, $tmp);
 
     // create work package for first root node
     $this->addWorkPackage(
@@ -237,6 +243,7 @@ class XMLExportController extends BatchController {
     // get document definition
     $docFile = $this->getDownloadFile();
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
+    $cacheSection = $this->getRequestValue('cacheSection');
 
     // check for iterator in session
     $iterator = PersistentIterator::load($this->ITERATOR_ID_VAR, $persistenceFacade, $session);
@@ -263,12 +270,12 @@ class XMLExportController extends BatchController {
     fclose($fileHandle);
 
     // decide what to do next
-    $rootOIDs = $this->cache->get(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS);
+    $rootOIDs = $this->cache->get($cacheSection, self::CACHE_KEY_ROOT_OIDS);
     if (!$iterator->valid() && sizeof($rootOIDs) > 0) {
       // if the current iterator is finished, reset the iterator and proceed with the next root oid
       $nextOID = array_shift($rootOIDs);
-      // store remaining root oids in session
-      $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
+      // store remaining root oids in the cache
+      $this->cache->put($cacheSection, self::CACHE_KEY_ROOT_OIDS, $rootOIDs);
       // delete iterator to start with new root oid
       PersistentIterator::reset($this->ITERATOR_ID_VAR, $session);
 
@@ -298,6 +305,7 @@ class XMLExportController extends BatchController {
     $docFile = $this->getDownloadFile();
     $docRootElement = $this->getRequestValue('docRootElement');
     $docLinebreak = $this->getRequestValue('docLinebreak');
+    $cacheSection = $this->getRequestValue('cacheSection');
 
     // end document
     $fileHandle = fopen($docFile, "a");
@@ -307,7 +315,7 @@ class XMLExportController extends BatchController {
 
     // clear cache
     $tmp = null;
-    $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_ROOT_OIDS, $tmp);
+    $this->cache->put($cacheSection, self::CACHE_KEY_ROOT_OIDS, $tmp);
   }
 
   /**
@@ -319,10 +327,11 @@ class XMLExportController extends BatchController {
     // get document definition
     $docIndent = $this->getRequestValue('docIndent');
     $docLinebreak = $this->getRequestValue('docLinebreak');
+    $cacheSection = $this->getRequestValue('cacheSection');
 
-    // get document state from session
-    $lastIndent = $this->getLocalSessionValue(self::LAST_INDENT_VAR);
-    $tagsToClose = $this->getLocalSessionValue(self::TAGS_TO_CLOSE_VAR);
+    // get document state from cache
+    $lastIndent = $this->cache->get($cacheSection, self::CACHE_KEY_LAST_INDENT);
+    $tagsToClose = $this->cache->get($cacheSection, self::CACHE_KEY_TAGS_TO_CLOSE);
 
     // write last opened and not closed tags
     if ($curIndent < $lastIndent) {
@@ -334,9 +343,9 @@ class XMLExportController extends BatchController {
       }
     }
 
-    // update document state in session
-    $this->setLocalSessionValue(self::LAST_INDENT_VAR, $lastIndent);
-    $this->setLocalSessionValue(self::TAGS_TO_CLOSE_VAR, $tagsToClose);
+    // update document state in cache
+    $this->cache->put($cacheSection, self::CACHE_KEY_LAST_INDENT, $lastIndent);
+    $this->cache->put($cacheSection, self::CACHE_KEY_TAGS_TO_CLOSE, $tagsToClose);
   }
 
   /**
@@ -351,17 +360,18 @@ class XMLExportController extends BatchController {
     // get document definition
     $docIndent = $this->getRequestValue('docIndent');
     $docLinebreak = $this->getRequestValue('docLinebreak');
+    $cacheSection = $this->getRequestValue('cacheSection');
 
-    // get document state from session
-    $lastIndent = $this->getLocalSessionValue(self::LAST_INDENT_VAR);
-    $tagsToClose = $this->getLocalSessionValue(self::TAGS_TO_CLOSE_VAR);
+    // get document state from cache
+    $lastIndent = $this->cache->get($cacheSection, self::CACHE_KEY_LAST_INDENT);
+    $tagsToClose = $this->cache->get($cacheSection, self::CACHE_KEY_TAGS_TO_CLOSE);
 
     // load node and get element name
     $node = $persistenceFacade->load($oid);
     $elementName = $persistenceFacade->getSimpleType($node->getType());
 
     // check if the node is written already
-    $exportedOids = $this->cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
+    $exportedOids = $this->cache->get($cacheSection, self::CACHE_KEY_EXPORTED_OIDS);
     if (!in_array($oid->__toString(), $exportedOids)) {
       // write node
       $mapper = $node->getMapper();
@@ -400,12 +410,12 @@ class XMLExportController extends BatchController {
 
       // register exported node
       $exportedOids[] = $oid->__toString();
-      $this->cache->put(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS, $exportedOids);
+      $this->cache->put($cacheSection, self::CACHE_KEY_EXPORTED_OIDS, $exportedOids);
     }
 
-    // update document state in session
-    $this->setLocalSessionValue(self::LAST_INDENT_VAR, $lastIndent);
-    $this->setLocalSessionValue(self::TAGS_TO_CLOSE_VAR, $tagsToClose);
+    // update document state in cache
+    $this->cache->put($cacheSection, self::CACHE_KEY_LAST_INDENT, $lastIndent);
+    $this->cache->put($cacheSection, self::CACHE_KEY_TAGS_TO_CLOSE, $tagsToClose);
   }
 
   /**
@@ -414,7 +424,8 @@ class XMLExportController extends BatchController {
    * @return Integer
    */
   protected function getNumUnvisitedChildren(Node $node) {
-    $exportedOids = $this->cache->get(self::CACHE_SECTION, self::CACHE_KEY_EXPORTED_OIDS);
+    $cacheSection = $this->getRequestValue('cacheSection');
+    $exportedOids = $this->cache->get($cacheSection, self::CACHE_KEY_EXPORTED_OIDS);
 
     $childOIDs = [];
     $mapper = $node->getMapper();

@@ -22,10 +22,10 @@ use wcmf\lib\io\IOException;
 class FileUtil {
 
   /**
-   * Copy an uploaded file to a given destination (only if the mime type mathes the given one).
-   * @param $mediaFile An assoziative array with the following keys: 'name', 'type', 'tmp_name' (typically a $_FILES entry)
+   * Copy an uploaded file to a given destination (only if the mime type matches the given one).
+   * @param $mediaFile An associative array with the following keys: 'name', 'type', 'tmp_name' (typically a $_FILES entry)
    * @param $destName The destination file name
-   * @param $mimeTypes An array holding the allowed mimetypes, null if arbitrary (default: _null_)
+   * @param $mimeTypes An array holding the allowed mime types, null if arbitrary (default: _null_)
    * @param $override Boolean whether an existing file should be overridden, if false an unique id will be placed in the filename to prevent overriding (default: _true_)
    * @return The filename of the uploaded file
    */
@@ -53,7 +53,7 @@ class FileUtil {
     }
     $result = move_uploaded_file($mediaFile['tmp_name'], $destName);
     if ($result === false) {
-      throw new IOException("Failed to move %0% to %1%.", [$mediaFile['tmp_name'], $destName]);
+      throw new IOException($message->getText("Failed to move %0% to %1%.", [$mediaFile['tmp_name'], $destName]));
     }
     $filename = basename($destName);
     return $filename;

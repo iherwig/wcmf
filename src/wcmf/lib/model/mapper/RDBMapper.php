@@ -1087,7 +1087,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $thisRelationDescription = $otherMapper->getRelationImpl($thisRole, true);
       if ($thisRelationDescription->getOtherNavigability() == true) {
         list($selectStmt, $objValueName, $relValueName) = $otherMapper->getRelationSelectSQL($objects, $thisRole, $criteria, $orderby, $pagingInfo);
-        $originalData = array();
+        $originalData = [];
         $relatedObjects = $otherMapper->loadObjectsFromSQL($selectStmt, ($buildDepth == BuildDepth::PROXIES_ONLY) ? BuildDepth::SINGLE : $buildDepth, $pagingInfo, $originalData);
       }
     }
