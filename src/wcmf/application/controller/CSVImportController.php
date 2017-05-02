@@ -41,7 +41,7 @@ use wcmf\lib\security\PermissionManager;
  * Initiate the import.
  * | Parameter              | Description
  * |------------------------|-------------------------
- * | _in_ `docFile`         | The name of the file to write to (path relative to script main location) (default: 'import.csv')
+ * | _in_ `docFile`         | The file upload as associative array with the following keys: 'name', 'type', 'tmp_name' (typically a $_FILES entry)
  * | _in_ `className`       | The entity type to import instances of
  * | _in_ `nodesPerCall`    | The number of nodes to process in one call (default: 50)
  * </div>
