@@ -11,13 +11,22 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
+use wcmf\lib\config\Configuration;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
+use wcmf\lib\io\Cache;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * CSVImportController imports instances of one type into the storage. It uses
@@ -43,9 +52,37 @@ use wcmf\lib\presentation\Response;
  * @author ingo herwig <ingo@wemove.com>
  */
 class CSVImportController extends BatchController {
+  const CACHE_KEY_STATS = 'stats';
 
   // default values, maybe overriden by corresponding request values (see above)
   private $NODES_PER_CALL = 50;
+
+  private $cache = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $actionMapper
+   * @param $localization
+   * @param $message
+   * @param $configuration
+   * @param $dynamicCache
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
+          Localization $localization,
+          Message $message,
+          Configuration $configuration,
+          Cache $dynamicCache) {
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
+    $this->cache = $dynamicCache;
+    $this->fileUtil = new FileUtil();
+  }
 
   /**
    * @see Controller::initialize()
@@ -76,6 +113,14 @@ class CSVImportController extends BatchController {
               ($header = fgetcsv($fileHandle)) !== false) {
         $request->setValue('csvHeader', $header);
       }
+
+      // initialize cache
+      $this->cache->put($cacheSection, self::CACHE_KEY_STATS, [
+          'processed' => 0,
+          'updated' => 0,
+          'created' => 0,
+          'skipped' => 0
+      ]);
     }
     // initialize parent controller after default request values are set
     parent::initialize($request, $response);
@@ -132,20 +177,31 @@ class CSVImportController extends BatchController {
     // get document definition
     $type =  $this->getRequestValue('className');
     $docFile = $this->getRequestValue('uploadFile');
+    $cacheSection = $this->getRequestValue('cacheSection');
 
-    // count lines
-    $numLines = 0;
+    // get stats from cache
+    $stats = $this->cache->get($cacheSection, self::CACHE_KEY_STATS);
+    $this->getResponse()->setValue('stats', $stats);
+
+    // oids are line numbers
+    $oids = [];
     $file = new \SplFileObject($docFile);
-    while (!$file->eof()) {
-      $file->fgets();
-      $numLines++;
+    $file->seek(1); // skip header
+    $eof = false;
+    while (!$eof) {
+      $content = $file->current();
+      if (strlen(trim($content)) > 0) {
+        $oids[] = $file->key();
+      }
+      $file->next();
+      $eof = $file->eof();
     }
 
     // create work packages for nodes
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     $this->addWorkPackage(
             $message->getText('Importing %0%', [$type]),
-            $nodesPerCall, range(1, $numLines-1), 'importNodes');
+            $nodesPerCall, $oids, 'importNodes');
   }
 
   /**
@@ -161,7 +217,12 @@ class CSVImportController extends BatchController {
     $type = $this->getRequestValue('className');
     $docFile = $this->getRequestValue('uploadFile');
     $header = $this->getRequestValue('csvHeader');
+    $cacheSection = $this->getRequestValue('cacheSection');
 
+    // get stats from cache
+    $stats = $this->cache->get($cacheSection, self::CACHE_KEY_STATS);
+
+    // get type definition
     $mapper = $persistenceFacade->getMapper($type);
     $pkNames = $mapper->getPkNames();
 
@@ -170,11 +231,8 @@ class CSVImportController extends BatchController {
 
     $file = new \SplFileObject($docFile);
     $file->setFlags(\SplFileObject::READ_CSV);
-
-    $firstLine = $oids[0];
-    $lastLine = $oids[sizeof($oids)-1];
-    $file->seek($firstLine);
-    while (!$file->eof() && $file->key() < $lastLine) {
+    foreach ($oids as $oid) {
+      $file->seek($oid);
       // read line
       $data = array_combine($header, $file->current());
 
@@ -204,17 +262,36 @@ class CSVImportController extends BatchController {
       // update the object
       if ($obj != null) {
         foreach ($data as $name => $value) {
-          if (!in_array($name, $pkValues)) {
-            $obj->setValue($name, $value);
+          if (!in_array($name, $pkNames) && $mapper->hasAttribute($name)) {
+            $value = empty($value) ? null : $value;
+            if ($value !== $obj->getValue($name)) {
+              $obj->setValue($name, $value);
+            }
           }
         }
+        $state = $obj->getState();
+        if ($state == PersistentObject::STATE_NEW) {
+          $stats['created']++;
+        }
+        elseif ($state == PersistentObject::STATE_DIRTY) {
+          $stats['updated']++;
+        }
+        else {
+          $stats['skipped']++;
+        }
       }
-      // next
-      $file->next();
+      else {
+        $stats['skipped']++;
+      }
+      $stats['processed']++;
     }
 
     // commit
     $persistenceFacade->getTransaction()->commit();
+
+    // update stats
+    $this->cache->put($cacheSection, self::CACHE_KEY_STATS, $stats);
+    $this->getResponse()->setValue('stats', $stats);
   }
 }
 ?>

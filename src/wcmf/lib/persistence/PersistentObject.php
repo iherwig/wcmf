@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\persistence;
 
-use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 
 /**
