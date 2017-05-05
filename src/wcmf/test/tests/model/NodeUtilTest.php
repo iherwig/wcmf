@@ -97,7 +97,7 @@ class NodeUtilTest extends DatabaseTestCase {
       "`Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
       "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
       "FROM `Image` INNER JOIN `Chapter` AS `NormalChapter` ON ".
-      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE (`NormalChapter`.`id` = 10) ORDER BY `sortkey` DESC";
+      "`Image`.`fk_chapter_id` = `NormalChapter`.`id` WHERE (`NormalChapter`.`id` = 10) ORDER BY `Image`.`sortkey` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected1, 'Image'), str_replace("\n", "", $sql1));
     $this->executeSql('Image', $sql1);
 
@@ -116,7 +116,7 @@ class NodeUtilTest extends DatabaseTestCase {
       "`Chapter`.`sortkey` AS `sortkey`, ".
       "`AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` ".
       "INNER JOIN `Chapter` AS `SubChapter` ON `SubChapter`.`fk_chapter_id` = `Chapter`.`id` ".
-      "WHERE (`SubChapter`.`id` = 10) ORDER BY `sortkey` ASC";
+      "WHERE (`SubChapter`.`id` = 10) ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected2, 'Chapter'), str_replace("\n", "", $sql2));
     $this->executeSql('Chapter', $sql2);
 
@@ -135,7 +135,7 @@ class NodeUtilTest extends DatabaseTestCase {
       "`Chapter`.`sortkey` AS `sortkey`, ".
       "`AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` ".
       "INNER JOIN `Chapter` AS `ParentChapter` ON `Chapter`.`fk_chapter_id` = `ParentChapter`.`id` ".
-      "WHERE (`ParentChapter`.`id` = 10) ORDER BY `sortkey` ASC";
+      "WHERE (`ParentChapter`.`id` = 10) ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected3, 'Chapter'), str_replace("\n", "", $sql3));
     $this->executeSql('Chapter', $sql3);
   }

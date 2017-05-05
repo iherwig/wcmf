@@ -45,7 +45,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
-      "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` ORDER BY `name` ASC";
+      "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);
 
@@ -56,8 +56,8 @@ class ObjectQueryTest extends DatabaseTestCase {
   public function testOid() {
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
     $sql = $query->getQueryString(false);
-    $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name` ".
-      "FROM `Author` AS `Author` ORDER BY `name` ASC";
+    $expected = "SELECT DISTINCT `Author`.`id` AS `id` ".
+      "FROM `Author` AS `Author` ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);
 
@@ -73,7 +73,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
       "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
-      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `name` ASC";
+      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);
 
@@ -101,7 +101,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
       "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` WHERE (`Author`.`name` LIKE '%ingo%' ".
-      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `name` ASC";
+      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);
   }
@@ -118,7 +118,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
       "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` WHERE (`Author`.`id` = 10 AND `Author`.`name` LIKE '%ingo%' ".
-      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `name` ASC";
+      "AND `Author`.`creator` LIKE '%admin%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);
   }
@@ -133,7 +133,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
       "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` INNER JOIN `Chapter` AS `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
-      "WHERE (`Author`.`name` LIKE '%ingo%') AND (`Chapter`.`name` LIKE 'Chapter 1%') ORDER BY `name` ASC";
+      "WHERE (`Author`.`name` LIKE '%ingo%') AND (`Chapter`.`name` LIKE 'Chapter 1%') ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);
   }
@@ -151,7 +151,7 @@ class ObjectQueryTest extends DatabaseTestCase {
       "`Chapter`.`sortkey_author` AS `sortkey_author`, `Chapter`.`sortkey_book` AS `sortkey_book`, `Chapter`.`sortkey_parentchapter` AS `sortkey_parentchapter`, `Chapter`.`sortkey` AS `sortkey`, ".
       "`AuthorRef`.`name` AS `author_name` FROM `Chapter` AS `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` INNER JOIN `Chapter` AS `Chapter_1` ON ".
       "`Chapter_1`.`fk_chapter_id` = `Chapter`.`id` WHERE (`Chapter`.`creator` LIKE '%ingo%') AND (`Chapter_1`.`name` LIKE 'Chapter 1%') ".
-      "ORDER BY `sortkey` ASC";
+      "ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql));
     $this->executeSql('Chapter', $sql);
   }
@@ -167,7 +167,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $expected = "SELECT DISTINCT `Publisher`.`id` AS `id`, `Publisher`.`name` AS `name`, `Publisher`.`created` AS `created`, `Publisher`.`creator` AS `creator`, ".
       "`Publisher`.`modified` AS `modified`, `Publisher`.`last_editor` AS `last_editor` ".
       "FROM `Publisher` AS `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
-      "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `name` ASC";
+      "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `Publisher`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
     $this->executeSql('Publisher', $sql);
   }
@@ -229,7 +229,7 @@ class ObjectQueryTest extends DatabaseTestCase {
       "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` INNER JOIN `Chapter` AS `Chapter` ON `Chapter`.`fk_author_id` = `Author`.`id` ".
       "WHERE (`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%') AND (`Chapter`.`created` >= '2004-01-01') ".
       "AND (`Chapter`.`created` < '2005-01-01') OR (`Author`.`name` LIKE '%herwig%') AND ".
-      "((`Chapter`.`name` LIKE 'Chapter 1%') OR (`Chapter`.`creator` = 'admin')) ORDER BY `name` ASC";
+      "((`Chapter`.`name` LIKE 'Chapter 1%') OR (`Chapter`.`creator` = 'admin')) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);
   }

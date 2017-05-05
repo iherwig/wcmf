@@ -253,7 +253,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $parameters = $this->addCriteria($selectStmt, $criteria, $tableName);
 
       // order
-      $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder());
+      $this->addOrderBy($selectStmt, $orderby, $this->getType(), $tableName, $this->getDefaultOrder());
 
       // limit
       if ($pagingInfo != null) {
@@ -366,7 +366,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $selectStmt->where($this->quoteIdentifier($tableName).'.'.
               $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
       // order
-      $this->addOrderBy($selectStmt, $orderby, $tableName, $this->getDefaultOrder($otherRole));
+      $this->addOrderBy($selectStmt, $orderby, $this->getType(), $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
       $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $tableName));
       // limit
@@ -396,11 +396,11 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $otherRelationDesc = $relationDescription->getOtherEndRelation();
     $nmMapper = $this->persistenceFacade->getMapper($thisRelationDesc->getOtherType());
     $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
-    $nmTablename = $nmMapper->getRealTableName();
+    $nmTableName = $nmMapper->getRealTableName();
 
     // id parameters
     $parameters = [];
-    $idPlaceholder = ':'.$nmTablename.'_'.$otherFkAttr->getName();
+    $idPlaceholder = ':'.$nmTableName.'_'.$otherFkAttr->getName();
     for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
       $dbid = $otherObjectProxies[$i]->getValue($thisRelationDesc->getIdName());
       if ($dbid === null) {
@@ -421,16 +421,17 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       $tableName = $this->getRealTableName();
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
-      $joinCond = $nmTablename.'.'.$thisFkAttr->getName().'='.$tableName.'.'.$thisIdAttr->getName();
+      $joinCond = $nmTableName.'.'.$thisFkAttr->getName().'='.$tableName.'.'.$thisIdAttr->getName();
       $joinColumns = [];
-      $selectStmt->where($this->quoteIdentifier($nmTablename).'.'.
+      $selectStmt->where($this->quoteIdentifier($nmTableName).'.'.
               $this->quoteIdentifier($otherFkAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
       // order (in this case we use the order of the many to many objects)
       $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);
       $hasNmOrder = sizeof($nmSortDefs) > 0;
-      $orderTable = $hasNmOrder ? $nmTablename : $tableName;
+      $orderType = $hasNmOrder ? $nmMapper->getType() : $this->getType();
+      $orderTable = $hasNmOrder ? $nmTableName : $tableName;
       $defaultOrderDef = $hasNmOrder ? $nmSortDefs : $this->getDefaultOrder($otherRole);
-      $this->addOrderBy($selectStmt, $orderby, $orderTable, $defaultOrderDef);
+      $this->addOrderBy($selectStmt, $orderby, $orderType, $orderTable, $defaultOrderDef);
       foreach($nmSortDefs as $nmSortDef) {
         // add the sort attribute from the many to many object
         $nmSortAttributeDesc = $nmMapper->getAttribute($nmSortDef['sortFieldName']);
@@ -438,9 +439,9 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
       // add proxy id
       $joinColumns[self::INTERNAL_VALUE_PREFIX.'id'] = $otherFkAttr->getName();
-      $selectStmt->join($nmTablename, $joinCond, $joinColumns);
+      $selectStmt->join($nmTableName, $joinCond, $joinColumns);
       // additional conditions
-      $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $nmTablename));
+      $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $nmTableName));
       // limit
       if ($pagingInfo != null) {
         $selectStmt->limit($pagingInfo->getPageSize(), $pagingInfo->getOffset());
@@ -448,7 +449,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     }
     else {
       // on used statements only set parameters
-      $parameters = array_merge($parameters, $this->getParameters($criteria, $nmTablename));
+      $parameters = array_merge($parameters, $this->getParameters($criteria, $nmTableName));
     }
 
     // set parameters
@@ -619,20 +620,23 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * Add the given order to the select statement
    * @param $selectStmt The select statement (instance of SelectStatement)
    * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null)
-   * @param $tableName The table name
+   * @param $orderType The type that define the attributes in orderby (maybe null)
+   * @param $aliasName The table alias name to be used (maybe null)
    * @param $defaultOrder The default order definition to use, if orderby is null (@see PersistenceMapper::getDefaultOrder())
    */
-  protected function addOrderBy(SelectStatement $selectStmt, $orderby, $tableName, $defaultOrder) {
+  protected function addOrderBy(SelectStatement $selectStmt, $orderby, $orderType, $aliasName, $defaultOrder) {
     if ($orderby == null) {
       $orderby = [];
       // use default ordering
       if ($defaultOrder && sizeof($defaultOrder) > 0) {
         foreach ($defaultOrder as $orderDef) {
           $orderby[] = $orderDef['sortFieldName']." ".$orderDef['sortDirection'];
+          $orderType = $orderDef['sortType'];
         }
       }
     }
-    foreach ($orderby as $curOrderBy) {
+    for ($i=0, $count=sizeof($orderby); $i<$count; $i++) {
+      $curOrderBy = $orderby[$i];
       $orderByParts = preg_split('/ /', $curOrderBy);
       $orderAttribute = $orderByParts[0];
       $orderDirection = sizeof($orderByParts) > 1 ? $orderByParts[1] : 'ASC';
@@ -641,8 +645,10 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
         $orderAttributeParts = preg_split('/\./', $orderAttribute);
         $orderAttribute = array_pop($orderAttributeParts);
       }
-      $orderAttributeDesc = $this->getAttribute($orderAttribute);
+      $mapper = $orderType != null ? $this->persistenceFacade->getMapper($orderType) : $this;
+      $orderAttributeDesc = $mapper->getAttribute($orderAttribute);
       $orderColumnName = $orderAttributeDesc->getColumn();
+      $tableName = $aliasName != null ? $aliasName : $mapper->getRealTableName();
 
       $orderAttributeFinal = $tableName.'.'.$orderColumnName;
       $selectStmt->order([$orderAttributeFinal.' '.$orderDirection]);

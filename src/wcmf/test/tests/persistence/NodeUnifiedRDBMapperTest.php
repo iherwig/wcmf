@@ -50,7 +50,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $expected = "SELECT `Chapter`.`id` AS `id`, `Chapter`.`fk_chapter_id` AS `fk_chapter_id`, `Chapter`.`fk_book_id` AS `fk_book_id`, `Chapter`.`fk_author_id` AS `fk_author_id`, ".
       "`Chapter`.`name` AS `name`, `Chapter`.`content` AS `content`, `Chapter`.`created` AS `created`, `Chapter`.`creator` AS `creator`, `Chapter`.`modified` AS `modified`, ".
       "`Chapter`.`last_editor` AS `last_editor`, `Chapter`.`sortkey_author` AS `sortkey_author`, `Chapter`.`sortkey_book` AS `sortkey_book`, `Chapter`.`sortkey_parentchapter` AS `sortkey_parentchapter`, ".
-      "`Chapter`.`sortkey` AS `sortkey`, `AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` ORDER BY `sortkey` ASC";
+      "`Chapter`.`sortkey` AS `sortkey`, `AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql1));
     $this->executeSql('Chapter', $sql1);
 
@@ -60,7 +60,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
       "`Chapter`.`name` AS `name`, `Chapter`.`content` AS `content`, `Chapter`.`created` AS `created`, `Chapter`.`creator` AS `creator`, `Chapter`.`modified` AS `modified`, ".
       "`Chapter`.`last_editor` AS `last_editor`, `Chapter`.`sortkey_author` AS `sortkey_author`, `Chapter`.`sortkey_book` AS `sortkey_book`, `Chapter`.`sortkey_parentchapter` AS `sortkey_parentchapter`, ".
       "`Chapter`.`sortkey` AS `sortkey`, `AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` WHERE `Chapter`.`name` = :Chapter_name ".
-      "ORDER BY `sortkey` ASC";
+      "ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql2));
     $this->executeSql('Chapter', $sql2, ['Chapter_name' => 'Chapter 1']);
 
@@ -70,7 +70,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
       "`ChapterAlias`.`name` AS `name`, `ChapterAlias`.`content` AS `content`, `ChapterAlias`.`created` AS `created`, `ChapterAlias`.`creator` AS `creator`, `ChapterAlias`.`modified` AS `modified`, ".
       "`ChapterAlias`.`last_editor` AS `last_editor`, `ChapterAlias`.`sortkey_author` AS `sortkey_author`, `ChapterAlias`.`sortkey_book` AS `sortkey_book`, `ChapterAlias`.`sortkey_parentchapter` AS `sortkey_parentchapter`, ".
       "`ChapterAlias`.`sortkey` AS `sortkey`, `AuthorRef`.`name` AS `author_name` FROM `Chapter` AS `ChapterAlias` LEFT JOIN `Author` AS `AuthorRef` ON `ChapterAlias`.`fk_author_id`=`AuthorRef`.`id` WHERE `ChapterAlias`.`name` = :ChapterAlias_name ".
-      "ORDER BY `sortkey` ASC";
+      "ORDER BY `ChapterAlias`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql3));
     $this->executeSql('Chapter', $sql3, ['ChapterAlias_name' => 'Chapter 1']);
 
@@ -79,7 +79,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $expected = "SELECT `Chapter`.`id` AS `id`, `Chapter`.`name` AS `name`, ".
       "`AuthorRef`.`name` AS `author_name` FROM `Chapter` ".
       "LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` WHERE `Chapter`.`name` = :Chapter_name ".
-      "ORDER BY `sortkey` ASC";
+      "ORDER BY `Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql4));
     $this->executeSql('Chapter', $sql4, ['Chapter_name' => 'Chapter 1']);
 
@@ -90,7 +90,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
       "`Chapter`.`name` AS `name`, `Chapter`.`content` AS `content`, `Chapter`.`created` AS `created`, `Chapter`.`creator` AS `creator`, `Chapter`.`modified` AS `modified`, ".
       "`Chapter`.`last_editor` AS `last_editor`, `Chapter`.`sortkey_author` AS `sortkey_author`, `Chapter`.`sortkey_book` AS `sortkey_book`, `Chapter`.`sortkey_parentchapter` AS `sortkey_parentchapter`, ".
       "`Chapter`.`sortkey` AS `sortkey`, `AuthorRef`.`name` AS `author_name` FROM `Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `Chapter`.`fk_author_id`=`AuthorRef`.`id` WHERE `Chapter`.`name` = :Chapter_name ".
-      "ORDER BY `name` ASC";
+      "ORDER BY `Chapter`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql5));
     $this->executeSql('Chapter', $sql5, ['Chapter_name' => 'Chapter 1']);
 
@@ -116,7 +116,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
       "`WCMF_Chapter`.`name` AS `name`, `WCMF_Chapter`.`content` AS `content`, `WCMF_Chapter`.`created` AS `created`, `WCMF_Chapter`.`creator` AS `creator`, `WCMF_Chapter`.`modified` AS `modified`, ".
       "`WCMF_Chapter`.`last_editor` AS `last_editor`, `WCMF_Chapter`.`sortkey_author` AS `sortkey_author`, `WCMF_Chapter`.`sortkey_book` AS `sortkey_book`, `WCMF_Chapter`.`sortkey_parentchapter` AS `sortkey_parentchapter`, ".
       "`WCMF_Chapter`.`sortkey` AS `sortkey`, `AuthorRef`.`name` AS `author_name` FROM `WCMF_Chapter` LEFT JOIN `Author` AS `AuthorRef` ON `WCMF_Chapter`.`fk_author_id`=`AuthorRef`.`id` WHERE `WCMF_Chapter`.`name` = :WCMF_Chapter_name ".
-      "ORDER BY `sortkey` ASC";
+      "ORDER BY `WCMF_Chapter`.`sortkey` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql9));
   }
 
@@ -181,7 +181,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $this->assertEquals('id', $relValueName2);
     $sql2 = $selectStmt2->__toString();
     $expected2 = "SELECT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, ".
-      "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` FROM `Author` WHERE `Author`.`id` IN(:Author_id0) ORDER BY `name` ASC";
+      "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` FROM `Author` WHERE `Author`.`id` IN(:Author_id0) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected2, 'Author'), str_replace("\n", "", $sql2));
     $this->executeSql('Author', $sql2, ['Author_id0' => 1]);
 
@@ -195,7 +195,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $this->assertEquals('id', $relValueName3);
     $sql3 = $selectStmt3->__toString();
     $expected3 = "SELECT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, ".
-      "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` FROM `Author` WHERE `Author`.`id` IN(:Author_id0) ORDER BY `name` ASC";
+      "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` FROM `Author` WHERE `Author`.`id` IN(:Author_id0) ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected3, 'Author'), str_replace("\n", "", $sql3));
     $this->executeSql('Author', $sql3, ['Author_id0' => 1]);
 
@@ -211,7 +211,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $sql4 = $selectStmt4->__toString();
     $expected4 = "SELECT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, ".
       "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor` FROM `Author` WHERE `Author`.`id` IN(:Author_id0) AND `Author`.`name` = :Author_name ".
-      "ORDER BY `name` ASC";
+      "ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected4, 'Author'), str_replace("\n", "", $sql4));
     $this->executeSql('Author', $sql4, ['Author_id0' => 1, 'Author_name' => 'Unknown']);
 
@@ -227,7 +227,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $expected6 = "SELECT `Image`.`id` AS `id`, `Image`.`fk_chapter_id` AS `fk_chapter_id`, `Image`.`fk_titlechapter_id` AS `fk_titlechapter_id`, `Image`.`file` AS `filename`, ".
       "`Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
       "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
-      "FROM `Image` WHERE `Image`.`fk_chapter_id` IN(:Image_fk_chapter_id0) ORDER BY `sortkey_normalchapter` DESC";
+      "FROM `Image` WHERE `Image`.`fk_chapter_id` IN(:Image_fk_chapter_id0) ORDER BY `Image`.`sortkey_normalchapter` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected6, 'Author'), str_replace("\n", "", $sql6));
     $this->executeSql('Image', $sql6, ['Image_fk_chapter_id0' => 1]);
 
@@ -245,7 +245,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $expected8 = "SELECT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, ".
       "`Author`.`modified` AS `modified`, `Author`.`last_editor` AS `last_editor`, `NMPublisherAuthor`.`sortkey_publisher` AS `sortkey_publisher`, `NMPublisherAuthor`.`fk_publisher_id` AS `_mapper_internal_id` FROM `Author` ".
       "INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_author_id`=`Author`.`id` ".
-      "WHERE `NMPublisherAuthor`.`fk_publisher_id` IN(:NMPublisherAuthor_fk_publisher_id0) ORDER BY `sortkey_publisher` ASC";
+      "WHERE `NMPublisherAuthor`.`fk_publisher_id` IN(:NMPublisherAuthor_fk_publisher_id0) ORDER BY `NMPublisherAuthor`.`sortkey_publisher` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected8, 'Author'), str_replace("\n", "", $sql8));
     $this->executeSql('Author', $sql8, ['NMPublisherAuthor_fk_publisher_id0' => 1]);
   }
