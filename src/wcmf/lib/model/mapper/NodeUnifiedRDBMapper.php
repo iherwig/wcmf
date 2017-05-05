@@ -623,7 +623,6 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
    * @param $defaultOrder The default order definition to use, if orderby is null (@see PersistenceMapper::getDefaultOrder())
    */
   protected function addOrderBy(SelectStatement $selectStmt, $orderby, $tableName, $defaultOrder) {
-    $orderbyFinal = [];
     if ($orderby == null) {
       $orderby = [];
       // use default ordering
@@ -633,7 +632,21 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
         }
       }
     }
-    $selectStmt->order($orderby);
+    foreach ($orderby as $curOrderBy) {
+      $orderByParts = preg_split('/ /', $curOrderBy);
+      $orderAttribute = $orderByParts[0];
+      $orderDirection = sizeof($orderByParts) > 1 ? $orderByParts[1] : 'ASC';
+      if (strpos($orderAttribute, '.') > 0) {
+        // the type is included in the attribute
+        $orderAttributeParts = preg_split('/\./', $orderAttribute);
+        $orderAttribute = array_pop($orderAttributeParts);
+      }
+      $orderAttributeDesc = $this->getAttribute($orderAttribute);
+      $orderColumnName = $orderAttributeDesc->getColumn();
+
+      $orderAttributeFinal = $tableName.'.'.$orderColumnName;
+      $selectStmt->order([$orderAttributeFinal.' '.$orderDirection]);
+    }
   }
 
   /**

@@ -468,7 +468,7 @@ class ObjectQuery extends AbstractQuery {
         $orderAttribute = $orderByParts[0];
         $orderDirection = sizeof($orderByParts) > 1 ? $orderByParts[1] : 'ASC';
         $orderType = null;
-
+        $orderTypeMapper = null;
         if (strpos($orderAttribute, '.') > 0) {
           // the type is included in the attribute
           $orderAttributeParts = preg_split('/\./', $orderAttribute);

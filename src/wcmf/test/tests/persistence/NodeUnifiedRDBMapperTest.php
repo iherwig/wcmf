@@ -120,6 +120,50 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
     $this->assertEquals($this->fixQueryQuotes($expected, 'Chapter'), str_replace("\n", "", $sql9));
   }
 
+  public function testSelectSQLWithMappedColumn() {
+    $mapper1 = ObjectFactory::getInstanceOf('app\src\model\_base\ImageRDBMapper');
+    $mapper1->setConnectionParams($this->dbParams);
+    $criteria = new Criteria('Image', 'filename', '=', 'Image 1');
+
+    // condition 1
+    $sql1 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL')->__toString();
+    $expected = "SELECT `Image`.`id` AS `id`, `Image`.`fk_chapter_id` AS `fk_chapter_id`, `Image`.`fk_titlechapter_id` AS `fk_titlechapter_id`, ".
+      "`Image`.`file` AS `filename`, `Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
+      "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
+      "FROM `Image` ORDER BY `Image`.`sortkey` DESC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql1));
+    $this->executeSql('Image', $sql1);
+
+    // condition 2
+    $sql2 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL', [[$criteria]])->__toString();
+    $expected = "SELECT `Image`.`id` AS `id`, `Image`.`fk_chapter_id` AS `fk_chapter_id`, `Image`.`fk_titlechapter_id` AS `fk_titlechapter_id`, ".
+      "`Image`.`file` AS `filename`, `Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
+      "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
+      "FROM `Image` WHERE `Image`.`file` = :Image_filename ORDER BY `Image`.`sortkey` DESC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql2));
+    $this->executeSql('Image', $sql2, ['Image_filename' => 'Image 1']);
+
+    // order 1
+    $sql3 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
+            [[$criteria], null, null, ["filename ASC", "created DESC"]])->__toString();
+    $expected = "SELECT `Image`.`id` AS `id`, `Image`.`fk_chapter_id` AS `fk_chapter_id`, `Image`.`fk_titlechapter_id` AS `fk_titlechapter_id`, ".
+      "`Image`.`file` AS `filename`, `Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
+      "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
+      "FROM `Image` WHERE `Image`.`file` = :Image_filename ORDER BY `Image`.`file` ASC, `Image`.`created` DESC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql3));
+    $this->executeSql('Chapter', $sql3, ['Image_filename' => 'Image 1']);
+
+    // order 2
+    $sql4 = TestUtil::callProtectedMethod($mapper1, 'getSelectSQL',
+            [[$criteria], null, null, ["Image.filename ASC", "Image.created DESC"]])->__toString();
+    $expected = "SELECT `Image`.`id` AS `id`, `Image`.`fk_chapter_id` AS `fk_chapter_id`, `Image`.`fk_titlechapter_id` AS `fk_titlechapter_id`, ".
+      "`Image`.`file` AS `filename`, `Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
+      "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
+      "FROM `Image` WHERE `Image`.`file` = :Image_filename ORDER BY `Image`.`file` ASC, `Image`.`created` DESC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql4));
+    $this->executeSql('Chapter', $sql4, ['Image_filename' => 'Image 1']);
+  }
+
   public function testRelationSQL() {
     $mapper1 = ObjectFactory::getInstanceOf('app\src\model\_base\ChapterRDBMapper');
     $mapper1->setConnectionParams($this->dbParams);

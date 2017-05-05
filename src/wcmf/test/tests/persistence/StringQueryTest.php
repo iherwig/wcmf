@@ -170,13 +170,24 @@ class StringQueryTest extends DatabaseTestCase {
 
   public function testWithDB() {
     TestUtil::startSession('admin', 'admin');
-    $query = new StringQuery('Chapter', __CLASS__.__METHOD__."1");
+    $query = new StringQuery('Chapter', __CLASS__.__METHOD__."10");
     $query->setConditionString($this->fixQueryQuotes("`Chapter`.`name` LIKE 'Chapter A'", 'Chapter'));
     $chapterList = $query->execute(BuildDepth::SINGLE);
 
     $this->assertEquals(1, sizeof($chapterList));
     $this->assertEquals('Chapter A', $chapterList[0]->getValue('name'));
     TestUtil::endSession();
+  }
+
+  public function testOrderByMappedColumn() {
+    $query = new StringQuery('Image', __CLASS__.__METHOD__."11");
+    $sql = $query->getQueryString(BuildDepth::SINGLE, ['filename ASC', 'created DESC']);
+    $expected = "SELECT DISTINCT `Image`.`id` AS `id`, `Image`.`fk_chapter_id` AS `fk_chapter_id`, `Image`.`fk_titlechapter_id` AS `fk_titlechapter_id`, ".
+      "`Image`.`file` AS `filename`, `Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
+      "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
+      "FROM `Image` ORDER BY `Image`.`file` ASC, `Image`.`created` DESC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql));
+    $this->executeSql('Image', $sql);
   }
 }
 ?>
