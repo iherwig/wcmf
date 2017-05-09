@@ -82,14 +82,22 @@ class StringQuery extends ObjectQuery {
             $value = preg_replace('/^\/|\/[a-zA-Z]*$/', '', $value);
           }
 
-          // quote value according to type
-          $replace = $typeAttr.' '.$sqlOp.' ';
-          if ($rqlOp == 'in' && !$isNumber) {
-            $replace .= '('.join(',', array_map([$mapper, 'quoteValue'], explode(',', $value))).')';
+          // handle null values
+          if ($value === 'null') {
+            $sqlOp = $sqlOp == '=' ? 'is' : 'is not';
+            $replace = $typeAttr.' '.$sqlOp.' null';
           }
           else {
-            $replace .= $isNumber ? $value : $mapper->quoteValue($value);
+            // quote value according to type
+            $replace = $typeAttr.' '.$sqlOp.' ';
+            if ($rqlOp == 'in' && !$isNumber) {
+              $replace .= '('.join(',', array_map([$mapper, 'quoteValue'], explode(',', $value))).')';
+            }
+            else {
+              $replace .= $isNumber ? $value : $mapper->quoteValue($value);
+            }
           }
+
           return $replace;
         }, $query);
       }
