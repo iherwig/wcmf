@@ -60,7 +60,7 @@ class StringQuery extends ObjectQuery {
       foreach ($operatorMap as $rqlOp => $sqlOp) {
         // add '=' separator for letter-only operators
         $operator = preg_match('/^[a-zA-Z]+$/', $rqlOp) ? '='.$rqlOp.'=' : $rqlOp;
-        $query = preg_replace_callback('/([^ =|&\)]+) ?'.$operator.' ?([^ =|&\)]+)/', function ($match)
+        $query = preg_replace_callback('/([^ !=|&\)]+) ?'.$operator.' ?([^ !=|&\)]+)/', function ($match)
                 use($rqlOp, $sqlOp, $mapper) {
           $typeAttr = $match[1];
           $value = preg_replace('/^[\'"]|[\'"]$/', '', $match[2]);
