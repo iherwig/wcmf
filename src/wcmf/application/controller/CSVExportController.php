@@ -153,7 +153,7 @@ class CSVExportController extends BatchController {
     }
 
     // unveil the query value if it is ofuscated
-    $queryTerm = $this->getRequestValue('query');
+    $queryTerm = urldecode($this->getRequestValue('query'));
     if (strlen($queryTerm) > 0) {
       $obfuscator = new Obfuscator($this->getSession());
       $unveiled = $obfuscator->unveil($queryTerm);

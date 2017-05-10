@@ -99,7 +99,7 @@ class ListController extends Controller {
     // unveil the query value if it is ofuscated
     $query = null;
     if ($request->hasValue('query')) {
-      $query = $request->getValue('query');
+      $query = urldecode($request->getValue('query'));
       if (strlen($query) > 0) {
         $obfuscator = new Obfuscator($this->getSession());
         $unveiled = $obfuscator->unveil($query);

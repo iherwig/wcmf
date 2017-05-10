@@ -108,15 +108,6 @@ class DefaultRequestListener {
         $request->setValue('limit', $limit);
       }
     }
-
-    // create query from optional GET values encoded in RQL
-    // (https://github.com/persvr/rql)
-    if ($request->hasValue('className') && $request->hasValue('query')) {
-      $type = $request->getValue('className');
-      $stringQuery = StringQuery::fromRql($type, urldecode($request->getValue('query')));
-      $query = $stringQuery->getQueryCondition();
-      $request->setValue('query', $query);
-    }
   }
 
   protected function transformResponse($request, $response) {

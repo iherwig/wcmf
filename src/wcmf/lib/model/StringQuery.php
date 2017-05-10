@@ -43,78 +43,11 @@ class StringQuery extends ObjectQuery {
   private $condition = '';
 
   /**
-   * Create a query instance from the given query parts encoded in RQL (https://github.com/persvr/rql), e.g.
-   * (Profile.keyword1=in=8,1|Profile.keyword2=in=8,2|Profile.keywords3=in=8,3)&Profile.yearlySalary=gte=1000
-   * @param $type The entity type to query for
-   * @param $query RQL query string
-   * @return StringQuery
-   */
-  public static function fromRql($type, $query) {
-    $stringQuery = new StringQuery($type);
-    if (strlen($query) > 0) {
-      // replace rql operators
-      $operatorMap = ['eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
-          'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp', '=' => '='];
-      $combineMap = ['|' => 'OR', '&' => 'AND'];
-      $mapper = self::getMapper($type);
-      foreach ($operatorMap as $rqlOp => $sqlOp) {
-        // add '=' separator for letter-only operators
-        $operator = preg_match('/^[a-zA-Z]+$/', $rqlOp) ? '='.$rqlOp.'=' : $rqlOp;
-        $query = preg_replace_callback('/([^ !=|&\)]+) ?'.$operator.' ?([^ !=|&\)]+)/', function ($match)
-                use($rqlOp, $sqlOp, $mapper) {
-          $typeAttr = $match[1];
-          $value = preg_replace('/^[\'"]|[\'"]$/', '', $match[2]);
-
-          // try to determine value type
-          list($typeOrRole, $attribute) = explode('.', preg_replace('/[`\(\)]/', '', $typeAttr), 2);
-          $relation = $mapper->hasRelation($typeOrRole) ? $mapper->getRelation($typeOrRole) : null;
-          $isNumber = false;
-          if ($relation) {
-            // check if the attribute type is numeric
-            $otherMapper = self::getMapper($relation->getOtherType());
-            $attributeDef = $otherMapper->hasAttribute($attribute) ? $otherMapper->getAttribute($attribute) : null;
-            $attributeType = $attributeDef != null ? strtolower($attributeDef->getType()) : null;
-            $isNumber = $attributeType == 'integer' || $attributeType == 'float';
-          }
-
-          // strip slashes from regexp
-          if ($sqlOp === 'regexp') {
-            $value = preg_replace('/^\/|\/[a-zA-Z]*$/', '', $value);
-          }
-
-          // handle null values
-          if ($value === 'null') {
-            $sqlOp = $sqlOp == '=' ? 'is' : 'is not';
-            $replace = $typeAttr.' '.$sqlOp.' null';
-          }
-          else {
-            // quote value according to type
-            $replace = $typeAttr.' '.$sqlOp.' ';
-            if ($rqlOp == 'in' && !$isNumber) {
-              $replace .= '('.join(',', array_map([$mapper, 'quoteValue'], explode(',', $value))).')';
-            }
-            else {
-              $replace .= $isNumber ? $value : $mapper->quoteValue($value);
-            }
-          }
-
-          return $replace;
-        }, $query);
-      }
-      foreach ($combineMap as $rqlOp => $sqlOp) {
-        $query = str_replace($rqlOp, ' '.$sqlOp.' ', $query);
-      }
-    }
-    $stringQuery->setConditionString($query);
-    return $stringQuery;
-  }
-
-  /**
    * Set the query condition string
    * @param $condition The query definition string
    */
   public function setConditionString($condition) {
-    $this->condition = $condition;
+    $this->condition = $this->parseRQL($condition);
   }
 
   /**
@@ -232,6 +165,74 @@ class StringQuery extends ObjectQuery {
     $this->resetInternals();
 
     return $selectStmt;
+  }
+
+  /**
+   * Parse the given query encoded in RQL (https://github.com/persvr/rql), e.g.
+   * (Profile.keyword1=in=8,1|Profile.keyword2=in=8,2|Profile.keywords3=in=8,3)&Profile.yearlySalary=gte=1000
+   * @param $query RQL query string
+   * @return String
+   */
+  protected function parseRQL($query) {
+    if (strlen($query) > 0) {
+      // replace rql operators
+      $operatorMap = ['eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
+          'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp', '=' => '='];
+      $combineMap = ['|' => 'OR', '&' => 'AND'];
+      $queryType = $this->getQueryType();
+      $mapper = self::getMapper($queryType);
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      foreach ($operatorMap as $rqlOp => $sqlOp) {
+        // add '=' separator for letter-only operators
+        $operator = preg_match('/^[a-zA-Z]+$/', $rqlOp) ? '='.$rqlOp.'=' : $rqlOp;
+        $query = preg_replace_callback('/([^ !=|&\)]+) ?'.$operator.' ?([^ !=|&\)]+)/', function ($match)
+                use($rqlOp, $sqlOp, $mapper, $persistenceFacade) {
+          $typeAttr = $match[1];
+          $value = preg_replace('/^[\'"]|[\'"]$/', '', $match[2]);
+
+          // try to determine value type
+          list($typeOrRole, $attribute) = explode('.', preg_replace('/[`\(\)]/', '', $typeAttr), 2);
+          $attributeDef = null;
+          if ($persistenceFacade->isKnownType($typeOrRole) &&
+                  $persistenceFacade->getFullyQualifiedType($typeOrRole) == $mapper->getType() && $mapper->hasAttribute($attribute)) {
+            $attributeDef = $mapper->getAttribute($attribute);
+          }
+          elseif ($mapper->hasRelation($typeOrRole)) {
+            $otherMapper = self::getMapper($mapper->getRelation($typeOrRole)->getOtherType());
+            $attributeDef = $otherMapper->hasAttribute($attribute) ? $otherMapper->getAttribute($attribute) : null;
+          }
+          $attributeType = $attributeDef != null ? strtolower($attributeDef->getType()) : null;
+          $isNumber = $attributeType == 'integer' || $attributeType == 'float';
+
+          // strip slashes from regexp
+          if ($sqlOp === 'regexp') {
+            $value = preg_replace('/^\/|\/[a-zA-Z]*$/', '', $value);
+          }
+
+          // handle null values
+          if ($value === 'null') {
+            $sqlOp = $sqlOp == '=' ? 'is' : 'is not';
+            $replace = $typeAttr.' '.$sqlOp.' null';
+          }
+          else {
+            // quote value according to type
+            $replace = $typeAttr.' '.$sqlOp.' ';
+            if ($rqlOp == 'in' && !$isNumber) {
+              $replace .= '('.join(',', array_map([$mapper, 'quoteValue'], explode(',', $value))).')';
+            }
+            else {
+              $replace .= $isNumber ? $value : $mapper->quoteValue($value);
+            }
+          }
+
+          return $replace;
+        }, $query);
+      }
+      foreach ($combineMap as $rqlOp => $sqlOp) {
+        $query = str_replace($rqlOp, ' '.$sqlOp.' ', $query);
+      }
+    }
+    return $query;
   }
 
   /**
