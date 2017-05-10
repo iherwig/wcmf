@@ -41,7 +41,6 @@ class AttributeDescription {
    */
   public function __construct($name, $type, array $tags, $defaultValue, $validateType,
     $validateDescription, $isEditable, $inputType, $displayType) {
-
     $this->name = $name;
     $this->type = $type;
     $this->tags = $tags;

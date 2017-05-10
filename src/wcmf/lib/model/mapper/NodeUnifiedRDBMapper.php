@@ -512,7 +512,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     $columns = [];
     foreach($attributeDescs as $curAttributeDesc) {
       $name = $curAttributeDesc->getName();
-      if (($attributes == null || in_array($name, $attributes)) && !($curAttributeDesc instanceof ReferenceDescription)) {
+      if (($attributes == null || in_array($name, $attributes)) && $curAttributeDesc instanceof RDBAttributeDescription) {
         $columns[$curAttributeDesc->getName()] = $curAttributeDesc->getColumn();
       }
     }
@@ -692,7 +692,7 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
     // attribute definitions
     $attributeDescs = $this->getAttributes();
     foreach($attributeDescs as $curAttributeDesc) {
-      if (!($curAttributeDesc instanceof ReferenceDescription)) {
+      if ($curAttributeDesc instanceof RDBAttributeDescription) {
         // add only attributes that are defined in the object
         $attribName = $curAttributeDesc->getName();
         //if ($object->hasValue($attribName)) {
