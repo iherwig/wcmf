@@ -21,9 +21,15 @@ use wcmf\lib\util\StringUtil;
 
 /**
  * StringQuery executes queries from a string representation. Queries are
- * constructed like WHERE clauses in sql, except that foreign key relations between the
- * different types are not necessary. Attributes have to be prepended with the
- * type name (or in case of ambiguity the role name), e.g. Author.name instead of name.
+ * constructed in two possible ways:
+ * 1. Like WHERE clauses in SQL
+ * 2. As RQL queries (https://github.com/persvr/rql)
+ *
+ * Note the following rules:
+ * - Foreign key relations between different types do not need to be included in
+ * the query string.
+ * - Attributes have to be prepended with the type name (or in case of ambiguity
+ * the role name), e.g. Author.name instead of name.
  *
  * @note: The query does not search in objects, that are created inside the current transaction.
  *
@@ -32,6 +38,11 @@ use wcmf\lib\util\StringUtil;
  * @code
  * $queryStr = "Author.name LIKE '%ingo%' AND (Recipe.name LIKE '%Salat%' OR Recipe.portions = 4)";
  * $query = new StringQuery('Author');
+ * $query->setConditionString($queryStr);
+ * $authorOIDs = $query->execute(false);
+ *
+ * $queryStr = "(Profile.keyword1=in=8,1|Profile.keyword2=in=8,2|Profile.keywords3=in=8,3)&Profile.salary=gte=1000";
+ * $query = new StringQuery('Profile');
  * $query->setConditionString($queryStr);
  * $authorOIDs = $query->execute(false);
  * @endcode
@@ -47,6 +58,14 @@ class StringQuery extends ObjectQuery {
    * @param $condition The query definition string
    */
   public function setConditionString($condition) {
+    $this->condition = $condition;
+  }
+
+  /**
+   * Set the query condition string as RQL
+   * @param $condition The query definition string
+   */
+  public function setRQLConditionString($condition) {
     $this->condition = $this->parseRQL($condition);
   }
 

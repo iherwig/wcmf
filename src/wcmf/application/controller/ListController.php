@@ -18,7 +18,6 @@ use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\UnknownFieldException;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
-use wcmf\lib\util\Obfuscator;
 
 /**
  * ListController is used to load Node lists.
@@ -36,7 +35,7 @@ use wcmf\lib\util\Obfuscator;
  * | _in_ `offset`          | The index of the first instance to return, based on the current sorting. The index is 0-based. If omitted, 0 is assumed (optional)
  * | _in_ `sortFieldName`   | The field name to sort the list by. Must be one of the fields of the type selected by the className parameter. If omitted, the sorting is undefined (optional)
  * | _in_ `sortDirection`   | The direction to sort the list. Must be either _asc_ for ascending or _desc_ for descending (optional, default: _asc_)
- * | _in_ `query`           | A query condition to be used with StringQuery::setConditionString()
+ * | _in_ `query`           | A query condition encoded in RQL to be used with StringQuery::setRQLConditionString()
  * | _in_ `translateValues` | Boolean whether list values should be translated to their display values (optional, default: _false_)
  * | _in_ `completeObjects` | Boolean whether to return all object attributes or only the display values using NodeUtil::removeNonDisplayValues (optional, default: _false_)
  * | _in_ `values`          | Comma separated list of node values to return, if `completeObjects` is set to false (optional, default: display values)
@@ -96,18 +95,8 @@ class ListController extends Controller {
     $request = $this->getRequest();
     $permissionManager = $this->getPermissionManager();
 
-    // unveil the query value if it is ofuscated
-    $query = null;
-    if ($request->hasValue('query')) {
-      $query = urldecode($request->getValue('query'));
-      if (strlen($query) > 0) {
-        $obfuscator = new Obfuscator($this->getSession());
-        $unveiled = $obfuscator->unveil($query);
-        if (strlen($unveiled) > 0) {
-          $query = stripslashes($unveiled);
-        }
-      }
-    }
+    // get the query
+    $query = $request->hasValue('query') ? urldecode($request->getValue('query')) : null;
 
     // get objects using the paging parameters
     $pagingInfo = null;
@@ -177,7 +166,7 @@ class ListController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $query = new StringQuery($type);
-    $query->setConditionString($queryCondition);
+    $query->setRQLConditionString($queryCondition);
     try {
       $objects = $query->execute(BuildDepth::SINGLE, $sortArray, $pagingInfo);
     }

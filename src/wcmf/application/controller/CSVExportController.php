@@ -19,7 +19,6 @@ use wcmf\lib\presentation\control\ValueListProvider;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\util\Obfuscator;
 
 /**
  * CSVExportController exports instances of one type into a CSV file. It uses
@@ -38,7 +37,7 @@ use wcmf\lib\util\Obfuscator;
  * | _in_ `className`       | The entity type to export instances of
  * | _in_ `sortFieldName`   | The field name to sort the list by. Must be one of the fields of the type selected by the className parameter. If omitted, the sorting is undefined (optional)
  * | _in_ `sortDirection`   | The direction to sort the list. Must be either _asc_ for ascending or _desc_ for descending (optional, default: _asc_)
- * | _in_ `query`           | A query condition to be used with StringQuery::setConditionString()
+ * | _in_ `query`           | A query condition encoded in RQL to be used with StringQuery::setRQLConditionString()
  * | _in_ `nodesPerCall`    | The number of nodes to process in one call (default: 50)
  * </div>
  * </div>
@@ -152,15 +151,8 @@ class CSVExportController extends BatchController {
       unlink($docFile);
     }
 
-    // unveil the query value if it is ofuscated
+    // get the query
     $queryTerm = urldecode($this->getRequestValue('query'));
-    if (strlen($queryTerm) > 0) {
-      $obfuscator = new Obfuscator($this->getSession());
-      $unveiled = $obfuscator->unveil($queryTerm);
-      if (strlen($unveiled) > 0) {
-        $queryTerm = stripslashes($unveiled);
-      }
-    }
 
     // add sort term
     $sortArray = null;
@@ -171,7 +163,7 @@ class CSVExportController extends BatchController {
 
     // get object ids of all nodes to export
     $query = new StringQuery($type);
-    $query->setConditionString($queryTerm);
+    $query->setRQLConditionString($queryTerm);
     $oids = $query->execute(false, $sortArray);
 
     // get csv columns
