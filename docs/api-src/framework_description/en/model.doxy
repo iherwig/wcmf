@@ -113,6 +113,11 @@ The following __tags__ are defined on the _ChiValueRef_ stereotype.
 | _reference_type_ |  Type, that owns the referenced attribute | _Author_ | |
 | _reference_value_ | Name of the references attribute | _name_ | |
 
+#### Transient properties #### {#model_transient}
+
+All class properties without a _ChiValue_ or _ChiValueRef_ stereotype are considered
+to be <strong>transient</strong>/<strong>computed</strong> properties.
+
 #### ChiAssociation #### {#model_association}
 
 The following __tags__ are defined on the _ChiAssociation_ stereotype.
@@ -519,7 +524,8 @@ The generator creates the following files:
   For each `ChiNode`/`ChiManyToMany` class two classes are created, one base class
   that contains all generated code (e.g. `AuthorBase`) and one empty subclass,
   that is used to add custom code (e.g. `Author`). The base class inherits from
-  \link wcmf::lib::model::Node `Node`\endlink or one of it's subclasses.
+  \link wcmf::lib::model::Node `Node`\endlink or one of it's subclasses. Getter
+  methods are generated for transient/computed properties.
 
 - __Controller classes__ are generated in directories corresponding to the
   model packages (_app/src/controller_, if the default model packages are used). For
