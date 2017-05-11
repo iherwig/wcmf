@@ -16,14 +16,20 @@ use app\src\model\Chapter;
 use app\src\model\Image;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\test\lib\BaseTestCase;
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
 
 /**
  * JsonFormatTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class JsonFormatTest extends BaseTestCase {
+class JsonFormatTest extends DatabaseTestCase {
+
+  protected function getDataSet() {
+    return new ArrayDataSet([
+    ]);
+  }
 
   public function testDeserializeSimple() {
     $message = ObjectFactory::getNewInstance('request');

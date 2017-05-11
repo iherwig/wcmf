@@ -191,7 +191,7 @@ class StringQuery extends ObjectQuery {
           $value = preg_replace('/^[\'"]|[\'"]$/', '', $match[2]);
 
           // try to determine value type
-          list($typeOrRole, $attribute) = explode('.', preg_replace('/[`\(\)]/', '', $typeAttr), 2);
+          list($typeOrRole, $attribute) = explode('.', preg_replace('/[`"\'\(\)]/', '', $typeAttr), 2);
           $attributeDef = null;
           if ($persistenceFacade->isKnownType($typeOrRole) &&
                   $persistenceFacade->getFullyQualifiedType($typeOrRole) == $mapper->getType() && $mapper->hasAttribute($attribute)) {
