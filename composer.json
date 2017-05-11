@@ -27,7 +27,7 @@
     "require": {
         "php": ">=5.6.0",
         "olympos/chronos-generator": "1.0.*",
-        "monolog/monolog": "~1.19",
+        "monolog/monolog": "~1.22",
         "zendframework/zend-db": "2.*",
         "zendframework/zendsearch": "^2.0@rc",
         "codecasts/nusoap-php7": "~0.9",
