@@ -62,6 +62,8 @@ abstract class Controller {
   private $message = null;
   private $configuration = null;
 
+  private $startedTransaction = false;
+
   /**
    * Constructor
    * @param $session
@@ -142,7 +144,13 @@ abstract class Controller {
 
     // execute controller logic
     if (!$validationFailed) {
-      $this->doExecute($method);
+      try {
+        $this->doExecute($method);
+        $this->endTransaction(true);
+      }
+      catch (\Exception $ex) {
+        $this->endTransaction(false);
+      }
     }
 
     // return the last error
@@ -303,6 +311,39 @@ abstract class Controller {
    */
   protected function getConfiguration() {
     return $this->configuration;
+  }
+
+  /**
+   * Start or join a transaction that will be committed at the end of execution.
+   * If a transaction already is started it will be joined and committed by the
+   * controller that started it. This allows to compose actions by using the
+   * Controller::executeSubAction() method that all share the same transaction.
+   * @return Boolean whether a new transaction was started or an existing was joined
+   */
+  protected function requireTransaction() {
+    $tx = $this->getPersistenceFacade()->getTransaction();
+    if (!$tx->isActive()) {
+      $tx->begin();
+      $this->startedTransaction = true;
+    }
+  }
+
+  /**
+   * End the transaction. Only if this controller instance started the transaction,
+   * it will be committed or rolled back. Otherwise the call will be ignored.
+   * @param $commit Boolean whether the transaction should be committed
+   */
+  protected function endTransaction($commit) {
+    $tx = $this->getPersistenceFacade()->getTransaction();
+    if ($this->startedTransaction && $tx->isActive()) {
+      if ($commit) {
+        $tx->commit();
+      }
+      else {
+        $tx->rollback();
+      }
+    }
+    $this->startedTransaction = false;
   }
 
   /**

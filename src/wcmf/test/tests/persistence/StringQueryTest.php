@@ -189,5 +189,17 @@ class StringQueryTest extends DatabaseTestCase {
     $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql));
     $this->executeSql('Image', $sql);
   }
+
+  public function testRQL() {
+    $queryStr = $this->fixQueryQuotes("(Author.name=in=A1,A2|Author.name=in=A4,A5)&Author.created=gte=2000", 'Author');
+    $query = new StringQuery('Author', __CLASS__.__METHOD__."12");
+    $query->setRQLConditionString($queryStr);
+    $sql = $query->getQueryString();
+    $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
+      "`Author`.`last_editor` AS `last_editor` FROM `Author` WHERE ".
+      "(Author.name in ('A1','A2') OR Author.name in ('A4','A5')) AND Author.created >= '2000' ORDER BY `Author`.`name` ASC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+    $this->executeSql('Author', $sql);
+  }
 }
 ?>
