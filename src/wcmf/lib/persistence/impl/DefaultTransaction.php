@@ -19,6 +19,7 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\persistence\Transaction;
+use wcmf\lib\persistence\TransactionEvent;
 
 /**
  * Default implementation of Transaction.
@@ -96,6 +97,8 @@ class DefaultTransaction implements Transaction {
       self::$logger->info("Commit transaction");
     }
     $this->isInCommit = true;
+    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+        TransactionEvent::BEFORE_COMMIT));
     $changedOids = [];
     if ($this->isActive) {
       $knowTypes = $this->persistenceFacade->getKnownTypes();
@@ -150,7 +153,11 @@ class DefaultTransaction implements Transaction {
       }
     }
     // forget changes
-    $this->rollback();
+    $this->clear();
+    $this->isActive = false;
+    $this->isInCommit = false;
+    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+        TransactionEvent::AFTER_COMMIT, $changedOids));
     return $changedOids;
   }
 
@@ -165,6 +172,8 @@ class DefaultTransaction implements Transaction {
     $this->clear();
     $this->isActive = false;
     $this->isInCommit = false;
+    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+        TransactionEvent::AFTER_ROLLBACK));
   }
 
   /**

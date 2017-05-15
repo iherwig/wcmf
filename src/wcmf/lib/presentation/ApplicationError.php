@@ -25,7 +25,7 @@ use wcmf\lib\util\StringUtil;
  * @code
  * $message = ObjectFactory::getInstance('message');
  * define('GENERAL_ERROR', serialize(['GENERAL_ERROR', ApplicationError::LEVEL_ERROR, 400,
- *   $message->getText('An unspecified error occured.')
+ *   $message->getText('An unspecified error occurred.')
  * ]));
  * @endcode
  *
@@ -182,13 +182,13 @@ class ApplicationError {
     if (!self::$predefined) {
       $message = ObjectFactory::getInstance('message');
       define('GENERAL_WARNING', serialize(['GENERAL_WARNING', ApplicationError::LEVEL_WARNING, 400,
-        $message->getText('An unspecified warning occured.')
+        $message->getText('An unspecified warning occurred.')
       ]));
       define('GENERAL_ERROR', serialize(['GENERAL_ERROR', ApplicationError::LEVEL_ERROR, 500,
-        $message->getText('An unspecified error occured.')
+        $message->getText('An unspecified error occurred.')
       ]));
       define('GENERAL_FATAL', serialize(['GENERAL_FATAL', ApplicationError::LEVEL_FATAL, 500,
-        $message->getText('An unspecified fatal error occured.')
+        $message->getText('An unspecified fatal error occurred.')
       ]));
 
       define('ACTION_INVALID', serialize(['ACTION_INVALID', ApplicationError::LEVEL_ERROR, 404,

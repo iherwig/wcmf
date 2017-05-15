@@ -11,15 +11,25 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
+use wcmf\lib\config\Configuration;
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\TransactionEvent;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\StringUtil;
+use Zend\Stdlib\Message;
 
 /**
  * CopyController is used to copy or move Node instances.
@@ -65,9 +75,43 @@ class CopyController extends BatchController {
   const ITERATOR_ID_VAR = 'CopyController.iteratorid';
 
   private $targetNode = null;
+  private $eventManager = null;
 
   // default values, maybe overriden by corresponding request values (see above)
   private $NODES_PER_CALL = 50;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $actionMapper
+   * @param $localization
+   * @param $message
+   * @param $configuration
+   * @param $eventManager
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
+          Localization $localization,
+          Message $message,
+          Configuration $configuration,
+          EventManager $eventManager) {
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
+    $this->eventManager = $eventManager;
+    // add transaction listener
+    $this->eventManager->addListener(TransactionEvent::NAME, [$this, 'afterCommit']);
+  }
+
+  /**
+   * Destructor
+   */
+  public function __destruct() {
+    $this->eventManager->removeListener(TransactionEvent::NAME, [$this, 'afterCommit']);
+  }
 
   /**
    * @see Controller::initialize()
@@ -180,6 +224,7 @@ class CopyController extends BatchController {
    * @param $oids The object ids to process
    */
   protected function startProcess($oids) {
+    $this->requireTransaction();
     $persistenceFacade = $this->getPersistenceFacade();
     $session = $this->getSession();
 
@@ -191,8 +236,6 @@ class CopyController extends BatchController {
     // do the action
     if ($action == 'move') {
       $persistenceFacade = $this->getPersistenceFacade();
-      $transaction = $persistenceFacade->getTransaction();
-      $transaction->begin();
       // with move action, we only need to attach the Node to the new target
       // the children will not be loaded, they will be moved automatically
       $nodeCopy = $persistenceFacade->load($nodeOID);
@@ -213,7 +256,6 @@ class CopyController extends BatchController {
           $logger->info("Moved: ".$nodeOID." to ".$parentNode->getOID());
         }
       }
-      $transaction->commit();
     }
     else if ($action == 'copy') {
       // with copy action, we need to attach a copy of the Node to the new target,
@@ -255,6 +297,7 @@ class CopyController extends BatchController {
    * @param $oids The object ids to process
    */
   protected function copyNodes($oids) {
+    $this->requireTransaction();
     $persistenceFacade = $this->getPersistenceFacade();
     $session = $this->getSession();
 
@@ -315,8 +358,6 @@ class CopyController extends BatchController {
       $logger->debug("Copying node ".$oid);
     }
     $persistenceFacade = $this->getPersistenceFacade();
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
 
     // load the original node
     $node = $persistenceFacade->load($oid);
@@ -364,10 +405,18 @@ class CopyController extends BatchController {
         }
       }
     }
-    $changedOids = $transaction->commit();
-    $this->updateCopyOIDs($changedOids);
-
     return $nodeCopy;
+  }
+
+  /**
+   * Update oids after commit
+   * @param $event
+   */
+  public function afterCommit(TransactionEvent $event) {
+    if ($event->getPhase() == TransactionEvent::AFTER_COMMIT) {
+      $changedOids = $event->getChangedOids();
+      $this->updateCopyOIDs($changedOids);
+    }
   }
 
   /**

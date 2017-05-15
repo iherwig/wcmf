@@ -10,15 +10,25 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\config\Configuration;
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\OptimisticLockException;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\ReferenceDescription;
+use wcmf\lib\persistence\TransactionEvent;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\security\PermissionManager;
 use wcmf\lib\validation\ValidationException;
 
 /**
@@ -45,6 +55,42 @@ use wcmf\lib\validation\ValidationException;
 class SaveController extends Controller {
 
   private $fileUtil = null;
+  private $insertOids = [];
+  private $nodeArray = [];
+  private $eventManager = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $actionMapper
+   * @param $localization
+   * @param $message
+   * @param $configuration
+   * @param $eventManager
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
+          Localization $localization,
+          Message $message,
+          Configuration $configuration,
+          EventManager $eventManager) {
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
+    $this->eventManager = $eventManager;
+    // add transaction listener
+    $this->eventManager->addListener(TransactionEvent::NAME, [$this, 'afterCommit']);
+  }
+
+  /**
+   * Destructor
+   */
+  public function __destruct() {
+    $this->eventManager->removeListener(TransactionEvent::NAME, [$this, 'afterCommit']);
+  }
 
   /**
    * Get the FileUtil instance
@@ -72,29 +118,21 @@ class SaveController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute($method=null) {
+    $this->requireTransaction();
     $persistenceFacade = $this->getPersistenceFacade();
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $message = $this->getMessage();
-
-    // array of all involved nodes
-    $nodeArray = [];
 
     // array of oids to actually save
     $saveOids = [];
 
-    // array of oids to insert (subset of saveOids)
-    $insertOids = [];
-
-    // start the persistence transaction
+    // get the persistence transaction
     $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
     try {
       // store all invalid parameters for later reference
       $invalidOids = [];
       $invalidAttributeNames = [];
       $invalidAttributeValues = [];
-      $needCommit = false;
       $curNode = null;
 
       // iterate over request values and check for oid/object pairs
@@ -152,7 +190,7 @@ class SaveController extends Controller {
             // get the requested node
             // see if we have already handled values of the node before or
             // if we have to initially load/create it
-            if (!isset($nodeArray[$curOidStr])) {
+            if (!isset($this->nodeArray[$curOidStr])) {
               // load/create the node initially
               if ($this->isLocalizedRequest()) {
                 // create a detached object, if this is a localization request in order to
@@ -161,7 +199,7 @@ class SaveController extends Controller {
                 // don't store changes on the original object
                 $transaction->detach($curNode->getOID());
                 $curNode->setOID($curOid);
-                $nodeArray[$curOidStr] = &$curNode;
+                $this->nodeArray[$curOidStr] = &$curNode;
               }
               else {
                 if ($isNew) {
@@ -174,7 +212,7 @@ class SaveController extends Controller {
                   // the new with the existing values
                   $curNode = $persistenceFacade->load($curOid, BuildDepth::SINGLE);
                 }
-                $nodeArray[$curOidStr] = &$curNode;
+                $this->nodeArray[$curOidStr] = &$curNode;
               }
               // the node could not be created from the oid
               if ($curNode == null) {
@@ -184,7 +222,7 @@ class SaveController extends Controller {
             }
             else {
               // take the existing node
-              $curNode = &$nodeArray[$curOidStr];
+              $curNode = &$this->nodeArray[$curOidStr];
             }
 
             // set data in node (prevent overwriting old image values, if no image is uploaded)
@@ -192,14 +230,9 @@ class SaveController extends Controller {
               try {
                 // validate the new value
                 $curNode->validateValue($curValueName, $curRequestValue);
-                if ($this->confirmSaveValue($curNode, $curValueName, $curRequestValue)) {
-                  // set the new value
-                  $oldValue = $curNode->getValue($curValueName);
-                  $curNode->setValue($curValueName, $curRequestValue);
-                  if ($oldValue !== $curRequestValue) {
-                    $needCommit = true;
-                  }
-                }
+                // set the new value
+                $oldValue = $curNode->getValue($curValueName);
+                $curNode->setValue($curValueName, $curRequestValue);
               }
               catch(ValidationException $ex) {
                 $invalidAttributeValues[] = ['oid' => $curOidStr,
@@ -212,7 +245,7 @@ class SaveController extends Controller {
               // associative array to asure uniqueness
               $saveOids[$curOidStr] = $curOidStr;
               if ($isNew) {
-                $insertOids[$curOidStr] = $curOidStr;
+                $this->insertOids[$curOidStr] = $curOidStr;
               }
             }
           }
@@ -233,82 +266,75 @@ class SaveController extends Controller {
           ['invalidAttributeValues' => $invalidAttributeValues]));
       }
 
-      // commit changes
-      if ($needCommit && !$response->hasErrors()) {
-        $localization = $this->getLocalization();
-        $saveOids = array_keys($saveOids);
-        for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
-          $curOidStr = $saveOids[$i];
-          $curObject = &$nodeArray[$curOidStr];
-          $curOid = $curObject->getOid();
-
-          // ask for confirmation
-          if ($this->confirmSave($curObject)) {
-            $this->beforeSave($curObject);
-            if ($this->isLocalizedRequest()) {
-              if (isset($insertOids[$curOidStr])) {
-                // translations are only allowed for existing objects
-                $response->addError(ApplicationError::get('PARAMETER_INVALID',
-                  ['invalidParameters' => ['language']]));
-              }
-              else {
-                // store a translation for localized data
-                $localization->saveTranslation($curObject, $request->getValue('language'));
-              }
-            }
-            $this->afterSave($curObject);
-          }
-          else {
-            // detach object if not confirmed
-            $transaction->detach($curOid);
-          }
-        }
-        $transaction->commit();
+      if ($response->hasErrors()) {
+        $this->endTransaction(false);
       }
       else {
-        $transaction->rollback();
+        // handle translations
+        $saveOids = array_keys($saveOids);
+        if ($this->isLocalizedRequest()) {
+          $localization = $this->getLocalization();
+          for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
+            $curOidStr = $saveOids[$i];
+            $curObject = &$this->nodeArray[$curOidStr];
+            $curOid = $curObject->getOid();
+            if (isset($this->insertOids[$curOidStr])) {
+              // translations are only allowed for existing objects
+              $response->addError(ApplicationError::get('PARAMETER_INVALID',
+                ['invalidParameters' => ['language']]));
+            }
+            else {
+              // store a translation for localized data
+              $localization->saveTranslation($curObject, $request->getValue('language'));
+            }
+          }
+        }
       }
     }
     catch (PessimisticLockException $ex) {
       $lock = $ex->getLock();
-      $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
-        ['lockedOids' => [$lock->getObjectId()->__toString()]]));
-      $transaction->rollback();
+      throw new ApplicationException($request, $response,
+              ApplicationError::get('OBJECT_IS_LOCKED', ['lockedOids' => [$lock->getObjectId()->__toString()]])
+      );
     }
     catch (OptimisticLockException $ex) {
       $currentState = $ex->getCurrentState();
-      $response->addError(ApplicationError::get('CONCURRENT_UPDATE',
-        ['currentState' => $currentState]));
-      $transaction->rollback();
-    }
-    catch (\Exception $ex) {
-      $this->getLogger()->error($ex);
-      $response->addError(ApplicationError::fromException($ex));
-      $transaction->rollback();
-    }
-
-    // return the saved nodes
-    foreach ($nodeArray as $oidStr => $node) {
-      $response->setValue($node->getOid()->__toString(), $node);
-    }
-
-    // return oid of the lastly created node
-    if (sizeof($insertOids) > 0 && !$response->hasErrors()) {
-      $keys = array_keys($insertOids);
-      $lastCreatedNode = $nodeArray[array_pop($keys)];
-      $lastCreatedOid = $lastCreatedNode->getOid();
-      $response->setValue('oid', $lastCreatedOid);
-      $response->setStatus(201);
+      throw new ApplicationException($request, $response,
+              ApplicationError::get('CONCURRENT_UPDATE', ['currentState' => $currentState])
+      );
     }
 
     $response->setAction('ok');
   }
 
   /**
+   * Update oids after commit
+   * @param $event
+   */
+  public function afterCommit(TransactionEvent $event) {
+    if ($event->getPhase() == TransactionEvent::AFTER_COMMIT) {
+      $response = $this->getResponse();
+
+      // return the saved nodes
+      foreach ($this->nodeArray as $oidStr => $node) {
+        $response->setValue($node->getOID()->__toString(), $node);
+      }
+
+      // return oid of the lastly created node
+      if (sizeof($this->insertOids) > 0 && !$response->hasErrors()) {
+        $keys = array_keys($this->insertOids);
+        $lastCreatedNode = $this->nodeArray[array_pop($keys)];
+        $response->setValue('oid', $lastCreatedNode->getOid());
+        $response->setStatus(201);
+      }
+    }
+  }
+
+  /**
    * Save uploaded file. This method calls checkFile which will prevent upload if returning false.
    * @param $oid The ObjectId of the object to which the file is associated
    * @param $valueName The name of the value to which the file is associated
-   * @param $data An assoziative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
+   * @param $data An associative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
    * @return The final filename if the upload was successful, null on error
    */
   protected function saveUploadFile(ObjectId $oid, $valueName, array $data) {
@@ -358,7 +384,7 @@ class SaveController extends Controller {
 
   /**
    * Check if the given data defines a file upload. File uploads are defined in
-   * an assoziative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
+   * an associative array with keys 'name', 'type', 'tmp_name' as contained in the php $_FILES array.
    * @param $data Array
    * @return Boolean
    */
@@ -408,7 +434,7 @@ class SaveController extends Controller {
   }
 
   /**
-   * Get the name of the directory to upload a file to and make shure that it exists.
+   * Get the name of the directory to upload a file to and make sure that it exists.
    * The default implementation will first look for a parameter 'uploadDir'
    * and then, if it is not given, for an 'uploadDir'. _type_ key in the configuration file
    * (section 'media') and finally for an 'uploadDir' key at the same place.
@@ -443,44 +469,5 @@ class SaveController extends Controller {
     $fileUtil->mkdirRec($uploadDir);
     return $uploadDir;
   }
-
-  /**
-   * Confirm save action on given Node value.
-   * @note subclasses will override this to implement special application requirements.
-   * @param $node The Node instance to confirm.
-   * @param $valueName The name of the value to save.
-   * @param $newValue The new value to set.
-   * @return Boolean whether the value should be changed (default: _true_).
-   */
-  protected function confirmSaveValue($node, $valueName, $newValue) {
-    return true;
-  }
-
-  /**
-   * Confirm save action on given Node. This method is called before modify()
-   * @note subclasses will override this to implement special application requirements.
-   * @param $node The Node instance to confirm.
-   * @return Boolean whether the Node should be saved (default: _true_).
-   */
-  protected function confirmSave($node) {
-    return true;
-  }
-
-  /**
-   * Called before save.
-   * @note subclasses will override this to implement special application requirements.
-   * @param $node The Node instance to be saved.
-   * @return Boolean whether the Node was modified (default: _false_).
-   */
-  protected function beforeSave($node) {
-    return false;
-  }
-
-  /**
-   * Called after save.
-   * @note subclasses will override this to implement special application requirements.
-   * @param $node The saved Node instance.
-   */
-  protected function afterSave($node) {}
 }
 ?>

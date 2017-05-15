@@ -210,6 +210,7 @@ class CSVImportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function importNodes($oids) {
+    $this->requireTransaction();
     $persistenceFacade = $this->getPersistenceFacade();
     $permissionManager = $this->getPermissionManager();
 
@@ -227,8 +228,6 @@ class CSVImportController extends BatchController {
     $pkNames = $mapper->getPkNames();
 
     // process csv lines
-    $persistenceFacade->getTransaction()->begin();
-
     $file = new \SplFileObject($docFile);
     $file->setFlags(\SplFileObject::READ_CSV);
     foreach ($oids as $oid) {
@@ -285,9 +284,6 @@ class CSVImportController extends BatchController {
       }
       $stats['processed']++;
     }
-
-    // commit
-    $persistenceFacade->getTransaction()->commit();
 
     // update stats
     $this->cache->put($cacheSection, self::CACHE_KEY_STATS, $stats);

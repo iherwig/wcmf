@@ -62,7 +62,7 @@ class ApplicationEvent extends Event {
 
   /**
    * Constructor.
-   * @param $stage The stage at which the event occured.
+   * @param $stage The stage at which the event occurred.
    * @param $request The request instance.
    * @param $response The response instance (optional).
    * @param $controller The controller instance (optional).
@@ -75,12 +75,13 @@ class ApplicationEvent extends Event {
   }
 
   /**
-   * Get the stage at which the event occured.
+   * Get the stage at which the event occurred.
    * @return String
    */
   public function getStage() {
     return $this->stage;
   }
+
   /**
    * Get the request.
    * @return Request instance

@@ -19,7 +19,6 @@ use wcmf\lib\model\Node;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ActionMapper;
-use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\PrincipalFactory;
@@ -84,9 +83,9 @@ class UserController extends Controller {
    * | _in_ `newpassword2` | The new password
    */
   public function changePassword() {
+    $this->requireTransaction();
     $session = $this->getSession();
     $permissionManager = $this->getPermissionManager();
-    $persistenceFacade = $this->getPersistenceFacade();
     $request = $this->getRequest();
     $response = $this->getResponse();
 
@@ -98,19 +97,10 @@ class UserController extends Controller {
       $tmpPerm1 = $permissionManager->addTempPermission($oidStr, '', PersistenceAction::READ);
       $tmpPerm2 = $permissionManager->addTempPermission($oidStr, '', PersistenceAction::UPDATE);
 
-      // start the persistence transaction
-      $transaction = $persistenceFacade->getTransaction();
-      $transaction->begin();
-      try {
-        $this->changePasswordImpl($authUser, $request->getValue('oldpassword'),
+      $this->changePasswordImpl($authUser, $request->getValue('oldpassword'),
           $request->getValue('newpassword1'), $request->getValue('newpassword2'));
-        $transaction->commit();
-      }
-      catch(\Exception $ex) {
-        $response->addError(ApplicationError::fromException($ex));
-        $transaction->rollback();
-      }
-      // remove temporary permissions
+
+        // remove temporary permissions
       $permissionManager->removeTempPermission($tmpPerm1);
       $permissionManager->removeTempPermission($tmpPerm2);
     }
@@ -128,14 +118,13 @@ class UserController extends Controller {
    * | _in_ `value` | The configuration value
    */
   public function setConfigValue() {
+    $this->requireTransaction();
     $session = $this->getSession();
     $request = $this->getRequest();
     $response = $this->getResponse();
     $persistenceFacade = $this->getPersistenceFacade();
-    $transaction = $this->getPersistenceFacade()->getTransaction();
 
     // load model
-    $transaction->begin();
     $authUser = $this->principalFactory->getUser($session->getAuthUser());
     if ($authUser) {
       $configKey = $request->getValue('name');
@@ -159,7 +148,6 @@ class UserController extends Controller {
         $configObj->setValue('value', $configValue);
       }
     }
-    $transaction->commit();
 
     // success
     $response->setAction('ok');

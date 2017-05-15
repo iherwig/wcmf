@@ -133,19 +133,17 @@ class SortController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute($method=null) {
+    $this->requireTransaction();
     $request = $this->getRequest();
     $response = $this->getResponse();
-    $transaction = $this->getPersistenceFacade()->getTransaction();
 
     // do actions
-    $transaction->begin();
     if ($request->getAction() == 'moveBefore') {
       $this->doMoveBefore();
     }
     else if ($request->getAction() == 'insertBefore') {
       $this->doInsertBefore();
     }
-    $transaction->commit();
 
     $response->setAction('ok');
   }

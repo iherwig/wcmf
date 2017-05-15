@@ -103,64 +103,55 @@ class AssociateController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute($method=null) {
+    $this->requireTransaction();
     $request = $this->getRequest();
     $response = $this->getResponse();
     $persistenceFacade = $this->getPersistenceFacade();
 
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
-    try {
-      // get the source node
-      $sourceOID = ObjectId::parse($request->getValue('sourceOid'));
-      $sourceNode = $persistenceFacade->load($sourceOID, BuildDepth::SINGLE);
+    // get the source node
+    $sourceOID = ObjectId::parse($request->getValue('sourceOid'));
+    $sourceNode = $persistenceFacade->load($sourceOID, BuildDepth::SINGLE);
 
-      // get the target node
-      $targetOID = ObjectId::parse($request->getValue('targetOid'));
-      $targetNode = $persistenceFacade->load($targetOID, BuildDepth::SINGLE);
+    // get the target node
+    $targetOID = ObjectId::parse($request->getValue('targetOid'));
+    $targetNode = $persistenceFacade->load($targetOID, BuildDepth::SINGLE);
 
-      // get the role
-      $role = null;
-      if ($request->hasValue('role')) {
-        $role = $request->getValue('role');
-      }
-
-      if ($sourceNode != null && $targetNode != null) {
-        // process actions
-        if ($request->getAction() == 'associate') {
-          try {
-            $sourceNode->addNode($targetNode, $role);
-          }
-          catch (Exception $ex) {
-            throw new ApplicationException($request, $response,
-                    ApplicationError::get('ASSOCIATION_INVALID'));
-          }
-        }
-        elseif ($request->getAction() == 'disassociate') {
-          try {
-            $sourceNode->deleteNode($targetNode, $role);
-          }
-          catch (Exception $ex) {
-            throw new ApplicationException($request, $response,
-                    ApplicationError::get('ASSOCIATION_INVALID'));
-          }
-        }
-      }
-      else {
-        if ($sourceNode == null) {
-          $response->addError(ApplicationError::get('OID_INVALID',
-                  ['invalidOids' => ['sourceOid']]));
-        }
-        if ($targetNode == null) {
-          $response->addError(ApplicationError::get('OID_INVALID',
-                  ['invalidOids' => ['targetOid']]));
-        }
-      }
-      $transaction->commit();
+    // get the role
+    $role = null;
+    if ($request->hasValue('role')) {
+      $role = $request->getValue('role');
     }
-    catch (Exception $ex) {
-      $this->getLogger()->error($ex);
-      $response->addError(ApplicationError::fromException($ex));
-      $transaction->rollback();
+
+    if ($sourceNode != null && $targetNode != null) {
+      // process actions
+      if ($request->getAction() == 'associate') {
+        try {
+          $sourceNode->addNode($targetNode, $role);
+        }
+        catch (Exception $ex) {
+          throw new ApplicationException($request, $response,
+                  ApplicationError::get('ASSOCIATION_INVALID'));
+        }
+      }
+      elseif ($request->getAction() == 'disassociate') {
+        try {
+          $sourceNode->deleteNode($targetNode, $role);
+        }
+        catch (Exception $ex) {
+          throw new ApplicationException($request, $response,
+                  ApplicationError::get('ASSOCIATION_INVALID'));
+        }
+      }
+    }
+    else {
+      if ($sourceNode == null) {
+        $response->addError(ApplicationError::get('OID_INVALID',
+                ['invalidOids' => ['sourceOid']]));
+      }
+      if ($targetNode == null) {
+        $response->addError(ApplicationError::get('OID_INVALID',
+                ['invalidOids' => ['targetOid']]));
+      }
     }
 
     $response->setAction('ok');

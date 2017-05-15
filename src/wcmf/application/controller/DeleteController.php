@@ -11,9 +11,10 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\persistence\BuildDepth;
-use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\concurrency\PessimisticLockException;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\ApplicationError;
+use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
 
 /**
@@ -52,6 +53,7 @@ class DeleteController extends Controller {
    * @see Controller::doExecute()
    */
   protected function doExecute($method=null) {
+    $this->requireTransaction();
     $persistenceFacade = $this->getPersistenceFacade();
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -59,9 +61,6 @@ class DeleteController extends Controller {
 
     $oid = ObjectId::parse($request->getValue('oid'));
 
-    // start the transaction
-    $transaction = $persistenceFacade->getTransaction();
-    $transaction->begin();
     try {
       // load the doomed node
       if ($oid) {
@@ -87,16 +86,11 @@ class DeleteController extends Controller {
           }
         }
       }
-      $transaction->commit();
     }
     catch (PessimisticLockException $ex) {
-      $response->addError(ApplicationError::get('OBJECT_IS_LOCKED',
-        ['lockedOids' => [$oid->__toString()]]));
-      $transaction->rollback();
-    }
-    catch (\Exception $ex) {
-      $response->addError(ApplicationError::fromException($ex));
-      $transaction->rollback();
+      throw new ApplicationException($request, $response,
+              ApplicationError::get('OBJECT_IS_LOCKED', ['lockedOids' => [$oid->__toString()]])
+      );
     }
 
     $response->setValue('oid', $oid);

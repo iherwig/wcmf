@@ -140,7 +140,6 @@ class PermissionController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
     $permissionManager = $this->getPermissionManager();
-    $transaction = $this->getPersistenceFacade()->getTransaction();
     $action = $request->getAction();
 
     // process actions
@@ -168,26 +167,20 @@ class PermissionController extends Controller {
         $response->setValue('result', $result);
       }
       elseif ($action == 'setPermissions') {
+        $this->requireTransaction();
         $permissions = $request->getValue('permissions');
-
-        $transaction->begin();
         $permissionManager->setPermissions($opResource, $opContext, $opAction, $permissions);
-        $transaction->commit();
       }
       elseif ($action == 'createPermission') {
+        $this->requireTransaction();
         $role = $request->getValue('role');
         $modifier = $request->getValue('modifier');
-
-        $transaction->begin();
         $permissionManager->createPermission($opResource, $opContext, $opAction, $role, $modifier);
-        $transaction->commit();
       }
       elseif ($action == 'removePermission') {
+        $this->requireTransaction();
         $role = $request->getValue('role');
-
-        $transaction->begin();
         $permissionManager->removePermission($opResource, $opContext, $opAction, $role);
-        $transaction->commit();
       }
     }
     $response->setAction('ok');

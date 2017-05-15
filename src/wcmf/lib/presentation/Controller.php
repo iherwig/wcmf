@@ -149,6 +149,13 @@ abstract class Controller {
         $this->endTransaction(true);
       }
       catch (\Exception $ex) {
+        if ($ex instanceof ApplicationException) {
+          $this->response->addError($ex->getError());
+        }
+        else {
+          $this->getLogger()->error($ex);
+          $this->response->addError(ApplicationError::fromException($ex));
+        }
         $this->endTransaction(false);
       }
     }
