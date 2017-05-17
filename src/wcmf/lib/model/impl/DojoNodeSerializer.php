@@ -82,52 +82,61 @@ class DojoNodeSerializer extends AbstractNodeSerializer {
   /**
    * @see NodeSerializer::serializeNode
    */
-  public function serializeNode($node, $rolesToRefOnly=[]) {
+  public function serializeNode($node, $rolesToRefOnly=[], $serializedOids=[]) {
     if (!($node instanceof Node)) {
       return null;
     }
-    $curResult = [];
-    $curResult['oid'] = $node->getOID()->__toString();
+    $oid = $node->getOID()->__toString();
+    if (!in_array($oid, $serializedOids)) {
+      $curResult = [];
+      $curResult['oid'] = $oid;
 
-    // serialize attributes
-    // use NodeValueIterator to iterate over all Node values
-    $valueIter = new NodeValueIterator($node, false);
-    foreach($valueIter as $valueName => $value) {
-      $curResult[$valueName] = $value;
-    }
+      // serialize attributes
+      // use NodeValueIterator to iterate over all Node values
+      $valueIter = new NodeValueIterator($node, false);
+      foreach($valueIter as $valueName => $value) {
+        $curResult[$valueName] = $value;
+      }
 
-    // add related objects by creating an attribute that is named as the role of the object
-    // multivalued relations will be serialized into an array
-    $mapper = $node->getMapper();
-    foreach ($mapper->getRelations() as $relation) {
-      $role = $relation->getOtherRole();
-      $relatedNodes = $node->getValue($role);
-      if ($relatedNodes) {
-        // serialize the nodes
-        $isMultiValued = $relation->isMultiValued();
-        if ($isMultiValued) {
-          $curResult[$role] = [];
-          foreach ($relatedNodes as $relatedNode) {
-            if ($relatedNode instanceof PersistentObjectProxy || in_array($role, $rolesToRefOnly)) {
-              // add the reference to the relation attribute
-              $curResult[$role][] = ['$ref' => $relatedNode->getOID()->__toString()];
+      $serializedOids[] = $curResult['oid'];
+
+      // add related objects by creating an attribute that is named as the role of the object
+      // multivalued relations will be serialized into an array
+      $mapper = $node->getMapper();
+      foreach ($mapper->getRelations() as $relation) {
+        $role = $relation->getOtherRole();
+        $relatedNodes = $node->getValue($role);
+        if ($relatedNodes) {
+          // serialize the nodes
+          $isMultiValued = $relation->isMultiValued();
+          if ($isMultiValued) {
+            $curResult[$role] = [];
+            foreach ($relatedNodes as $relatedNode) {
+              if ($relatedNode instanceof PersistentObjectProxy || in_array($role, $rolesToRefOnly)) {
+                // add the reference to the relation attribute
+                $curResult[$role][] = ['$ref' => $relatedNode->getOID()->__toString()];
+              }
+              else {
+                $curResult[$role][] = $this->serializeNode($relatedNode, [$relation->getThisRole()], $serializedOids);
+              }
             }
-            else {
-              $curResult[$role][] = $this->serializeNode($relatedNode, [$relation->getThisRole()]);
-            }
-          }
-        }
-        else {
-          $relatedNode = $relatedNodes;
-          if ($relatedNode instanceof PersistentObjectProxy || in_array($role, $rolesToRefOnly)) {
-            // add the reference to the relation attribute
-            $curResult[$role] = ['$ref' => $relatedNode->getOID()->__toString()];
           }
           else {
-            $curResult[$role] = $this->serializeNode($relatedNode, [$relation->getThisRole()]);
+            $relatedNode = $relatedNodes;
+            if ($relatedNode instanceof PersistentObjectProxy || in_array($role, $rolesToRefOnly)) {
+              // add the reference to the relation attribute
+              $curResult[$role] = ['$ref' => $relatedNode->getOID()->__toString()];
+            }
+            else {
+              $curResult[$role] = $this->serializeNode($relatedNode, [$relation->getThisRole()], $serializedOids);
+            }
           }
         }
       }
+    }
+    else {
+      // only add a reference for already serialized nodes to prevent recursion
+      $curResult = ['ref' => $oid];
     }
     return $curResult;
   }

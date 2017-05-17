@@ -1071,7 +1071,6 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     if (sizeof($objects) == 0) {
       return $relatives;
     }
-    $type = $objects[0]->getType();
 
     $otherRelationDescription = $this->getRelationImpl($role, true);
     if ($otherRelationDescription->getOtherNavigability() == true) {
