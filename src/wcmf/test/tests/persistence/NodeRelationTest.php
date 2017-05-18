@@ -91,7 +91,6 @@ class NodeRelationTest extends DatabaseTestCase {
   }
 
   public function testRelations() {
-    $this->markTestIncomplete('Book Book does not resolve correctly yet');
     TestUtil::startSession('admin', 'admin');
 
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -106,6 +105,17 @@ class NodeRelationTest extends DatabaseTestCase {
     $referencedBooks1 = $book1->getChildrenEx(null, 'ReferencedBook', null);
     $this->assertEquals(1, sizeof($referencedBooks1));
     $this->assertEquals($this->oids['book2'], $referencedBooks1[0]->getOID());
+    $referencingBooks1 = $book1->getChildrenEx(null, 'ReferencingBook', null);
+    $this->assertEquals(1, sizeof($referencingBooks1));
+    $this->assertEquals($this->oids['book2'], $referencingBooks1[0]->getOID());
+
+    $book2 = $books[1];
+    $referencedBooks2 = $book2->getChildrenEx(null, 'ReferencedBook', null);
+    $this->assertEquals(1, sizeof($referencedBooks2));
+    $this->assertEquals($this->oids['book1'], $referencedBooks2[0]->getOID());
+    $referencingBooks2 = $book2->getChildrenEx(null, 'ReferencingBook', null);
+    $this->assertEquals(1, sizeof($referencingBooks2));
+    $this->assertEquals($this->oids['book1'], $referencingBooks2[0]->getOID());
 
     $authors1 = $publisher->getChildrenEx(null, 'Author', null);
     $this->assertEquals(2, sizeof($authors1));

@@ -268,7 +268,7 @@ class DefaultTransaction implements Transaction {
       if (self::$isDebugEnabled) {
         self::$logger->debug("Merging data of ".$key);
       }
-      $this->loadedObjects[$key]->mergeValues($object);
+      $registeredObject->mergeValues($object);
     }
     else {
       if (self::$isDebugEnabled) {

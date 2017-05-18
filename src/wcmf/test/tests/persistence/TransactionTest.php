@@ -175,8 +175,7 @@ class TransactionTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testSingleInstancePerEntity2() {
-    $this->markTestIncomplete('Book Book does not resolve correctly yet');
+  public function testSingleInstancePerEntityRecursive() {
     TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
