@@ -959,7 +959,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $attachedObject = $tx->attach($objects[$i]);
       // don't return objects that are to be deleted by the current transaction
       if ($attachedObject->getState() != PersistentObject::STATE_DELETED) {
-        $attachedObjects[] = $attachedObject;
+        $attachedObjects[] = $tx->getLoaded($objects[$i]->getOID());
       }
     }
     return $attachedObjects;
@@ -1092,6 +1092,7 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
     }
     // group relatedObjects by original objects
     $relativeMap = [];
+    $tx = $this->persistenceFacade->getTransaction();
     foreach ($relatedObjects as $i => $relatedObject) {
       // NOTE: we take the key from the original data, because the corresponding values in the objects might be
       // all the same, if the same object is related to multiple objects in a many to many relation
@@ -1100,8 +1101,12 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       if (!isset($relativeMap[$key])) {
         $relativeMap[$key] = [];
       }
-      $relativeMap[$key][] = ($buildDepth != BuildDepth::PROXIES_ONLY) ? $relatedObject :
-              new PersistentObjectProxy($relatedObject->getOID());
+      if ($buildDepth != BuildDepth::PROXIES_ONLY) {
+        $relativeMap[$key][] = $tx->getLoaded($relatedObject->getOID());
+      }
+      else {
+        $relativeMap[$key][] = new PersistentObjectProxy($relatedObject->getOID());
+      }
 
       // remove internal value after use (important when loading nm relations,
       // because if not done, the value will not be updated when loading the relation

@@ -307,7 +307,6 @@ class Node extends DefaultPersistentObject {
    * @return Boolean whether the operation succeeds or not
    */
   public function addNode(PersistentObject $other, $role=null, $forceSet=false, $trackChange=true, $updateOtherSide=true) {
-
     $mapper = $this->getMapper();
 
     // set role if missing
@@ -328,10 +327,11 @@ class Node extends DefaultPersistentObject {
       $value = $mergeResult['result'];
       $addedNodes = $mergeResult['added'];
     }
-    elseif ($oldValue != $value) {
+    elseif ($oldValue == null && $value != null ||
+            $oldValue->getOID()->__toString() != $value->getOID()->__toString()) {
       $addedNodes[] = $value;
     }
-    $result1 = parent::setValue($role, $value, $forceSet, $trackChange);
+    $result1 = sizeof($addedNodes) > 0 && parent::setValue($role, $value, $forceSet, $trackChange);
 
     // remember the addition
     if (sizeof($addedNodes) > 0) {

@@ -10,12 +10,11 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\test\lib\ArrayDataSet;
-use wcmf\test\lib\DatabaseTestCase;
-
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\util\TestUtil;
+use wcmf\test\lib\ArrayDataSet;
+use wcmf\test\lib\DatabaseTestCase;
 
 /**
  * TransactionTest.
@@ -49,6 +48,14 @@ class TransactionTest extends DatabaseTestCase {
       ],
       'Author' => [
         ['id' => 12345],
+      ],
+      'Book' => [
+        ['id' => 205],
+        ['id' => 206],
+      ],
+      'NMBookBook' => [
+        ['id' => 207, 'fk_referencingbook_id' => 205, 'fk_referencedbook_id' => 206],
+        ['id' => 208, 'fk_referencingbook_id' => 206, 'fk_referencedbook_id' => 205],
       ],
     ]);
   }
@@ -163,6 +170,34 @@ class TransactionTest extends DatabaseTestCase {
     $this->assertEquals($modifiedName, $author3->getValue('name'));
     $publisher3 = $author3->getFirstChild('Publisher');
     $this->assertEquals($modifiedName, $publisher3->getValue('name'));
+    $transaction->rollback();
+
+    TestUtil::endSession();
+  }
+
+  public function testSingleInstancePerEntity2() {
+    $this->markTestIncomplete('Book Book does not resolve correctly yet');
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $transaction = $persistenceFacade->getTransaction();
+
+    $transaction->begin();
+    // load
+    $book = $persistenceFacade->loadFirstObject('Book', 3);
+    $this->assertEquals('app.src.model.Book:205', $book->getOID()->__toString());
+    $this->assertEquals('app.src.model.Book:206',
+            $book->getFirstChild('ReferencedBook')->getOID()->__toString());
+    $this->assertEquals('app.src.model.Book:206',
+            $book->getFirstChild('ReferencingBook')->getOID()->__toString());
+    $this->assertEquals('app.src.model.Book:205',
+            $book->getFirstChild('ReferencedBook')->getFirstChild('ReferencedBook')->getOID()->__toString());
+    $this->assertEquals('app.src.model.Book:205',
+            $book->getFirstChild('ReferencedBook')->getFirstChild('ReferencingBook')->getOID()->__toString());
+    $this->assertEquals('app.src.model.Book:205',
+            $book->getFirstChild('ReferencingBook')->getFirstChild('ReferencedBook')->getOID()->__toString());
+    $this->assertEquals('app.src.model.Book:205',
+            $book->getFirstChild('ReferencingBook')->getFirstChild('ReferencingBook')->getOID()->__toString());
+
     $transaction->rollback();
 
     TestUtil::endSession();
