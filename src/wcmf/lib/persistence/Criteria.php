@@ -152,11 +152,11 @@ class Criteria {
   }
 
   /**
-   * Get a string representation of the operation
+   * Get a string representation of the criteria
    * @return String
    */
   public function __toString() {
-    return $this->getId()." ".$this->value;
+    return $this->getId()." ".print_r($this->value, true);
   }
 }
 ?>

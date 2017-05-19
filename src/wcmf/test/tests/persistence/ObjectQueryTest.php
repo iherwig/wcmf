@@ -81,6 +81,27 @@ class ObjectQueryTest extends DatabaseTestCase {
     $this->assertEquals($this->fixQueryQuotes("(`Author`.`name` LIKE '%ingo%' AND `Author`.`creator` LIKE '%admin%')", 'Author'), $cond);
   }
 
+  public function testCriteria() {
+    $query = new ObjectQuery('Author', __CLASS__.__METHOD__."2");
+    $authorTpl = $query->getObjectTemplate('Author');
+    $authorTpl->setValue("id", Criteria::asValue("IN", [11, 12, 13])); // IN with numbers
+    $authorTpl->setValue("name", Criteria::asValue("LIKE", "%ingo%")); // explicit LIKE
+    $authorTpl->setValue("creator", "admin"); // implicit LIKE
+    $authorTpl->setValue("last_editor", Criteria::asValue("!=", null)); // NOT NULL
+    $authorTpl->setValue("created", Criteria::asValue("=", null)); // NULL
+    $authorTpl->setValue("modified", Criteria::asValue("IN", ['2017-01-01', '2017-01-02'])); // IN with strings
+    $sql = $query->getQueryString();
+    $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name`, `Author`.`created` AS `created`, `Author`.`creator` AS `creator`, `Author`.`modified` AS `modified`, ".
+      "`Author`.`last_editor` AS `last_editor` FROM `Author` AS `Author` WHERE (`Author`.`id` IN (11, 12, 13) AND `Author`.`name` LIKE '%ingo%' AND `Author`.`created` IS NULL AND ".
+      "`Author`.`creator` LIKE '%admin%' AND `Author`.`modified` IN ('2017-01-01', '2017-01-02') AND `Author`.`last_editor` IS NOT NULL) ORDER BY `Author`.`name` ASC";
+    $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
+    $this->executeSql('Author', $sql);
+
+    $cond = $query->getQueryCondition();
+    $this->assertEquals($this->fixQueryQuotes("(`Author`.`id` IN (11, 12, 13) AND `Author`.`name` LIKE '%ingo%' AND `Author`.`created` IS NULL AND ".
+      "`Author`.`creator` LIKE '%admin%' AND `Author`.`modified` IN ('2017-01-01', '2017-01-02') AND `Author`.`last_editor` IS NOT NULL)", 'Author'), $cond);
+  }
+
   public function testOrderby() {
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."3");
     $sql = $query->getQueryString(BuildDepth::SINGLE, ['name ASC', 'created DESC']);

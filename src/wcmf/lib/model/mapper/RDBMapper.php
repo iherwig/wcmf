@@ -102,10 +102,10 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
 
   /**
    * Set the connection parameters.
-   * @param $params Initialization data given in an assoziative array with the following keys:
+   * @param $params Initialization data given in an associative array with the following keys:
    *               dbType, dbHostName, dbUserName, dbPassword, dbName
    *               if dbPrefix is given it will be appended to every table string, which is
-   *               usefull if different cms operate on the same database
+   *               useful if different applications operate on the same database
    */
   public function setConnectionParams($params) {
     $this->connectionParams = $params;
@@ -659,15 +659,16 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
       $condition .= " IS ".($operator == '!=' ? "NOT " : "")."NULL";
       $placeholder = null;
     }
+    elseif (strtolower($operator) == 'in') {
+      $array = !$placeholder ? array_map(array($mapper, 'quoteValue'), $value) :
+          array_map(function($i) use ($placeholder) { return $placeholder.$i; }, range(0, sizeof($value)-1));
+      $condition .= " IN (".join(', ', $array).")";
+      $placeholder = !$placeholder ? null : $array;
+    }
     else {
       $condition .= " ".$criteria->getOperator()." ";
       $valueStr = !$placeholder ? $mapper->quoteValue($value) : $placeholder;
-      if (is_array($value)) {
-        $condition .= "(".$valueStr.")";
-      }
-      else {
-        $condition .= $valueStr;
-      }
+      $condition .= $valueStr;
     }
     return [$condition, $placeholder];
   }

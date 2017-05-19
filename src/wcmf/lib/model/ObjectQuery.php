@@ -119,7 +119,7 @@ class ObjectQuery extends AbstractQuery {
   private $involvedTypes = [];
   private $aliasCounter = 1;
   private $observedObjects = [];
-  private $parameterOrder = [];
+  private $parameterCriteriaMap = [];
 
   /**
    * Constructor.
@@ -316,12 +316,12 @@ class ObjectQuery extends AbstractQuery {
       $this->processOrderBy($orderby, $selectStmt);
 
       // set parameter order to be reused next time
-      $selectStmt->setMeta('parameterOrder', $this->parameterOrder);
+      $selectStmt->setMeta('parameterCriteriaMap', $this->parameterCriteriaMap);
     }
 
     // set parameters
     $selectStmt->setParameters($this->getParameters($this->conditions,
-            $selectStmt->getMeta('parameterOrder')));
+            $selectStmt->getMeta('parameterCriteriaMap')));
 
     // reset internal variables
     $this->resetInternals();
@@ -360,13 +360,21 @@ class ObjectQuery extends AbstractQuery {
               $condition .= ' '.$criterion->getCombineOperator().' ';
             }
             // because the attributes are not selected with alias, the column name has to be used
-            $index = sizeof(array_keys($this->parameterOrder));
+            $index = sizeof(array_keys($this->parameterCriteriaMap));
             $placeholder = ':'.$tableName['alias'].'_'.$attributeDesc->getColumn().$index;
             list($criteriaCondition, $criteriaPlaceholder) = $mapper->renderCriteria($criterion,
                     $placeholder, $tableName['alias'], $attributeDesc->getColumn());
             $condition .= $criteriaCondition;
-            if ($criteriaPlaceholder != null) {
-              $this->parameterOrder[$criteriaPlaceholder] = $this->getParameterPosition($criterion, $this->conditions);
+            if ($criteriaPlaceholder) {
+              $value = $this->getParameterPosition($criterion, $this->conditions);
+              if (is_array($criteriaPlaceholder)) {
+                $value = array_fill(0, sizeof($criteriaPlaceholder), $value);
+                $this->parameterCriteriaMap = array_merge($this->parameterCriteriaMap,
+                        array_combine($criteriaPlaceholder, $value));
+              }
+              else {
+                $this->parameterCriteriaMap[$criteriaPlaceholder] = $value;
+              }
             }
           }
         }
@@ -526,11 +534,11 @@ class ObjectQuery extends AbstractQuery {
   /**
    * Get an array of parameter values for the given criteria
    * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
-   * @param $parameterOrder Array defining the parameter order
+   * @param $parameters Array defining the parameter order
    * @return Array
    */
-  protected function getParameters($criteria, array $parameterOrder) {
-    $parameters = [];
+  protected function getParameters($criteria, array $parameters) {
+    $result = [];
     // flatten conditions
     $criteriaFlat = [];
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -547,10 +555,25 @@ class ObjectQuery extends AbstractQuery {
       }
     }
     // get parameters in order
-    foreach ($parameterOrder as $placeholder => $index) {
-      $parameters[$placeholder] = $criteriaFlat[$index]->getValue();
+    $criteriaValuePosition = [];
+    foreach ($parameters as $placeholder => $index) {
+      $value = $criteriaFlat[$index]->getValue();
+      if (is_array($value)) {
+        // criteria has array value
+        // initialize position counting for this criteria (defined by index)
+        if (!isset($criteriaValuePosition[$index])) {
+          $criteriaValuePosition[$index] = 0;
+        }
+        // set the value from the array
+        $result[$placeholder] = $value[$criteriaValuePosition[$index]];
+        $criteriaValuePosition[$index]++;
+      }
+      else {
+        // criteria has single value
+        $result[$placeholder] = $value;
+      }
     }
-    return $parameters;
+    return $result;
   }
 
   protected function getParameterPosition($criterion, $criteria) {
@@ -572,7 +595,7 @@ class ObjectQuery extends AbstractQuery {
    */
   protected function resetInternals() {
     $this->processedNodes = [];
-    $this->parameterOrder = [];
+    $this->parameterCriteriaMap = [];
     $this->involvedTypes = [];
     $this->aliasCounter = 1;
   }

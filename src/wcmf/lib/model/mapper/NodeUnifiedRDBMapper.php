@@ -605,7 +605,13 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
                   $this->renderCriteria($criterion, $placeholder, $tableName);
           $selectStmt->where($criteriaCondition, $criterion->getCombineOperator());
           if ($criteriaPlaceholder) {
-            $parameters[$criteriaPlaceholder] = $criterion->getValue();
+            $value = $criterion->getValue();
+            if (is_array($criteriaPlaceholder)) {
+              $parameters = array_merge($parameters, array_combine($criteriaPlaceholder, $value));
+            }
+            else {
+              $parameters[$criteriaPlaceholder] = $value;
+            }
           }
         }
         else {
@@ -669,7 +675,13 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
           $placeholder = ':'.$tableName.'_'.$criterion->getAttribute();
           list($criteriaCondition, $criteriaPlaceholder) = $this->renderCriteria($criterion, $placeholder, '', '');
           if ($criteriaPlaceholder) {
-            $parameters[$criteriaPlaceholder] = $criterion->getValue();
+            $value = $criterion->getValue();
+            if (is_array($criteriaPlaceholder)) {
+              $parameters = array_merge($parameters, array_combine($criteriaPlaceholder, $value));
+            }
+            else {
+              $parameters[$criteriaPlaceholder] = $value;
+            }
           }
         }
         else {
