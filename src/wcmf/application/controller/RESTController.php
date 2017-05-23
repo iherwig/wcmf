@@ -188,6 +188,7 @@ class RESTController extends Controller {
    * The object data is contained in POST content.
    */
   public function create() {
+    $this->requireTransaction();
     // delegate to SaveController
     $subResponse = $this->executeSubAction('create');
 
@@ -211,6 +212,7 @@ class RESTController extends Controller {
    * should be added, an `oid` parameter in the object data is sufficient.
    */
   public function createInRelation() {
+    $this->requireTransaction();
     $request = $this->getRequest();
 
     // create new object
@@ -252,6 +254,7 @@ class RESTController extends Controller {
    * The object data is contained in POST content.
    */
   public function update() {
+    $this->requireTransaction();
     $request = $this->getRequest();
 
     $oidStr = $this->getFirstRequestOid();
@@ -296,6 +299,7 @@ class RESTController extends Controller {
    * The object data is contained in POST content.
    */
   public function updateInRelation() {
+    $this->requireTransaction();
     $request = $this->getRequest();
 
     $isOrderRequest = $request->hasValue('referenceOid');
@@ -344,6 +348,7 @@ class RESTController extends Controller {
    * | _in_ `id`        | Id of object to delete
    */
   public function delete() {
+    $this->requireTransaction();
     // delegate to DeleteController
     $subResponse = $this->executeSubAction('delete');
     $this->handleSubResponse($subResponse);
@@ -362,6 +367,7 @@ class RESTController extends Controller {
    * | _in_ `targetId`  | Id of the object to be deleted from the relation (determines the object id together with _relation_)
    */
   public function deleteInRelation() {
+    $this->requireTransaction();
     $request = $this->getRequest();
 
     // remove existing object from relation

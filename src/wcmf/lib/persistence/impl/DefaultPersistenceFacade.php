@@ -348,8 +348,8 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * Check if the given value is either null or an array and
    * throw an exception if not
    * @param $param The parameter
-   * @param $name The name of the parameter (used in the exception text)
-   * @param $className Classname to match if, instances of a specific type are expected (optional)
+   * @param $paramName The name of the parameter (used in the exception text)
+   * @param $className Class name to match if, instances of a specific type are expected (optional)
    */
   private function checkArrayParameter($param, $paramName, $className=null) {
     if ($param == null) {

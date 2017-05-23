@@ -55,9 +55,12 @@ use wcmf\lib\validation\ValidationException;
 class SaveController extends Controller {
 
   private $fileUtil = null;
-  private $insertOids = [];
-  private $nodeArray = [];
   private $eventManager = null;
+
+  // maps request objects to entities
+  private $nodeArray = [];
+  // request object ids
+  private $insertOids = [];
 
   /**
    * Constructor
@@ -153,7 +156,7 @@ class SaveController extends Controller {
               $invalidAttributeNames[] = $curValueName;
             }
             // ignore primary key values, because they are immutable
-            if (!$isNew && in_array($curValueName, $pkValueNames)) {
+            if (in_array($curValueName, $pkValueNames)) {
               continue;
             }
             // ignore relations
@@ -199,7 +202,7 @@ class SaveController extends Controller {
                 // don't store changes on the original object
                 $transaction->detach($curNode->getOID());
                 $curNode->setOID($curOid);
-                $this->nodeArray[$curOidStr] = &$curNode;
+                $this->nodeArray[$curOidStr] = $curNode;
               }
               else {
                 if ($isNew) {
@@ -212,7 +215,7 @@ class SaveController extends Controller {
                   // the new with the existing values
                   $curNode = $persistenceFacade->load($curOid, BuildDepth::SINGLE);
                 }
-                $this->nodeArray[$curOidStr] = &$curNode;
+                $this->nodeArray[$curOidStr] = $curNode;
               }
               // the node could not be created from the oid
               if ($curNode == null) {
@@ -222,7 +225,7 @@ class SaveController extends Controller {
             }
             else {
               // take the existing node
-              $curNode = &$this->nodeArray[$curOidStr];
+              $curNode = $this->nodeArray[$curOidStr];
             }
 
             // set data in node (prevent overwriting old image values, if no image is uploaded)
@@ -231,7 +234,6 @@ class SaveController extends Controller {
                 // validate the new value
                 $curNode->validateValue($curValueName, $curRequestValue);
                 // set the new value
-                $oldValue = $curNode->getValue($curValueName);
                 $curNode->setValue($curValueName, $curRequestValue);
               }
               catch(ValidationException $ex) {
@@ -276,7 +278,7 @@ class SaveController extends Controller {
           $localization = $this->getLocalization();
           for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
             $curOidStr = $saveOids[$i];
-            $curObject = &$this->nodeArray[$curOidStr];
+            $curObject = $this->nodeArray[$curOidStr];
             $curOid = $curObject->getOid();
             if (isset($this->insertOids[$curOidStr])) {
               // translations are only allowed for existing objects
@@ -304,6 +306,18 @@ class SaveController extends Controller {
       );
     }
 
+    // return the saved nodes
+    foreach ($this->nodeArray as $oidStr => $node) {
+      $response->setValue($node->getOID()->__toString(), $node);
+    }
+
+    // return oid of the lastly created node
+    if (sizeof($this->insertOids) > 0 && !$response->hasErrors()) {
+      $keys = array_keys($this->insertOids);
+      $lastCreatedNode = $this->nodeArray[array_pop($keys)];
+      $response->setValue('oid', $lastCreatedNode->getOid());
+      $response->setStatus(201);
+    }
     $response->setAction('ok');
   }
 
@@ -316,8 +330,13 @@ class SaveController extends Controller {
       $response = $this->getResponse();
 
       // return the saved nodes
+      $changedOids = $event->getChangedOids();
       foreach ($this->nodeArray as $oidStr => $node) {
-        $response->setValue($node->getOID()->__toString(), $node);
+        $nodeOidStr = $node->getOID()->__toString();
+        if ($changedOids[$oidStr] == $nodeOidStr) {
+          $response->clearValue($oidStr);
+          $response->setValue($nodeOidStr, $node);
+        }
       }
 
       // return oid of the lastly created node

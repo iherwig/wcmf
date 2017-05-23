@@ -237,6 +237,9 @@ class DefaultTransaction implements Transaction {
     if (isset($this->loadedObjects[$key])) {
       $registeredObject = $this->loadedObjects[$key];
     }
+    if (isset($this->newObjects[$key])) {
+      $registeredObject = $this->newObjects[$key];
+    }
     return $registeredObject;
   }
 
