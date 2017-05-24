@@ -69,20 +69,16 @@ class DeleteController extends Controller {
           $logger->warn("An object with oid ".$oid." is does not exist.");
         }
         else {
-          if($this->confirmDelete($doomedNode)) {
-            // commit changes
-            $localization = $this->getLocalization();
-            if ($this->isLocalizedRequest()) {
-              // delete the translations for the requested language
-              $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));
-            }
-            else {
-              // delete the real object data and all translations
-              $localization->deleteTranslation($doomedNode->getOID());
-              $doomedNode->delete();
-            }
-            // after delete
-            $this->afterDelete($oid);
+          // commit changes
+          $localization = $this->getLocalization();
+          if ($this->isLocalizedRequest()) {
+            // delete the translations for the requested language
+            $localization->deleteTranslation($doomedNode->getOID(), $request->getValue('language'));
+          }
+          else {
+            // delete the real object data and all translations
+            $localization->deleteTranslation($doomedNode->getOID());
+            $doomedNode->delete();
           }
         }
       }
@@ -97,22 +93,5 @@ class DeleteController extends Controller {
     $response->setStatus(204);
     $response->setAction('ok');
   }
-
-  /**
-   * Confirm delete action on given Node.
-   * @note subclasses will override this to implement special application requirements.
-   * @param $node The Node instance to confirm.
-   * @return Boolean whether the Node should be deleted (default: _true_)
-   */
-  protected function confirmDelete($node) {
-    return true;
-  }
-
-  /**
-   * Called after delete.
-   * @note subclasses will override this to implement special application requirements.
-   * @param $oid The oid of the Node deleted
-   */
-  protected function afterDelete($oid) {}
 }
 ?>

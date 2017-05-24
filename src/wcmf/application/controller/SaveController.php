@@ -57,10 +57,10 @@ class SaveController extends Controller {
   private $fileUtil = null;
   private $eventManager = null;
 
-  // maps request objects to entities
+  // maps request object ids to entities
   private $nodeArray = [];
-  // request object ids
-  private $insertOids = [];
+  // request object id of the last inserted entity
+  private $lastInsertOid = null;
 
   /**
    * Constructor
@@ -126,9 +126,6 @@ class SaveController extends Controller {
     $request = $this->getRequest();
     $response = $this->getResponse();
 
-    // array of oids to actually save
-    $saveOids = [];
-
     // get the persistence transaction
     $transaction = $persistenceFacade->getTransaction();
     try {
@@ -136,6 +133,7 @@ class SaveController extends Controller {
       $invalidOids = [];
       $invalidAttributeNames = [];
       $invalidAttributeValues = [];
+      $invalidTranslations = [];
       $curNode = null;
 
       // iterate over request values and check for oid/object pairs
@@ -196,13 +194,18 @@ class SaveController extends Controller {
             if (!isset($this->nodeArray[$curOidStr])) {
               // load/create the node initially
               if ($this->isLocalizedRequest()) {
-                // create a detached object, if this is a localization request in order to
-                // save it manually later
-                $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
-                // don't store changes on the original object
-                $transaction->detach($curNode->getOID());
-                $curNode->setOID($curOid);
-                $this->nodeArray[$curOidStr] = $curNode;
+                if ($isNew) {
+                  $invalidTranslations[] = $curOidStr;
+                }
+                else {
+                  // create a detached object, if this is a localization request in order to
+                  // save it manually later
+                  $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
+                  $curNode->setOID($curOid);
+                  $curNode->setState(PersistentObject::STATE_CLEAN);
+                  // don't store changes on the original object
+                  $transaction->detach($curNode->getOID());
+                }
               }
               else {
                 if ($isNew) {
@@ -214,13 +217,13 @@ class SaveController extends Controller {
                   // load the existing object, if this is a save request in order to merge
                   // the new with the existing values
                   $curNode = $persistenceFacade->load($curOid, BuildDepth::SINGLE);
+                  if (!$curNode) {
+                    $invalidOids[] = $curOidStr;
+                  }
                 }
-                $this->nodeArray[$curOidStr] = $curNode;
               }
-              // the node could not be created from the oid
-              if ($curNode == null) {
-                $invalidOids[] = $curOidStr;
-                continue;
+              if ($curNode) {
+                $this->nodeArray[$curOidStr] = $curNode;
               }
             }
             else {
@@ -229,7 +232,7 @@ class SaveController extends Controller {
             }
 
             // set data in node (prevent overwriting old image values, if no image is uploaded)
-            if (!$isFile || ($isFile && sizeof($curRequestValue) > 0)) {
+            if ($curNode && (!$isFile || ($isFile && sizeof($curRequestValue) > 0))) {
               try {
                 // validate the new value
                 $curNode->validateValue($curValueName, $curRequestValue);
@@ -239,15 +242,6 @@ class SaveController extends Controller {
               catch(ValidationException $ex) {
                 $invalidAttributeValues[] = ['oid' => $curOidStr,
                   'parameter' => $curValueName, 'message' => $ex->getMessage()];
-              }
-            }
-
-            // add node to save array
-            if ($curNode->getState() != PersistentObject::STATE_CLEAN) {
-              // associative array to asure uniqueness
-              $saveOids[$curOidStr] = $curOidStr;
-              if ($isNew) {
-                $this->insertOids[$curOidStr] = $curOidStr;
               }
             }
           }
@@ -267,28 +261,21 @@ class SaveController extends Controller {
         $response->addError(ApplicationError::get('ATTRIBUTE_VALUE_INVALID',
           ['invalidAttributeValues' => $invalidAttributeValues]));
       }
+      if (sizeof($invalidTranslations) > 0) {
+        $response->addError(ApplicationError::get('PARAMETER_INVALID',
+          ['invalidParameters' => ['language']]));
+      }
 
       if ($response->hasErrors()) {
         $this->endTransaction(false);
       }
       else {
         // handle translations
-        $saveOids = array_keys($saveOids);
         if ($this->isLocalizedRequest()) {
           $localization = $this->getLocalization();
-          for ($i=0, $count=sizeof($saveOids); $i<$count; $i++) {
-            $curOidStr = $saveOids[$i];
-            $curObject = $this->nodeArray[$curOidStr];
-            $curOid = $curObject->getOid();
-            if (isset($this->insertOids[$curOidStr])) {
-              // translations are only allowed for existing objects
-              $response->addError(ApplicationError::get('PARAMETER_INVALID',
-                ['invalidParameters' => ['language']]));
-            }
-            else {
-              // store a translation for localized data
-              $localization->saveTranslation($curObject, $request->getValue('language'));
-            }
+          foreach ($this->nodeArray as $oidStr => $node) {
+            // store a translation for localized data
+            $localization->saveTranslation($node, $request->getValue('language'));
           }
         }
       }
@@ -309,13 +296,14 @@ class SaveController extends Controller {
     // return the saved nodes
     foreach ($this->nodeArray as $oidStr => $node) {
       $response->setValue($node->getOID()->__toString(), $node);
+      if ($node->getState() == PersistentObject::STATE_NEW) {
+        $this->lastInsertOid = $oidStr;
+      }
     }
 
     // return oid of the lastly created node
-    if (sizeof($this->insertOids) > 0 && !$response->hasErrors()) {
-      $keys = array_keys($this->insertOids);
-      $lastCreatedNode = $this->nodeArray[array_pop($keys)];
-      $response->setValue('oid', $lastCreatedNode->getOid());
+    if ($this->lastInsertOid && !$response->hasErrors()) {
+      $response->setValue('oid', $this->nodeArray[$this->lastInsertOid]->getOID());
       $response->setStatus(201);
     }
     $response->setAction('ok');
@@ -330,20 +318,17 @@ class SaveController extends Controller {
       $response = $this->getResponse();
 
       // return the saved nodes
-      $changedOids = $event->getChangedOids();
-      foreach ($this->nodeArray as $oidStr => $node) {
-        $nodeOidStr = $node->getOID()->__toString();
-        if ($changedOids[$oidStr] == $nodeOidStr) {
-          $response->clearValue($oidStr);
-          $response->setValue($nodeOidStr, $node);
-        }
+      $changedOids = array_flip($event->getChangedOids());
+      foreach ($this->nodeArray as $requestOidStr => $node) {
+        $newOidStr = $node->getOID()->__toString();
+        $oldOidStr = $changedOids[$newOidStr];
+        $response->clearValue($oldOidStr);
+        $response->setValue($newOidStr, $node);
       }
 
       // return oid of the lastly created node
-      if (sizeof($this->insertOids) > 0 && !$response->hasErrors()) {
-        $keys = array_keys($this->insertOids);
-        $lastCreatedNode = $this->nodeArray[array_pop($keys)];
-        $response->setValue('oid', $lastCreatedNode->getOid());
+      if ($this->lastInsertOid && !$response->hasErrors()) {
+        $response->setValue('oid', $this->nodeArray[$this->lastInsertOid]->getOID());
         $response->setStatus(201);
       }
     }
@@ -435,13 +420,12 @@ class SaveController extends Controller {
    * @return The filename
    */
   protected function getUploadFilename(ObjectId $oid, $valueName, $filename) {
-    $filename = preg_replace("/[^a-zA-Z0-9\-_\.\/]+/", "_", $filename);
-    return $filename;
+    return preg_replace("/[^a-zA-Z0-9\-_\.\/]+/", "_", $filename);
   }
 
   /**
    * Determine what to do if a file with the same name already exists. The
-   * implementation returns _true_.
+   * default implementation returns _true_.
    * @note subclasses will override this to implement special application requirements.
    * @param $oid The ObjectId of the object
    * @param $valueName The name of the value of the object identified by oid
