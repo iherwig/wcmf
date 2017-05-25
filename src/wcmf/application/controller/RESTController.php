@@ -10,12 +10,22 @@
  */
 namespace wcmf\application\controller;
 
+use wcmf\lib\config\Configuration;
+use wcmf\lib\core\EventManager;
+use wcmf\lib\core\Session;
+use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\TransactionEvent;
+use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
+use wcmf\lib\presentation\ControllerMethods;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\security\PermissionManager;
 
 /**
  * RESTController handles requests sent from a dstore/Rest client.
@@ -39,7 +49,42 @@ use wcmf\lib\presentation\Response;
  * @author ingo herwig <ingo@wemove.com>
  */
 class RESTController extends Controller {
-  use \wcmf\lib\presentation\ControllerMethods;
+  use ControllerMethods;
+
+  private $eventManager = null;
+
+  /**
+   * Constructor
+   * @param $session
+   * @param $persistenceFacade
+   * @param $permissionManager
+   * @param $actionMapper
+   * @param $localization
+   * @param $message
+   * @param $configuration
+   * @param $eventManager
+   */
+  public function __construct(Session $session,
+          PersistenceFacade $persistenceFacade,
+          PermissionManager $permissionManager,
+          ActionMapper $actionMapper,
+          Localization $localization,
+          Message $message,
+          Configuration $configuration,
+          EventManager $eventManager) {
+    parent::__construct($session, $persistenceFacade, $permissionManager,
+            $actionMapper, $localization, $message, $configuration);
+    $this->eventManager = $eventManager;
+    // add transaction listener
+    $this->eventManager->addListener(TransactionEvent::NAME, [$this, 'afterCommit']);
+  }
+
+  /**
+   * Destructor
+   */
+  public function __destruct() {
+    $this->eventManager->removeListener(TransactionEvent::NAME, [$this, 'afterCommit']);
+  }
 
   /**
    * @see Controller::initialize()
@@ -115,9 +160,9 @@ class RESTController extends Controller {
    * |------------------|-------------------------
    * | _in_ `language`  | The language of the returned objects
    * | _in_ `className` | The type of returned objects
-   * | _in_ `sortBy`    | _?sortBy=+foo_ for sorting the list by foo ascending or
-   * | _in_ `sort`      | _?sort(+foo)_ for sorting the list by foo ascending
-   * | _in_ `limit`     | _?limit(10,25)_ for loading 10 objects starting from position 25
+   * | _in_ `sortBy`    | <em>?sortBy=+foo</em> for sorting the list by foo ascending or
+   * | _in_ `sort`      | <em>?sort(+foo)</em> for sorting the list by foo ascending
+   * | _in_ `limit`     | <em>?limit(10,25)</em> for loading 10 objects starting from position 25
    * | _out_            | List of objects
    */
   public function readList() {
@@ -135,9 +180,9 @@ class RESTController extends Controller {
    * | _in_ `sourceId`  | Id of the object to which the returned objects are related (determines the object id together with _className_)
    * | _in_ `className` | The type of the object defined by _sourceId_
    * | _in_ `relation`  | Name of the relation to the object defined by _sourceId_ (determines the type of the returned objects)
-   * | _in_ `sortBy`    | _?sortBy=+foo_ for sorting the list by foo ascending or
-   * | _in_ `sort`      | _?sort(+foo)_ for sorting the list by foo ascending
-   * | _in_ `limit`     | _?limit(10,25)_ for loading 10 objects starting from position 25
+   * | _in_ `sortBy`    | <em>?sortBy=+foo</em> for sorting the list by foo ascending or
+   * | _in_ `sort`      | <em>?sort(+foo)</em> for sorting the list by foo ascending
+   * | _in_ `limit`     | <em>?limit(10,25)</em> for loading 10 objects starting from position 25
    * | _out_            | List of objects
    */
   public function readInRelation() {
@@ -412,6 +457,30 @@ class RESTController extends Controller {
       // in case of error, return default response
       $response->setValues($subResponse->getValues());
       $response->setStatus(400);
+    }
+  }
+
+  /**
+   * Update oids after commit
+   * @param $event
+   */
+  public function afterCommit(TransactionEvent $event) {
+    if ($event->getPhase() == TransactionEvent::AFTER_COMMIT) {
+      $response = $this->getResponse();
+      $locationOid = $response->getHeader('Location');
+
+      // replace changed oids
+      $changedOids = $event->getChangedOids();
+      foreach ($changedOids as $oldOid => $newOid) {
+        if ($response->hasValue($oldOid)) {
+          $value = $response->getValue($oldOid);
+          $response->setValue($newOid, $value);
+          $response->clearValue($oldOid);
+        }
+        if ($locationOid == $oldOid) {
+          $this->setLocationHeaderFromOid($newOid);
+        }
+      }
     }
   }
 
