@@ -66,7 +66,7 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
-   * @see PersistentObject::getValueNames
+   * @see PersistentObject::getValueNames()
    */
   public function getValueNames($excludeTransient=false) {
     // exclude relations
@@ -82,7 +82,7 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
-   * @see PersistentObject::getValue
+   * @see PersistentObject::getValue()
    */
   public function getValue($name) {
     // initialize a relation value, if not done before
@@ -110,7 +110,7 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
-   * @see PersistentObject::setValue
+   * @see PersistentObject::setValue()
    */
   public function setValue($name, $value, $forceSet=false, $trackChange=true) {
     // if the attribute is a relation, a special handling is required
@@ -164,9 +164,9 @@ class Node extends DefaultPersistentObject {
    * @param $oid The object id that the Nodes should match (optional, default: _null_)
    * @param $type The type that the Nodes should match (either fully qualified or simple, if not ambiguous)
    *        (optional, default: _null_)
-   * @param $values An assoziative array holding key value pairs that the Node values should match
+   * @param $values An associative array holding key value pairs that the Node values should match
    *        (values are interpreted as regular expression, optional, default: _null_)
-   * @param $properties An assoziative array holding key value pairs that the Node properties should match
+   * @param $properties An associative array holding key value pairs that the Node properties should match
    *        (values are interpreted as regular expression, optional, default: _null_)
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return An Array holding references to the Nodes that matched.
@@ -288,12 +288,16 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
-   * Get the number of children of the Node.
-   * @param $memOnly Boolean whether to only get the number of loaded children or all children (default: _true_).
-   * @return The number of children.
+   * Get the names of all attributes.
+   * @return An array of relation names.
    */
-  public function getNumChildren($memOnly=true) {
-    return $this->getNumRelatives('child', $memOnly);
+  public function getRelationNames() {
+    $result = [];
+    $relations = $this->getRelations();
+    foreach ($relations as $curRelation) {
+      $result[] = $curRelation->getOtherRole();
+    }
+    return $result;
   }
 
   /**
@@ -475,12 +479,21 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
+   * Get the number of children of the Node.
+   * @param $memOnly Boolean whether to only get the number of loaded children or all children (default: _true_).
+   * @return The number of children.
+   */
+  public function getNumChildren($memOnly=true) {
+    return $this->getNumRelatives('child', $memOnly);
+  }
+
+  /**
    * Get the first child that matches given conditions.
    * @param $role The role that the child should match (optional, default: _null_).
    * @param $type The type that the child should match (either fully qualified or simple, if not ambiguous)
    *        (optional, default: _null_).
-   * @param $values An assoziative array holding key value pairs that the child values should match (optional, default: _null_).
-   * @param $properties An assoziative array holding key value pairs that the child properties should match (optional, default: _null_).
+   * @param $values An associative array holding key value pairs that the child values should match (optional, default: _null_).
+   * @param $properties An associative array holding key value pairs that the child properties should match (optional, default: _null_).
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Node instance or null.
    */
@@ -512,8 +525,8 @@ class Node extends DefaultPersistentObject {
    * @param $role The role that the children should match (optional, default: _null_).
    * @param $type The type that the children should match (either fully qualified or simple, if not ambiguous)
    *        (optional, default: _null_).
-   * @param $values An assoziative array holding key value pairs that the children values should match (optional, default: _null_).
-   * @param $properties An assoziative array holding key value pairs that the children properties should match (optional, default: _null_).
+   * @param $values An associative array holding key value pairs that the children values should match (optional, default: _null_).
+   * @param $properties An associative array holding key value pairs that the children properties should match (optional, default: _null_).
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Array containing children Nodes that matched (proxies not included).
    */
@@ -603,8 +616,8 @@ class Node extends DefaultPersistentObject {
    * @param $role The role that the parent should match (optional, default: _null_).
    * @param $type The type that the parent should match (either fully qualified or simple, if not ambiguous)
    *        (optional, default: _null_).
-   * @param $values An assoziative array holding key value pairs that the parent values should match (optional, default: _null_).
-   * @param $properties An assoziative array holding key value pairs that the parent properties should match (optional, default: _null_).
+   * @param $values An associative array holding key value pairs that the parent values should match (optional, default: _null_).
+   * @param $properties An associative array holding key value pairs that the parent properties should match (optional, default: _null_).
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Node instance or null.
    */
@@ -637,8 +650,8 @@ class Node extends DefaultPersistentObject {
    * @param $role The role that the parents should match (optional, default: _null_).
    * @param $type The type that the parents should match (either fully qualified or simple, if not ambiguous)
    *        (optional, default: _null_).
-   * @param $values An assoziative array holding key value pairs that the parent values should match (optional, default: _null_).
-   * @param $properties An assoziative array holding key value pairs that the parent properties should match (optional, default: _null_).
+   * @param $values An associative array holding key value pairs that the parent values should match (optional, default: _null_).
+   * @param $properties An associative array holding key value pairs that the parent properties should match (optional, default: _null_).
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Array containing parent Nodes that matched (proxies not included).
    */

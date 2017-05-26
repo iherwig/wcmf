@@ -196,7 +196,7 @@ class ListController extends Controller {
         $node = $nodes[$i];
         $displayValues = $request->hasValue('values') ? array_map('trim', explode(',', $request->getValue('values'))) :
           $node->getProperty('displayValues');
-        $valueNames = $node->getValueNames();
+        $valueNames = array_merge($node->getValueNames(), $node->getRelationNames());
         foreach($valueNames as $name) {
           if (!in_array($name, $displayValues)) {
             $node->removeValue($name);

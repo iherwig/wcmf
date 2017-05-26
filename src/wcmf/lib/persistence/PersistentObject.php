@@ -147,16 +147,16 @@ interface PersistentObject {
    */
 
   /**
-   * Get the value of a named item.
-   * @param $name The name of the item to query.
-   * @return The value of the item / null if it doesn't exits.
+   * Get the value of an attribute.
+   * @param $name The name of the attribute to query.
+   * @return The value of the attribute / null if it doesn't exits.
    */
   public function getValue($name);
 
   /**
-   * Set the value of a named item if it exists.
-   * @param $name The name of the item to set.
-   * @param $value The value of the item.
+   * Set the value of an attribute if it exists.
+   * @param $name The name of the attribute to set.
+   * @param $value The value of the attribute.
    * @param $forceSet Boolean whether to set the value even if it is already set
    *   and to bypass validation (used to notify listeners) (default: _false_)
    * @param $trackChange Boolean whether to track the change (change state, notify listeners) or not (default: _true_)
@@ -166,22 +166,22 @@ interface PersistentObject {
   public function setValue($name, $value, $forceSet=false, $trackChange=true);
 
   /**
-   * Check if the node has a given item.
-   * @param $name The name of the item to query.
-   * @return Boolean whether the item exists or not.
+   * Check if the object has a given attribute.
+   * @param $name The name of the attribute to query.
+   * @return Boolean whether the attribute exists or not.
    */
   public function hasValue($name);
 
   /**
-   * Remove a named item.
-   * @param $name The name of the item to remove.
+   * Remove an attribute.
+   * @param $name The name of the attribute to remove.
    */
   public function removeValue($name);
 
   /**
-   * Get the names of all items.
+   * Get the names of all attributes.
    * @param $excludeTransient Boolean whether to exclude transient values (default: _false_)
-   * @return An array of item names.
+   * @return An array of attribute names.
    */
   public function getValueNames($excludeTransient=false);
 
@@ -195,8 +195,8 @@ interface PersistentObject {
    * Check if data may be set. The method is also called, when setting a value.
    * Controller may call this method before setting data and saving the object.
    * Throws a ValidationException in case of invalid data.
-   * @param $name The name of the item to set.
-   * @param $value The value of the item.
+   * @param $name The name of the attribute to set.
+   * @param $value The value of the attribute.
    * The default implementation calls PersistentObject::validateValueAgainstValidateType().
    */
   public function validateValue($name, $value);
@@ -244,16 +244,16 @@ interface PersistentObject {
   public function getPropertyNames();
 
   /**
-   * Get the value of one property of a named item.
-   * @param $name The name of the item to get its properties.
+   * Get the value of one property of an attribute.
+   * @param $name The name of the attribute to get its properties.
    * @param $property The name of the property to get.
    * @return The value property/null if not found.
    */
   public function getValueProperty($name, $property);
 
   /**
-   * Set the value of one property of a named item.
-   * @param $name The name of the item to set its properties.
+   * Set the value of one property of an attribute.
+   * @param $name The name of the attribute to set its properties.
    * @param $property The name of the property to set.
    * @param $value The value to set on the property.
    */
