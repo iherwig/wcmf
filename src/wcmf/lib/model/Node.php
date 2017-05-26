@@ -288,7 +288,7 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
-   * Get the names of all attributes.
+   * Get the names of all relations.
    * @return An array of relation names.
    */
   public function getRelationNames() {
