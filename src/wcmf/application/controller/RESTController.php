@@ -163,6 +163,7 @@ class RESTController extends Controller {
    * | _in_ `sortBy`    | <em>?sortBy=+foo</em> for sorting the list by foo ascending or
    * | _in_ `sort`      | <em>?sort(+foo)</em> for sorting the list by foo ascending
    * | _in_ `limit`     | <em>?limit(10,25)</em> for loading 10 objects starting from position 25
+   * | _in_ `query`     | A query condition encoded in RQL to be used with StringQuery::setRQLConditionString()
    * | _out_            | List of objects
    */
   public function readList() {
@@ -183,6 +184,7 @@ class RESTController extends Controller {
    * | _in_ `sortBy`    | <em>?sortBy=+foo</em> for sorting the list by foo ascending or
    * | _in_ `sort`      | <em>?sort(+foo)</em> for sorting the list by foo ascending
    * | _in_ `limit`     | <em>?limit(10,25)</em> for loading 10 objects starting from position 25
+   * | _in_ `query`     | A query condition encoded in RQL to be used with StringQuery::setRQLConditionString()
    * | _out_            | List of objects
    */
   public function readInRelation() {
@@ -196,7 +198,8 @@ class RESTController extends Controller {
     $persistenceFacade = $this->getPersistenceFacade();
     $sourceNode = $persistenceFacade->load($sourceOid);
     if ($sourceNode) {
-      $query = NodeUtil::getRelationQueryCondition($sourceNode, $relationName);
+      $relationQuery = NodeUtil::getRelationQueryCondition($sourceNode, $relationName);
+      $query = ($request->hasValue('query') ? $request->getValue('query').'&' : '').$relationQuery;
       $request->setValue('query', $query);
 
       // set the class name
