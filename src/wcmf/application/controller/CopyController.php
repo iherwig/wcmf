@@ -15,6 +15,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\PersistentIterator;
@@ -22,14 +23,13 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\TransactionEvent;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\presentation\TransactionEvent;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\util\StringUtil;
-use Zend\Stdlib\Message;
 
 /**
  * CopyController is used to copy or move Node instances.
