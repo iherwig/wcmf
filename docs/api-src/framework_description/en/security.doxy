@@ -132,6 +132,16 @@ and is equivalent to
 resource?context?action = +allowedRole
 ~~~~~~~~~~~~~
 
+#### Operator precedence ####
+
+Granted roles are evaluated before denied ones. That means that the following
+code grants the permission to a user who has both roles (_allowedRole_ and _deniedRole_)
+although the permission is denied for one of the roles.
+
+~~~~~~~~~~~~~{.ini}
+resource?context?action = +allowedRole -deniedRole
+~~~~~~~~~~~~~
+
 #### Built-in resources ####
 
 The resource value could be set to any string to implement custom application

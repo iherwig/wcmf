@@ -54,7 +54,7 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZmqprEeaGbp23C_zkpg" name="uploadDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_86xZm6prEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_86xZnKprEeaGbp23C_zkpg" value="1"/>
-                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZnaprEeaGbp23C_zkpg" value="app/public/media/"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZnaprEeaGbp23C_zkpg" value="app/media/"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_86xZoqprEeaGbp23C_zkpg" name="Localization">
@@ -998,6 +998,20 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_864HxaprEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_864HxqprEeaGbp23C_zkpg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_864Hx6prEeaGbp23C_zkpg" value="$principalFactory"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_XVX_wEZOEeeLZa5OKBzA3A" name="DynamicRoles">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_XVX_wUZOEeeLZa5OKBzA3A" name="creator" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XVX_wkZOEeeLZa5OKBzA3A" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_XVX_w0ZOEeeLZa5OKBzA3A" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_XVX_xEZOEeeLZa5OKBzA3A" value="$creatorRole"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_dVhkUEZOEeeLZa5OKBzA3A" name="CreatorRole">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_dVhkUUZOEeeLZa5OKBzA3A" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dVhkUkZOEeeLZa5OKBzA3A" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dVhkU0ZOEeeLZa5OKBzA3A" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_dVhkVEZOEeeLZa5OKBzA3A" value="wcmf\lib\security\principal\impl\CreatorRole"/>
                 </ownedAttribute>
               </packagedElement>
             </packagedElement>
@@ -2183,11 +2197,11 @@
   <Chronos:ChiValue xmi:id="_RRfzoLQ5EeOQ5oJFa1i8cg" app_data_type="DATATYPE_ATTRIBUTE|GROUP_INTERNAL" base_Property="_QGL3ELQ5EeOQ5oJFa1i8cg"/>
   <Chronos:ChiValue xmi:id="_WYoFgLQ5EeOQ5oJFa1i8cg" app_data_type="DATATYPE_ATTRIBUTE|GROUP_INTERNAL" db_data_type="DATETIME" base_Property="_VDL8kLQ5EeOQ5oJFa1i8cg"/>
   <Chronos:ChiValue xmi:id="_bCo9kLQ5EeOQ5oJFa1i8cg" app_data_type="DATATYPE_ATTRIBUTE|GROUP_INTERNAL" base_Property="_Z6PLELQ5EeOQ5oJFa1i8cg"/>
-  <Chronos:ChiNode xmi:id="_VViRkLTNEeOYkOsR5IzpsA" base_Class="_s2Ve4LTMEeOYkOsR5IzpsA" display_value="table|id" pk_name="table"/>
-  <Chronos:ChiNode xmi:id="_dQEfMLTNEeOYkOsR5IzpsA" base_Class="_s73fILTMEeOYkOsR5IzpsA" display_value="objectid|login|created"/>
+  <Chronos:ChiNode xmi:id="_VViRkLTNEeOYkOsR5IzpsA" base_Class="_s2Ve4LTMEeOYkOsR5IzpsA" display_value="table,id" pk_name="table"/>
+  <Chronos:ChiNode xmi:id="_dQEfMLTNEeOYkOsR5IzpsA" base_Class="_s73fILTMEeOYkOsR5IzpsA" display_value="objectid,login,created"/>
   <Chronos:ChiNode xmi:id="_fMz4sLTNEeOYkOsR5IzpsA" base_Class="_s5AYYLTMEeOYkOsR5IzpsA" display_value="name" orderby="name"/>
-  <Chronos:ChiNode xmi:id="_haVgMLTNEeOYkOsR5IzpsA" base_Class="_tCKUYLTMEeOYkOsR5IzpsA" display_value="objectid|attribute|language"/>
-  <Chronos:ChiNode xmi:id="_jedUELTNEeOYkOsR5IzpsA" base_Class="_tJBxYLTMEeOYkOsR5IzpsA" display_value="login,active,super_user" orderby="name"/>
+  <Chronos:ChiNode xmi:id="_haVgMLTNEeOYkOsR5IzpsA" base_Class="_tCKUYLTMEeOYkOsR5IzpsA" display_value="objectid,attribute,language"/>
+  <Chronos:ChiNode xmi:id="_jedUELTNEeOYkOsR5IzpsA" base_Class="_tJBxYLTMEeOYkOsR5IzpsA" display_value="login" orderby="name"/>
   <Chronos:ChiNode xmi:id="_lbY60LTNEeOYkOsR5IzpsA" base_Class="_tFTvALTMEeOYkOsR5IzpsA" display_value="name"/>
   <Chronos:ChiNode xmi:id="_m1UiMLTNEeOYkOsR5IzpsA" base_Class="_s_A5wLTMEeOYkOsR5IzpsA" display_value="name" orderby="name"/>
   <Chronos:ChiManyToMany xmi:id="_oMlQELTNEeOYkOsR5IzpsA" base_Class="_tM8BALTMEeOYkOsR5IzpsA" pk_name="fk_user_id|fk_role_id"/>
@@ -2228,7 +2242,7 @@
   <Chronos:ChiView xmi:id="_Pa9YcPu5EeOmMdys2glKCA" base_Class="_MLKboPu5EeOmMdys2glKCA"/>
   <Chronos:ChiActionKey xmi:id="_lLMKkPu5EeOmMdys2glKCA" base_Association="_lK86APu5EeOmMdys2glKCA"/>
   <Chronos:ChiValue xmi:id="_hAlnMDQ0EeSRmq5T8ey5JQ" base_Property="_hAkZEDQ0EeSRmq5T8ey5JQ"/>
-  <Chronos:ChiNode xmi:id="_VG9c4DkNEeSAepGYcnIyuw" base_Class="_VEQuMDkNEeSAepGYcnIyuw" display_value="resource|context|action|roles"/>
+  <Chronos:ChiNode xmi:id="_VG9c4DkNEeSAepGYcnIyuw" base_Class="_VEQuMDkNEeSAepGYcnIyuw" display_value="resource,context,action,roles"/>
   <Chronos:ChiValue xmi:id="_VG-D8DkNEeSAepGYcnIyuw" is_editable="true" base_Property="_VEQuMTkNEeSAepGYcnIyuw"/>
   <Chronos:ChiValue xmi:id="_VG-rADkNEeSAepGYcnIyuw" is_editable="true" base_Property="_VEQuNTkNEeSAepGYcnIyuw"/>
   <Chronos:ChiValue xmi:id="_VG_SEDkNEeSAepGYcnIyuw" is_editable="true" base_Property="_VEQuOTkNEeSAepGYcnIyuw"/>
@@ -2393,4 +2407,6 @@
   <Chronos:ChiController xmi:id="_xpsLoC3lEeeXlbGiPETVvw" base_Class="_xjVsAC3lEeeXlbGiPETVvw"/>
   <Chronos:ChiActionKey xmi:id="__zqVAC37EeeXlbGiPETVvw" action="importCSV" base_Association="_6TVgAC37EeeXlbGiPETVvw"/>
   <Chronos:ChiActionKey xmi:id="_M0REkC38EeeXlbGiPETVvw" action="continue" base_Association="_ER4z0C38EeeXlbGiPETVvw"/>
+  <Chronos:ChiSystem xmi:id="_XayrQEZOEeeLZa5OKBzA3A" plattform="wcmf" config="security.ini" base_Class="_XVX_wEZOEeeLZa5OKBzA3A"/>
+  <Chronos:ChiSystem xmi:id="_dVkAkEZOEeeLZa5OKBzA3A" plattform="wcmf" config="security.ini" base_Class="_dVhkUEZOEeeLZa5OKBzA3A"/>
 </xmi:XMI>

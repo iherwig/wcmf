@@ -51,8 +51,8 @@ class PermissionsTest extends DatabaseTestCase {
         ['id' => 222, 'name' => 'Publisher2'],
       ],
       'Book' => [
-        ['id' => 111, 'title' => 'Book1'],
-        ['id' => 222, 'title' => 'Book2'],
+        ['id' => 111, 'title' => 'Book1', 'creator' => 'userPermTest'],
+        ['id' => 222, 'title' => 'Book2', 'creator' => ''],
       ],
       'Chapter' => [
         ['id' => 111, 'fk_chapter_id' => null, 'fk_book_id' => 111, 'name' => 'Chapter 1'],
@@ -211,6 +211,18 @@ class PermissionsTest extends DatabaseTestCase {
     $oids = ObjectFactory::getInstance('persistenceFacade')->getOIDs('Book');
     $this->assertEquals(1, sizeof($oids));
     $this->assertEquals('app.src.model.Book:111', $oids[0]->__toString());
+
+    TestUtil::endSession();
+  }
+
+  public function testCreatorPermission() {
+    TestUtil::startSession('userPermTest', 'user1');
+
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+
+    // test
+    $this->assertTrue($permissionManager->authorize('Book:111', '', 'update'));
+    $this->assertFalse($permissionManager->authorize('Book:222', '', 'update'));
 
     TestUtil::endSession();
   }

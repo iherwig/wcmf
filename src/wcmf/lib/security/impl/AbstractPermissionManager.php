@@ -17,6 +17,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\PermissionManager;
+use wcmf\lib\security\principal\User;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\util\StringUtil;
@@ -27,7 +28,7 @@ use wcmf\lib\util\StringUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AbstractPermissionManager {
+abstract class AbstractPermissionManager implements PermissionManager {
 
   const RESOURCE_TYPE_ENTITY_TYPE = 'entity.type';
   const RESOURCE_TYPE_ENTITY_TYPE_PROPERTY = 'entity.type.property';
@@ -42,6 +43,7 @@ class AbstractPermissionManager {
 
   protected $persistenceFacade = null;
   protected $session = null;
+  protected $dynamicRoles = [];
   protected $principalFactory = null;
 
   /**
@@ -50,12 +52,14 @@ class AbstractPermissionManager {
    * @param $session
    */
   public function __construct(PersistenceFacade $persistenceFacade,
-          Session $session) {
+          Session $session,
+          array $dynamicRoles=[]) {
     $this->persistenceFacade = $persistenceFacade;
     $this->session = $session;
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
+    $this->dynamicRoles = $dynamicRoles;
   }
 
   /**
@@ -96,38 +100,38 @@ class AbstractPermissionManager {
     // always start checking from most specific
     switch ($resourceType) {
       case (self::RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY):
-        $authorized = $this->authorizeAction($oidProperty, $context, $action, $login);
+        $authorized = $this->authorizeAction($oidProperty, $oidProperty, $context, $action, $login);
         if ($authorized === null) {
-          $authorized = $this->authorizeAction($typeProperty, $context, $action, $login);
+          $authorized = $this->authorizeAction($oidProperty, $typeProperty, $context, $action, $login);
           if ($authorized === null) {
-            $authorized = $this->authorizeAction($oid, $context, $action, $login);
+            $authorized = $this->authorizeAction($oidProperty, $oid, $context, $action, $login);
             if ($authorized === null) {
-              $authorized = $this->authorizeAction($type, $context, $action, $login);
+              $authorized = $this->authorizeAction($oidProperty, $type, $context, $action, $login);
             }
           }
         }
         break;
 
       case (self::RESOURCE_TYPE_ENTITY_INSTANCE):
-        $authorized = $this->authorizeAction($oid, $context, $action, $login);
+        $authorized = $this->authorizeAction($oid, $oid, $context, $action, $login);
         if ($authorized === null) {
-          $authorized = $this->authorizeAction($type, $context, $action, $login);
+          $authorized = $this->authorizeAction($oid, $type, $context, $action, $login);
         }
         break;
 
       case (self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY):
-        $authorized = $this->authorizeAction($typeProperty, $context, $action, $login);
+        $authorized = $this->authorizeAction($typeProperty, $typeProperty, $context, $action, $login);
         if ($authorized === null) {
-          $authorized = $this->authorizeAction($type, $context, $action, $login);
+          $authorized = $this->authorizeAction($typeProperty, $type, $context, $action, $login);
         }
         break;
 
       case (self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY):
-        $authorized = $this->authorizeAction($type, $context, $action, $login);
+        $authorized = $this->authorizeAction($type, $type, $context, $action, $login);
         break;
 
       default:
-        $authorized = $this->authorizeAction($resourceStr, $context, $action, $login);
+        $authorized = $this->authorizeAction($resourceStr, $resourceStr, $context, $action, $login);
         break;
     }
 
@@ -182,23 +186,26 @@ class AbstractPermissionManager {
   }
 
   /**
-   * Authorize the given resource, context, action triple using the
-   * temporary permissions or the current user.
-   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
+   * Authorize a resource, context, action triple by using the permissions set
+   * on another resource (e.g. authorize an action on an entity instance base
+   * on the permissions defined for it's type).
+   * @param $requestedResource The resource string to authorize.
+   * @param $permissionResource The resource string to use for selecting permissions.
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
    * @param $login The login of the user to use for authorization
-   * @param $returnNullIfNoPermissionExists Optional, default: true
-   * @return Boolean
+   * @return Boolean or null if undefined
    */
-  protected function authorizeAction($resource, $context, $action, $login, $returnNullIfNoPermissionExists=true) {
+  protected function authorizeAction($requestedResource, $permissionResource,
+          $context, $action, $login) {
     if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Authorizing $resource?$context?$action");
+      self::$logger->debug("Authorizing $requestedResource?$context?$action ".
+              "using permissions of $permissionResource?$context?$action");
     }
     $authorized = null;
 
     // check temporary permissions
-    if ($this->hasTempPermission($resource, $context, $action)) {
+    if ($this->hasTempPermission($permissionResource, $context, $action)) {
       if (self::$logger->isDebugEnabled()) {
         self::$logger->debug("Has temporary permission");
       }
@@ -206,21 +213,17 @@ class AbstractPermissionManager {
     }
     else {
       // check other permissions
-      $permissions = $this->getPermissions($resource, $context, $action);
+      $permissions = $this->getPermissions($permissionResource, $context, $action);
       if (self::$logger->isDebugEnabled()) {
         self::$logger->debug("Permissions: ".StringUtil::getDump($permissions));
       }
       if ($permissions != null) {
         // matching permissions found, check user roles
-        $authorized = $this->matchRoles($permissions, $login);
-      }
-      elseif (!$returnNullIfNoPermissionExists) {
-        // no permission definied, check for user's default policy
-        $authorized = $this->getDefaultPolicy($login);
+        $authorized = $this->matchRoles($requestedResource, $permissions, $login);
       }
     }
     if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Result for $resource?$context?$action: ".(is_bool($authorized) ? ((!$authorized ? "not " : "")."authorized") : "not defined"));
+      self::$logger->debug("Result: ".(is_bool($authorized) ? ((!$authorized ? "not " : "")."authorized") : "not defined"));
     }
     return $authorized;
   }
@@ -237,41 +240,41 @@ class AbstractPermissionManager {
 
   /**
    * Get the resource type and parameters (as applicable) from a resource
-   * @param $resourceStr The resource represented as string
+   * @param $resource The resource represented as string
    * @return Associative array with keys
    *   'resourceType' (one of the RESOURCE_TYPE_ constants),
    *   'oid' (object id),
    *   'type' (entity type),
    *   'oidProperty' (object id with instance property),
-   *  'typeProperty' (type id with entity property)
+   *   'typeProperty' (type id with entity property)
    */
-  protected function parseResource($resourceStr) {
+  protected function parseResource($resource) {
     $resourceType = null;
     $oid = null;
     $type = null;
     $oidProperty = null;
     $typeProperty = null;
-    $extensionRemoved = preg_replace('/\.[^\.]*?$/', '', $resourceStr);
-    if (($oidObj = ObjectId::parse($resourceStr)) !== null) {
+    $extensionRemoved = preg_replace('/\.[^\.]*?$/', '', $resource);
+    if (($oidObj = ObjectId::parse($resource)) !== null) {
       $resourceType = self::RESOURCE_TYPE_ENTITY_INSTANCE;
-      $oid = $resourceStr;
+      $oid = $resource;
       $type = $oidObj->getType();
     }
     elseif (($oidObj = ObjectId::parse($extensionRemoved)) !== null) {
       $resourceType = self::RESOURCE_TYPE_ENTITY_INSTANCE_PROPERTY;
       $oid = $extensionRemoved;
       $type = $oidObj->getType();
-      $oidProperty = $resourceStr;
-      $typeProperty = $type.substr($resourceStr, strlen($extensionRemoved));
+      $oidProperty = $resource;
+      $typeProperty = $type.substr($resource, strlen($extensionRemoved));
     }
-    elseif ($this->persistenceFacade->isKnownType($resourceStr)) {
+    elseif ($this->persistenceFacade->isKnownType($resource)) {
       $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE;
-      $type = $resourceStr;
+      $type = $resource;
     }
     elseif ($this->persistenceFacade->isKnownType($extensionRemoved)) {
       $resourceType = self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY;
       $type = $extensionRemoved;
-      $typeProperty = $resourceStr;
+      $typeProperty = $resource;
     }
     else {
       // defaults to other
@@ -288,15 +291,15 @@ class AbstractPermissionManager {
 
   /**
    * Parse a permissions string and return an associative array with the keys
-   * 'default', 'allow', 'deny', where 'allow', 'deny' are arrays itselves holding roles
+   * 'default', 'allow', 'deny', where 'allow', 'deny' are arrays itself holding roles
    * and 'default' is a boolean value derived from the wildcard policy (+* or -*).
-   * @param $val A role string (+*, +administrators, -guest, entries without '+' or '-'
+   * @param $value A role string (+*, +administrators, -guest, entries without '+' or '-'
    *     prefix default to allow rules).
    * @return Associative array containing the permissions as an associative array with the keys
-   *     'default', 'allow', 'deny' or null, if val is empty
+   *     'default', 'allow', 'deny' or null, if value is empty
    */
-  protected function deserializePermissions($val) {
-    if (strlen($val) == 0) {
+  protected function deserializePermissions($value) {
+    if (strlen($value) == 0) {
       return null;
     }
     $result = [
@@ -305,7 +308,7 @@ class AbstractPermissionManager {
       'deny' => [],
     ];
 
-    $roleValues = explode(" ", $val);
+    $roleValues = explode(" ", $value);
     foreach ($roleValues as $roleValue) {
       $roleValue = trim($roleValue);
       $matches = [];
@@ -338,7 +341,7 @@ class AbstractPermissionManager {
    * Convert an associative permissions array with keys 'default', 'allow', 'deny'
    * into a string.
    * @param $permissions Associative array with keys 'default', 'allow', 'deny',
-   *     where 'allow', 'deny' are arrays itselves holding roles and 'default' is a
+   *     where 'allow', 'deny' are arrays itself holding roles and 'default' is a
    *     boolean value derived from the wildcard policy (+* or -*).
    * @return A role string (+*, +administrators, -guest, entries without '+' or '-'
    *     prefix default to allow rules).
@@ -361,36 +364,29 @@ class AbstractPermissionManager {
 
   /**
    * Matches the roles of the user and the roles in the given permissions
+   * @param $resource The resource string to authorize.
    * @param $permissions An array containing permissions as an associative array
    *     with the keys 'default', 'allow', 'deny', where 'allow', 'deny' are arrays
-   *     itselves holding roles and 'default' is a boolean value derived from the
+   *     itself holding roles and 'default' is a boolean value derived from the
    *     wildcard policy (+* or -*). 'allow' overwrites 'deny' overwrites 'default'
    * @param $login the login of the user to match the roles for
-   * @return Boolean whether the user has access right according to the permissions.
+   * @return Boolean whether the user is authorized according to the permissions
    */
-  protected function matchRoles($permissions, $login) {
+  protected function matchRoles($resource, $permissions, $login) {
     if (self::$logger->isDebugEnabled()) {
       self::$logger->debug("Matching roles for ".$login);
     }
     $user = $this->principalFactory->getUser($login, true);
     if ($user != null) {
-      if (isset($permissions['allow'])) {
-        foreach ($permissions['allow'] as $value) {
-          if ($user->hasRole($value)) {
-            if (self::$logger->isDebugEnabled()) {
-              self::$logger->debug("Allowed because of role ".$value);
+      foreach (['allow' => true, 'deny' => false] as $key => $result) {
+        if (isset($permissions[$key])) {
+          foreach ($permissions[$key] as $role) {
+            if ($this->matchRole($user, $role, $resource)) {
+              if (self::$logger->isDebugEnabled()) {
+                self::$logger->debug($key." because of role ".$role);
+              }
+              return $result;
             }
-            return true;
-          }
-        }
-      }
-      if (isset($permissions['deny'])) {
-        foreach ($permissions['deny'] as $value) {
-          if ($user->hasRole($value)) {
-            if (self::$logger->isDebugEnabled()) {
-              self::$logger->debug("Denied because of role ".$value);
-            }
-            return false;
           }
         }
       }
@@ -398,7 +394,20 @@ class AbstractPermissionManager {
     if (self::$logger->isDebugEnabled()) {
       self::$logger->debug("Check default ".$permissions['default']);
     }
-    return isset($permissions['default']) ? $permissions['default'] : false;
+    return (isset($permissions['default']) ? $permissions['default'] : false);
+  }
+
+  /**
+   * Check if a user matches the role for a resource
+   * @param $user The user instance.
+   * @param $role The role name.
+   * @param $resource The resource string to authorize.
+   * @return Boolean
+   */
+  protected function matchRole(User $user, $role, $resource) {
+    $isDynamicRole = isset($this->dynamicRoles[$role]);
+    return (($isDynamicRole && $this->dynamicRoles[$role]->match($user, $resource) === true)
+            || (!$isDynamicRole && $user->hasRole($role)));
   }
 
   /**

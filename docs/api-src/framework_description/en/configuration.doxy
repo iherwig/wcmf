@@ -91,6 +91,8 @@ dependencies of an instance may be set by using the `$` notation, which refers
 to another configuration section. If a section does not contain a `__class` key
 it is instantiated as an associative array.
 
+@note Instance names are treated case-insensitive.
+
 The following example demonstrates the pattern by means of the
 \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink instance:
 
@@ -180,7 +182,8 @@ instance can be retrieved by using the following code:
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 ~~~~~~~~~~~~~
 
-@note Instance names are treated case-insensitive.
+@note An exception is thrown if a constructor parameter can't be resolved. That means if a
+constructor parameter is supposed to be optional, a default value must be provided.
 
 ### Shared and Non-Shared instances ### {#conf_shareddi}
 

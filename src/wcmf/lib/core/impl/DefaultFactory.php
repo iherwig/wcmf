@@ -249,7 +249,7 @@ class DefaultFactory implements Factory {
               // will cause an exception, if the class does not exist
               $cParams[$paramName] = $this->getInstanceOf($paramClass->name);
             }
-            else {
+            elseif (!$param->isDefaultValueAvailable()) {
               throw new ConfigurationException('Constructor parameter \''.$paramName.
                       '\' in class \''.$className.'\' cannot be injected.');
             }
