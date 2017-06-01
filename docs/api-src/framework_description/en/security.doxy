@@ -164,6 +164,32 @@ The actions for the persistency related resources are properties of
 \link wcmf::lib::persistence::PersistenceAction `PersistenceAction`\endlink,
 e.g. \link wcmf::lib::persistence::PersistenceAction::READ `PersistenceAction::READ`\endlink.
 
+#### Dynamic roles ####
+
+Besides assigning _static roles_ to users, it's sometimes useful to have roles, that evaluate
+dynamically in the current context (_requested resource_, _user_ and _action_). With these
+so called _dynamic roles_ it is for example possible to assign permissions to the creator of
+an instance or realize date/time based permissions.
+
+Dynamic roles implement the \link wcmf::lib::security::principal::DynamicRole `DynamicRole`\endlink
+interface and are defined in the `DynamicRoles` configuration section.
+
+The following example shows the configuration of the
+\link wcmf::lib::security::principal::impl::CreatorRole `CreatorRole`\endlink in
+the \ref app "default application":.
+
+~~~~~~~~~~~~~{.ini}
+[DynamicRoles]
+creator = $creatorRole
+
+[CreatorRole]
+__class = wcmf\lib\security\principal\impl\CreatorRole
+~~~~~~~~~~~~~
+
+@note Dynamic roles are checked before static role assignments. That means you
+could define a dynamic role with the same name as a static role and add custom
+matching code.
+
 #### Permission inheritance ####
 
 Permissions on __entity instances__ are passed to child entities in a _composite

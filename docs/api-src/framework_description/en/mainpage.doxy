@@ -46,29 +46,29 @@ wCMF features a pragmatic Model-Driven Software Development (<em>MDSD</em>) appr
   <h2>Features</h2>
   <div class="col-md-6">
     <ul>
-      <li>Full featured object persistence layer:
+      <li>Full featured object <a href="persistence.html">persistence layer</a>:
         <ul>
-          <li>Flexible mapper architecture with adapter to RDBMS</li>
-          <li>Optimistic and pessimistic object locking</li>
-          <li>Searching using template based object query and criteria api</li>
-          <li>Query caching and eager relation loading</li>
-          <li>Transaction support</li>
+          <li>Flexible <a href="persistence.html#pers_mappers">mapper</a> architecture with adapter to RDBMS</li>
+          <li>Optimistic and pessimistic <a href="persistence.html#Concurrency">object locking</a></li>
+          <li><a href="persistence.html#pers_search">Searching</a> using template based object query and criteria api</li>
+          <li>Query caching and <a href="persistence.html#pers_builddepth">eager relation loading</a></li>
+          <li><a href="persistence.html#pers_tx">Transaction</a> support</li>
         </ul>
       </li>
-      <li>Role based permission management (for actions, types, instances, instance properties)</li>
-      <li>Event system</li>
+      <li><a href="security.html#Authorization">Role based permission management</a> (for actions, types, instances, instance properties)</li>
+      <li><a href="presentation.html#Events">Event system</a></li>
     </ul>
   </div>
   <div class="col-md-6">
     <ul>
-      <li>Dependency injection support</li>
-      <li>Definition of the application flow through configuration files</li>
+      <li><a href="configuration.html#Dependencyinjection">Dependency injection</a> support</li>
+      <li>Configuration based <a href="presentation.html#pres_routing">routing</a></li>
       <li><a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a> integration</li>
       <li><a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene Search Engine</a> integration</li>
       <li>I18n support</li>
       <li>Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>, <a href="https://logging.apache.org/log4php/" target="_blank">log4php</a>)</li>
-      <li>SOAP and REST interface supporting CRUD operations on all objects</li>
-      <li><a href="http://wiki.eclipse.org/MDT-UML2">Eclipse MDT/UML2</a> compatible code generator</li>
+      <li><a href="presentation.html#WebserviceAPIs">SOAP and REST interfaces</a> supporting CRUD operations on all objects</li>
+      <li><a href="http://wiki.eclipse.org/MDT-UML2">Eclipse MDT/UML2</a> compatible <a href="model.html#Generator">code generator</a></li>
       <li>Modern <a href="https://dojotoolkit.org/">Dojo</a> based <a href="https://github.com/iherwig/wcmf-default-app">default application</a> for content management</li>
     </ul>
   </div>

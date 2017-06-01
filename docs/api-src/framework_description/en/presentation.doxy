@@ -579,6 +579,8 @@ The following events are defined in wCMF:
   \link wcmf::lib::persistence::StateChangeEvent `StateChangeEvent`\endlink
   signal changes in \link wcmf::lib::persistence::PersistentObject `PersistentObject`\endlink
   instances.
+- \link wcmf::lib::persistence::TransactionEvent `TransactionEvent`\endlink
+  is fired at different phases of a transaction.
 - \link wcmf::lib::presentation::ApplicationEvent `ApplicationEvent`\endlink
   allows to listen to the different steps of the request handling process.
 
