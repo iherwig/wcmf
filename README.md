@@ -15,24 +15,24 @@ PHP web application, e.g. CRM, CMS from an UML model.
 
 Features
 --------
-- Full featured object persistence layer:
-  - Flexible mapper architecture with adapter to RDBMS
-  - Optimistic and pessimistic object locking
-  - Searching using template based object query and criteria api
-  - Query caching and eager relation loading
-  - Transaction support
-- Role based permission management (for actions, types, instances, instance properties)
-- Event system
-- Dependency injection support
-- Definition of the application flow through configuration files
-- <a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a> integration
-- <a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene Search Engine</a> integration
+- Full featured object [persistence layer](http://wcmf.wemove.com/persistence.html):
+    - Flexible [mapper](http://wcmf.wemove.com/persistence.html#pers_mappers) architecture with adapter to RDBMS
+    - Optimistic and pessimistic [object locking](http://wcmf.wemove.com/persistence.html#Concurrency)
+    - [Searching](http://wcmf.wemove.com/persistence.html#pers_search) using template based object query and criteria api
+    - Query caching and [eager relation loading](http://wcmf.wemove.com/persistence.html#pers_builddepth)
+    - [Transaction](http://wcmf.wemove.com/persistence.html#pers_tx) support
+- [Role based permission management](http://wcmf.wemove.com/security.html#Authorization) (for actions, types, instances, instance properties)
+- [Event system](http://wcmf.wemove.com/presentation.html#Events)
+- [Dependency injection](http://wcmf.wemove.com/configuration.html#Dependencyinjection) support
+- Configuration based [routing](http://wcmf.wemove.com/presentation.html#pres_routing)
+- [Smarty Template Engine](http://www.smarty.net/) integration
+- [Lucene Search Engine](http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html) integration
 - I18n support
-- Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>, <a href="https://logging.apache.org/log4php/" target="_blank">log4php</a>)
-- SOAP and REST interface supporting CRUD operations on all objects
-- <a href="http://wiki.eclipse.org/MDT-UML2">Eclipse MDT/UML2</a> compatible code generator
+- Flexible logging ([Monolog](https://github.com/Seldaek/monolog), [log4php](https://logging.apache.org/log4php/))
+- [SOAP and REST interfaces](http://wcmf.wemove.com/presentation.html#WebserviceAPIs) supporting CRUD operations on all objects
+- [Eclipse MDT/UML2](http://wiki.eclipse.org/MDT-UML2) compatible [code generator](http://wcmf.wemove.com/model.html#Generator)
 - Modern [Dojo](https://dojotoolkit.org/) based [default application](https://github.com/iherwig/wcmf-default-app) for content management
 
 License
 --------
-wCMF is available under an open source license (<a href="https://github.com/iherwig/wcmf/blob/master/LICENSE">MIT License</a>).
+wCMF is available under an open source license ([MIT License](https://github.com/iherwig/wcmf/blob/master/LICENSE)).
