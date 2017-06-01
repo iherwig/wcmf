@@ -24,6 +24,7 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\ReferenceDescription;
+use wcmf\lib\persistence\TransientAttributeDescription;
 
 /**
  * Default ConcurrencyManager implementation.
@@ -143,7 +144,7 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
         foreach($it as $valueName => $originalValue) {
           $attribute = $mapper->getAttribute($valueName);
           // ignore references
-          if (!($attribute instanceof ReferenceDescription)) {
+          if (!($attribute instanceof ReferenceDescription) && !($attribute instanceof TransientAttributeDescription)) {
             $currentValue = $currentState->getValue($valueName);
             if (strval($currentValue) != strval($originalValue)) {
               if (self::$logger->isDebugEnabled()) {
