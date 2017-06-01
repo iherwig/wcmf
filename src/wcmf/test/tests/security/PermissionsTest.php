@@ -222,7 +222,12 @@ class PermissionsTest extends DatabaseTestCase {
 
     // test
     $this->assertTrue($permissionManager->authorize('Book:111', '', 'update'));
+    $this->assertTrue($permissionManager->authorize('Book:111.title', '', 'update'));
     $this->assertFalse($permissionManager->authorize('Book:222', '', 'update'));
+    $this->assertFalse($permissionManager->authorize('Book:222.title', '', 'update'));
+
+    $newBook = ObjectFactory::getInstance('persistenceFacade')->create('Book');
+    $this->assertTrue($permissionManager->authorize($newBook->getOID()->__toString(), '', 'update'));
 
     TestUtil::endSession();
   }

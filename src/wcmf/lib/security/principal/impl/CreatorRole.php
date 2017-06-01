@@ -23,7 +23,7 @@ use wcmf\lib\security\principal\DynamicRole;
  */
 class CreatorRole {
 
-  const CREATED_ATTRIBUTE = 'creator';
+  const CREATOR_ATTRIBUTE = 'creator';
 
   private $initialized = false;
   private $permissionManager = null;
@@ -34,16 +34,25 @@ class CreatorRole {
    */
   public function match(User $user, $resource) {
     $result = null;
-    if (($oidObj = ObjectId::parse($resource)) !== null) {
+    $extensionRemoved = preg_replace('/\.[^\.]*?$/', '', $resource);
+    if (($oidObj = ObjectId::parse($resource)) !== null || ($oidObj = ObjectId::parse($extensionRemoved)) !== null) {
       $this->initialize();
       $mapper = $this->persistenceFacade->getMapper($oidObj->getType());
-      $tmpPerm = $this->permissionManager->addTempPermission(
-              $oidObj->__toString(), '', PersistenceAction::READ);
-      if ($mapper->hasAttribute(self::CREATED_ATTRIBUTE) &&
-          ($obj = $this->persistenceFacade->load($oidObj)) !== null) {
-        $result = $obj->getValue(self::CREATED_ATTRIBUTE) === $user->getLogin();
+      if ($mapper->hasAttribute(self::CREATOR_ATTRIBUTE)) {
+        if ($oidObj->containsDummyIds()) {
+          // any user might be the creator of a new object
+          $result = true;
+        }
+        else {
+          $tmpPerm = $this->permissionManager->addTempPermission(
+                  $oidObj->__toString(), '', PersistenceAction::READ);
+          if (($obj = $this->persistenceFacade->load($oidObj)) !== null) {
+            $creator = $obj->getValue(self::CREATOR_ATTRIBUTE);
+            $result = $creator === $user->getLogin();
+          }
+          $this->permissionManager->removeTempPermission($tmpPerm);
+        }
       }
-      $this->permissionManager->removeTempPermission($tmpPerm);
     }
     return $result;
   }
