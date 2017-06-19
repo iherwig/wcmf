@@ -12,7 +12,6 @@ namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistentObject;

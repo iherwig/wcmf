@@ -29,6 +29,7 @@ use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\RelationDescription;
 use wcmf\lib\persistence\UpdateOperation;
+use wcmf\lib\persistence\TransientAttributeDescription;
 
 /**
  * NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node
@@ -653,11 +654,22 @@ abstract class NodeUnifiedRDBMapper extends RDBMapper {
       }
       $mapper = $orderType != null ? $this->persistenceFacade->getMapper($orderType) : $this;
       $orderAttributeDesc = $mapper->getAttribute($orderAttribute);
-      $orderColumnName = $orderAttributeDesc->getColumn();
-      $tableName = $aliasName != null ? $aliasName : $mapper->getRealTableName();
-
-      $orderAttributeFinal = $tableName.'.'.$orderColumnName;
-      $selectStmt->order([$orderAttributeFinal.' '.$orderDirection]);
+      if ($orderAttributeDesc instanceof ReferenceDescription) {
+      	// add the referenced column without table name
+      	$mapper = $this->persistenceFacade->getMapper($orderAttributeDesc->getOtherType());
+      	$orderAttributeDesc = $mapper->getAttribute($orderAttributeDesc->getOtherName());
+      	$orderColumnName = $orderAttributeDesc->getColumn();
+      }
+      elseif ($orderAttributeDesc instanceof TransientAttributeDescription) {
+      	// skip, because no column exists
+      	continue;
+      }
+      else {
+      	// add the column with table name
+      	$tableName = $aliasName != null ? $aliasName : $mapper->getRealTableName();
+      	$orderColumnName = $tableName.'.'.$orderAttributeDesc->getColumn();
+      }
+      $selectStmt->order([$orderColumnName.' '.$orderDirection]);
     }
   }
 

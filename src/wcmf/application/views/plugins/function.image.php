@@ -8,7 +8,6 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\ImageUtil;
 
 /**

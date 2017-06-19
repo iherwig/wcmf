@@ -39,7 +39,7 @@ The following screenshots show the list and detail view of an _Author_ entity ty
 
 ### Prerequisites ### {#app_pre}
 
-To run the wCMF default application you will need the following:
+To run the wCMF default application you will need the following environment:
 
 - Web server (e.g. Apache)
 - PHP >= 5.6
@@ -50,7 +50,10 @@ To run the wCMF default application you will need the following:
 To modify the demo model you additionally need:
 
 - UML Modeling tool (e.g. [Eclipse Papyrus](http://www.eclipse.org/papyrus/) or
-  [Chronos Web Modeler](http://sourceforge.net/projects/olympos/)),
+  [Chronos Web Modeler](http://sourceforge.net/projects/olympos/))
+  
+@note A development environment based on Docker containers and the Eclipe IDE is
+provided in the [wcmf-workspace](https://github.com/iherwig/wcmf-workspace) project.
 
 ### Installation ### {#app_install}
 
