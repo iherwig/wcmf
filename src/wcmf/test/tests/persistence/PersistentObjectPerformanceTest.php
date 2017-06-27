@@ -10,7 +10,6 @@
  */
 namespace wcmf\test\tests\persistence;
 
-use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\ObjectQuery;

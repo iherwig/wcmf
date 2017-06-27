@@ -2,7 +2,6 @@
 namespace wcmf\lib\presentation\impl;
 
 use wcmf\lib\core\EventManager;
-use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\presentation\ApplicationEvent;
