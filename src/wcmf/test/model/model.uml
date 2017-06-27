@@ -114,6 +114,11 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_86xZv6prEeaGbp23C_zkpg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZwKprEeaGbp23C_zkpg" value="wcmf\lib\search\impl\LuceneSearch"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_8U5icFuKEeeJNLUV4A8xUw" name="indexStrategy" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_8U5icVuKEeeJNLUV4A8xUw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8U5icluKEeeJNLUV4A8xUw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_8U5ic1uKEeeJNLUV4A8xUw" value="$indexStrategy"/>
+                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZwaprEeaGbp23C_zkpg" name="indexPath" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_86xZwqprEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_86xZw6prEeaGbp23C_zkpg" value="1"/>
@@ -123,6 +128,11 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_86xZxqprEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_86xZx6prEeaGbp23C_zkpg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralBoolean" xmi:id="_86xZyKprEeaGbp23C_zkpg" value="true"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_H4XloFuLEeeJNLUV4A8xUw" name="IndexStrategy">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_H4XloVuLEeeJNLUV4A8xUw" name="__class" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_H4XloluLEeeJNLUV4A8xUw" value="wcmf\lib\search\impl\DefaultIndexStrategy"/>
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_86xZyaprEeaGbp23C_zkpg" name="Session">
@@ -2409,4 +2419,5 @@
   <Chronos:ChiActionKey xmi:id="_M0REkC38EeeXlbGiPETVvw" action="continue" base_Association="_ER4z0C38EeeXlbGiPETVvw"/>
   <Chronos:ChiSystem xmi:id="_XayrQEZOEeeLZa5OKBzA3A" plattform="wcmf" config="security.ini" base_Class="_XVX_wEZOEeeLZa5OKBzA3A"/>
   <Chronos:ChiSystem xmi:id="_dVkAkEZOEeeLZa5OKBzA3A" plattform="wcmf" config="security.ini" base_Class="_dVhkUEZOEeeLZa5OKBzA3A"/>
+  <Chronos:ChiSystem xmi:id="_H4Za0FuLEeeJNLUV4A8xUw" plattform="wcmf" base_Class="_H4XloFuLEeeJNLUV4A8xUw"/>
 </xmi:XMI>
