@@ -19,11 +19,10 @@ use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
 use wcmf\lib\search\IndexedSearch;
+use wcmf\lib\search\impl\DefaultIndexStrategy;
 use wcmf\lib\util\StringUtil;
 use ZendSearch\Lucene\Analysis\Analyzer\Analyzer;
 use ZendSearch\Lucene\Analysis\TokenFilter\StopWords;
-use ZendSearch\Lucene\Document;
-use ZendSearch\Lucene\Document\Field;
 use ZendSearch\Lucene\Index\Term;
 use ZendSearch\Lucene\Lucene;
 use ZendSearch\Lucene\Search\Query\Wildcard;
@@ -42,6 +41,7 @@ use ZendSearch\Lucene\Search\Weight\Boolean;
  */
 class LuceneSearch implements IndexedSearch {
 
+  private $indexStrategy;
   private $indexPath = '';
   private $liveUpdate = true;
   private $index;
@@ -56,6 +56,8 @@ class LuceneSearch implements IndexedSearch {
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
+    $this->indexStrategy = new DefaultIndexStrategy();
+    
     // listen to object change events
     ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
       [$this, 'stateChanged']);
@@ -68,6 +70,14 @@ class LuceneSearch implements IndexedSearch {
     $this->commitIndex(false);
     ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
       [$this, 'stateChanged']);
+  }
+  
+  /**
+   * Set the IndexStrategy instance.
+   * @param $indexStrategy
+   */
+  public function setIndexStrategy(IndexStrategy $indexStrategy) {
+    $this->indexStrategy = $indexStrategy;
   }
 
   /**
@@ -128,7 +138,7 @@ class LuceneSearch implements IndexedSearch {
   /**
    * @see Search::find()
    */
-  public function find($searchTerm, PagingInfo $pagingInfo=null) {
+  public function find($searchTerm, PagingInfo $pagingInfo=null, $createSummary=true) {
     $results = [];
     $index = $this->getIndex(false);
     if ($index) {
@@ -144,27 +154,29 @@ class LuceneSearch implements IndexedSearch {
           $oidStr = $hit->oid;
           $oid = ObjectId::parse($oidStr);
 
-          // get the summary with highlighted text
           $summary = '';
-          $highlightedRegex = '/((<b style="color:black;background-color:#[0-9a-f]{6}">)+)([^<]+?)((<\/b>)+)/';
-          $obj = $persistenceFacade->load($oid);
-          if ($obj) {
-            $valueNames = $obj->getValueNames(true);
-            foreach ($valueNames as $curValueName) {
-              $inputType = $obj->getValueProperty($curValueName, 'input_type');
-              $value = $obj->getValue($curValueName);
-              if (!is_object($value) && !is_array($value)) {
-                $value = $this->encodeValue($value, $inputType);
-                if (strlen($value) > 0) {
-                  $highlighted = @$query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
-                  $matches = [];
-                  if (preg_match($highlightedRegex, $highlighted, $matches)) {
-                    $hitStr = $matches[3];
-                    $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
-                    $highlighted = trim(preg_replace('/&#13;|[\n\r\t]/', ' ', $highlighted));
-                    $excerpt = StringUtil::excerpt($highlighted, $hitStr, 300, '');
-                    $summary = $excerpt;
-                    break;
+          if ($createSummary) {
+            // get the summary with highlighted text
+            $highlightedRegex = '/((<b style="color:black;background-color:#[0-9a-f]{6}">)+)([^<]+?)((<\/b>)+)/';
+            $obj = $persistenceFacade->load($oid);
+            if ($obj) {
+              $valueNames = $obj->getValueNames(true);
+              foreach ($valueNames as $curValueName) {
+                $inputType = $obj->getValueProperty($curValueName, 'input_type');
+                $value = $obj->getValue($curValueName);
+                if (!is_object($value) && !is_array($value)) {
+                  $value = $this->indexStrategy->encodeValue($value, $inputType);
+                  if (strlen($value) > 0) {
+                    $highlighted = @$query->htmlFragmentHighlightMatches(strip_tags($value), 'UTF-8');
+                    $matches = [];
+                    if (preg_match($highlightedRegex, $highlighted, $matches)) {
+                      $hitStr = $matches[3];
+                      $highlighted = preg_replace($highlightedRegex, ' <em class="highlighted">$3</em> ', $highlighted);
+                      $highlighted = trim(preg_replace('/&#13;|[\n\r\t]/', ' ', $highlighted));
+                      $excerpt = StringUtil::excerpt($highlighted, $hitStr, 300, '');
+                      $summary = $excerpt;
+                      break;
+                    }
                   }
                 }
               }
@@ -238,38 +250,8 @@ class LuceneSearch implements IndexedSearch {
         if (self::$logger->isDebugEnabled()) {
           self::$logger->debug("Add/Update index for: ".$oidStr." language:".$language);
         }
-
-        // create the document
-        $doc = new Document();
-
-        $valueNames = $indexObj->getValueNames(true);
-
-        $doc->addField(Field::keyword('oid', $oidStr, 'UTF-8'));
-        $typeField = Field::keyword('type', $obj->getType(), 'UTF-8');
-        $typeField->isStored = false;
-        $doc->addField($typeField);
-        if ($language != null) {
-          $languageField = Field::keyword('lang', $language, 'UTF-8');
-          $languageField->isStored = false;
-          $doc->addField($languageField);
-        }
-
-        foreach ($valueNames as $curValueName) {
-          $inputType = $indexObj->getValueProperty($curValueName, 'input_type');
-          $value = $indexObj->getValue($curValueName);
-          if (!is_object($value) && !is_array($value)) {
-            $value = $this->encodeValue($value, $inputType);
-            if (preg_match('/^text|^f?ckeditor/', $inputType)) {
-              $value = strip_tags($value);
-              $doc->addField(Field::unStored($curValueName, $value, 'UTF-8'));
-            }
-            else {
-              $field = Field::keyword($curValueName, $value, 'UTF-8');
-              $field->isStored = false;
-              $doc->addField($field);
-            }
-          }
-        }
+        
+        $doc = $this->indexStrategy->getDocument($indexObj);
 
         $this->deleteFromIndex($obj);
         $index->addDocument($doc);
@@ -347,19 +329,6 @@ class LuceneSearch implements IndexedSearch {
       }
     }
     return $this->index;
-  }
-
-  /**
-   * Encode the given value according to the input type
-   * @param $value
-   * @param $inputType
-   * @return String
-   */
-  protected function encodeValue($value, $inputType) {
-    if (preg_match('/^f?ckeditor/', $inputType)) {
-      $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
-    }
-    return trim($value);
   }
 
   /**

@@ -31,10 +31,11 @@ interface Search {
    * Search for searchTerm
    * @param $searchTerm
    * @param $pagingInfo A PagingInfo instance (optional, default: _null_)
+   * @param $createSummary Boolean whether to create a summary or not (optional, default: _true_)
    * @return Associative array with object ids as keys and
    * associative array with keys 'oid', 'score', 'summary' as value
    */
-  public function find($searchTerm, PagingInfo $pagingInfo=null);
+  public function find($searchTerm, PagingInfo $pagingInfo=null, $createSummary=true);
 
   /**
    * Check if the instance object is searchable
