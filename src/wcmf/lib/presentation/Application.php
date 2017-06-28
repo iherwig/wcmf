@@ -74,6 +74,14 @@ class Application {
   public function initialize($defaultController='', $defaultContext='', $defaultAction='login') {
     $config = ObjectFactory::getInstance('configuration');
     $this->debug = $config->getBooleanValue('debug', 'Application');
+    
+    // configure php
+    if ($config->hasSection('phpconfig')) {
+      $phpSettings = $config->getSection('phpconfig');
+      foreach ($phpSettings as $option => $value) {
+        ini_set($option, $value);
+      }
+    }
 
     // create the Request and Response instances
     $this->request = ObjectFactory::getInstance('request');

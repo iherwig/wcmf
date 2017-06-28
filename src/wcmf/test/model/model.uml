@@ -135,6 +135,7 @@
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_H4XloluLEeeJNLUV4A8xUw" value="wcmf\lib\search\impl\DefaultIndexStrategy"/>
                 </ownedAttribute>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_KntIYFxJEeeaovNgIyUZeA" name="PhpConfig"/>
               <packagedElement xmi:type="uml:Class" xmi:id="_86xZyaprEeaGbp23C_zkpg" name="Session">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZyqprEeaGbp23C_zkpg" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_86xZy6prEeaGbp23C_zkpg" value="1"/>
@@ -1741,6 +1742,7 @@
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_MBFYqKvxEeaQUopA1XIUeQ" value="utf8"/>
                 </ownedAttribute>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_qxaPwFxJEeeaovNgIyUZeA" name="PhpConfig"/>
             </packagedElement>
           </packagedElement>
           <packagedElement xmi:type="uml:Package" xmi:id="_nmqxoOj5EeOllcOTHGuLUw" name="src">
@@ -2420,4 +2422,6 @@
   <Chronos:ChiSystem xmi:id="_XayrQEZOEeeLZa5OKBzA3A" plattform="wcmf" config="security.ini" base_Class="_XVX_wEZOEeeLZa5OKBzA3A"/>
   <Chronos:ChiSystem xmi:id="_dVkAkEZOEeeLZa5OKBzA3A" plattform="wcmf" config="security.ini" base_Class="_dVhkUEZOEeeLZa5OKBzA3A"/>
   <Chronos:ChiSystem xmi:id="_H4Za0FuLEeeJNLUV4A8xUw" plattform="wcmf" base_Class="_H4XloFuLEeeJNLUV4A8xUw"/>
+  <Chronos:ChiSystem xmi:id="_Kn25YFxJEeeaovNgIyUZeA" plattform="wcmf" base_Class="_KntIYFxJEeeaovNgIyUZeA"/>
+  <Chronos:ChiSystem xmi:id="_qxaPwVxJEeeaovNgIyUZeA" plattform="wcmf" config="server.ini" base_Class="_qxaPwFxJEeeaovNgIyUZeA"/>
 </xmi:XMI>
