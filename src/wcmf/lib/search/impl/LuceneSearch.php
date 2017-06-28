@@ -181,12 +181,12 @@ class LuceneSearch implements IndexedSearch {
                 }
               }
             }
-            $results[$oidStr] = [
+          }
+          $results[$oidStr] = [
               'oid' => $oidStr,
               'score' => $hit->score,
               'summary' => $summary
-            ];
-          }
+          ];
         }
       }
       catch (Exception $ex) {

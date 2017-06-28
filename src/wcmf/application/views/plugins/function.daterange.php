@@ -26,6 +26,19 @@ use wcmf\lib\core\ObjectFactory;
  * @return String
  */
 function smarty_function_daterange(array $params, Smarty_Internal_Template $template) {
+  $hasFrom = strlen($params['from']) > 0;
+  $hasTo = strlen($params['to']) > 0;
+  if (!$hasFrom && !$hasTo) {
+    return '';
+  }
+
+  if ($hasFrom && !$hasTo) {
+    $params['to'] = $params['from'];
+  }
+  elseif (!$hasFrom && $hasTo) {
+    $params['from'] = $params['to'];
+  }
+
   $from = new DateTime($params['from']);
   $to = new DateTime($params['to']);
   $lang = $params['lang'];
