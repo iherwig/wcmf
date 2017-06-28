@@ -464,13 +464,13 @@ class ObjectQuery extends AbstractQuery {
    * @param $selectStmt A SelectStatement instance
    */
   protected function processOrderBy($orderby, SelectStatement $selectStmt) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if ($orderby) {
       $ok = false;
 
       // reset current order by
       $selectStmt->reset(SelectStatement::ORDER);
 
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       foreach ($orderby as $curOrderBy) {
         $orderByParts = preg_split('/ /', $curOrderBy);
         $orderAttribute = $orderByParts[0];
@@ -525,7 +525,9 @@ class ObjectQuery extends AbstractQuery {
           $orderType = join('.', $orderAttributeParts);
         }
         if (!in_array($orderAttribute, $columnNames)) {
-          $selectStmt->addColumns([$orderAttribute], $orderType);
+          $queryType = $this->getQueryType();
+          $joinName = ($orderType != $queryType && $orderType != $persistenceFacade->getSimpleType($queryType)) ? $orderType: null;
+          $selectStmt->addColumns([$orderAttribute], $joinName);
         }
       }
     }
