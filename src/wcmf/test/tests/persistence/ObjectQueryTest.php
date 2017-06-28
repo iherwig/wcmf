@@ -56,7 +56,7 @@ class ObjectQueryTest extends DatabaseTestCase {
   public function testOid() {
     $query = new ObjectQuery('Author', __CLASS__.__METHOD__."1");
     $sql = $query->getQueryString(false);
-    $expected = "SELECT DISTINCT `Author`.`id` AS `id` ".
+    $expected = "SELECT DISTINCT `Author`.`id` AS `id`, `Author`.`name` AS `name` ".
       "FROM `Author` AS `Author` ORDER BY `Author`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Author'), str_replace("\n", "", $sql));
     $this->executeSql('Author', $sql);

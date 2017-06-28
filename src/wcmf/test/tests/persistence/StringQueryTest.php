@@ -184,7 +184,7 @@ class StringQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString(BuildDepth::SINGLE, ['filename ASC', 'created DESC']);
     $expected = "SELECT DISTINCT `Image`.`id` AS `id`, `Image`.`fk_chapter_id` AS `fk_chapter_id`, `Image`.`fk_titlechapter_id` AS `fk_titlechapter_id`, ".
       "`Image`.`file` AS `filename`, `Image`.`created` AS `created`, `Image`.`creator` AS `creator`, `Image`.`modified` AS `modified`, `Image`.`last_editor` AS `last_editor`, ".
-      "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey` ".
+      "`Image`.`sortkey_titlechapter` AS `sortkey_titlechapter`, `Image`.`sortkey_normalchapter` AS `sortkey_normalchapter`, `Image`.`sortkey` AS `sortkey`, `Image`.`file` AS `file` ".
       "FROM `Image` ORDER BY `Image`.`file` ASC, `Image`.`created` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Image'), str_replace("\n", "", $sql));
     $this->executeSql('Image', $sql);
