@@ -39,28 +39,10 @@
           <emfPageIdentifier href="model.notation#_WheIIPu5EeOmMdys2glKCA"/>
         </children>
         <children>
-          <emfPageIdentifier href="model.notation#_87JM8KprEeaGbp23C_zkpg"/>
-        </children>
-        <children>
           <emfPageIdentifier href="model.notation#_ypcQgLTNEeOYkOsR5IzpsA"/>
         </children>
         <children>
-          <emfPageIdentifier href="model.notation#_87P6oKprEeaGbp23C_zkpg"/>
-        </children>
-        <children>
           <emfPageIdentifier href="model.notation#_xLm1QLQ4EeOQ5oJFa1i8cg"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="model.notation#_866jcKprEeaGbp23C_zkpg"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="model.notation#_Rk6wALRnEeOfbtYsPp7Oyg"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="model.notation#_HCVB8BeREeejPquxoVdwSw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="model.notation#_87d9EKprEeaGbp23C_zkpg"/>
         </children>
       </children>
     </windows>
