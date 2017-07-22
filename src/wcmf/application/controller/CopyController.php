@@ -414,7 +414,7 @@ class CopyController extends BatchController {
    */
   public function afterCommit(TransactionEvent $event) {
     if ($event->getPhase() == TransactionEvent::AFTER_COMMIT) {
-      $changedOids = $event->getChangedOids();
+      $changedOids = $event->getInsertedOids();
       $this->updateCopyOIDs($changedOids);
     }
   }

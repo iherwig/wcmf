@@ -201,10 +201,9 @@ class SaveController extends Controller {
                   // create a detached object, if this is a localization request in order to
                   // save it manually later
                   $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
+                  $transaction->detach($curNode->getOID());
                   $curNode->setOID($curOid);
                   $curNode->setState(PersistentObject::STATE_CLEAN);
-                  // don't store changes on the original object
-                  $transaction->detach($curNode->getOID());
                 }
               }
               else {
@@ -318,7 +317,7 @@ class SaveController extends Controller {
       $response = $this->getResponse();
 
       // return the saved nodes
-      $changedOids = array_flip($event->getChangedOids());
+      $changedOids = array_flip($event->getInsertedOids());
       foreach ($this->nodeArray as $requestOidStr => $node) {
         $newOidStr = $node->getOID()->__toString();
         $oldOidStr = $changedOids[$newOidStr];

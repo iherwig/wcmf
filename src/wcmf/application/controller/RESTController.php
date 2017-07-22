@@ -473,7 +473,7 @@ class RESTController extends Controller {
       $locationOid = $response->getHeader('Location');
 
       // replace changed oids
-      $changedOids = $event->getChangedOids();
+      $changedOids = $event->getInsertedOids();
       foreach ($changedOids as $oldOid => $newOid) {
         if ($response->hasValue($oldOid)) {
           $value = $response->getValue($oldOid);

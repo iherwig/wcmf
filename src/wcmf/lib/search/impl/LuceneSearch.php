@@ -17,7 +17,7 @@ use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistentObject;
-use wcmf\lib\persistence\StateChangeEvent;
+use wcmf\lib\persistence\TransactionEvent;
 use wcmf\lib\search\IndexedSearch;
 use wcmf\lib\search\impl\DefaultIndexStrategy;
 use wcmf\lib\util\StringUtil;
@@ -59,8 +59,8 @@ class LuceneSearch implements IndexedSearch {
     $this->indexStrategy = new DefaultIndexStrategy();
     
     // listen to object change events
-    ObjectFactory::getInstance('eventManager')->addListener(StateChangeEvent::NAME,
-      [$this, 'stateChanged']);
+    ObjectFactory::getInstance('eventManager')->addListener(TransactionEvent::NAME,
+      [$this, 'afterCommit']);
   }
 
   /**
@@ -68,8 +68,8 @@ class LuceneSearch implements IndexedSearch {
    */
   public function __destruct() {
     $this->commitIndex(false);
-    ObjectFactory::getInstance('eventManager')->removeListener(StateChangeEvent::NAME,
-      [$this, 'stateChanged']);
+    ObjectFactory::getInstance('eventManager')->removeListener(TransactionEvent::NAME,
+      [$this, 'afterCommit']);
   }
   
   /**
@@ -280,19 +280,20 @@ class LuceneSearch implements IndexedSearch {
   }
 
   /**
-   * Listen to StateChangeEvents
-   * @param $event StateChangeEvent instance
+   * Listen to TransactionEvents
+   * @param $event TransactionEvent instance
    */
-  public function stateChanged(StateChangeEvent $event) {
-    if ($this->liveUpdate) {
-      $object = $event->getObject();
-      $oldState = $event->getOldValue();
-      $newState = $event->getNewValue();
-      if (($oldState == PersistentObject::STATE_NEW || $oldState == PersistentObject::STATE_DIRTY)
-              && $newState == PersistentObject::STATE_CLEAN) {
+  public function afterCommit(TransactionEvent $event) {
+    if ($this->liveUpdate && $event->getPhase() == TransactionEvent::AFTER_COMMIT) {
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      // add inserted/updated objects
+      foreach (array_merge(array_values($event->getInsertedOids()), $event->getUpdatedOids()) as $oid) {
+        $object = $persistenceFacade->load(ObjectId::parse($oid));
         $this->addToIndex($object);
       }
-      elseif ($newState == PersistentObject::STATE_DELETED) {
+      // remove deleted objects
+      foreach ($event->getDeletedOids() as $oid) {
+        $object = $persistenceFacade->load(ObjectId::parse($oid));
         $this->deleteFromIndex($object);
       }
     }

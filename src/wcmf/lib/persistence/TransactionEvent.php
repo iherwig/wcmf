@@ -40,16 +40,22 @@ class TransactionEvent extends Event {
   const AFTER_ROLLBACK = 'AFTER_ROLLBACK';
 
   private $phase = null;
-  private $changedOids = [];
-
+  private $insertedOids = [];
+  private $updatedOids = [];
+  private $deletedOids = [];
+  
   /**
    * Constructor.
    * @param $phase The phase at which the event occurred.
-   * @param $oids Associative array mapping old to new object ids
+   * @param $insertedOids Associative array mapping old to new object id strings
+   * @param $updatedOids Array of object id strings of updated objects
+   * @param $deletedOids Array of object id strings of deleted objects
    */
-  public function __construct($phase, array $changedOids=[]) {
+  public function __construct($phase, array $insertedOids=[], array $updatedOids=[], array $deletedOids=[]) {
     $this->phase = $phase;
-    $this->changedOids = $changedOids;
+    $this->insertedOids = $insertedOids;
+    $this->updatedOids = $updatedOids;
+    $this->deletedOids = $deletedOids;
   }
 
   /**
@@ -61,12 +67,30 @@ class TransactionEvent extends Event {
   }
 
   /**
-   * Get the map of changed object ids.
+   * Get the map of oids of inserted objects.
    * NOTE: This property is available after commit only
    * @return Map of oid changes (key: oid string before commit, value: oid string after commit)
    */
-  public function getChangedOids() {
-    return $this->changedOids;
+  public function getInsertedOids() {
+    return $this->insertedOids;
+  }
+  
+  /**
+   * Get the list of oids of updated objects.
+   * NOTE: This property is available after commit only
+   * @return Array of oid strings
+   */
+  public function getUpdatedOids() {
+  	return $this->updatedOids;
+  }
+  
+  /**
+   * Get the list of oids of deleted objects.
+   * NOTE: This property is available after commit only
+   * @return Array of oid strings
+   */
+  public function getDeletedOids() {
+  	return $this->deletedOids;
   }
 }
 ?>

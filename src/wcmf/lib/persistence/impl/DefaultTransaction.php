@@ -99,7 +99,9 @@ class DefaultTransaction implements Transaction {
     $this->isInCommit = true;
     $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
         TransactionEvent::BEFORE_COMMIT));
-    $changedOids = [];
+    $insertedOids = [];
+    $updatedOids = [];
+    $deletedOids = [];
     if ($this->isActive) {
       $knowTypes = $this->persistenceFacade->getKnownTypes();
       try {
@@ -118,9 +120,9 @@ class DefaultTransaction implements Transaction {
           $oldState = sizeof($this->newObjects).':'.
                   sizeof($this->dirtyObjects).':'.
                   sizeof($this->deletedObjects);
-          $changedOids = array_merge($changedOids, $this->processInserts());
-          $this->processUpdates();
-          $this->processDeletes();
+          $insertedOids = array_merge($insertedOids, $this->processInserts());
+          $updatedOids = array_merge($updatedOids, $this->processUpdates());
+          $deletedOids = array_merge($deletedOids, $this->processDeletes());
           // check queues after processing
           $newState = sizeof($this->newObjects).':'.
                   sizeof($this->dirtyObjects).':'.
@@ -157,8 +159,7 @@ class DefaultTransaction implements Transaction {
     $this->isActive = false;
     $this->isInCommit = false;
     $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
-        TransactionEvent::AFTER_COMMIT, $changedOids));
-    return $changedOids;
+        TransactionEvent::AFTER_COMMIT, $insertedOids, $updatedOids, $deletedOids));
   }
 
   /**
@@ -213,19 +214,23 @@ class DefaultTransaction implements Transaction {
   public function detach(ObjectId $oid) {
     $key = $oid->__toString();
     if (isset($this->newObjects[$key])) {
+      $object = $this->newObjects[$key];
       unset($this->newObjects[$key]);
     }
     if (isset($this->dirtyObjects[$key])) {
+      $object = $this->dirtyObjects[$key];
       unset($this->dirtyObjects[$key]);
     }
     if (isset($this->deletedObjects[$key])) {
+      $object = $this->deletedObjects[$key];
       unset($this->deletedObjects[$key]);
     }
     if (isset($this->loadedObjects[$key])) {
+      $object = $this->loadedObjects[$key];
       unset($this->loadedObjects[$key]);
     }
     unset($this->observedObjects[$key]);
-    $this->detachedObjects[$key] = $oid;
+    $this->detachedObjects[$key] = $object;
   }
 
   /**
@@ -375,10 +380,10 @@ class DefaultTransaction implements Transaction {
 
   /**
    * Process the new objects queue
-   * @return Map of oid changes (key: oid string before commit, value: oid string after commit)
+   * @return Map of oids of inserted objects (key: oid string before commit, value: oid string after commit)
    */
   protected function processInserts() {
-    $changedOids = [];
+    $insertedOids = [];
     $pendingInserts = [];
     $insertOids = array_keys($this->newObjects);
     while (sizeof($insertOids) > 0) {
@@ -404,7 +409,7 @@ class DefaultTransaction implements Transaction {
       if ($canInsert) {
         $oldOid = $object->getOID();
         $object->getMapper()->save($object);
-        $changedOids[$oldOid->__toString()] = $object->getOID()->__toString();
+        $insertedOids[$oldOid->__toString()] = $object->getOID()->__toString();
       }
       unset($this->newObjects[$key]);
       $insertOids = array_keys($this->newObjects);
@@ -416,13 +421,15 @@ class DefaultTransaction implements Transaction {
       $key = $object->getOID()->__toString();
       $this->newObjects[$key] = $object;
     }
-    return $changedOids;
+    return $insertedOids;
   }
 
   /**
    * Process the dirty objects queue
+   * @return Array of oid strings of updated objects
    */
   protected function processUpdates() {
+    $updatedOids = [];
     $updateOids = array_keys($this->dirtyObjects);
     while (sizeof($updateOids) > 0) {
       $key = array_shift($updateOids);
@@ -432,14 +439,18 @@ class DefaultTransaction implements Transaction {
       $object = $this->dirtyObjects[$key];
       $object->getMapper()->save($object);
       unset($this->dirtyObjects[$key]);
+      $updatedOids[] = $key;
       $updateOids = array_keys($this->dirtyObjects);
     }
+    return $updatedOids;
   }
 
   /**
    * Process the deleted objects queue
+   * @return Array of oid strings of deleted objects
    */
   protected function processDeletes() {
+    $deletedOids = [];
     $deleteOids = array_keys($this->deletedObjects);
     while (sizeof($deleteOids) > 0) {
       $key = array_shift($deleteOids);
@@ -449,8 +460,10 @@ class DefaultTransaction implements Transaction {
       $object = $this->deletedObjects[$key];
       $object->getMapper()->delete($object);
       unset($this->deletedObjects[$key]);
+      $deletedOids[] = $key;
       $deleteOids = array_keys($this->deletedObjects);
     }
+    return $deletedOids;
   }
 
   /**
@@ -461,8 +474,7 @@ class DefaultTransaction implements Transaction {
     $object = $event->getObject();
 
     // don't listen to detached object changes
-    $key = $object->getOID()->__toString();
-    if (isset($this->detachedObjects[$key])) {
+    if (in_array($object, array_values($this->detachedObjects))) {
       return;
     }
 
