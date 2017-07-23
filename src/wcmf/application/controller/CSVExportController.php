@@ -68,8 +68,7 @@ class CSVExportController extends BatchController {
 
       // set the cache section and directory for the download file
       $config = $this->getConfiguration();
-      $cacheBaseDir = $config->hasValue('cacheDir', 'DynamicCache') ?
-        WCMF_BASE.$config->getValue('cacheDir', 'DynamicCache') : session_save_path();
+      $cacheBaseDir = WCMF_BASE.$config->getValue('cacheDir', 'StaticCache');
       $cacheSection = 'csv-export-'.uniqid().'/cache';
       $downloadDir = $cacheBaseDir.dirname($cacheSection).'/';
       FileUtil::mkdirRec($downloadDir);
@@ -216,6 +215,16 @@ class CSVExportController extends BatchController {
       }
     }
     fclose($fileHandle);
+  }
+
+  /**
+   * @see BatchController::cleanup()
+   */
+  protected function cleanup() {
+  	$downloadDir = dirname($this->getRequestValue('downloadFile'));
+  	FileUtil::emptyDir($downloadDir);
+  	rmdir($downloadDir);
+  	parent::cleanup();
   }
 }
 ?>

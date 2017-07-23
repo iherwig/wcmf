@@ -48,7 +48,7 @@ class FileCache implements Cache {
   }
 
   /**
-   * Set the cache directory (defaults to session_save_path if not given).
+   * Set the cache directory (defaults to WCMF_BASE/app/cache/ if not given).
    * If not existing, the directory will be created relative to WCMF_BASE.
    * @param $cacheDir String
    */
@@ -174,7 +174,7 @@ class FileCache implements Cache {
    */
   private function getCacheDir() {
     if ($this->cacheDir == null) {
-      $this->cacheDir = session_save_path().DIRECTORY_SEPARATOR;
+      $this->cacheDir = WCMF_BASE.'/app/cache/';
     }
     return $this->cacheDir;
   }

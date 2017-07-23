@@ -82,7 +82,7 @@ class XMLExportController extends BatchController {
    * @param $localization
    * @param $message
    * @param $configuration
-   * @param $dynamicCache
+   * @param $staticCache
    */
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
@@ -91,10 +91,10 @@ class XMLExportController extends BatchController {
           Localization $localization,
           Message $message,
           Configuration $configuration,
-          Cache $dynamicCache) {
+          Cache $staticCache) {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
-    $this->cache = $dynamicCache;
+    $this->cache = $staticCache;
     $this->fileUtil = new FileUtil();
   }
 
@@ -131,8 +131,7 @@ class XMLExportController extends BatchController {
 
       // set the cache section and directory for the download file
       $config = $this->getConfiguration();
-      $cacheBaseDir = $config->hasValue('cacheDir', 'DynamicCache') ?
-        WCMF_BASE.$config->getValue('cacheDir', 'DynamicCache') : session_save_path();
+      $cacheBaseDir = WCMF_BASE.$config->getValue('cacheDir', 'StaticCache');
       $cacheSection = 'xml-export-'.uniqid().'/cache';
       $downloadDir = $cacheBaseDir.dirname($cacheSection).'/';
       FileUtil::mkdirRec($downloadDir);
@@ -458,6 +457,16 @@ class XMLExportController extends BatchController {
    */
   protected function formatValue($value) {
     return htmlentities(str_replace(["\r", "\n"], ["", ""], nl2br($value)), ENT_QUOTES);
+  }
+
+  /**
+   * @see BatchController::cleanup()
+   */
+  protected function cleanup() {
+    $downloadDir = dirname($this->getRequestValue('downloadFile'));
+    FileUtil::emptyDir($downloadDir);
+    rmdir($downloadDir);
+    parent::cleanup();
   }
 }
 ?>

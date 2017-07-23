@@ -23,21 +23,16 @@ use wcmf\test\lib\BaseTestCase;
 class InifileConfigurationTest extends BaseTestCase {
 
   const INI_FILE = WCMF_BASE.'app/config/config.ini';
-  const SESSION_SAVE_PATH = WCMF_BASE.'app/cache';
-
-  private $defaultSessionSavePath = '';
+  const CONFIG_CACHE_PATH = WCMF_BASE.'app/config/cache';
 
   protected function setUp() {
-    $this->defaultSessionSavePath = session_save_path();
-    FileUtil::mkdirRec(self::SESSION_SAVE_PATH);
-    FileUtil::emptyDir(self::SESSION_SAVE_PATH);
-    session_save_path(self::SESSION_SAVE_PATH);
+    FileUtil::mkdirRec(self::CONFIG_CACHE_PATH);
+    FileUtil::emptyDir(self::CONFIG_CACHE_PATH);
     parent::setUp();
   }
 
   protected function tearDown() {
-    FileUtil::emptyDir(self::SESSION_SAVE_PATH);
-    session_save_path($this->defaultSessionSavePath);
+    FileUtil::emptyDir(self::CONFIG_CACHE_PATH);
     parent::tearDown();
   }
 

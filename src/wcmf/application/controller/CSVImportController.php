@@ -68,7 +68,7 @@ class CSVImportController extends BatchController {
    * @param $localization
    * @param $message
    * @param $configuration
-   * @param $dynamicCache
+   * @param $staticCache
    */
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
@@ -77,10 +77,10 @@ class CSVImportController extends BatchController {
           Localization $localization,
           Message $message,
           Configuration $configuration,
-          Cache $dynamicCache) {
+          Cache $staticCache) {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
-    $this->cache = $dynamicCache;
+    $this->cache = $staticCache;
     $this->fileUtil = new FileUtil();
   }
 
@@ -98,8 +98,7 @@ class CSVImportController extends BatchController {
       // move the file upload
       if ($request->hasValue('docFile')) {
         $config = $this->getConfiguration();
-        $cacheBaseDir = $config->hasValue('cacheDir', 'DynamicCache') ?
-          WCMF_BASE.$config->getValue('cacheDir', 'DynamicCache') : session_save_path();
+        $cacheBaseDir = WCMF_BASE.$config->getValue('cacheDir', 'StaticCache');
         $cacheSection = 'csv-import-'.uniqid().'/cache';
         $uploadDir = $cacheBaseDir.dirname($cacheSection).'/';
         FileUtil::mkdirRec($uploadDir);
@@ -288,6 +287,16 @@ class CSVImportController extends BatchController {
     // update stats
     $this->cache->put($cacheSection, self::CACHE_KEY_STATS, $stats);
     $this->getResponse()->setValue('stats', $stats);
+  }
+
+  /**
+   * @see BatchController::cleanup()
+   */
+  protected function cleanup() {
+    $uploadDir = dirname($this->getRequestValue('uploadFile'));
+    FileUtil::emptyDir($uploadDir);
+    rmdir($uploadDir);
+    parent::cleanup();
   }
 }
 ?>

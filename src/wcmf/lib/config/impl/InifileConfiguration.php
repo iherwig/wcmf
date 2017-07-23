@@ -652,6 +652,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       if (self::$logger->isDebugEnabled()) {
         self::$logger->debug("Serialize configuration: ".join(',', $this->addedFiles)." to file: ".$cacheFile);
       }
+      $this->fileUtil->mkdirRec(dirname($cacheFile));
       if ($fh = @fopen($cacheFile, "w")) {
         if (@fwrite($fh, serialize(get_object_vars($this)))) {
           @fclose($fh);
@@ -701,8 +702,8 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @return Filename
    */
   protected function getSerializeFilename($parsedFiles) {
-    $path = session_save_path().DIRECTORY_SEPARATOR;
-    $filename = $path.'wcmf_config_'.md5(realpath($this->configPath).'/'.join('_', $parsedFiles));
+    $path = $this->fileUtil->realpath($this->configPath).'/cache/';
+    $filename = $path.'wcmf_config_'.md5($this->fileUtil->realpath($this->configPath).'/'.join('_', $parsedFiles));
     return $filename;
   }
 

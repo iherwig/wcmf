@@ -61,8 +61,9 @@ class SmartyView implements View {
     $this->view->loadFilter('output', 'trimwhitespace');
 
     // setup default smarty directories
+    // will be overridden by call to setCacheDir
     $this->view->setTemplateDir(WCMF_BASE);
-    $cacheDir = session_save_path().DIRECTORY_SEPARATOR;
+    $cacheDir = WCMF_BASE.'/smarty/';
     $this->view->setCompileDir($cacheDir.'templates_c/');
     $this->view->setCacheDir($cacheDir.'cache/');
   }
