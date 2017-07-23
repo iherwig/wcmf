@@ -213,6 +213,7 @@ class DefaultTransaction implements Transaction {
    */
   public function detach(ObjectId $oid) {
     $key = $oid->__toString();
+    $object = null;
     if (isset($this->newObjects[$key])) {
       $object = $this->newObjects[$key];
       unset($this->newObjects[$key]);
