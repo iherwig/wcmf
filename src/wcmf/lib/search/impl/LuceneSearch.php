@@ -57,7 +57,7 @@ class LuceneSearch implements IndexedSearch {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
     $this->indexStrategy = new DefaultIndexStrategy();
-    
+
     // listen to object change events
     ObjectFactory::getInstance('eventManager')->addListener(TransactionEvent::NAME,
       [$this, 'afterCommit']);
@@ -71,7 +71,7 @@ class LuceneSearch implements IndexedSearch {
     ObjectFactory::getInstance('eventManager')->removeListener(TransactionEvent::NAME,
       [$this, 'afterCommit']);
   }
-  
+
   /**
    * Set the IndexStrategy instance.
    * @param $indexStrategy
@@ -250,10 +250,10 @@ class LuceneSearch implements IndexedSearch {
         if (self::$logger->isDebugEnabled()) {
           self::$logger->debug("Add/Update index for: ".$oidStr." language:".$language);
         }
-        
+
         $doc = $this->indexStrategy->getDocument($indexObj);
 
-        $this->deleteFromIndex($obj);
+        $this->deleteFromIndex($obj->getOID());
         $index->addDocument($doc);
       }
       $this->indexIsDirty = true;
@@ -263,20 +263,18 @@ class LuceneSearch implements IndexedSearch {
   /**
    * @see IndexedSearch::deleteFromIndex()
    */
-  public function deleteFromIndex(PersistentObject $obj) {
-    if ($this->isSearchable($obj)) {
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug("Delete from index: ".$obj->getOID());
-      }
-      $index = $this->getIndex();
-
-      $term = new Term($obj->getOID()->__toString(), 'oid');
-      $docIds = $index->termDocs($term);
-      foreach ($docIds as $id) {
-        $index->delete($id);
-      }
-      $this->indexIsDirty = true;
+  public function deleteFromIndex(ObjectId $oid) {
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Delete from index: ".$oid);
     }
+    $index = $this->getIndex();
+
+    $term = new Term($oid->__toString(), 'oid');
+    $docIds = $index->termDocs($term);
+    foreach ($docIds as $id) {
+      $index->delete($id);
+    }
+    $this->indexIsDirty = true;
   }
 
   /**
@@ -293,8 +291,7 @@ class LuceneSearch implements IndexedSearch {
       }
       // remove deleted objects
       foreach ($event->getDeletedOids() as $oid) {
-        $object = $persistenceFacade->load(ObjectId::parse($oid));
-        $this->deleteFromIndex($object);
+        $this->deleteFromIndex($oid);
       }
     }
   }
