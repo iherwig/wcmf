@@ -291,7 +291,7 @@ class LuceneSearch implements IndexedSearch {
       }
       // remove deleted objects
       foreach ($event->getDeletedOids() as $oid) {
-        $this->deleteFromIndex($oid);
+        $this->deleteFromIndex(ObjectId::parse($oid));
       }
     }
   }
