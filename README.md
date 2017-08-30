@@ -11,7 +11,6 @@ PHP web application, e.g. CRM, CMS from an UML model.
 [![Packagist License](https://img.shields.io/packagist/l/wcmf/wcmf.svg?style=flat-square)](https://github.com/iherwig/wcmf/blob/master/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/wcmf/wcmf.svg?style=flat-square)](https://packagist.org/packages/wcmf/wcmf)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/wcmf/wcmf.svg?style=flat-square)](https://packagist.org/packages/wcmf/wcmf)
-[![Packagist Downloads/Month](https://img.shields.io/packagist/dm/wcmf/wcmf.svg?style=flat-square)](https://packagist.org/packages/wcmf/wcmf)
 
 Features
 --------
