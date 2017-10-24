@@ -103,6 +103,8 @@ class SaveControllerTest extends ControllerTestCase {
     // test
     $translatedObj = ObjectFactory::getInstance('localization')->loadTranslatedObject($oid, 'de');
     $this->assertEquals('title [de]', $translatedObj->getValue('title'));
+    $originalObj = $persistenceFacade->load($oid);
+    $this->assertEquals('title [en]', $originalObj->getValue('title'));
 
     TestUtil::endSession();
   }
