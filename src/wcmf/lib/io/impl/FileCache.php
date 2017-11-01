@@ -10,9 +10,7 @@
  */
 namespace wcmf\lib\io\impl;
 
-use wcmf\lib\config\ConfigChangeEvent;
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\Cache;
 use wcmf\lib\io\FileUtil;
 
@@ -32,19 +30,11 @@ class FileCache implements Cache {
 
   /**
    * Constructor
+   * @param $cacheDir
    */
-  public function __construct() {
+  public function __construct($cacheDir=null) {
     $this->fileUtil = new FileUtil();
-    ObjectFactory::getInstance('eventManager')->addListener(ConfigChangeEvent::NAME,
-      [$this, 'configChanged']);
-  }
-
-  /**
-   * Destructor.
-   */
-  public function __destruct() {
-    ObjectFactory::getInstance('eventManager')->removeListener(ConfigChangeEvent::NAME,
-      [$this, 'configChanged']);
+    $this->cacheDir = $cacheDir;
   }
 
   /**
@@ -186,14 +176,6 @@ class FileCache implements Cache {
    */
   private function getCacheFile($section) {
     return $this->getCacheDir().$section;
-  }
-
-  /**
-   * Listen to ConfigChangeEvents
-   * @param $event ConfigChangeEvent instance
-   */
-  public function configChanged(ConfigChangeEvent $event) {
-    $this->clearAll();
   }
 }
 ?>

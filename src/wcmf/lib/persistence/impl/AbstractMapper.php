@@ -14,6 +14,7 @@ use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\ObjectId;
@@ -78,6 +79,20 @@ abstract class AbstractMapper implements PersistenceMapper {
   }
 
   /**
+   * @see PersistenceMapper::getTypeDisplayName()
+   */
+  public function getTypeDisplayName(Message $message) {
+    return $message->getText($this->getType());
+  }
+  
+  /**
+   * @see PersistenceMapper::getTypeDescription()
+   */
+  public function getTypeDescription(Message $message) {
+    return $message->getText("");
+  }
+  
+  /**
    * @see PersistenceMapper::hasRelation()
    */
   public function hasRelation($roleName) {
@@ -111,6 +126,27 @@ abstract class AbstractMapper implements PersistenceMapper {
     }
     $this->attributeNames[$name] = false;
     return false;
+  }
+
+  /**
+   * @see PersistenceMapper::getAttributeDisplayName()
+   */
+  public function getAttributeDisplayName($name, Message $message) {
+    return $message->getText($name);
+  }
+
+  /**
+   * @see PersistenceMapper::getAttributeDescription()
+   */
+  public function getAttributeDescription($name, Message $message) {
+    return $message->getText("");
+  }
+
+  /**
+   * @see PersistenceMapper::getProperties()
+   */
+  public function getProperties() {
+    return [];
   }
 
   /**

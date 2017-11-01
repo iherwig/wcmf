@@ -50,26 +50,6 @@ interface PersistenceMapper {
   public function getPkNames();
 
   /**
-   * Get the symbol used to quote identifiers.
-   * @return String
-   */
-  public function getQuoteIdentifierSymbol();
-
-  /**
-   * Add quotation to a given identifier (like column name).
-   * @param $identifier The identifier string
-   * @return String
-   */
-  public function quoteIdentifier($identifier);
-
-  /**
-   * Add quotation to a given value.
-   * @param $value The value
-   * @return String
-   */
-  public function quoteValue($value);
-
-  /**
    * Get the relations for this type
    * @param $hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations (default: 'all')

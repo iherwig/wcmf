@@ -17,6 +17,7 @@ use wcmf\lib\config\WritableConfiguration;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\Cache;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\IOException;
 use wcmf\lib\util\StringUtil;
@@ -42,6 +43,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   private $configPath = null;
   private $configExtension = 'ini';
+  private $configCache = null;
 
   private $fileUtil = null;
 
@@ -50,9 +52,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Constructor.
    * @param $configPath The path, either absolute or relative to the executed script
+   * @param $configCache Cache instance used for caching configurations (optional)
    */
-  public function __construct($configPath) {
+  public function __construct($configPath, Cache $configCache=null) {
     $this->configPath = $configPath;
+    $this->configCache = $configCache;
     $this->fileUtil = new FileUtil();
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);

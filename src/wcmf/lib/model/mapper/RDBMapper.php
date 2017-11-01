@@ -248,7 +248,8 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceMapper::getQuoteIdentifierSymbol
+   * Get the symbol used to quote identifiers.
+   * @return String
    */
   public function getQuoteIdentifierSymbol() {
     if ($this->adapter == null) {
@@ -258,7 +259,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceMapper::quoteIdentifier
+   * Add quotation to a given identifier (like column name).
+   * @param $identifier The identifier string
+   * @return String
    */
   public function quoteIdentifier($identifier) {
     if ($this->adapter == null) {
@@ -268,7 +271,9 @@ abstract class RDBMapper extends AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceMapper::quoteValue
+   * Add quotation to a given value.
+   * @param $value The value
+   * @return String
    */
   public function quoteValue($value) {
     if ($this->adapter == null) {

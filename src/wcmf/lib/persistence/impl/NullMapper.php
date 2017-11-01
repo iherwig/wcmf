@@ -55,27 +55,6 @@ class NullMapper implements PersistenceMapper {
   }
 
   /**
-   * @see PersistenceMapper::getQuoteIdentifierSymbol()
-   */
-  public function getQuoteIdentifierSymbol() {
-    return '';
-  }
-
-  /**
-   * @see PersistenceMapper::quoteIdentifier()
-   */
-  public function quoteIdentifier($identifier) {
-    return $identifier;
-  }
-
-  /**
-   * @see PersistenceMapper::quoteValue()
-   */
-  public function quoteValue($value) {
-    return $value;
-  }
-
-  /**
    * @see PersistenceMapper::getRelations()
    */
   public function getRelations($hierarchyType='all') {
