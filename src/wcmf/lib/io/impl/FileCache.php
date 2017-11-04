@@ -30,11 +30,11 @@ class FileCache implements Cache {
 
   /**
    * Constructor
-   * @param $cacheDir
+   * @param $cacheDir String
    */
   public function __construct($cacheDir=null) {
     $this->fileUtil = new FileUtil();
-    $this->cacheDir = $cacheDir;
+    $this->cacheDir = WCMF_BASE.$cacheDir;
   }
 
   /**

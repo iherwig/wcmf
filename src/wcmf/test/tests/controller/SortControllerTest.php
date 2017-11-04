@@ -75,7 +75,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205]));
+    $this->assertTrue($this->checkChapterOrder([203, 204, 205]));
 
     // simulate a movebefore call
     $data = [
@@ -85,7 +85,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('moveBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([205, 203, 204]));
+    $this->assertTrue($this->checkChapterOrder([205, 203, 204]));
 
     TestUtil::endSession();
   }
@@ -97,7 +97,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205]));
+    $this->assertTrue($this->checkChapterOrder([203, 204, 205]));
 
     // simulate a movebefore call
     $data = [
@@ -107,7 +107,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('moveBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([203, 205, 204]));
+    $this->assertTrue($this->checkChapterOrder([203, 205, 204]));
 
     TestUtil::endSession();
   }
@@ -119,7 +119,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205]));
+    $this->assertTrue($this->checkChapterOrder([203, 204, 205]));
 
     // simulate a movebefore call
     $data = [
@@ -129,7 +129,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('moveBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([204, 205, 203]));
+    $this->assertTrue($this->checkChapterOrder([204, 205, 203]));
 
     TestUtil::endSession();
   }
@@ -141,7 +141,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+    $this->assertTrue($this->checkChapterOrder([203, 204, 205], 100));
 
     // simulate a insertbefore call
     $data = [
@@ -153,7 +153,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([205, 203, 204], 100));
+    $this->assertTrue($this->checkChapterOrder([205, 203, 204], 100));
 
     TestUtil::endSession();
   }
@@ -165,7 +165,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+    $this->assertTrue($this->checkChapterOrder([203, 204, 205], 100));
 
     // simulate a insertbefore call
     $data = [
@@ -177,7 +177,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([203, 205, 204], 100));
+    $this->assertTrue($this->checkChapterOrder([203, 205, 204], 100));
 
     TestUtil::endSession();
   }
@@ -189,7 +189,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testChapterOrder([203, 204, 205], 100));
+    $this->assertTrue($this->checkChapterOrder([203, 204, 205], 100));
 
     // simulate a insertbefore call
     $data = [
@@ -201,7 +201,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testChapterOrder([204, 205, 203], 100));
+    $this->assertTrue($this->checkChapterOrder([204, 205, 203], 100));
 
     TestUtil::endSession();
   }
@@ -213,7 +213,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testImageOrder([503, 504, 505]));
+    $this->assertTrue($this->checkImageOrder([503, 504, 505]));
 
     // simulate a movebefore call
     $data = [
@@ -223,7 +223,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('moveBefore', $data);
 
     // test
-    $this->assertTrue($this->testImageOrder([505, 503, 504]));
+    $this->assertTrue($this->checkImageOrder([505, 503, 504]));
 
     TestUtil::endSession();
   }
@@ -235,7 +235,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testImageOrder([503, 504, 505]));
+    $this->assertTrue($this->checkImageOrder([503, 504, 505]));
 
     // simulate a movebefore call
     $data = [
@@ -245,7 +245,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('moveBefore', $data);
 
     // test
-    $this->assertTrue($this->testImageOrder([503, 505, 504]));
+    $this->assertTrue($this->checkImageOrder([503, 505, 504]));
 
     TestUtil::endSession();
   }
@@ -257,7 +257,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testImageOrder([503, 504, 505]));
+    $this->assertTrue($this->checkImageOrder([503, 504, 505]));
 
     // simulate a movebefore call
     $data = [
@@ -267,7 +267,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('moveBefore', $data);
 
     // test
-    $this->assertTrue($this->testImageOrder([504, 505, 503]));
+    $this->assertTrue($this->checkImageOrder([504, 505, 503]));
 
     TestUtil::endSession();
   }
@@ -279,7 +279,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
+    $this->assertTrue($this->checkImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
     $data = [
@@ -291,7 +291,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testImageOrder([505, 503, 504], 203));
+    $this->assertTrue($this->checkImageOrder([505, 503, 504], 203));
 
     TestUtil::endSession();
   }
@@ -303,7 +303,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
+    $this->assertTrue($this->checkImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
     $data = [
@@ -315,7 +315,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testImageOrder([503, 505, 504], 203));
+    $this->assertTrue($this->checkImageOrder([503, 505, 504], 203));
 
     TestUtil::endSession();
   }
@@ -327,7 +327,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testImageOrder([503, 504, 505], 203));
+    $this->assertTrue($this->checkImageOrder([503, 504, 505], 203));
 
     // simulate a insertbefore call
     $data = [
@@ -339,7 +339,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testImageOrder([504, 505, 503], 203));
+    $this->assertTrue($this->checkImageOrder([504, 505, 503], 203));
 
     TestUtil::endSession();
   }
@@ -351,7 +351,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testNMBookOrder([304, 305, 306], 303));
+    $this->assertTrue($this->checkNMBookOrder([304, 305, 306], 303));
 
     // simulate a insertbefore call
     $data = [
@@ -363,7 +363,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testNMBookOrder([306, 304, 305], 303));
+    $this->assertTrue($this->checkNMBookOrder([306, 304, 305], 303));
 
     TestUtil::endSession();
   }
@@ -375,7 +375,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testNMBookOrder([304, 305, 306], 303));
+    $this->assertTrue($this->checkNMBookOrder([304, 305, 306], 303));
 
     // simulate a insertbefore call
     $data = [
@@ -387,7 +387,7 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testNMBookOrder([304, 306, 305], 303));
+    $this->assertTrue($this->checkNMBookOrder([304, 306, 305], 303));
 
     TestUtil::endSession();
   }
@@ -399,7 +399,7 @@ class SortControllerTest extends ControllerTestCase {
     TestUtil::startSession('admin', 'admin');
 
     // test before
-    $this->assertTrue($this->testNMBookOrder([304, 305, 306], 303));
+    $this->assertTrue($this->checkNMBookOrder([304, 305, 306], 303));
 
     // simulate a insertbefore call
     $data = [
@@ -411,12 +411,12 @@ class SortControllerTest extends ControllerTestCase {
     $this->runRequest('insertBefore', $data);
 
     // test
-    $this->assertTrue($this->testNMBookOrder([305, 306, 304], 303));
+    $this->assertTrue($this->checkNMBookOrder([305, 306, 304], 303));
 
     TestUtil::endSession();
   }
 
-  private function testChapterOrder(array $order, $authorId=null) {
+  private function checkChapterOrder(array $order, $authorId=null) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if ($authorId == null) {
       $chapters = $persistenceFacade->loadObjects('Chapter');
@@ -433,7 +433,7 @@ class SortControllerTest extends ControllerTestCase {
     return true;
   }
 
-  private function testImageOrder(array $order, $chapterId=null) {
+  private function checkImageOrder(array $order, $chapterId=null) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     if ($chapterId == null) {
       $images = $persistenceFacade->loadObjects('Image');
@@ -450,7 +450,7 @@ class SortControllerTest extends ControllerTestCase {
     return true;
   }
 
-  private function testNMBookOrder(array $order, $bookId) {
+  private function checkNMBookOrder(array $order, $bookId) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $referencingBook = $persistenceFacade->load(new ObjectId('Book', $bookId));
     $referencedBooks = $referencingBook->getValue('ReferencedBook');
