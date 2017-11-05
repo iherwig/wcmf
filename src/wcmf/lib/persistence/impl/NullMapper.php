@@ -104,6 +104,13 @@ class NullMapper implements PersistenceMapper {
   }
 
   /**
+   * @see PersistenceMapper::getReferences()
+   */
+  public function getReferences() {
+    return [];
+  }
+
+  /**
    * @see PersistenceMapper::getAttributeDisplayName()
    */
   public function getAttributeDisplayName($name, Message $message) {
