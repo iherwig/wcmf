@@ -8,12 +8,13 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\lib\model\mapper;
+namespace wcmf\lib\model\mapper\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\model\mapper\impl\AbstractRDBMapper;
+use wcmf\lib\model\mapper\RDBAttributeDescription;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBManyToOneRelationDescription;
-use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\RDBOneToManyRelationDescription;
 use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\mapper\SQLConst;
@@ -28,8 +29,8 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\RelationDescription;
-use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\persistence\TransientAttributeDescription;
+use wcmf\lib\persistence\UpdateOperation;
 
 /**
  * NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node
@@ -38,7 +39,7 @@ use wcmf\lib\persistence\TransientAttributeDescription;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class NodeUnifiedRDBMapper extends RDBMapper {
+abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
 
   const CACHE_KEY = 'mapper';
 

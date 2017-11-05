@@ -60,7 +60,7 @@ abstract class AbstractQuery {
     $selectStmt = $this->buildQuery($buildDepth, $orderby);
     $str = $selectStmt->__toString();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $mapper = $persistenceFacade->getMapper($selectStmt->getType());
+    $mapper = self::getMapper($selectStmt->getType());
     foreach ($selectStmt->getParameters() as $key => $value) {
       $value = is_string($value) ? $mapper->quoteValue($value) : $value;
       $str = preg_replace('/'.$key.'/', $value, $str, 1);
