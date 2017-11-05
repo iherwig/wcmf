@@ -279,7 +279,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    */
   protected function getRelationSelectSQL(array $otherObjectProxies,
           $otherRole, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
-    $relationDescription = $this->getRelationImpl($otherRole, true);
+    $relationDescription = $this->getRelationIncludingNM($otherRole);
     if ($relationDescription instanceof RDBManyToOneRelationDescription) {
       return $this->getManyToOneRelationSelectSQL($relationDescription,
               $otherObjectProxies, $otherRole, $criteria, $orderby, $pagingInfo);

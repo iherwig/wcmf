@@ -116,6 +116,12 @@ interface PersistenceMapper {
   public function getAttributeDescription($name, Message $message);
 
   /**
+   * Get the references to other entities
+   * @return Array of ReferenceDescription instances
+   */
+  public function getReferences();
+
+  /**
    * Get meta information on the mapped class.
    * @return Associative array of key value pairs
    */

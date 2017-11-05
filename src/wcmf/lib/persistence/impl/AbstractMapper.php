@@ -22,15 +22,17 @@ use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceEvent;
+use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\security\PermissionManager;
 
 /**
  * AbstractMapper provides a basic implementation for other mapper classes.
- * It handles authorization on entity level and calls the lifecycle callcacks
+ * It handles authorization on entity level and calls the lifecycle callbacks
  * of PersistentObject instances. Authorization on attribute level has to be
  * implemented by subclasses.
  *
@@ -40,8 +42,8 @@ abstract class AbstractMapper implements PersistenceMapper {
 
   private $logStrategy = null;
 
-  private $attributeNames = [];
-  private $relationNames = [];
+  private $attributes = [];
+  private $relations = [];
 
   private static $logger = null;
 
@@ -84,48 +86,67 @@ abstract class AbstractMapper implements PersistenceMapper {
   public function getTypeDisplayName(Message $message) {
     return $message->getText($this->getType());
   }
-  
+
   /**
    * @see PersistenceMapper::getTypeDescription()
    */
   public function getTypeDescription(Message $message) {
     return $message->getText("");
   }
-  
+
   /**
    * @see PersistenceMapper::hasRelation()
    */
   public function hasRelation($roleName) {
-    if (isset($this->relationNames[$roleName])) {
-      return $this->relationNames[$roleName];
+    $this->initRelations();
+    return isset($this->relations['byrole'][$roleName]);
+  }
+
+  /**
+   * @see PersistenceMapper::getRelation()
+   */
+  public function getRelation($roleName) {
+    if ($this->hasRelation($roleName)) {
+      return $this->relations['byrole'][$roleName];
     }
-    $relations = $this->getRelations();
-    foreach ($relations as $relation) {
-      if ($relation->getOtherRole() == $roleName) {
-        $this->relationNames[$roleName] = true;
-        return true;
-      }
+    throw new PersistenceException("No relation to '".$roleName."' exists in '".$this->getType()."'");
+  }
+
+  /**
+   * @see PersistenceMapper::getRelationsByType()
+   */
+  public function getRelationsByType($type) {
+    $this->initRelations();
+    if (isset($this->relations['bytype'][$type])) {
+      return $this->relations['bytype'][$type];
     }
-    $this->relationNames[$roleName] = false;
-    return false;
+    throw new PersistenceException("No relation to '".$type."' exists in '".$this->getType()."'");
   }
 
   /**
    * @see PersistenceMapper::hasAttribute()
    */
   public function hasAttribute($name) {
-    if (isset($this->attributeNames[$name])) {
-      return $this->attributeNames[$name];
+    $this->initAttributes();
+    return isset($this->attributes['byname'][$name]);
+  }
+
+  /**
+   * @see PersistenceMapper::getAttribute()
+   */
+  public function getAttribute($name) {
+    if ($this->hasAttribute($name)) {
+      return $this->attributes['byname'][$name];
     }
-    $attributes = $this->getAttributes();
-    foreach ($attributes as $attribute) {
-      if ($attribute->getName() === $name) {
-        $this->attributeNames[$name] = true;
-        return true;
-      }
-    }
-    $this->attributeNames[$name] = false;
-    return false;
+    throw new PersistenceException("No attribute '".$name."' exists in '".$this->getType()."'");
+  }
+
+  /**
+   * @see PersistenceMapper::getReferences()
+   */
+  public function getReferences() {
+    $this->initAttributes();
+    return $this->attributes['refs'];
   }
 
   /**
@@ -392,9 +413,49 @@ abstract class AbstractMapper implements PersistenceMapper {
   }
 
   /**
+   * Initialize relations.
+   */
+  private function initRelations() {
+    if ($this->relations == null) {
+      $this->relations = [];
+      $this->relations['byrole'] = [];
+      $this->relations['bytype'] = [];
+
+      $relations = $this->getRelations();
+      foreach ($relations as $relation) {
+        $this->relations['byrole'][$relation->getOtherRole()] = $relation;
+        $otherType = $relation->getOtherType();
+        if (!isset($this->relations['bytype'][$otherType])) {
+          $this->relations['bytype'][$otherType] = [];
+        }
+        $this->relations['bytype'][$otherType][] = $relation;
+        $this->relations['bytype'][$this->persistenceFacade->getSimpleType($otherType)][] = $relation;
+      }
+    }
+  }
+
+  /**
+   * Initialize attributes.
+   */
+  private function initAttributes() {
+    if ($this->attributes == null) {
+      $this->attributes = [];
+      $this->attributes['byname'] = [];
+      $this->attributes['refs'] = [];
+
+      $attributes = $this->getAttributes();
+      foreach ($attributes as $attribute) {
+        $this->attributes['byname'][$attribute->getName()] = $attribute;
+        if ($attribute instanceof ReferenceDescription) {
+          $this->attributes['refs'][] = $attribute;
+        }
+      }
+    }
+  }
+
+  /**
    * @see PersistenceFacade::load()
    * @note Precondition: Object rights have been checked already
-   *
    */
   abstract protected function loadImpl(ObjectId $oid, $buildDepth=BuildDepth::SINGLE);
 

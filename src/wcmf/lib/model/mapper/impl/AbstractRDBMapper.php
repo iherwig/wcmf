@@ -34,7 +34,6 @@ use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
-use wcmf\lib\persistence\ReferenceDescription;
 use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\security\PermissionManager;
 use Zend\Db\Adapter\Adapter;
@@ -143,7 +142,6 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     }
     return $this->adapter;
   }
-
 
   /**
    * Get the mapper for a Node and optionally check if it is a supported one.
@@ -442,47 +440,21 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    */
   public function getRelations($hierarchyType='all') {
     $this->initRelations();
-    if ($hierarchyType == 'all') {
-      return array_values($this->relations['byrole']);
-    }
-    else {
-      return $this->relations[$hierarchyType];
-    }
+    return $hierarchyType == 'all' ? $this->relations['all'] : $this->relations[$hierarchyType];
   }
 
   /**
-   * @see PersistenceMapper::getRelation()
-   */
-  public function getRelation($roleName) {
-    return $this->getRelationImpl($roleName, false);
-  }
-
-  /**
-   * @see PersistenceMapper::getRelationsByType()
-   */
-  public function getRelationsByType($type) {
-    $this->initRelations();
-    if (isset($this->relations['bytype'][$type])) {
-      return $this->relations['bytype'][$type];
-    }
-    else {
-      throw new PersistenceException("No relation to '".$type."' exists in '".$this->getType()."'");
-    }
-  }
-
-  /**
-   * Internal implementation of PersistenceMapper::getRelation()
+   * Implementation of PersistenceMapper::getRelation() including nm classes in
+   *    many to many relations
    * @param $roleName The role name of the relation
-   * @param $includeManyToMany Boolean whether to also search in relations to many to many
-   *    objects or not
    * @return RelationDescription
    */
-  protected function getRelationImpl($roleName, $includeManyToMany) {
+  protected function getRelationIncludingNM($roleName) {
     $this->initRelations();
-    if (isset($this->relations['byrole'][$roleName])) {
-      return $this->relations['byrole'][$roleName];
+    if ($this->hasRelation($roleName)) {
+      return $this->getRelation($roleName);
     }
-    elseif ($includeManyToMany && isset($this->relations['nm'][$roleName])) {
+    elseif (isset($this->relations['nm'][$roleName])) {
       return $this->relations['nm'][$roleName];
     }
     else {
@@ -496,36 +468,23 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   private function initRelations() {
     if ($this->relations == null) {
       $this->relations = [];
-      $this->relations['byrole'] = $this->getRelationDescriptions();
-      $this->relations['bytype'] = [];
+      $this->relations['all'] = array_values($this->getRelationDescriptions());
       $this->relations['parent'] = [];
       $this->relations['child'] = [];
       $this->relations['undefined'] = [];
       $this->relations['nm'] = [];
 
-      foreach ($this->relations['byrole'] as $role => $desc) {
-        $otherType = $desc->getOtherType();
-        if (!isset($this->relations['bytype'][$otherType])) {
-          $this->relations['bytype'][$otherType] = [];
-        }
-        $this->relations['bytype'][$otherType][] = $desc;
-        $this->relations['bytype'][$this->persistenceFacade->getSimpleType($otherType)][] = $desc;
+      foreach ($this->relations['all'] as $relation) {
+        $hierarchyType = $relation->getHierarchyType();
+        $hierarchyKey = $hierarchyType == 'parent' || $hierarchyType == 'child' ?
+                $hierarchyType : 'undefined';
+        $this->relations[$hierarchyKey][] = $relation;
 
-        $hierarchyType = $desc->getHierarchyType();
-        if ($hierarchyType == 'parent') {
-          $this->relations['parent'][] = $desc;
-        }
-        elseif ($hierarchyType == 'child') {
-          $this->relations['child'][] = $desc;
-        }
-        else {
-          $this->relations['undefined'][] = $desc;
-        }
         // also store relations to many to many objects, because
         // they would be invisible otherwise
-        if ($desc instanceof RDBManyToManyRelationDescription) {
-          $nmDesc = $desc->getThisEndRelation();
-          $this->relations['nm'][$nmDesc->getOtherRole()] = $nmDesc;
+        if ($relation instanceof RDBManyToManyRelationDescription) {
+          $nmRelation = $relation->getThisEndRelation();
+          $this->relations['nm'][$nmRelation->getOtherRole()] = $nmRelation;
         }
       }
     }
@@ -538,12 +497,12 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     $this->initAttributes();
     $result = [];
     if (sizeof($tags) == 0) {
-      $result = array_values($this->attributes['byname']);
+      $result = $this->attributes;
     }
     else {
-      foreach ($this->attributes['byname'] as $name => $desc) {
-        if ($desc->matchTags($tags, $matchMode)) {
-          $result[] = $desc;
+      foreach ($this->attributes as $attribute) {
+        if ($attribute->matchTags($tags, $matchMode)) {
+          $result[] = $attribute;
         }
       }
     }
@@ -551,40 +510,11 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   }
 
   /**
-   * @see PersistenceMapper::getAttribute()
-   */
-  public function getAttribute($name) {
-    $this->initAttributes();
-    if (isset($this->attributes['byname'][$name])) {
-      return $this->attributes['byname'][$name];
-    }
-    else {
-      throw new PersistenceException("No attribute '".$name."' exists in '".$this->getType()."'");
-    }
-  }
-
-  /**
-   * Get the references to other entities
-   * @return Array of AttributeDescription instances
-   */
-  protected function getReferences() {
-    $this->initAttributes();
-    return $this->attributes['refs'];
-  }
-
-  /**
-   * Get the relation descriptions defined in the subclass and add them to internal arrays.
+   * Get the attribute descriptions defined in the subclass and add them to internal arrays.
    */
   private function initAttributes() {
     if ($this->attributes == null) {
-      $this->attributes = [];
-      $this->attributes['byname'] = $this->getAttributeDescriptions();
-      $this->attributes['refs'] = [];
-      foreach ($this->attributes['byname'] as $name => $attrDesc) {
-        if ($attrDesc instanceof ReferenceDescription) {
-          $this->attributes['refs'][] = $attrDesc;
-        }
-      }
+      $this->attributes = array_values($this->getAttributeDescriptions());
     }
   }
 
@@ -1072,7 +1002,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       return $relatives;
     }
 
-    $otherRelationDescription = $this->getRelationImpl($role, true);
+    $otherRelationDescription = $this->getRelationIncludingNM($role);
     if ($otherRelationDescription->getOtherNavigability() == true) {
       $otherType = $otherRelationDescription->getOtherType();
       $otherMapper = self::getMapper($otherType);
@@ -1080,7 +1010,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       // load related objects from other mapper
       $relatedObjects = [];
       $thisRole = $otherRelationDescription->getThisRole();
-      $thisRelationDescription = $otherMapper->getRelationImpl($thisRole, true);
+      $thisRelationDescription = $otherMapper->getRelationIncludingNM($thisRole);
       if ($thisRelationDescription->getOtherNavigability() == true) {
         list($selectStmt, $objValueName, $relValueName) = $otherMapper->getRelationSelectSQL($objects, $thisRole, $criteria, $orderby, $pagingInfo);
         $originalData = [];
