@@ -17,7 +17,6 @@ use wcmf\lib\config\WritableConfiguration;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\io\Cache;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\IOException;
 use wcmf\lib\util\StringUtil;
@@ -43,7 +42,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   private $configPath = null;
   private $configExtension = 'ini';
-  private $configCache = null;
+  private $cachePath = null;
 
   private $fileUtil = null;
 
@@ -52,11 +51,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Constructor.
    * @param $configPath The path, either absolute or relative to the executed script
-   * @param $configCache Cache instance used for caching configurations (optional)
+   * @param $cachePath The cache path, either absolute or relative to the executed script (optional)
    */
-  public function __construct($configPath, Cache $configCache=null) {
+  public function __construct($configPath, $cachePath=null) {
     $this->configPath = $configPath;
-    $this->configCache = $configCache;
+    $this->cachePath = $cachePath;
     $this->fileUtil = new FileUtil();
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
@@ -103,7 +102,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
         self::$logger->debug("File date ".$addedFile.": ".@filemtime($addedFile));
       }
       $cachedFile = $this->getSerializeFilename($this->addedFiles);
-      self::$logger->debug("File date ".$cachedFile.": ".@filemtime($cachedFile));
+      self::$logger->debug("Cache file date ".$cachedFile.": ".@filemtime($cachedFile));
     }
     if ($numParsedFiles > 0 && $lastFile == $filename &&
             !$this->checkFileDate($this->addedFiles, $this->getSerializeFilename($this->addedFiles))) {
@@ -648,11 +647,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   }
 
   /**
-   * Store the instance in the filesystem. If the instance is modified, this call is ignored.
+   * Store the instance in the file system. If the instance is modified, this call is ignored.
    */
   protected function serialize() {
-    if (!$this->isModified()) {
-      $cacheFile = $this->getSerializeFilename($this->addedFiles);
+    if (!$this->isModified() && ($cacheFile = $this->getSerializeFilename($this->addedFiles))) {
       if (self::$logger->isDebugEnabled()) {
         self::$logger->debug("Serialize configuration: ".join(',', $this->addedFiles)." to file: ".$cacheFile);
       }
@@ -674,27 +672,24 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @return Boolean whether the data could be retrieved or not
    */
   protected function unserialize($parsedFiles) {
-    if (!$this->isModified()) {
-      $cacheFile = $this->getSerializeFilename($parsedFiles);
-      if (file_exists($cacheFile)) {
-        $parsedFiles[] = __FILE__;
-        if (!$this->checkFileDate($parsedFiles, $cacheFile)) {
-          $vars = unserialize(file_get_contents($cacheFile));
+    if (!$this->isModified() && ($cacheFile = $this->getSerializeFilename($parsedFiles)) && file_exists($cacheFile)) {
+      $parsedFiles[] = __FILE__;
+      if (!$this->checkFileDate($parsedFiles, $cacheFile)) {
+        $vars = unserialize(file_get_contents($cacheFile));
 
-          // check if included ini files were updated since last cache time
-          $includes = $vars['containedFiles'];
-          if (is_array($includes)) {
-            if ($this->checkFileDate($includes, $cacheFile)) {
-              return false;
-            }
+        // check if included ini files were updated since last cache time
+        $includes = $vars['containedFiles'];
+        if (is_array($includes)) {
+          if ($this->checkFileDate($includes, $cacheFile)) {
+            return false;
           }
-
-          // everything is up-to-date
-          foreach($vars as $key => $val) {
-            $this->$key = $val;
-          }
-          return true;
         }
+
+        // everything is up-to-date
+        foreach($vars as $key => $val) {
+          $this->$key = $val;
+        }
+        return true;
       }
     }
     return false;
@@ -702,11 +697,15 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Get the filename for the serialized data that correspond to the the given ini file sequence.
+   * NOTE: The method returns null, if no cache path is configured
    * @param $parsedFiles An array of parsed filenames
-   * @return Filename
+   * @return String
    */
   protected function getSerializeFilename($parsedFiles) {
-    $path = $this->fileUtil->realpath($this->configPath).'/cache/';
+    if (!$this->cachePath) {
+      return null;
+    }
+    $path = $this->fileUtil->realpath($this->cachePath).'/';
     $filename = $path.'wcmf_config_'.md5($this->fileUtil->realpath($this->configPath).'/'.join('_', $parsedFiles));
     return $filename;
   }

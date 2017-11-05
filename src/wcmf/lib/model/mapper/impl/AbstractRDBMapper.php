@@ -14,6 +14,7 @@ use PDO;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
@@ -143,6 +144,22 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     return $this->adapter;
   }
 
+
+  /**
+   * Get the mapper for a Node and optionally check if it is a supported one.
+   * @param $type The type of Node to get the mapper for
+   * @param $strict Boolean indicating if the mapper must be an instance of RDBMapper (default true)
+   * @return RDBMapper instance
+   */
+  protected static function getMapper($type, $strict=true) {
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $mapper = $persistenceFacade->getMapper($type);
+    if ($strict && !($mapper instanceof RDBMapper)) {
+      throw new PersistenceException('Only PersistenceMappers of type RDBMapper are supported.');
+    }
+    return $mapper;
+  }
+
   /**
    * Actually connect to the database using the configuration parameters given
    * to the constructor. The implementation ensures that only one connection is
@@ -224,10 +241,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   protected function getNextId() {
     try {
       // get sequence table mapper
-      $sequenceMapper = $this->persistenceFacade->getMapper(self::SEQUENCE_CLASS);
-      if (!($sequenceMapper instanceof RDBMapper)) {
-        throw new PersistenceException(self::SEQUENCE_CLASS." is not mapped by RDBMapper.");
-      }
+      $sequenceMapper = self::getMapper(self::SEQUENCE_CLASS);
       $sequenceTable = $sequenceMapper->getRealTableName();
       $sequenceConn = $sequenceMapper->getConnection();
       $tableName = strtolower($this->getRealTableName());
@@ -651,7 +665,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     }
 
     // map type and attribute, if necessary
-    $mapper = $this->persistenceFacade->getMapper($type);
+    $mapper = self::getMapper($type);
     if ($tableName === null) {
       $tableName = $mapper->getRealTableName();
     }
@@ -757,7 +771,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       // insert new object
       $operations = $this->getInsertSQL($object);
       foreach($operations as $operation) {
-        $mapper = $this->persistenceFacade->getMapper($operation->getType());
+        $mapper = self::getMapper($operation->getType());
         $mapper->executeOperation($operation);
       }
       // log action
@@ -773,7 +787,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       // save object
       $operations = $this->getUpdateSQL($object);
       foreach($operations as $operation) {
-        $mapper = $this->persistenceFacade->getMapper($operation->getType());
+        $mapper = self::getMapper($operation->getType());
         $mapper->executeOperation($operation);
       }
     }
@@ -802,7 +816,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     $affectedRows = 0;
     $operations = $this->getDeleteSQL($oid);
     foreach($operations as $operation) {
-      $mapper = $this->persistenceFacade->getMapper($operation->getType());
+      $mapper = self::getMapper($operation->getType());
       $affectedRows += $mapper->executeOperation($operation);
     }
     // only delete children if the object was deleted
@@ -821,7 +835,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
         // load related objects
         $otherType = $relationDesc->getOtherType();
-        $otherMapper = $this->persistenceFacade->getMapper($otherType);
+        $otherMapper = self::getMapper($otherType, false);
         $allObjects = $this->loadRelationImpl([$proxy], $relationDesc->getOtherRole());
         $oidStr = $proxy->getOID()->__toString();
         if (isset($allObjects[$oidStr])) {
@@ -1061,10 +1075,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     $otherRelationDescription = $this->getRelationImpl($role, true);
     if ($otherRelationDescription->getOtherNavigability() == true) {
       $otherType = $otherRelationDescription->getOtherType();
-      $otherMapper = $this->persistenceFacade->getMapper($otherType);
-      if (!($otherMapper instanceof RDBMapper)) {
-        throw new PersistenceException("Can only load related objects, if they are mapped by an RDBMapper instance.");
-      }
+      $otherMapper = self::getMapper($otherType);
 
       // load related objects from other mapper
       $relatedObjects = [];

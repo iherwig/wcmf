@@ -396,7 +396,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
           PagingInfo $pagingInfo=null) {
     $thisRelationDesc = $relationDescription->getThisEndRelation();
     $otherRelationDesc = $relationDescription->getOtherEndRelation();
-    $nmMapper = $this->persistenceFacade->getMapper($thisRelationDesc->getOtherType());
+    $nmMapper = self::getMapper($thisRelationDesc->getOtherType());
     $otherFkAttr = $nmMapper->getAttribute($otherRelationDesc->getFkName());
     $nmTableName = $nmMapper->getRealTableName();
 
@@ -540,7 +540,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
       $relationDescs = $this->getRelationsByType($referencedType);
       // get relation try role name if ambiguous
       $relationDesc = sizeof($relationDescs) == 1 ? $relationDescs[0] : $this->getRelation($referencedType);
-      $otherMapper = $this->persistenceFacade->getMapper($relationDesc->getOtherType());
+      $otherMapper = self::getMapper($relationDesc->getOtherType());
       if ($otherMapper) {
         $otherTable = $otherMapper->getRealTableName();
         $otherAttributeDesc = $otherMapper->getAttribute($referencedValue);
@@ -653,11 +653,11 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
         $orderAttributeParts = preg_split('/\./', $orderAttribute);
         $orderAttribute = array_pop($orderAttributeParts);
       }
-      $mapper = $orderType != null ? $this->persistenceFacade->getMapper($orderType) : $this;
+      $mapper = $orderType != null ? self::getMapper($orderType) : $this;
       $orderAttributeDesc = $mapper->getAttribute($orderAttribute);
       if ($orderAttributeDesc instanceof ReferenceDescription) {
       	// add the referenced column without table name
-      	$mapper = $this->persistenceFacade->getMapper($orderAttributeDesc->getOtherType());
+      	$mapper = self::getMapper($orderAttributeDesc->getOtherType());
       	$orderAttributeDesc = $mapper->getAttribute($orderAttributeDesc->getOtherName());
       	$orderColumnName = $orderAttributeDesc->getColumn();
       }
@@ -779,7 +779,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   protected function loadRelationObjects(PersistentObjectProxy $objectProxy,
           PersistentObjectProxy $relativeProxy, RDBManyToManyRelationDescription $relationDesc,
           $includeTransaction=false) {
-    $nmMapper = $this->persistenceFacade->getMapper($relationDesc->getThisEndRelation()->getOtherType());
+    $nmMapper = self::getMapper($relationDesc->getThisEndRelation()->getOtherType());
     $nmType = $nmMapper->getType();
 
     $thisId = $objectProxy->getOID()->getFirstId();

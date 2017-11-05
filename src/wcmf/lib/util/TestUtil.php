@@ -44,7 +44,8 @@ class TestUtil {
     LogManager::configure($logger);
 
     // setup configuration
-    $configuration = new InifileConfiguration($configPath);
+    $cachePath = dirname($configPath).'/cache/static/config/';
+    $configuration = new InifileConfiguration($configPath, $cachePath);
 
     // setup object factory
     ObjectFactory::configure(new DefaultFactory($configuration));

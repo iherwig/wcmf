@@ -482,12 +482,12 @@ class ObjectQuery extends AbstractQuery {
           $orderAttributeParts = preg_split('/\./', $orderAttribute);
           $orderAttribute = array_pop($orderAttributeParts);
           $orderType = join('.', $orderAttributeParts);
-          $orderTypeMapper = $persistenceFacade->getMapper($orderType);
+          $orderTypeMapper = self::getMapper($orderType);
         }
         else {
           // check all involved types
           foreach (array_keys($this->involvedTypes) as $curType) {
-            $mapper = $persistenceFacade->getMapper($curType);
+            $mapper = self::getMapper($curType);
             if ($mapper->hasAttribute($orderAttribute)) {
               $orderTypeMapper = $mapper;
               break;
@@ -543,11 +543,10 @@ class ObjectQuery extends AbstractQuery {
     $result = [];
     // flatten conditions
     $criteriaFlat = [];
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     foreach ($criteria as $key => $curCriteria) {
       foreach ($curCriteria as $criterion) {
         if ($criterion instanceof Criteria) {
-          $mapper = $persistenceFacade->getMapper($criterion->getType());
+          $mapper = self::getMapper($criterion->getType());
           $valueName = $criterion->getAttribute();
           $attributeDesc = $mapper->getAttribute($valueName);
           if ($attributeDesc) {

@@ -161,20 +161,10 @@ abstract class AbstractQuery {
   protected static function getMapper($type) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = $persistenceFacade->getMapper($type);
-    self::checkMapper($mapper);
-    return $mapper;
-  }
-
-  /**
-   * Check if a mapper is a supported one.
-   * @param $mapper PersistenceMapper instance
-   * @throws PersistenceException
-   */
-  protected static function checkMapper(PersistenceMapper $mapper) {
     if (!($mapper instanceof RDBMapper)) {
-      $message = ObjectFactory::getInstance('message');
-      throw new PersistenceException($message->getText('Only PersistenceMappers of type RDBMapper are supported.'));
+      throw new PersistenceException('Only PersistenceMappers of type RDBMapper are supported.');
     }
+    return $mapper;
   }
 }
 ?>

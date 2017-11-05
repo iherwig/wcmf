@@ -50,6 +50,7 @@ class SelectStatement extends Select {
     }
     else {
       $selectStmt = $cache->get($cacheSection, $cacheId);
+      $selectStmt->adapter = $mapper->getAdapter();
     }
     return $selectStmt;
   }
@@ -63,6 +64,7 @@ class SelectStatement extends Select {
     parent::__construct();
     $this->id = $id;
     $this->type = $mapper->getType();
+    $this->adapter = $mapper->getAdapter();
   }
 
   /**
@@ -230,11 +232,6 @@ class SelectStatement extends Select {
    * @return AdapterInterface
    */
   protected function getAdapter() {
-    if ($this->adapter == null) {
-      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $mapper = $persistenceFacade->getMapper($this->type);
-      $this->adapter = $mapper->getAdapter();
-    }
     return $this->adapter;
   }
 
