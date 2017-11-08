@@ -67,7 +67,7 @@ To simplify the implementation of mapper classes, wCMF already contains
 a class hierarchy for a common mapping approach, which maps each concrete class
 to one database table ([Concrete Table Inheritance]
 (http://martinfowler.com/eaaCatalog/concreteTableInheritance.html)). In this
-hierarchy \link wcmf::lib::model::mapper::RDBMapper `RDBMapper`\endlink handles
+hierarchy \link wcmf::lib::model::mapper::impl::AbstractRDBMapper `AbstractRDBMapper`\endlink handles
 the communication with the relational database, while
 \link wcmf::lib::model::mapper::NodeUnifiedRDBMapper `NodeUnifiedRDBMapper`\endlink
 defines the actual mapping rules. Application developers simply need to implement
