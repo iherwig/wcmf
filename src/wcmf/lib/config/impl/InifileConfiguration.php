@@ -656,7 +656,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       }
       $this->fileUtil->mkdirRec(dirname($cacheFile));
       if ($fh = @fopen($cacheFile, "w")) {
-        if (@fwrite($fh, serialize(get_object_vars($this)))) {
+        if (@fwrite($fh, serialize(array_filter(get_object_vars($this), function($value, $name) {
+          return $name != 'comments'; // don't store comments
+        }, ARRAY_FILTER_USE_BOTH)))) {
           @fclose($fh);
         }
       }
