@@ -269,7 +269,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
         }
 
         // set paging info
-        $tmpPagingInfo = new PagingInfo($pagingInfo->getPageSize(), true);
+        $tmpPagingInfo = new PagingInfo($pagingInfo->getPageSize(), false);
         $tmpPagingInfo->setOffset($offsets[$i]);
 
         $objects = $mapper->loadObjects($type, $buildDepth, $typeCriteria, $orderby, $tmpPagingInfo);
