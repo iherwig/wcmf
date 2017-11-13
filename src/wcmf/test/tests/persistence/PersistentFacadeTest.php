@@ -82,26 +82,31 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // lower bound 1
     $pagingInfo1 = new PagingInfo(0);
     $chapters1 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo1);
+    $this->assertEquals(100, $pagingInfo1->getTotalCount());
     $this->assertEquals(0, sizeof($chapters1));
 
     // lower bound 2
     $pagingInfo2 = new PagingInfo(1);
     $chapters2 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo2);
+    $this->assertEquals(100, $pagingInfo2->getTotalCount());
     $this->assertEquals(1, sizeof($chapters2));
 
     // simple
     $pagingInfo3 = new PagingInfo(10);
     $chapters3 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo3);
+    $this->assertEquals(100, $pagingInfo3->getTotalCount());
     $this->assertEquals(10, sizeof($chapters3));
 
     // out of bounds 1
     $pagingInfo4 = new PagingInfo(-1);
     $chapters4 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo4);
+    $this->assertEquals(100, $pagingInfo4->getTotalCount());
     $this->assertEquals($this->numChapters, sizeof($chapters4));
 
     // out of bounds 2
     $pagingInfo5 = new PagingInfo(100000000);
     $chapters5 = $persistenceFacade->loadObjects('Chapter', BuildDepth::SINGLE, null, null, $pagingInfo5);
+    $this->assertEquals(100, $pagingInfo5->getTotalCount());
     $this->assertEquals($this->numChapters, sizeof($chapters5));
 
     TestUtil::endSession();
@@ -236,7 +241,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPaging1stPage() {
+  public function testPagingMultipleTypes1stPage() {
     TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $types = ['Publisher', 'Author'];
@@ -266,7 +271,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPagingDifferentPageSizes() {
+  public function testPagingMultipleTypesDifferentPageSizes() {
     TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $types = ['Publisher', 'Author'];
@@ -437,7 +442,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPagingMultipleNoOrder() {
+  public function testPagingMultipleTypesNoOrder() {
     TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $types = ['Publisher', 'Author'];

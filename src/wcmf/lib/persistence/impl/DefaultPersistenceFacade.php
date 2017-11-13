@@ -44,12 +44,12 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    * @param $logStrategy OutputStrategy used for logging persistence actions.
    */
   public function __construct(EventManager $eventManager,
-          OutputStrategy $logStrategy) {
-    $this->eventManager = $eventManager;
-    $this->logStrategy = $logStrategy;
-    // register as change listener to track the created oids, after save
-    $this->eventManager->addListener(StateChangeEvent::NAME,
-            [$this, 'stateChanged']);
+    OutputStrategy $logStrategy) {
+      $this->eventManager = $eventManager;
+      $this->logStrategy = $logStrategy;
+      // register as change listener to track the created oids, after save
+      $this->eventManager->addListener(StateChangeEvent::NAME,
+        [$this, 'stateChanged']);
   }
 
   /**
@@ -57,7 +57,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
    */
   public function __destruct() {
     $this->eventManager->removeListener(StateChangeEvent::NAME,
-            [$this, 'stateChanged']);
+      [$this, 'stateChanged']);
   }
 
   /**
@@ -121,7 +121,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     // if there is a entry for the type name but not for the simple type name,
     // the type is ambiquous and we return the type name
     return (isset($this->mappers[$type]) && !isset($this->simpleToFqNames[$simpleType])) ?
-        $type : $simpleType;
+    $type : $simpleType;
   }
 
   /**
@@ -178,7 +178,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
-        $mapper = $this->getMapper($type);
+    $mapper = $this->getMapper($type);
     $result = $mapper->getOIDs($type, $criteria, $orderby, $pagingInfo);
     return $result;
   }
@@ -252,6 +252,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       }
 
       $tmpResult = [];
+      $total = 0;
       for ($i=0, $countI=$numTypes; $i<$countI; $i++) {
         // collect n objects from each type
         $type = $typeOrTypes[$i];
@@ -273,7 +274,9 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 
         $objects = $mapper->loadObjects($type, $buildDepth, $typeCriteria, $orderby, $tmpPagingInfo);
         $tmpResult = array_merge($tmpResult, $objects);
+        $total += $tmpPagingInfo->getTotalCount();
       }
+      $pagingInfo->setTotalCount($total);
 
       // sort
       if ($orderby != null) {
@@ -357,13 +360,13 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     }
     if (!is_array($param)) {
       throw new IllegalArgumentException("The parameter '".$paramName.
-              "' is expected to be null or an array");
+        "' is expected to be null or an array");
     }
     if ($className != null) {
       foreach ($param as $instance) {
         if (!($instance instanceof $className)) {
           throw new IllegalArgumentException("The parameter '".$paramName.
-              "' is expected to contain only instances of '".$className."'");
+            "' is expected to contain only instances of '".$className."'");
         }
       }
     }
