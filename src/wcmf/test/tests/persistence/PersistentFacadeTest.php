@@ -116,6 +116,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page
     $pagingInfo->setPage(1);
     $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects1));
     $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects1[1]->getOID()->__toString());
@@ -126,6 +127,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page
     $pagingInfo->setPage(2);
     $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects2));
     $this->assertEquals('app.src.model.Publisher:4', $objects2[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:3', $objects2[1]->getOID()->__toString());
@@ -136,6 +138,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 3. page
     $pagingInfo->setPage(3);
     $objects3 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects3));
     $this->assertEquals('app.src.model.Author:5', $objects3[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:6', $objects3[1]->getOID()->__toString());
@@ -146,6 +149,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 4. page
     $pagingInfo->setPage(4);
     $objects4 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(1, sizeof($objects4));
     $this->assertEquals('app.src.model.Author:8', $objects4[0]->getOID()->__toString());
 
@@ -161,6 +165,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page
     $pagingInfo->setPage(1);
     $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created DESC'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects1));
     $this->assertEquals('app.src.model.Author:8', $objects1[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:8', $objects1[1]->getOID()->__toString());
@@ -171,6 +176,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page
     $pagingInfo->setPage(2);
     $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created DESC'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects2));
     $this->assertEquals('app.src.model.Author:5', $objects2[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:4', $objects2[1]->getOID()->__toString());
@@ -181,6 +187,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 3. page
     $pagingInfo->setPage(3);
     $objects3 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created DESC'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects3));
     $this->assertEquals('app.src.model.Publisher:4', $objects3[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:2', $objects3[1]->getOID()->__toString());
@@ -191,6 +198,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 4. page
     $pagingInfo->setPage(4);
     $objects4 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created DESC'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(1, sizeof($objects4));
     $this->assertEquals('app.src.model.Publisher:1', $objects4[0]->getOID()->__toString());
 
@@ -206,6 +214,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 3. page
     $pagingInfo->setPage(3);
     $objects3 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects3));
     $this->assertEquals('app.src.model.Author:5', $objects3[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:6', $objects3[1]->getOID()->__toString());
@@ -216,6 +225,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page
     $pagingInfo->setPage(2);
     $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects2));
     $this->assertEquals('app.src.model.Publisher:4', $objects2[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:3', $objects2[1]->getOID()->__toString());
@@ -234,6 +244,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
 
     // 1. page
     $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects1));
     $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects1[1]->getOID()->__toString());
@@ -244,6 +255,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page
     $pagingInfo->setPage(1);
     $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects2));
     $this->assertEquals('app.src.model.Publisher:1', $objects2[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects2[1]->getOID()->__toString());
@@ -267,6 +279,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page (5)
     $pagingInfo1->setPage(1);
     $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo1);
+    $this->assertEquals(16, $pagingInfo1->getTotalCount());
     $this->assertEquals(5, sizeof($objects1));
     $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects1[1]->getOID()->__toString());
@@ -277,6 +290,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page (4)
     $pagingInfo2->setPage(1);
     $objects3 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo2);
+    $this->assertEquals(16, $pagingInfo2->getTotalCount());
     $this->assertEquals(4, sizeof($objects3));
     $this->assertEquals('app.src.model.Publisher:1', $objects3[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects3[1]->getOID()->__toString());
@@ -286,6 +300,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page (3)
     $pagingInfo3->setPage(1);
     $objects5 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo3);
+    $this->assertEquals(16, $pagingInfo3->getTotalCount());
     $this->assertEquals(3, sizeof($objects5));
     $this->assertEquals('app.src.model.Publisher:1', $objects5[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects5[1]->getOID()->__toString());
@@ -294,6 +309,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page (5)
     $pagingInfo1->setPage(2);
     $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo1);
+    $this->assertEquals(16, $pagingInfo1->getTotalCount());
     $this->assertEquals(5, sizeof($objects2));
     $this->assertEquals('app.src.model.Publisher:4', $objects2[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:3', $objects2[1]->getOID()->__toString());
@@ -304,6 +320,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page (4)
     $pagingInfo2->setPage(2);
     $objects4 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo2);
+    $this->assertEquals(16, $pagingInfo2->getTotalCount());
     $this->assertEquals(4, sizeof($objects4));
     $this->assertEquals('app.src.model.Author:2', $objects4[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:4', $objects4[1]->getOID()->__toString());
@@ -313,6 +330,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page (3)
     $pagingInfo3->setPage(2);
     $objects6 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo3);
+    $this->assertEquals(16, $pagingInfo3->getTotalCount());
     $this->assertEquals(3, sizeof($objects6));
     $this->assertEquals('app.src.model.Author:1', $objects6[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:2', $objects6[1]->getOID()->__toString());
@@ -321,6 +339,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 3. page (3)
     $pagingInfo3->setPage(3);
     $objects7 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo3);
+    $this->assertEquals(16, $pagingInfo3->getTotalCount());
     $this->assertEquals(3, sizeof($objects7));
     $this->assertEquals('app.src.model.Author:3', $objects7[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:5', $objects7[1]->getOID()->__toString());
@@ -329,6 +348,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page (5)
     $pagingInfo1->setPage(1);
     $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo1);
+    $this->assertEquals(16, $pagingInfo1->getTotalCount());
     $this->assertEquals(5, sizeof($objects1));
     $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects1[1]->getOID()->__toString());
@@ -339,6 +359,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page (5)
     $pagingInfo1->setPage(2);
     $objects2 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo1);
+    $this->assertEquals(16, $pagingInfo1->getTotalCount());
     $this->assertEquals(5, sizeof($objects2));
     $this->assertEquals('app.src.model.Publisher:4', $objects2[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:3', $objects2[1]->getOID()->__toString());
@@ -349,6 +370,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page (4)
     $pagingInfo2->setPage(1);
     $objects3 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo2);
+    $this->assertEquals(16, $pagingInfo2->getTotalCount());
     $this->assertEquals(4, sizeof($objects3));
     $this->assertEquals('app.src.model.Publisher:1', $objects3[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects3[1]->getOID()->__toString());
@@ -358,6 +380,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page (4)
     $pagingInfo2->setPage(2);
     $objects4 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo2);
+    $this->assertEquals(16, $pagingInfo2->getTotalCount());
     $this->assertEquals(4, sizeof($objects4));
     $this->assertEquals('app.src.model.Author:2', $objects4[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:4', $objects4[1]->getOID()->__toString());
@@ -367,6 +390,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page (3)
     $pagingInfo3->setPage(1);
     $objects5 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo3);
+    $this->assertEquals(16, $pagingInfo3->getTotalCount());
     $this->assertEquals(3, sizeof($objects5));
     $this->assertEquals('app.src.model.Publisher:1', $objects5[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects5[1]->getOID()->__toString());
@@ -375,6 +399,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 2. page (3)
     $pagingInfo3->setPage(2);
     $objects6 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo3);
+    $this->assertEquals(16, $pagingInfo3->getTotalCount());
     $this->assertEquals(3, sizeof($objects6));
     $this->assertEquals('app.src.model.Author:1', $objects6[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:2', $objects6[1]->getOID()->__toString());
@@ -383,6 +408,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 3. page (3)
     $pagingInfo3->setPage(3);
     $objects7 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, ['created'], $pagingInfo3);
+    $this->assertEquals(16, $pagingInfo3->getTotalCount());
     $this->assertEquals(3, sizeof($objects7));
     $this->assertEquals('app.src.model.Author:3', $objects7[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:5', $objects7[1]->getOID()->__toString());
@@ -403,6 +429,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page (created date only )
     $pagingInfo->setPage(1);
     $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, $criteria, ['created'], $pagingInfo);
+    $this->assertEquals(2, $pagingInfo->getTotalCount());
     $this->assertEquals(2, sizeof($objects1));
     $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Author:5', $objects1[1]->getOID()->__toString());
@@ -419,6 +446,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     // 1. page
     $pagingInfo->setPage(1);
     $objects1 = $persistenceFacade->loadObjects($types, BuildDepth::SINGLE, null, null, $pagingInfo);
+    $this->assertEquals(16, $pagingInfo->getTotalCount());
     $this->assertEquals(5, sizeof($objects1));
     $this->assertEquals('app.src.model.Publisher:1', $objects1[0]->getOID()->__toString());
     $this->assertEquals('app.src.model.Publisher:2', $objects1[1]->getOID()->__toString());
@@ -429,7 +457,7 @@ class PersistentFacadeTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-    public function testManyToManyWithBuildDepth() {
+  public function testManyToManyWithBuildDepth() {
     TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
