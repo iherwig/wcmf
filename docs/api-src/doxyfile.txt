@@ -165,7 +165,7 @@ STRIP_FROM_PATH        = E:/Daten/web/wcmf/docs/api-src/framework_description/en
 # using the -I flag.
 
 STRIP_FROM_INC_PATH    = E:/Daten/web/wcmf/docs/api-src/framework_description/en/ \
-                         E:/Daten/web/wcmf/src/wcmf/
+                         E:/Daten/web/wcmf/src/wcmf/ \
                          J:/Daten/web/www/wcmf/docs/api-src/framework_description/en/ \
                          J:/Daten/web/www/wcmf/src/wcmf/
 
