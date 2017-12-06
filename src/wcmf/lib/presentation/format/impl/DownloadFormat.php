@@ -39,9 +39,12 @@ class DownloadFormat extends AbstractFormat {
       return false;
     }
     $cacheLifetime = $response->getCacheLifetime();
-    $expireDate = $cacheLifetime !== null && $cacheDate !== null ?
-      (clone $cacheDate)->modify('+'.$lifetime.' seconds') : null;
-    return $expireDate < new \DateTime();
+    $expireDate = null;
+    if ($cacheLifetime !== null && $cacheDate !== null) {
+      $expireDate = clone $cacheDate;
+      $expireDate->modify('+'.$lifetime.' seconds');
+    }
+    return $expireDate === null || $expireDate < new \DateTime();
   }
 
   /**
