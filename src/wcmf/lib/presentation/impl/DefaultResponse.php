@@ -26,6 +26,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   private $formatter = null;
   private $request = null;
   private $cacheId = null;
+  private $cacheLifetime = null;
   private $status = 200;
   private $file = null;
 
@@ -70,11 +71,25 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   }
 
   /**
+   * @see Response::setCacheLifetime()
+   */
+  public function setCacheLifetime($seconds) {
+    $this->cacheLifetime = $seconds !== null ? intval($seconds) : null;
+  }
+
+  /**
+   * @see Response::getCacheLifetime()
+   */
+  public function getCacheLifetime() {
+    return $this->cacheLifetime;
+  }
+
+  /**
    * @see Response::isCached()
    */
   public function isCached() {
     $format = $this->formatter->getFormat($this->getFormat());
-    return $format->isCached($this);
+    return $this->getCacheId() != null && $format->isCached($this);
   }
 
   /**
@@ -82,7 +97,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
    */
   public function getCacheDate() {
     $format = $this->formatter->getFormat($this->getFormat());
-    return $format->getCacheDate($this);
+    return $this->isCached() ? $format->getCacheDate($this) : null;
   }
 
   /**

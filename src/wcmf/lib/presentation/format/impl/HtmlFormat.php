@@ -108,8 +108,7 @@ class HtmlFormat extends AbstractFormat {
 
     // display the view
     $templateFile = $this->getTemplateFile($response);
-    $cacheId = $response->getCacheId();
-    $view->render($templateFile, $cacheId);
+    $view->render($templateFile, $response->getCacheId(), $response->getCacheLifetime());
 
     return $values;
   }

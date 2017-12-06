@@ -78,7 +78,7 @@ class JsonFormat extends HierarchicalFormat {
   }
 
   /**
-   * @see Format::isCached()
+   * @see Format::getCacheDate()
    */
   public function getCacheDate(Response $response) {
     $cacheId = $response->getCacheId();
@@ -103,7 +103,7 @@ class JsonFormat extends HierarchicalFormat {
 
       // cache result
       if ($caching) {
-        $this->cache->put($this->getCacheSection($response), $cacheId, $encoded);
+        $this->cache->put($this->getCacheSection($response), $cacheId, $encoded, $response->getCacheLifetime());
       }
     }
     else {

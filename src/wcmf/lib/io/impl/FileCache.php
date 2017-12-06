@@ -51,7 +51,8 @@ class FileCache implements Cache {
    */
   public function exists($section, $key) {
     $this->initializeCache($section);
-    return isset($this->cache[$section][$key]);
+    return isset($this->cache[$section][$key]) &&
+      !$this->isExpired($this->cache[$section][$key][0], $this->cache[$section][$key][1]);
   }
 
   /**
@@ -59,7 +60,8 @@ class FileCache implements Cache {
    */
   public function getDate($section, $key) {
     $this->initializeCache($section);
-    if (isset($this->cache[$section][$key])) {
+    if (isset($this->cache[$section][$key]) &&
+        !$this->isExpired($this->cache[$section][$key][0], $this->cache[$section][$key][1])) {
       return (new \DateTime())->setTimeStamp($this->cache[$section][$key][0]);
     }
     return null;
@@ -70,8 +72,9 @@ class FileCache implements Cache {
    */
   public function get($section, $key) {
     $this->initializeCache($section);
-    if (isset($this->cache[$section][$key])) {
-      return $this->cache[$section][$key][1];
+    if (isset($this->cache[$section][$key]) &&
+        !$this->isExpired($this->cache[$section][$key][0], $this->cache[$section][$key][1])) {
+      return $this->cache[$section][$key][2];
     }
     return null;
   }
@@ -79,9 +82,9 @@ class FileCache implements Cache {
   /**
    * @see Cache::put()
    */
-  public function put($section, $key, $value) {
+  public function put($section, $key, $value, $lifetime=null) {
     $this->initializeCache($section);
-    $this->cache[$section][$key] = [time(), $value];
+    $this->cache[$section][$key] = [time(), $lifetime, $value];
     $this->saveCache($section);
   }
 
@@ -138,6 +141,23 @@ class FileCache implements Cache {
         $this->cache[$section] = [];
       }
     }
+  }
+
+  /**
+   * Check if an entry with the given creation timestamp and lifetime is expired
+   * @param $createTs The creation timestamp
+   * @param $lifetime The lifetime in seconds
+   * @return Boolean
+   */
+  private function isExpired($createTs, $lifetime) {
+    if ($lifetime === null) {
+      return false;
+    }
+    $expireDate = (new \DateTime())->setTimeStamp($createTs);
+    if (intval($lifetime)) {
+      $expireDate = $expireDate->modify('+'.$lifetime.' seconds');
+    }
+    return $expireDate < new \DateTime();
   }
 
   /**

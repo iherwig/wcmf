@@ -45,10 +45,11 @@ interface View {
   /**
    * Render the given template
    * @param $tplFile The template file
-   * @param $cacheId The id of the view (@see Controller::getCacheId())
+   * @param $cacheId The id of the view (optional, @see Response::getCacheId())
+   * @param $cacheLifetime The cache lifetime in seconds (optional, default: implementation specific)
    * @param $display Boolean whether to output the result or return it (default: _true_)
    */
-  public function render($tplFile, $cacheId=null, $display=true);
+  public function render($tplFile, $cacheId=null, $cacheLifetime=null, $display=true);
 
   /**
    * Clear the cache

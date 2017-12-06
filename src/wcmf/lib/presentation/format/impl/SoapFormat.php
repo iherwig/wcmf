@@ -47,7 +47,7 @@ class SoapFormat extends HierarchicalFormat {
   }
 
   /**
-   * @see Format::isCached()
+   * @see Format::getCacheDate()
    */
   public function getCacheDate(Response $response) {
     return null;

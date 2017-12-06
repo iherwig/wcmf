@@ -36,7 +36,7 @@ class NullCache implements Cache {
   /**
    * @see Cache::put()
    */
-  public function put($section, $key, $value) {}
+  public function put($section, $key, $value, $lifetime=null) {}
 
   /**
    * @see Cache::clear()

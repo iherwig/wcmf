@@ -46,7 +46,7 @@ class NullView implements View {
   /**
    * @see View::display()
    */
-  public function render($tplFile, $cacheId=null, $display=true) {
+  public function render($tplFile, $cacheId=null, $cacheLifetime=null, $display=true) {
     if (!$display) {
       return '';
     }

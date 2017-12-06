@@ -34,8 +34,14 @@ class DownloadFormat extends AbstractFormat {
    * @see Format::isCached()
    */
   public function isCached(Response $response) {
-    $file = $response->getFile();
-    return $file ? file_exists($file['filename']) : false;
+    $cacheDate = $this->getCacheDate($response);
+    if ($cacheDate === null) {
+      return false;
+    }
+    $cacheLifetime = $response->getCacheLifetime();
+    $expireDate = $cacheLifetime !== null && $cacheDate !== null ?
+      (clone $cacheDate)->modify('+'.$lifetime.' seconds') : null;
+    return $expireDate < new \DateTime();
   }
 
   /**
@@ -44,7 +50,7 @@ class DownloadFormat extends AbstractFormat {
   public function getCacheDate(Response $response) {
     $file = $response->getFile();
     return $file && file_exists($file['filename']) ?
-            DateTime::createFromFormat('U', filemtime($file['filename'])) : null;
+            \DateTime::createFromFormat('U', filemtime($file['filename'])) : null;
   }
 
   /**
@@ -57,8 +63,6 @@ class DownloadFormat extends AbstractFormat {
       if ($file['isDownload']) {
         $response->setHeader("Content-Disposition", 'attachment; filename="'.basename($file['filename']).'"');
       }
-      $response->setHeader("Pragma", "no-cache");
-      $response->setHeader("Expires", 0);
     }
     return $response->getHeaders();
   }

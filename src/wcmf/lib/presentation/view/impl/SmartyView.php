@@ -156,13 +156,21 @@ class SmartyView implements View {
   /**
    * @see View::display()
    */
-  public function render($tplFile, $cacheId=null, $display=true) {
+  public function render($tplFile, $cacheId=null, $cacheLifetime=null, $display=true) {
+    $oldCacheLifetime = $this->view->cache_lifetime;
+    if ($cacheLifetime !== null) {
+      $this->view->cache_lifetime = intval($cacheLifetime);
+    }
     if ($display) {
-      $this->view->display($tplFile, $cacheId);
+      $result = $this->view->display($tplFile, $cacheId);
     }
     else {
-      return $this->view->fetch($tplFile, $cacheId);
+      $result = $this->view->fetch($tplFile, $cacheId);
     }
+    if ($cacheLifetime !== null) {
+      $this->view->cache_lifetime = $oldCacheLifetime;
+    }
+    return $result;
   }
 
   /**

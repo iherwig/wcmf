@@ -33,8 +33,9 @@ interface Response extends ControllerMessage {
 
   /**
    * Set a string value that uniquely identifies the request data
-   * resulting in the current response. This value maybe used to compare
-   * two requests and return cached responses based on the result.
+   * resulting in the current response. If this value is not null,
+   * it will be used to compare two requests and return cached responses
+   * based on the result. Set a value of null to prevent caching.
    * @param $cacheId
    */
   public function setCacheId($cacheId);
@@ -45,6 +46,21 @@ interface Response extends ControllerMessage {
    * @return The id
    */
   public function getCacheId();
+
+  /**
+   * Set the lifetime of a cached response. After this time
+   * previously cached response is dicarded. Set a value of -1 for
+   * an infinite lifetime.
+   * @param $seconds
+   */
+  public function setCacheLifetime($seconds);
+
+  /**
+   * Get the lifetime of a cached response. A value of null means
+   * an infinite lifetime.
+   * @return Integer
+   */
+  public function getCacheLifetime();
 
   /**
    * Check if the response is cached. Controllers may use the result

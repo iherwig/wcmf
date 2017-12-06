@@ -94,9 +94,10 @@ class DefaultFormatter implements Formatter {
       $lastModified =  $cacheDate !== null ? $cacheDate : new \DateTime();
       $lastModifiedTs = $lastModified->getTimestamp();
       $etag = md5($lastModifiedTs.$cacheId);
+      $maxAge = $response->getCacheLifetime() !== null ? $response->getCacheLifetime() : 31536000;
 
       // send caching headers
-      session_cache_limiter("public");
+      $response->setHeader("Cache-Control", "public, max-age=".$maxAge);
       $response->setHeader("Last-Modified", $lastModified->format("D, d M Y H:i:s")." GMT");
       $response->setHeader("ETag", $etag);
 
@@ -111,6 +112,7 @@ class DefaultFormatter implements Formatter {
 
     // remove unwanted headers
     $response->setHeader('X-Powered-By', null);
+    $response->setHeader('Expires', null);
 
     // delegate serialization to the response format
     if (!$responseSent) {

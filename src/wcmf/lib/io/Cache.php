@@ -45,12 +45,13 @@ interface Cache {
   public function get($section, $key);
 
   /**
-   * Store the value of the specified cache entry
+   * Store the value of the specified cache entry with an optional lifetime.
    * @param $section The cache section
    * @param $key The key
    * @param $value The value
+   * @param $lifetime The lifetime in seconds (optional)
    */
-  public function put($section, $key, $value);
+  public function put($section, $key, $value, $lifetime=null);
 
   /**
    * Clear the given cache section. The wildcard char '*'
