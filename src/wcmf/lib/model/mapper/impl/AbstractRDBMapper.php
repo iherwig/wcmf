@@ -319,7 +319,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * Execute a query on the connection.
    * @param $sql The SQL statement as string
-   * @param $parameters An array of values to replace the placeholders with (optional, default: empty array)
+   * @param $parameters An associative array of parameter name/values pairs to replace the placeholders with (optional, default: empty array)
    * @return If the query is a select, an array of associative arrays containing the selected data,
    * the number of affected rows else
    */

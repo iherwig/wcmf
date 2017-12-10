@@ -67,7 +67,7 @@ class RDBMapperTest extends DatabaseTestCase {
 
     $mapper = $persistenceFacade->getMapper('Chapter');
     $sql = "SELECT * FROM Chapter WHERE name = :name";
-    $results = $mapper->executeSql($sql, [':name' => 'Chapter B']);
+    $results = $mapper->executeSql($sql, ['name' => 'Chapter B']);
 
     $this->assertEquals(1, sizeof($results));
     $this->assertEquals('Chapter B', $results[0]['name']);
@@ -88,7 +88,7 @@ class RDBMapperTest extends DatabaseTestCase {
 
     $mapper = $persistenceFacade->getMapper('Chapter');
     $sql = "INSERT INTO Chapter (id, name) VALUES (:id, :name)";
-    $results = $mapper->executeSql($sql, [':id' => 1, ':name' => 'Chapter D']);
+    $results = $mapper->executeSql($sql, ['id' => 1, 'name' => 'Chapter D']);
 
     $this->assertEquals(1, $results);
   }
@@ -108,7 +108,7 @@ class RDBMapperTest extends DatabaseTestCase {
 
     $mapper = $persistenceFacade->getMapper('Chapter');
     $sql = "UPDATE Chapter SET name = :name WHERE id = :id";
-    $results = $mapper->executeSql($sql, [':id' => 300, ':name' => 'Chapter A.1']);
+    $results = $mapper->executeSql($sql, ['id' => 300, 'name' => 'Chapter A.1']);
 
     $this->assertEquals(1, $results);
   }
@@ -128,10 +128,9 @@ class RDBMapperTest extends DatabaseTestCase {
 
     $mapper = $persistenceFacade->getMapper('Chapter');
     $sql = "DELETE FROM Chapter WHERE id = :id";
-    $results = $mapper->executeSql($sql, [':id' => 300]);
+    $results = $mapper->executeSql($sql, ['id' => 300]);
 
     $this->assertEquals(1, $results);
   }
-
-  }
+}
 ?>
