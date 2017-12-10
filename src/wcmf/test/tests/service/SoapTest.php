@@ -54,7 +54,7 @@ class SoapTest extends DatabaseTestCase {
 
   protected function setUp() {
     parent::setUp();
-    TestUtil::startServer(WCMF_BASE.'app/public', 'router.php');
+    TestUtil::startServer(WCMF_BASE.'app/public', WCMF_BASE.'wcmf/test/router.php');
 
     // log wsdl
     $wsdlUrl = self::getEndPoint().'?wsdl';
