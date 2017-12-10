@@ -29,6 +29,7 @@ class SelectStatement extends Select {
   protected $id = null;
   protected $type = null;
   protected $parameters = [];
+  protected $parametersStripped = [];
   protected $meta = [];
   protected $cachedSql = [];
 
@@ -128,14 +129,19 @@ class SelectStatement extends Select {
    */
   public function setParameters($parameters) {
     $this->parameters = $parameters;
+    // store version with colons stripped
+    $this->parametersStripped = array_combine(array_map(function($name) {
+        return preg_replace('/^:/', '', $name);
+    }, array_keys($this->parameters)), $this->parameters);
   }
 
   /**
    * Get the select parameters
+   * @param $stripColons Indicates whether to strip the colon character from the parameter name or not (default: false)
    * @return Array
    */
-  public function getParameters() {
-    return $this->parameters;
+  public function getParameters($stripColons=false) {
+    return $stripColons ? $this->parametersStripped : $this->parameters;
   }
 
   /**
@@ -148,7 +154,7 @@ class SelectStatement extends Select {
     $sql = preg_replace('/LIMIT [0-9]+ OFFSET [0-9]+$/i', '', $sql);
     $sql = preg_replace('/ORDER BY .+$/i', '', $sql);
     $stmt = $adapter->getDriver()->getConnection()->prepare(trim($sql));
-    $result = $stmt->execute($this->getParameters())->getResource();
+    $result = $stmt->execute($this->getParameters(true))->getResource();
     $row = $result->fetch();
     $nRows = $row['nRows'];
     return $nRows;
@@ -224,7 +230,7 @@ class SelectStatement extends Select {
     $adapter = $this->getAdapter();
     $sql = $this->getSql();
     $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
-    return $stmt->execute($this->getParameters())->getResource();
+    return $stmt->execute($this->getParameters(true))->getResource();
   }
 
   /**
