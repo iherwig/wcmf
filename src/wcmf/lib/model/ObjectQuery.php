@@ -527,7 +527,8 @@ class ObjectQuery extends AbstractQuery {
         if (!in_array($orderAttribute, $columnNames)) {
           $queryType = $this->getQueryType();
           $joinName = ($orderType != $queryType && $orderType != $persistenceFacade->getSimpleType($queryType)) ? $orderType: null;
-          $selectStmt->addColumns([$orderAttribute], $joinName);
+          $selectStmt->addColumns([$orderAttribute => $orderAttribute], $joinName);
+          $columnNames[] = $orderAttribute;
         }
       }
     }
