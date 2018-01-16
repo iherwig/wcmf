@@ -223,6 +223,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
       }
 
       // get cache key for stored offsets of previous page
+      $pagingInfo = $pagingInfo ?: new PagingInfo(-1);
       $page = $pagingInfo->getPage();
       $prevPage = $page > 1 ? $page-1 : 1;
       $prevPagingInfo = new PagingInfo($pagingInfo->getPageSize(), true);
