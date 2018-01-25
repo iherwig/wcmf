@@ -15,6 +15,7 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\PersistenceException;
 use Zend\Db\Adapter\Adapter;
 
@@ -32,11 +33,27 @@ class DBUtil {
       isset($connectionParams['dbName'])) {
 
       try {
+        $charSet = isset($connectionParams['dbCharSet']) ? $connectionParams['dbCharSet'] : 'utf8';
+        $dbType = strtolower($connectionParams['dbType']);
+
         // create new connection
         $pdoParams = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
-        if ($connectionParams['dbType'] == 'mysql') {
-          $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+        // driver specific
+        switch ($dbType) {
+          case 'mysql':
+            $pdoParams[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+            $pdoParams[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES ".$charSet;
+            break;
+          case 'sqlite':
+            if (strtolower($connectionParams['dbName']) == ':memory:') {
+              $pdoParams[PDO::ATTR_PERSISTENT] = true;
+            }
+            else {
+              $connectionParams['dbName'] = FileUtil::realpath(WCMF_BASE.$connectionParams['dbName']);
+            }
+            break;
         }
+
         $params = [
           'host' => $connectionParams['dbHostName'],
           'username' => $connectionParams['dbUserName'],
