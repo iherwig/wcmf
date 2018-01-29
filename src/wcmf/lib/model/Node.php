@@ -326,6 +326,12 @@ class Node extends DefaultPersistentObject {
     $oldValue = parent::getValue($role);
     $addedNodes = []; // this array contains the other node or nothing
     if (!$relDesc || $relDesc->isMultiValued()) {
+      // check multiplicity if multivalued
+      $maxMultiplicity = $relDesc->getOtherMaxMultiplicity();
+      if ($relDesc->isMultiValued() && !($maxMultiplicity == 'unbounded') &&
+          sizeof(oldValue) >= $maxMultiplicity) {
+            throw new IllegalArgumentException("Maximum number of related objects exceeded: ".$role." (".(sizeof(oldValue)+1)." > ".$maxMultiplicity.")");
+      }
       // make sure that the value is an array if multivalued
       $mergeResult = self::mergeObjectLists($oldValue, [$value]);
       $value = $mergeResult['result'];
