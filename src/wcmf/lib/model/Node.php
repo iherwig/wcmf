@@ -129,6 +129,7 @@ class Node extends DefaultPersistentObject {
           $result &= $this->addNode($curValue, $name, $forceSet, $trackChange);
         }
       }
+      $this->relationStates[$name] = self::RELATION_STATE_INITIALIZED;
       return $result;
     }
     else {

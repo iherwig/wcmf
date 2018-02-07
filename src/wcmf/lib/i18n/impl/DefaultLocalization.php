@@ -13,6 +13,7 @@ namespace wcmf\lib\i18n\impl;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\NodeValueIterator;
@@ -61,6 +62,11 @@ class DefaultLocalization implements Localization {
   private $translationType = null;
   private $languageType = null;
 
+  private $translatedObjects = [];
+
+  private static $isDebugEnabled = false;
+  private static $logger = null;
+
   /**
    * Configuration
    * @param $persistenceFacade
@@ -71,6 +77,11 @@ class DefaultLocalization implements Localization {
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           Configuration $configuration, $defaultLanguage, $translationType, $languageType) {
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
+    }
+    self::$isDebugEnabled = self::$logger->isDebugEnabled();
+
     $this->persistenceFacade = $persistenceFacade;
     $this->configuration = $configuration;
     $supportedLanguages = $this->getSupportedLanguages();
@@ -126,15 +137,22 @@ class DefaultLocalization implements Localization {
   public function loadTranslatedObject(ObjectId $oid, $lang, $useDefaults=true) {
     $object = $this->persistenceFacade->load($oid, BuildDepth::SINGLE);
 
-    return $this->loadTranslation($object, $lang, $useDefaults, false);
+    return $object != null ? $this->loadTranslation($object, $lang, $useDefaults, false) : null;
   }
 
   /**
    * @see Localization::loadTranslation()
    */
-  public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true) {
+  public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true, $marker=null) {
+    if (self::$isDebugEnabled) {
+      self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
+          "Load translation [".$lang."] for: ".$object->getOID());
+    }
     $translatedObject = $this->loadTranslationImpl($object, $lang, $useDefaults);
-    $object->setProperty(__CLASS__.'.loaded', true);
+
+    // mark already translated object to avoid infinite recursion (the marker is defined by initial object)
+    $marker = $marker == null ? __CLASS__.'@'.$object->getOID() : $marker;
+    $object->setProperty($marker, true);
 
     // recurse if requested
     if ($recursive) {
@@ -144,12 +162,35 @@ class DefaultLocalization implements Localization {
           $role = $relation->getOtherRole();
           $relationValue = $object->getValue($role);
           if ($relationValue != null) {
-            $relatives = $relation->isMultiValued() ? $relationValue : [$relationValue];
+            $isMultivalued = $relation->isMultiValued();
+            $relatives = $isMultivalued ? $relationValue : [$relationValue];
             foreach ($relatives as $relative) {
               // don't resolve proxies
-              if (!($relative instanceof PersistentObjectProxy) && $relative->getProperty(__CLASS__.'.loaded') !== true) {
-                $translatedChild = $this->loadTranslation($relative, $lang, $useDefaults, $recursive);
+              if (self::$isDebugEnabled) {
+                self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
+                    "Process relative: ".$relative->getOID()." marker: ".$marker);
+              }
+              if (!($relative instanceof PersistentObjectProxy) && $relative->getProperty($marker) !== true) {
+                $translatedChild = $this->loadTranslation($relative, $lang, $useDefaults, $recursive, $marker);
+                if (self::$isDebugEnabled) {
+                  self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
+                      "Add relative: ".$relative->getOID()." marker: ".$marker);
+                }
                 $translatedObject->addNode($translatedChild, $role);
+              }
+              else {
+                if ($relative instanceof PersistentObjectProxy) {
+                  if (self::$isDebugEnabled) {
+                    self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
+                        "Skip proxied relative: ".$relative->getOID()." marker: ".$marker);
+                  }
+                }
+                elseif ($relative->getProperty(__CLASS__.'.loaded') == true) {
+                  if (self::$isDebugEnabled) {
+                    self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
+                        "Skip already loaded relative: ".$relative->getOID()." marker: ".$marker);
+                  }
+                }
               }
             }
           }
@@ -174,30 +215,35 @@ class DefaultLocalization implements Localization {
       throw new IllegalArgumentException('Cannot load translation for null');
     }
 
-    $translatedObject = $object;
     $oidStr = $object->getOID()->__toString();
 
-    // load the translations and translate the object for any language
-    // different to the default language
-    if ($lang != $this->getDefaultLanguage()) {
-      $transaction = $this->persistenceFacade->getTransaction();
-      $translatedObject = $this->persistenceFacade->create($object->getType());
-      $transaction->detach($translatedObject->getOID());
-      $object->copyValues($translatedObject, true);
+    $cacheKey = $oidStr.'.'.$lang;
+    if (!isset($this->translatedObjects[$cacheKey])) {
+      $translatedObject = $object;
 
-      $query = new ObjectQuery($this->translationType, __CLASS__.'load_save');
-      $tpl = $query->getObjectTemplate($this->translationType);
-      $tpl->setValue('objectid', Criteria::asValue('=', $oidStr));
-      $tpl->setValue('language', Criteria::asValue('=', $lang));
-      $translations = $query->execute(BuildDepth::SINGLE);
+      // load the translations and translate the object for any language
+      // different to the default language
+      if ($lang != $this->getDefaultLanguage()) {
+        $transaction = $this->persistenceFacade->getTransaction();
+        $translatedObject = $this->persistenceFacade->create($object->getType());
+        $transaction->detach($translatedObject->getOID());
+        $object->copyValues($translatedObject, true);
 
-      // set the translated values in the object
-      $iter = new NodeValueIterator($object, false);
-      for($iter->rewind(); $iter->valid(); $iter->next()) {
-        $this->setTranslatedValue($translatedObject, $iter->key(), $translations, $useDefaults);
+        $query = new ObjectQuery($this->translationType, __CLASS__.'load_save');
+        $tpl = $query->getObjectTemplate($this->translationType);
+        $tpl->setValue('objectid', Criteria::asValue('=', $oidStr));
+        $tpl->setValue('language', Criteria::asValue('=', $lang));
+        $translations = $query->execute(BuildDepth::SINGLE);
+
+        // set the translated values in the object
+        $iter = new NodeValueIterator($object, false);
+        for($iter->rewind(); $iter->valid(); $iter->next()) {
+          $this->setTranslatedValue($translatedObject, $iter->key(), $translations, $useDefaults);
+        }
       }
+      $this->translatedObjects[$cacheKey] = $translatedObject;
     }
-    return $translatedObject;
+    return $this->translatedObjects[$cacheKey];
   }
 
   /**
