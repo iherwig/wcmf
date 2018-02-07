@@ -217,7 +217,7 @@ class DefaultLocalization implements Localization {
 
     $oidStr = $object->getOID()->__toString();
 
-    $cacheKey = $oidStr.'.'.$lang;
+    $cacheKey = $oidStr.'.'.$lang.'.'.$useDefaults;
     if (!isset($this->translatedObjects[$cacheKey])) {
       $translatedObject = $object;
 
