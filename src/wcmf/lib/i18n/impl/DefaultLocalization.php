@@ -145,12 +145,11 @@ class DefaultLocalization implements Localization {
    */
   public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true, $marker=null) {
     if (self::$isDebugEnabled) {
-      self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
-          "Load translation [".$lang."] for: ".$object->getOID());
+      self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Load translation [".$lang."] for: ".$object->getOID());
     }
     $translatedObject = $this->loadTranslationImpl($object, $lang, $useDefaults);
 
-    // mark already translated object to avoid infinite recursion (the marker is defined by initial object)
+    // mark already translated objects to avoid infinite recursion (the marker value is based on the initial object)
     $marker = $marker == null ? __CLASS__.'@'.$object->getOID() : $marker;
     $object->setProperty($marker, true);
 
@@ -165,31 +164,21 @@ class DefaultLocalization implements Localization {
             $isMultivalued = $relation->isMultiValued();
             $relatives = $isMultivalued ? $relationValue : [$relationValue];
             foreach ($relatives as $relative) {
-              // don't resolve proxies
               if (self::$isDebugEnabled) {
-                self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
-                    "Process relative: ".$relative->getOID()." marker: ".$marker);
+                self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Process relative: ".$relative->getOID());
               }
+              // skip proxies and already translated relatives
               if (!($relative instanceof PersistentObjectProxy) && $relative->getProperty($marker) !== true) {
-                $translatedChild = $this->loadTranslation($relative, $lang, $useDefaults, $recursive, $marker);
+                $translatedRelative = $this->loadTranslation($relative, $lang, $useDefaults, $recursive, $marker);
                 if (self::$isDebugEnabled) {
-                  self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
-                      "Add relative: ".$relative->getOID()." marker: ".$marker);
+                  self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Add relative: ".$relative->getOID());
                 }
-                $translatedObject->addNode($translatedChild, $role);
+                $translatedObject->addNode($translatedRelative, $role);
               }
               else {
-                if ($relative instanceof PersistentObjectProxy) {
-                  if (self::$isDebugEnabled) {
-                    self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
-                        "Skip proxied relative: ".$relative->getOID()." marker: ".$marker);
-                  }
-                }
-                elseif ($relative->getProperty(__CLASS__.'.loaded') == true) {
-                  if (self::$isDebugEnabled) {
-                    self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '').
-                        "Skip already loaded relative: ".$relative->getOID()." marker: ".$marker);
-                  }
+                if (self::$isDebugEnabled) {
+                  $reason = $relative instanceof PersistentObjectProxy ? 'proxy' : 'already loaded';
+                  self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Skip relative: ".$relative->getOID()." reason: ".$reason);
                 }
               }
             }
