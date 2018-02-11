@@ -14,10 +14,10 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\URIUtil;
 
-if (!class_exists('\Eventviva\ImageResize')) {
+if (!class_exists('\Gumlet\ImageResize')) {
     throw new ConfigurationException(
             'ImageUtil requires ImageResize to resize images. '.
-            'If you are using composer, add eventviva/php-image-resize '.
+            'If you are using composer, add gumlet/php-image-resize '.
             'as dependency to your project');
 }
 
@@ -33,10 +33,11 @@ class ImageUtil {
   private static $scriptDirAbs = null;
 
   /**
-   * Create an HTML image tag using srcset and sizes attributes. The image locations
-   * in the srcset attribute will point to the frontend cache directory
+   * Create an HTML image tag using srcset and sizes attributes. The original image is supposed
+   * to be located inside the upload directory of the application (_Media_ configuration section).
+   * The image locations in the srcset attribute will point to the frontend cache directory
    * (_FrontendCache_ configuration section).
-   * @param $imageFile The image file
+   * @param $imageFile The image file location relative to the upload directory
    * @param $widths Array of sorted width values to be used in the srcset attribute
    * @param $type Indicates how width values should be used (optional, default: w)
    *        - w: Values will be used as pixels, e.g. widths="1600,960" results in srcset="... 1600w, ... 960w"
@@ -133,33 +134,43 @@ class ImageUtil {
   /**
    * Output the cached image for the given cache location
    * @param $location
+   * @param $returnLocation Boolean indicating if only the file location should be returned (optional)
+   * @return String, if returnLocation is true
    */
-  public static function getCachedImage($location) {
+  public static function getCachedImage($location, $returnLocation=false) {
     // strip the cache base from the location
     $cacheLocation = substr($location, strlen(self::IMAGE_CACHE_SECTION.'/'));
 
     // determine the width and source file from the location
     // the location is supposed to follow the pattern directory/{width}-basename
+    $width = null;
     $basename = basename($cacheLocation);
     if(preg_match('/^([0-9]+)-/', $basename, $matches)) {
+      // get required width from location and remove it from location
       $width = $matches[1];
-      // remove width from location
       $basename = preg_replace('/^'.$width.'-/', '', $basename);
-      $sourceFile = self::getSourceDir($cacheLocation).$basename;
     }
-    else {
-      $sourceFile = $cacheLocation;
-    }
+    $sourceFile = self::getSourceDir($cacheLocation).$basename;
 
     // create the resized image file, if not existing
     $resizedFile = self::getCacheRoot().$cacheLocation;
     if (FileUtil::fileExists($sourceFile) && !FileUtil::fileExists($resizedFile)) {
+      FileUtil::mkdirRec(pathinfo($resizedFile, PATHINFO_DIRNAME));
       $fixedFile = FileUtil::fixFilename($sourceFile);
-      self::resizeImage($fixedFile, $resizedFile, $width);
+      if ($width !== null) {
+        self::resizeImage($fixedFile, $resizedFile, $width);
+      }
+      else {
+        // just copy in case of undefined width
+        copy($fixedFile, $resizedFile);
+      }
     }
 
     // return the image file
     $file = FileUtil::fileExists($resizedFile) ? $resizedFile : $sourceFile;
+    if ($returnLocation) {
+      return $file;
+    }
     $imageInfo = getimagesize($file);
     $image = file_get_contents($file);
     header('Content-type: '.$imageInfo['mime'].';');
@@ -224,8 +235,7 @@ class ImageUtil {
    * @param $width
    */
   private static function resizeImage($sourceFile, $destFile, $width) {
-    FileUtil::mkdirRec(pathinfo($destFile, PATHINFO_DIRNAME));
-    $image = new \Eventviva\ImageResize($sourceFile);
+    $image = new \Gumlet\ImageResize($sourceFile);
     $image->resizeToWidth($width);
     $image->save($destFile);
   }

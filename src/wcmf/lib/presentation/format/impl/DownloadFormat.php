@@ -13,7 +13,6 @@ namespace wcmf\lib\presentation\format\impl;
 use wcmf\lib\presentation\format\Format;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use Zend\Stdlib\DateTime;
 
 /**
  * DownloadFormat is used for downloads. It will be automatically chosen, if

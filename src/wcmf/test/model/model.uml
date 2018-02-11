@@ -2186,6 +2186,19 @@
                 <ownedEnd xmi:type="uml:Property" xmi:id="_j0jhAHIBEeWqqJ8U6ttukA" name="failurecontroller" type="_gLuoYLRnEeOfbtYsPp7Oyg" association="_j0gdsHIBEeWqqJ8U6ttukA"/>
                 <ownedEnd xmi:type="uml:Property" xmi:id="_j0i58HIBEeWqqJ8U6ttukA" name="failure" type="_dGbcIHIBEeWqqJ8U6ttukA" association="_j0gdsHIBEeWqqJ8U6ttukA"/>
               </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_dbqIAA9xEeildoXk6VHCVw" name="ImageController">
+                <generalization xmi:type="uml:Generalization" xmi:id="_dbqIAQ9xEeildoXk6VHCVw" general="_3TWiULQGEeOIMOFxCilDfw"/>
+                <ownedOperation xmi:type="uml:Operation" xmi:id="_dbqIAg9xEeildoXk6VHCVw" name="createImage" visibility="protected">
+                  <ownedComment xmi:type="uml:Comment" xmi:id="_dbqIAw9xEeildoXk6VHCVw" annotatedElement="_dbqIAg9xEeildoXk6VHCVw">
+                    <body>Create the resized and cached image.</body>
+                  </ownedComment>
+                  <ownedParameter xmi:type="uml:Parameter" xmi:id="_rXlQUA9xEeildoXk6VHCVw" name="location" type="_agg3ALQwEeOLlbB2YLI0iw">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_rXlQUQ9xEeildoXk6VHCVw">
+                      <body>The target location pointing into the cache directory</body>
+                    </ownedComment>
+                  </ownedParameter>
+                </ownedOperation>
+              </packagedElement>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_EcxzoPu5EeOmMdys2glKCA" name="views">
               <packagedElement xmi:type="uml:Class" xmi:id="_MLKboPu5EeOmMdys2glKCA" name="cms"/>
@@ -2435,4 +2448,5 @@
   <Chronos:ChiSystem xmi:id="_88DL4KprEeaGbp23C_zkpg" plattform="wcmf" config="presentation.ini" base_Class="_862S2qprEeaGbp23C_zkpg"/>
   <Chronos:ChiSystem xmi:id="_88FoIKprEeaGbp23C_zkpg" plattform="wcmf" config="security.ini" base_Class="_864HtKprEeaGbp23C_zkpg"/>
   <Chronos:ChiSystem xmi:id="_3txW4KpwEeaGbp23C_zkpg" plattform="wcmf" config="persistence.ini" base_Class="_3twIwKpwEeaGbp23C_zkpg"/>
+  <Chronos:ChiController xmi:id="_dbuZcA9xEeildoXk6VHCVw" base_Class="_dbqIAA9xEeildoXk6VHCVw"/>
 </xmi:XMI>
