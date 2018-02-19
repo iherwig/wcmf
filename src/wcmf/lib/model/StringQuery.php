@@ -236,8 +236,8 @@ class StringQuery extends ObjectQuery {
           else {
             // quote value according to type
             $replace = $typeAttr.' '.$sqlOp.' ';
-            if ($rqlOp == 'in' && !$isNumber) {
-              $replace .= '('.join(',', array_map([$mapper, 'quoteValue'], explode(',', $value))).')';
+            if ($rqlOp == 'in') {
+              $replace .= '('.($isNumber ? $value : join(',', array_map([$mapper, 'quoteValue'], explode(',', $value)))).')';
             }
             else {
               $replace .= $isNumber ? $value : $mapper->quoteValue($value);
