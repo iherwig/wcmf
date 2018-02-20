@@ -23,11 +23,11 @@ class DefaultIndexStrategy implements IndexStrategy {
   /**
    * @see IndexStrategy::getDocument()
    */
-  public function getDocument(PersistentObject $obj) {
+  public function getDocument(PersistentObject $obj, $language) {
     $doc = new Document();
-    
+
     $valueNames = $obj->getValueNames(true);
-    
+
     $doc->addField(Field::keyword('oid', $obj->getOID()->__toString(), 'UTF-8'));
     $typeField = Field::keyword('type', $obj->getType(), 'UTF-8');
     $typeField->isStored = false;
@@ -37,7 +37,7 @@ class DefaultIndexStrategy implements IndexStrategy {
       $languageField->isStored = false;
       $doc->addField($languageField);
     }
-    
+
     foreach ($valueNames as $curValueName) {
       $inputType = $obj->getValueProperty($curValueName, 'input_type');
       $value = $obj->getValue($curValueName);
@@ -56,11 +56,10 @@ class DefaultIndexStrategy implements IndexStrategy {
     }
 
     $this->enhanceDocument($doc, $obj);
-    
+
     return $doc;
   }
 
-  
   /**
    * @see IndexStrategy::encodeValue()
    */
@@ -70,7 +69,7 @@ class DefaultIndexStrategy implements IndexStrategy {
     }
     return trim($value);
   }
-  
+
   /**
    * Customize the lucene document according the the application requirements
    * @param $doc The lucene document

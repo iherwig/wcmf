@@ -251,7 +251,7 @@ class LuceneSearch implements IndexedSearch {
           self::$logger->debug("Add/Update index for: ".$oidStr." language:".$language);
         }
 
-        $doc = $this->indexStrategy->getDocument($indexObj);
+        $doc = $this->indexStrategy->getDocument($indexObj, $language);
 
         $this->deleteFromIndex($obj->getOID());
         $index->addDocument($doc);
