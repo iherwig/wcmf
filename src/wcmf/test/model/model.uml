@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Chronos="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xsi:schemaLocation="http:///schemas/Chronos/_jAH0gM-nEd6fypAGO026Fw/0 chronos.profile.uml#_jARlgc-nEd6fypAGO026Fw">
   <uml:Model xmi:id="_ItyOULQGEeOIMOFxCilDfw" name="model">
     <packagedElement xmi:type="uml:Package" xmi:id="_e7sa8LQGEeOIMOFxCilDfw" name="wcmf test">
       <packagedElement xmi:type="uml:Package" xmi:id="_krkH0LQGEeOIMOFxCilDfw" name="root">
@@ -34,6 +34,11 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_86xZkKprEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_86xZkaprEeaGbp23C_zkpg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZkqprEeaGbp23C_zkpg" value="{}"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_FnhbcBcnEeiIF8C2xqPbSQ" name="linkableTypes" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_FnhbcRcnEeiIF8C2xqPbSQ" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FnhbchcnEeiIF8C2xqPbSQ" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_FnhbcxcnEeiIF8C2xqPbSQ" value="{}"/>
                 </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZk6prEeaGbp23C_zkpg" name="timezone" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZlKprEeaGbp23C_zkpg" value="Europe/Berlin"/>
@@ -1710,6 +1715,11 @@
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_fcwjmqvwEeaQUopA1XIUeQ" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fcwjm6vwEeaQUopA1XIUeQ" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_fcwjnKvwEeaQUopA1XIUeQ" value="{Author, Book, Publisher}"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_ge_0MBcnEeiIF8C2xqPbSQ" name="linkableTypes" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ge_0MRcnEeiIF8C2xqPbSQ" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ge_0MhcnEeiIF8C2xqPbSQ" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_ge_0MxcnEeiIF8C2xqPbSQ" value="{Author, Book, Publisher}"/>
                 </ownedAttribute>
               </packagedElement>
             </packagedElement>
