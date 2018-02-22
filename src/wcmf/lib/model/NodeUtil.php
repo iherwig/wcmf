@@ -261,10 +261,10 @@ class NodeUtil {
    * @param $valueName The name of the value to translate
    * @param $language The language to use
    */
-  private static function translateValue(PersistentObject $object, $valueName, $language) {
+  public static function translateValue(PersistentObject $object, $valueName, $language) {
     $value = $object->getValue($valueName);
     // translate list values
-    $value = ValueListProvider::translateValue($value, $object->getValueProperty($valueName, 'input_type'), true, null, $language);
+    $value = ValueListProvider::translateValue($value, $object->getValueProperty($valueName, 'input_type'), $language);
     // force set (the rendered value may not be satisfy validation rules)
     $object->setValue($valueName, $value, true);
   }
