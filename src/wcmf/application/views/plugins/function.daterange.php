@@ -8,37 +8,13 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-use wcmf\lib\core\ObjectFactory;
-
-/**
- * Date names to be included by l10n tools
- * - $message->getText("Monday")
- * - $message->getText("Tuesday")
- * - $message->getText("Wednesday")
- * - $message->getText("Thursday")
- * - $message->getText("Friday")
- * - $message->getText("Saturday")
- * - $message->getText("Sunday")
- * - $message->getText("January")
- * - $message->getText("February")
- * - $message->getText("March")
- * - $message->getText("April")
- * - $message->getText("May")
- * - $message->getText("June")
- * - $message->getText("July")
- * - $message->getText("August")
- * - $message->getText("September")
- * - $message->getText("October")
- * - $message->getText("November")
- * - $message->getText("December")
- */
 
 /**
  * Format one or two dates avoiding duplicate years and months (e.g. 10. - 11.03.2016).
  *
  * Example:
  * @code
- * {daterange from=$date->getValue('start_date') to=$date->getValue('end_date') lang=$language}
+ * {daterange from='2018-01-01' to='2018-03-01' lang='de'}
  * @endcode
  *
  * @param $params Array with keys:
@@ -88,18 +64,6 @@ function smarty_function_daterange(array $params, Smarty_Internal_Template $temp
   else {
     $result = $from->format($fullFormat)." - ".$to->format($fullFormat);
   }
-
-  // localize names
-  $message = ObjectFactory::getInstance('message');
-  $names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
-      "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-  ];
-  foreach ($names as $name) {
-    $localizeName = $message->getText($name, null, $lang);
-    $localizeShortName = substr($localizeName, 0, 3);
-    $result = strtr($result, [$name => $localizeName, substr($name, 0, 3) => $localizeShortName]);
-  }
-
   return $result;
 }
 ?>

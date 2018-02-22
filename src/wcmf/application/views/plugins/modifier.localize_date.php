@@ -38,7 +38,7 @@ use wcmf\lib\core\ObjectFactory;
  *
  * Example:
  * @code
- * {$date|date_format:"F Y"|localize_date:$language}
+ * {$date|date_format:"F Y"|localize_date:'de'}
  * @endcode
  *
  * @param $date The date

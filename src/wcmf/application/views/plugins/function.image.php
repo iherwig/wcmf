@@ -17,7 +17,7 @@ use wcmf\lib\io\ImageUtil;
  *
  * Example:
  * @code
- * {res_image src=$image->getFile() widths="1600,960,640" type="w"
+ * {res_image src='images/poster.jpg' widths="1600,960,640" type="w"
  *          sizes="(min-width: 50em) 33vw, (min-width: 28em) 50vw, 100vw"
  *          alt="Image 1" default="images/blank.gif"}
  * @endcode
