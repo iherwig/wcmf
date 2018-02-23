@@ -28,6 +28,12 @@ abstract class AbstractQuery {
   private $selectStmt = null;
 
   /**
+   * Get the logger
+   * @return Logger
+   */
+  protected abstract function getLogger();
+
+  /**
    * Get the name of the type that should be queried
    * @return String
    */
@@ -45,7 +51,16 @@ abstract class AbstractQuery {
     // build the query
     $this->selectStmt = $this->buildQuery($buildDepth, $orderby, $pagingInfo);
 
-    return $this->executeInternal($this->selectStmt, $buildDepth, $pagingInfo);
+    $result = $this->executeInternal($this->selectStmt, $buildDepth, $pagingInfo);
+    $logger = $this->getLogger();
+    if ($logger && $logger->isDebugEnabled()) {
+      $logger->debug("Executed query: ".$this->selectStmt->__toString());
+      $logger->debug("With parameters: ".json_encode($this->selectStmt->getParameters()));
+      $logger->debug("Result: ".join(", ", array_map(function($item) {
+        return preg_replace( "/\r|\n/", " ", $item->__toString());
+      }, $result)));
+    }
+    return $result;
   }
 
   /**

@@ -17,6 +17,8 @@ namespace wcmf\lib\persistence;
  */
 class PagingInfo {
 
+  const SIZE_INFINITE = -1;
+
   private $pageSize = 10;
   private $page = 1;
   private $offset = 0;
@@ -27,13 +29,13 @@ class PagingInfo {
    * Creates a PagingInfo object. The ignoreTotalCount parameter may be
    * set to true, if the count is to be ignored. This may speed up loading
    * of objects, because an extra count query may be omitted.
-   * @param $pageSize The pageSize (-1 to set no page size)
+   * @param $pageSize The pageSize (PagingInfo::SIZE_INFINITE to set no page size)
    * @param $ignoreTotalCount Boolean whether this instance ignores the
    *    total count or not (optional, default: _false_)
    */
   public function __construct($pageSize, $ignoreTotalCount=false) {
     $this->pageSize = intval($pageSize);
-    if ($this->pageSize == -1) {
+    if ($this->pageSize == self::SIZE_INFINITE) {
       $this->pageSize = PHP_INT_MAX;
     }
     $this->ignoreTotalCount = $ignoreTotalCount;

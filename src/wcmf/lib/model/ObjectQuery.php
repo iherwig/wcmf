@@ -11,6 +11,7 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
@@ -64,26 +65,26 @@ use wcmf\lib\persistence\ValueChangeEvent;
  *
  * // (Author.name LIKE '%ingo%' AND Author.email LIKE '%wemove%')
  * $authorTpl1 = $query->getObjectTemplate('Author');
- * $authorTpl1->setValue("name", "ingo");
- * $authorTpl1->setValue("email", "LIKE '%wemove%'");
+ * $authorTpl1->setValue("name", Criteria::asValue("LIKE", "%ingo%"));
+ * $authorTpl1->setValue("email", Criteria::asValue("LIKE", "%wemove%"));
  *
  * // OR Author.name LIKE '%herwig%'
  * $authorTpl2 = $query->getObjectTemplate('Author', null, Criteria::OPERATOR_OR);
- * $authorTpl2->setValue("name", "herwig");
+ * $authorTpl2->setValue("name", Criteria::asValue("LIKE", "%herwig%"));
  *
  * // Recipe.created >= '2004-01-01' AND Recipe.created < '2005-01-01'
  * $recipeTpl1 = $query->getObjectTemplate('Recipe');
- * $recipeTpl1->setValue("created", ">= '2004-01-01'");
+ * $recipeTpl1->setValue("created", Criteria::asValue(">=", "2004-01-01"));
  * $recipeTpl2 = $query->getObjectTemplate('Recipe');
- * $recipeTpl2->setValue("created", "< '2005-01-01'");
+ * $recipeTpl2->setValue("created", Criteria::asValue("<", "2005-01-01"));
  *
  * // AND (Recipe.name LIKE '%Salat%' OR Recipe.portions = 4)
  * // could have be built using one template, but this demonstrates the usage
  * // of the ObjectQuery::makeGroup() method
  * $recipeTpl3 = $query->getObjectTemplate('Recipe');
- * $recipeTpl3->setValue("name", "Salat");
+ * $recipeTpl3->setValue("name", Criteria::asValue("LIKE", "%Salat%"));
  * $recipeTpl4 = $query->getObjectTemplate('Recipe', null, Criteria::OPERATOR_OR);
- * $recipeTpl4->setValue("portions", "= 4");
+ * $recipeTpl4->setValue("portions", Criteria::asValue("=", 4));
  * $query->makeGroup([$recipeTpl3, $recipeTpl4], Criteria::OPERATOR_AND);
  *
  * $authorTpl1->addNode($recipeTpl1, 'Recipe');
@@ -121,6 +122,8 @@ class ObjectQuery extends AbstractQuery {
   private $observedObjects = [];
   private $parameterCriteriaMap = [];
 
+  private static $logger = null;
+
   /**
    * Constructor.
    * @param $type The type to search for
@@ -134,6 +137,9 @@ class ObjectQuery extends AbstractQuery {
     $this->id = $queryId == null ? SelectStatement::NO_CACHE : $queryId;
     ObjectFactory::getInstance('eventManager')->addListener(ValueChangeEvent::NAME,
       [$this, 'valueChanged']);
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   /**
@@ -259,6 +265,13 @@ class ObjectQuery extends AbstractQuery {
       return $tmp[0];
     }
     return '';
+  }
+
+  /**
+   * @see AbstractQuery::getLogger()
+   */
+  protected function getLogger() {
+    return self::$logger;
   }
 
   /**
