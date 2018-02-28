@@ -31,7 +31,8 @@ use wcmf\lib\presentation\Controller;
  * |------------------------|-------------------------
  * | _in_ `oid`             | The object id of the Node to read
  * | _in_ `depth`           | The number of levels referenced Node must be returned as complete objects. Below this level, Nodes are returned as references. The value -1 has the special meaning of unlimited depth (optional, default: 1)
- * | _in_ `translateValues` | Boolean whether list values should be translated to their display values (optional, default: _true_)
+ * | _in_ `useDefaults`     | Boolean whether to apply values from the default language, if they are not provided in a translation (optional, default: _true_)
+ * | _in_ `translateValues` | Boolean whether list values should be translated to their display values (optional, default: _false_)
  * | _out_ `object`         | The Node to read
  * | __Response Actions__   | |
  * | `ok`                   | In all cases
@@ -93,7 +94,7 @@ class DisplayController extends Controller {
     // translate all nodes to the requested language if requested
     if ($this->isLocalizedRequest()) {
       $localization = $this->getLocalization();
-      $node = $localization->loadTranslation($node, $request->getValue('language'), true, true);
+      $node = $localization->loadTranslation($node, $request->getValue('language'), $request->getBooleanValue('useDefaults', true), true);
     }
 
     // translate values if requested
