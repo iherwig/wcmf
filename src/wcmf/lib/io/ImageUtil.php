@@ -47,13 +47,14 @@ class ImageUtil {
    * @param $alt Alternative text (optional)
    * @param $class Image class (optional)
    * @param $title Image title (optional)
+   * @param $data Data attributes as key/value pairs
    * @param $width Width in pixels to output for the width attribute, the height attribute will be calculated according to the aspect ration (optional)
    * @param $fallbackFile The image file to use, if imageFile does not exist (optional)
    * @param $generate Boolean indicating whether to generate the images or not (optional, default: __false__)
    * @return String
    */
   public static function getImageTag($imageFile, $widths, $type='w', $sizes='',
-          $useDataAttributes=false, $alt='', $class='', $title='', $width=null, $fallbackFile='',
+          $useDataAttributes=false, $alt='', $class='', $title='', array $data=[], $width=null, $fallbackFile='',
           $generate=false) {
     // check if the image files exist
     if (!FileUtil::fileExists($imageFile)) {
@@ -118,6 +119,9 @@ class ImageUtil {
     $tag = '<img '.($useDataAttributes ? 'data-' : '').'src="'.$imageFile.'" alt="'.$alt.'"'.
       (strlen($class) > 0 ? ' class="'.$class.'"' : '').
       (strlen($title) > 0 ? ' title="'.$title.'"' : '');
+    foreach ($data as $name => $value) {
+      $tag .= ' data-'.$name.'="'.str_replace('"', '\"', $value).'"';
+    }
     if (sizeof($srcset) > 0) {
       $tag .= ' '.($useDataAttributes ? 'data-' : '').'srcset="'.join(', ', $srcset).'"'.
         ' '.(strlen($sizes) > 0 ? ($useDataAttributes ? 'data-' : '').'sizes="'.$sizes.'"' : '');

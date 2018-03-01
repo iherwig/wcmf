@@ -84,7 +84,8 @@ use wcmf\lib\io\ImageUtil;
  *        - useDataAttributes: Boolean indicating whether to replace src, srcset, sizes by data-src, data-srcset, data-sizes (optional, default: __false__)
  *        - alt: Alternative text (optional)
  *        - class: Image class (optional)
- *        - title: Image title (optional)
+ *        - title: Image title (optional
+ *        - data: Associative array of key/value pairs to be used as data attributes
  *        - width: Width in pixels to output for the width attribute, the height attribute will be calculated according to the aspect ration (optional)
  *        - default: The default file, if src does not exist (optional)
  *        - generate: Boolean indicating whether to generate the images or not (optional, default: __false__)
@@ -102,9 +103,10 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
   $alt = isset($params['alt']) ? $params['alt'] : '';
   $class = isset($params['class']) ? $params['class'] : '';
   $title = isset($params['title']) ? $params['title'] : '';
+  $data = isset($params['data']) && is_array($params['data'])  ? $params['data'] : [];
   $width = isset($params['width']) ? $params['width'] : null;
 
   return ImageUtil::getImageTag($file, $widths, $type, $sizes,
-          $useDataAttributes, $alt, $class, $title, $width, $default, $generate);
+          $useDataAttributes, $alt, $class, $title, $data, $width, $default, $generate);
 }
 ?>
