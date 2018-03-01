@@ -138,6 +138,8 @@ class ImageUtil {
    * @return String, if returnLocation is true
    */
   public static function getCachedImage($location, $returnLocation=false) {
+    $location = urldecode($location);
+
     // strip the cache base from the location
     $cacheLocation = substr($location, strlen(self::IMAGE_CACHE_SECTION.'/'));
 
