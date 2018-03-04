@@ -66,6 +66,16 @@ class Node extends DefaultPersistentObject {
   }
 
   /**
+   * @see PersistentObject::__clone()
+   */
+  public function __clone() {
+    $copy = parent::__clone();
+    $copy->relationStates = $this->relationStates;
+
+    return $copy;
+  }
+
+  /**
    * @see PersistentObject::getValueNames()
    */
   public function getValueNames($excludeTransient=false) {
