@@ -86,6 +86,21 @@ class MediaController extends Controller {
 
     if ($request->getAction() == "browseMedia") {
       $opts = [
+        'plugin' => [
+            'Normalizer' => [
+                'enable' => true,
+                'nfc' => true,
+                'nfkc' => true,
+                'umlauts' => true,
+                'lowercase' => false,
+                'convmap' => []
+            ],
+            'Sanitizer' => [
+                'enable' => true,
+                'targets'  => ['\\','/',':','*','?','"','<','>','|'],
+                'replace'  => '_'
+            ]
+        ],
         // 'debug' => true,
         'roots' => [[
             'driver' => 'LocalFileSystem',
@@ -94,10 +109,23 @@ class MediaController extends Controller {
             'alias' => 'Media',
             'tmbBgColor' => 'transparent',
             'startPath' => str_replace('/', DIRECTORY_SEPARATOR, rtrim($absDirectory, '/'))
-          ]
-        ],
+        ]],
         'bind' => [
-          'rename rm paste' => [$this, 'onFileMoved']
+            'rename rm paste' => [$this, 'onFileMoved'],
+            'upload.pre mkdir.pre archive.pre ls.pre' => [
+                'Plugin.Normalizer.cmdPreprocess'
+            ],
+            'ls' => [
+                'Plugin.Normalizer.cmdPostprocess'
+            ],
+            'mkdir.pre mkfile.pre rename.pre' => [
+                'Plugin.Sanitizer.cmdPreprocess',
+                'Plugin.Normalizer.cmdPreprocess'
+            ],
+            'upload.presave' => [
+                'Plugin.Sanitizer.onUpLoadPreSave',
+                'Plugin.Normalizer.onUpLoadPreSave'
+            ]
         ]
       ];
 

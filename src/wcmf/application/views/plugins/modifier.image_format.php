@@ -23,7 +23,9 @@
 function smarty_modifier_image_format($image) {
   if (strlen($image) > 0 && file_exists($image)) {
     $size = getimagesize($image);
-    return $size[0] > $size[1] ? 'landscape' : 'portrait';
+    if ($size !== false) {
+      return $size[0] > $size[1] ? 'landscape' : 'portrait';
+    }
   }
   return '';
 }
