@@ -15,7 +15,6 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\format\Formatter;
-use wcmf\lib\presentation\impl\AbstractControllerMessage;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 use wcmf\lib\util\StringUtil;
@@ -229,6 +228,9 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   protected function getMatchingRoutes($requestPath) {
     $matchingRoutes = [];
     $defaultValuePattern = '([^/]+)';
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Get mathching routes for request path: ".$requestPath);
+    }
 
     $config = ObjectFactory::getInstance('configuration');
     if ($config->hasSection('routes')) {
@@ -245,7 +247,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         // extract parameters from route definition and prepare as regex pattern
         $params = [];
         $numPatterns = 0;
-        $routePattern = preg_replace_callback('/\{([^\}]+)\}/', function ($match)
+        $routePattern = preg_replace_callback('/\/\{(.+?)\}(?=(\/|$))/', function ($match)
                 use($defaultValuePattern, &$params, &$numPatterns) {
           // a variable may be either defined by {name} or by {name|pattern} where
           // name is the variable's name and pattern is an optional regex pattern, the
@@ -259,7 +261,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
             $numPatterns++;
           }
           // return the value match pattern (defaults to defaultValuePattern)
-          return $hasPattern ? '('.$paramParts[1].')' : $defaultValuePattern;
+          return '/'.($hasPattern ? '('.$paramParts[1].')' : $defaultValuePattern);
         }, $route);
 
         // replace wildcard character and slashes
