@@ -216,7 +216,7 @@ class DefaultLocalization implements Localization {
       if ($lang != $this->getDefaultLanguage()) {
         $transaction = $this->persistenceFacade->getTransaction();
         $transaction->detach($translatedObject->getOID());
-        $translatedObject = $object->__clone();
+        $translatedObject = clone $object;
 
         $query = new ObjectQuery($this->translationType, __CLASS__.'load_save');
         $tpl = $query->getObjectTemplate($this->translationType);
