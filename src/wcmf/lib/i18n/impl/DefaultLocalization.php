@@ -150,7 +150,7 @@ class DefaultLocalization implements Localization {
     $translatedObject = $this->loadTranslationImpl($object, $lang, $useDefaults);
 
     // mark already translated objects to avoid infinite recursion (the marker value is based on the initial object)
-    $marker = $marker == null ? __CLASS__.'@'.$object->getOID() : $marker;
+    $marker = $marker == null ? __CLASS__.'@'.$lang.':'.$object->getOID() : $marker;
     $object->setProperty($marker, true);
 
     // recurse if requested
@@ -167,18 +167,20 @@ class DefaultLocalization implements Localization {
               if (self::$isDebugEnabled) {
                 self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Process relative: ".$relative->getOID());
               }
-              // skip proxies and already translated relatives
-              if (!($relative instanceof PersistentObjectProxy) && $relative->getProperty($marker) !== true) {
-                $translatedRelative = $this->loadTranslation($relative, $lang, $useDefaults, $recursive, $marker);
+              // skip proxies
+              if (!$relative instanceof PersistentObjectProxy) {
+                $translatedRelative =  $relative->getProperty($marker) !== true ?
+                    $this->loadTranslation($relative, $lang, $useDefaults, $recursive, $marker) :
+                    $this->loadTranslationImpl($relative, $lang, $useDefaults);
                 if (self::$isDebugEnabled) {
                   self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Add relative: ".$relative->getOID());
                 }
+                $translatedObject->deleteNode($relative, $role);
                 $translatedObject->addNode($translatedRelative, $role);
               }
               else {
                 if (self::$isDebugEnabled) {
-                  $reason = $relative instanceof PersistentObjectProxy ? 'proxy' : 'already loaded';
-                  self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Skip relative: ".$relative->getOID()." reason: ".$reason);
+                  self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Skip proxy relative: ".$relative->getOID());
                 }
               }
             }
