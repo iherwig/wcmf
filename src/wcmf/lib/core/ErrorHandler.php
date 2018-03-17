@@ -24,11 +24,15 @@ class ErrorHandler {
   private static $logger = null;
 
   /**
-   * Constructor.
+   * Constructor
+   * @param $setExceptionHandler Boolean indicating, if this instance should also set
+   *                             an exception handler to log exceptions (default: __false__)
    */
-  public function __construct() {
+  public function __construct($setExceptionHandler=false) {
     set_error_handler([$this, 'handleError']);
-    set_exception_handler([$this, 'handleException']);
+    if ($setExceptionHandler) {
+      set_exception_handler([$this, 'handleException']);
+    }
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }

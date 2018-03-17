@@ -13,9 +13,6 @@ namespace wcmf\lib\presentation;
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\presentation\ApplicationException;
-use wcmf\lib\presentation\ApplicationError;
-use wcmf\lib\presentation\Request;
 
 /**
  * Application is the main application class, that does all the initialization.
@@ -74,7 +71,7 @@ class Application {
   public function initialize($defaultController='', $defaultContext='', $defaultAction='login') {
     $config = ObjectFactory::getInstance('configuration');
     $this->debug = $config->getBooleanValue('debug', 'Application');
-    
+
     // configure php
     if ($config->hasSection('phpconfig')) {
       $phpSettings = $config->getSection('phpconfig');
@@ -158,7 +155,7 @@ class Application {
       }
       throw $exception;
     }
-    catch (Exception $ex) {
+    catch (\Exception $ex) {
       self::$logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
     }
   }
