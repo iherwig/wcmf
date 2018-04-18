@@ -19,6 +19,12 @@ namespace wcmf\lib\core;
 interface Session {
 
   /**
+   * Check if the session is started.
+   * @return Boolean.
+   */
+  public function isStarted();
+
+  /**
    * Get the id of the session.
    * @return The id of the current session.
    */

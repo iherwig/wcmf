@@ -41,8 +41,17 @@ class ClientSideSession implements Session {
    * @param $configuration
    */
   public function __construct(Configuration $configuration) {
-    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
+    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application'))).'-cs';
     $this->key = $configuration->getValue('secret', 'application');
+  }
+
+  /**
+   * @see Session::isStarted()
+   */
+  public function isStarted() {
+    return sizeof(array_filter(array_keys($_COOKIE), function($key) {
+      return strpos($key, $this->getCookiePrefix()) === 0;
+    })) > 0;
   }
 
   /**

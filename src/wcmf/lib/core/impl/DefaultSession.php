@@ -47,17 +47,20 @@ class DefaultSession implements Session {
     if (in_array('sha256', hash_algos())) {
       ini_set('session.hash_function', 'sha256');
     }
-    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
+    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application'))).'-ds';
 
-    session_name($this->cookiePrefix.'-session');
-    // NOTE: prevent "headers already sent" errors in phpunit tests
-    if (!headers_sent()) {
-      session_start();
-    }
+    session_name($this->getCookieName());
   }
 
   public function __destruct() {
     session_write_close();
+  }
+
+  /**
+   * @see Session::isStarted()
+   */
+  public function isStarted() {
+    return isset($_COOKIE[$this->getCookieName()]);
   }
 
   /**
@@ -71,6 +74,7 @@ class DefaultSession implements Session {
    * @see Session::get()
    */
   public function get($key, $default=null) {
+    $this->start();
     $value = $default;
     if (isset($_SESSION[$key])) {
       $value = $_SESSION[$key];
@@ -82,6 +86,7 @@ class DefaultSession implements Session {
    * @see Session::set()
    */
   public function set($key, $value) {
+    $this->start();
     $_SESSION[$key] = $value;
   }
 
@@ -89,6 +94,7 @@ class DefaultSession implements Session {
    * @see Session::remove()
    */
   public function remove($key) {
+    $this->start();
     unset($_SESSION[$key]);
   }
 
@@ -96,6 +102,7 @@ class DefaultSession implements Session {
    * @see Session::exist()
    */
   public function exist($key) {
+    $this->start();
     $result = isset($_SESSION[$key]);
     return $result;
   }
@@ -104,6 +111,7 @@ class DefaultSession implements Session {
    * @see Session::clear()
    */
   public function clear() {
+    $this->start();
     $_SESSION = [];
   }
 
@@ -111,6 +119,7 @@ class DefaultSession implements Session {
    * @see Session::destroy()
    */
   public function destroy() {
+    $this->start();
     $_SESSION = [];
     @session_destroy();
   }
@@ -139,10 +148,30 @@ class DefaultSession implements Session {
   }
 
   /**
+   * Start the session, if it is not started already
+   */
+  private function start() {
+    if (session_status() == PHP_SESSION_NONE) {
+      // NOTE: prevent "headers already sent" errors in phpunit tests
+      if (!headers_sent()) {
+        session_start();
+      }
+    }
+  }
+
+  /**
    * Get the cookie prefix
    * @return String
    */
   protected function getCookiePrefix() {
     return $this->cookiePrefix;
+  }
+
+  /**
+   * Get the cookie name
+   * @return String
+   */
+  private function getCookieName() {
+    return $this->cookiePrefix.'-session';
   }
 }
