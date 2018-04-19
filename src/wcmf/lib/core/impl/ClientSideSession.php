@@ -17,6 +17,7 @@ use Lcobucci\JWT\ValidationData;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
+use wcmf\lib\core\TokenBasedSession;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 use wcmf\lib\util\StringUtil;
 use wcmf\lib\util\URIUtil;
@@ -26,13 +27,15 @@ use wcmf\lib\util\URIUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class ClientSideSession implements Session {
+class ClientSideSession implements TokenBasedSession {
 
   const TOKEN_HEADER = 'Authorization';
   const AUTH_TYPE = 'Bearer';
-  const AUTH_USER_NAME = 'user';
+  const AUTH_USER_NAME = 'auth_user';
 
   private $cookiePrefix = '';
+  private $tokenName = '';
+  private $token = null;
 
   private $key = null;
 
@@ -41,8 +44,23 @@ class ClientSideSession implements Session {
    * @param $configuration
    */
   public function __construct(Configuration $configuration) {
-    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application'))).'-cs';
+    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
+    $this->tokenName = $this->getCookiePrefix().'-auth-token';
     $this->key = $configuration->getValue('secret', 'application');
+  }
+
+  /**
+   * @see TokenBasedSession::getHeaderName()
+   */
+  public function getHeaderName() {
+    return self::TOKEN_HEADER;
+  }
+
+  /**
+   * @see TokenBasedSession::getCookieName()
+   */
+  public function getCookieName() {
+    return $this->tokenName;
   }
 
   /**
@@ -67,8 +85,15 @@ class ClientSideSession implements Session {
   public function get($key, $default=null) {
     $value = $default;
     if (isset($_COOKIE[$key])) {
-      $value = $_COOKIE[$key];
+      $value = unserialize($_COOKIE[$key]);
     }
+    else {
+      $tokenData = $this->getTokenData();
+      if (isset($tokenData[$key])) {
+        $value = $tokenData[$key]->getValue();
+      }
+    }
+    \wcmf\lib\core\LogManager::getLogger(__CLASS__)->error("get session value: ".$key.'='.$value);
     return $value;
   }
 
@@ -76,10 +101,12 @@ class ClientSideSession implements Session {
    * @see Session::set()
    */
   public function set($key, $value) {
+    $encodedValue = serialize($value);
+    \wcmf\lib\core\LogManager::getLogger(__CLASS__)->error("set session value: ".$key.'='.$encodedValue);
     if (!headers_sent()) {
-      setcookie($key, $value, 0, '/', '', URIUtil::isHttps(), false);
+      setcookie($key, $encodedValue, 0, '/', '', URIUtil::isHttps(), false);
     }
-    $_COOKIE[$key] = $value;
+    $_COOKIE[$key] = $encodedValue;
   }
 
   /**
@@ -121,8 +148,8 @@ class ClientSideSession implements Session {
    * @see Session::setAuthUser()
    */
   public function setAuthUser($login) {
-    $token = $this->createToken($login);
-    $this->set($this->getCookiePrefix().'-token', $token);
+    $this->token = $this->createToken($login);
+    $this->set($this->tokenName, $this->token);
   }
 
   /**
@@ -131,8 +158,8 @@ class ClientSideSession implements Session {
   public function getAuthUser() {
     $login = AnonymousUser::USER_GROUP_NAME;
     // check for auth user in token
-    if (($data = $this->getTokenData()) !== null) {
-      $login = $data[self::AUTH_USER_NAME];
+    if (($data = $this->getTokenData()) !== null && isset($data[self::AUTH_USER_NAME])) {
+      $login = $data[self::AUTH_USER_NAME]->getValue();
     }
     return $login;
   }
@@ -182,11 +209,11 @@ class ClientSideSession implements Session {
    * @return Associative array
    */
   protected function getTokenData() {
-    $data = null;
+    $result = null;
 
     $request = ObjectFactory::getInstance('request');
     $token = $request->hasHeader(self::TOKEN_HEADER) ?
-      trim(str_replace(self::AUTH_TYPE, '', $request->getHeader(self::TOKEN_HEADER))) : null;
+        trim(str_replace(self::AUTH_TYPE, '', $request->getHeader(self::TOKEN_HEADER))) : $this->token;
     if ($token !== null) {
       $jwt = (new Parser())->parse((string)$token);
 
@@ -194,9 +221,9 @@ class ClientSideSession implements Session {
       $data = new ValidationData();
       $data->setIssuer($this->getTokenIssuer());
       if ($jwt->validate($data) && $jwt->verify($this->getTokenSigner(), $this->key)) {
-        $data = $jwt->getClaims();
+        $result = $jwt->getClaims();
       }
     }
-    return $data;
+    return $result;
   }
 }

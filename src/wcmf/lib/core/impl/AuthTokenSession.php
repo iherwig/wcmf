@@ -11,9 +11,8 @@
 namespace wcmf\lib\core\impl;
 
 use wcmf\lib\config\Configuration;
-use wcmf\lib\core\impl\DefaultSession;
+use wcmf\lib\core\TokenBasedSession;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 use wcmf\lib\util\URIUtil;
 
@@ -26,7 +25,7 @@ use wcmf\lib\util\URIUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class AuthTokenSession extends DefaultSession implements Session {
+class AuthTokenSession extends DefaultSession implements TokenBasedSession {
 
   const TOKEN_HEADER = 'X-Auth-Token';
 
@@ -40,7 +39,21 @@ class AuthTokenSession extends DefaultSession implements Session {
   public function __construct(Configuration $configuration) {
     parent::__construct($configuration);
 
-    $this->tokenName = $this->getCookiePrefix().'-token';
+    $this->tokenName = $this->getCookiePrefix().'-auth-token';
+  }
+
+  /**
+   * @see TokenBasedSession::getHeaderName()
+   */
+  public function getHeaderName() {
+    return self::TOKEN_HEADER;
+  }
+
+  /**
+   * @see TokenBasedSession::getCookieName()
+   */
+  public function getCookieName() {
+    return $this->tokenName;
   }
 
   /**

@@ -167,6 +167,7 @@ class UserController extends Controller {
     $response = $this->getResponse();
 
     // load model
+    $value = null;
     $authUser = $this->principalFactory->getUser($session->getAuthUser());
     if ($authUser) {
       $configKey = $request->getValue('name');
@@ -175,10 +176,11 @@ class UserController extends Controller {
       $configObj = null;
       $configList = Node::filter($authUser->getValue('UserConfig'), null, null,
               ['name' => $configKey]);
-      $configValue = sizeof($configList) > 0 ?
+      $value = sizeof($configList) > 0 ?
               $configObj = $configList[0]->getValue('value') : null;
-      $response->setValue('value', $configValue);
     }
+    $response->setValue('value', $value);
+
     // success
     $response->setAction('ok');
   }

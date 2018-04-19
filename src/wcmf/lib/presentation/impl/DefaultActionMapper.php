@@ -87,11 +87,11 @@ class DefaultActionMapper implements ActionMapper {
     if (!$this->permissionManager->authorize($referrer, $context, $action)) {
       $authUserLogin = $this->session->getAuthUser();
       if ($authUserLogin == AnonymousUser::USER_GROUP_NAME) {
-        self::$logger->error("Session invalid. The request was: ".$request->__toString());
+        self::$logger->debug("Session invalid. The request was: ".$request->__toString());
         throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
       }
       else {
-        self::$logger->error("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$authUserLogin."'");
+        self::$logger->debug("Authorization failed for '".$referrer.'?'.$context.'?'.$action."' user '".$authUserLogin."'");
         throw new ApplicationException($request, $response, ApplicationError::get('PERMISSION_DENIED'));
       }
     }

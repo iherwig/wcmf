@@ -47,7 +47,7 @@ class DefaultSession implements Session {
     if (in_array('sha256', hash_algos())) {
       ini_set('session.hash_function', 'sha256');
     }
-    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application'))).'-ds';
+    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
 
     session_name($this->getCookieName());
   }

@@ -109,8 +109,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
     $requestPath = preg_replace('/^'.StringUtil::escapeForRegex($basePath).'/', '', $requestUri);
     $requestMethod = $this->getMethod();
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Request: ".$requestMethod." ".$requestPath);
+    if (self::$logger->isInfoEnabled()) {
+      self::$logger->info("Request: ".$requestMethod." ".$requestPath);
     }
 
     // get all routes from the configuration that match the request path
@@ -347,6 +347,9 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   private static function getAllHeaders() {
     $headers = [];
+    foreach (apache_request_headers() as $name => $value) {
+      $headers[$name] = $value;
+    }
     foreach ($_SERVER as $name => $value) {
       if (substr($name, 0, 5) == 'HTTP_') {
         $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
