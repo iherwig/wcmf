@@ -347,8 +347,10 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   private static function getAllHeaders() {
     $headers = [];
-    foreach (apache_request_headers() as $name => $value) {
-      $headers[$name] = $value;
+    if (function_exists('apache_request_headers')) {
+      foreach (apache_request_headers() as $name => $value) {
+        $headers[$name] = $value;
+      }
     }
     foreach ($_SERVER as $name => $value) {
       if (substr($name, 0, 5) == 'HTTP_') {
