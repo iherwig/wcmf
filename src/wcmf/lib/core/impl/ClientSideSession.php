@@ -84,16 +84,13 @@ class ClientSideSession implements TokenBasedSession {
    */
   public function get($key, $default=null) {
     $value = $default;
-    if (isset($_COOKIE[$key])) {
-      $value = unserialize($_COOKIE[$key]);
+    if ($key === self::AUTH_USER_NAME) {
+      // auth user is stored in the token cookie
+      $value = $this->getAuthUser();
     }
-    else {
-      $tokenData = $this->getTokenData();
-      if (isset($tokenData[$key])) {
-        $value = $tokenData[$key]->getValue();
-      }
+    elseif (isset($_COOKIE[$key])) {
+      $value = $this->unserializeValue($_COOKIE[$key]);
     }
-    \wcmf\lib\core\LogManager::getLogger(__CLASS__)->error("get session value: ".$key.'='.$value);
     return $value;
   }
 
@@ -101,8 +98,8 @@ class ClientSideSession implements TokenBasedSession {
    * @see Session::set()
    */
   public function set($key, $value) {
-    $encodedValue = serialize($value);
-    \wcmf\lib\core\LogManager::getLogger(__CLASS__)->error("set session value: ".$key.'='.$encodedValue);
+    // don't encode auth token value
+    $encodedValue = ($key !== $this->getCookieName())  ? $this->serializeValue($value) : $value;
     if (!headers_sent()) {
       setcookie($key, $encodedValue, 0, '/', '', URIUtil::isHttps(), false);
     }
@@ -225,5 +222,23 @@ class ClientSideSession implements TokenBasedSession {
       }
     }
     return $result;
+  }
+
+  /**
+   * Serialize a value to be used in a cookie
+   * @param $value
+   * @return String
+   */
+  protected function serializeValue($value) {
+    return json_encode($value);
+  }
+
+  /**
+   * Unserialize a value used in a cookie
+   * @param $value
+   * @return String
+   */
+  protected function unserializeValue($value) {
+    return json_decode($value, true);
   }
 }
