@@ -21,7 +21,7 @@
  * @param $alpha The alpha value (optional)
  * @return String
  */
-function smarty_modifier_hex2rgba($hexColor, $alpha) {
+function smarty_modifier_hex2rgba($hexColor, $alpha=null) {
   $hexColor = str_replace("#", "", $hexColor);
 
   if(strlen($hexColor) == 3) {
@@ -34,6 +34,6 @@ function smarty_modifier_hex2rgba($hexColor, $alpha) {
     $g = hexdec($hexColor[2].$hexColor[3]);
     $b = hexdec($hexColor[4].$hexColor[5]);
   }
-  return 'rgba('.$r.', '.$g.', '.$b.', '.($alpha ? $alpha : '1.0').')';
+  return 'rgba('.$r.', '.$g.', '.$b.', '.($alpha !== null ? $alpha : '1.0').')';
 }
 ?>
