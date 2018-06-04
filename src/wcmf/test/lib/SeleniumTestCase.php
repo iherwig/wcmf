@@ -10,102 +10,94 @@
  */
 namespace wcmf\test\lib;
 
-use wcmf\lib\util\TestUtil;
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverDimension;
+use Facebook\WebDriver\WebDriverExpectedCondition;
+use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+
+if (!class_exists('\Facebook\WebDriver\Remote\RemoteWebDriver')) {
+    throw new ConfigurationException(
+            'SeleniumTestCase requires Facebook\WebDriver. '.
+            'If you are using composer, add facebook/webdriver '.
+            'as dependency to your project');
+}
 
 /**
  * SeleniumTestCase is the base class for test cases that run with Selenium.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
+abstract class SeleniumTestCase extends DatabaseTestCase {
   use TestTrait;
 
   /**
-   * @see http://getbootstrap.com/css/#grid-media-queries
+   * @see https://getbootstrap.com/docs/4.1/layout/overview/#responsive-breakpoints
    */
-  private $displayWidths = [
-    /* Extra small devices (phones, less than 768px) */
-    'xsmall'  => 480,
-    /* Small devices (tablets, 768px and up) */
-    'small' => 768,
-    /* Medium devices (desktops, 992px and up) */
-    'medium' => 992,
-    /* Large devices (large desktops, 1200px and up) */
-    'large' => 1200,
+  private static $displayWidths = [
+    /* Small devices (landscape phones, 576px and up) */
+    'small'  => 576,
+    /* Medium devices (tablets, 768px and up) */
+    'medium' => 768,
+    /* Large devices (desktops, 992px and up) */
+    'large' => 992,
+    /* Extra large devices (large desktops, 1200px and up) */
+    'xlarge' => 1200,
   ];
-  private $width = 1024;
+  private static $height = 768;
 
-  private $databaseTester;
+  protected $driver = null;
 
   protected static function getAppUrl() {
-    return "http://".SERVER_HOST.":".SERVER_PORT;
-  }
-
-  protected function setUp() {
-    // framework setup
-    TestUtil::initFramework(WCMF_BASE.'app/config/');
-
-    // database setup
-    $params = TestUtil::createDatabase();
-    $conn = new \PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection($params['connection'], $params['dbName']);
-    $this->databaseTester = new \PHPUnit_Extensions_Database_DefaultTester($conn);
-    $this->databaseTester->setSetUpOperation(\PHPUnit_Extensions_Database_Operation_Factory::CLEAN_INSERT());
-    $this->databaseTester->setTearDownOperation(\PHPUnit_Extensions_Database_Operation_Factory::NONE());
-    $this->databaseTester->setDataSet($this->getDataSet());
-    $this->databaseTester->onSetUp();
-
-    // selenium setup
-    $this->setBrowser('firefox');
-    $this->setBrowserUrl(self::getAppUrl());
-    parent::setUp();
-    $this->getLogger(__CLASS__)->info("Running: ".get_class($this).".".$this->getName());
-  }
-
-  public function tearDown() {
-    if ($this->databaseTester) {
-      $this->databaseTester->onTearDown();
-      $this->databaseTester = NULL;
+    if (!defined('TEST_SERVER')) {
+      throw new \RuntimeException("Constant TEST_SERVER not defined, e.g. define(TEST_SERVER, 'localhost:8500')");
     }
-    parent::tearDown();
+    return "http://".TEST_SERVER;
   }
 
-  public function setUpPage() {
-    parent::setUpPage();
+  protected static function getSeleniumUrl() {
+    if (!defined('SELENIUM_SERVER')) {
+      throw new \RuntimeException("Constant SELENIUM_SERVER not defined, e.g. define(SELENIUM_SERVER, 'localhost:8001')");
+    }
+    return "http://".SELENIUM_SERVER;
+  }
 
-    // get window object
-    $window = $this->currentWindow();
+  protected function takeScreenShot($filename) {
+    $screenshot = $this->driver->takeScreenshot();
+    file_put_contents('log/'.$filename.'.png', $screenshot);
+  }
 
-    // set window size
-    $window->size([
-      'width' => $this->width,
-      'height' => 768
-    ]);
+  public function setUp() {
+    $this->driver = RemoteWebDriver::create(self::getSeleniumUrl(), DesiredCapabilities::phantomjs());
+    $this->setDisplay('large');
+    parent::setUp();
   }
 
   protected function setDisplay($size) {
-    if (isset($this->displayWidths[$size])) {
-      $this->width = $this->displayWidths[$size];
-      $this->setUpPage();
+    if (isset(self::$displayWidths[$size])) {
+      $this->setWindowSize(self::$displayWidths[$size], self::$height);
     }
   }
 
+  protected function setWindowSize($width, $height) {
+    $this->driver->manage()->window()->setSize(new WebDriverDimension($width, $height));
+  }
+
   /**
-   * Wait for a DOM element matching the given xpath
-   * @param $xpath The xpath
-   * @param $wait maximum (in seconds)
-   * @return element|false false on time-out
+   * Wait
+   * @param $ms
    */
-  protected function waitForXpath($xpath, $wait=30) {
-    for ($i=0; $i <= $wait; $i++) {
-      try {
-        $x = $this->byXPath($xpath);
-        return $x;
-      }
-      catch (\Exception $e) {
-        sleep(1);
-      }
-    }
-    return false;
+  protected function wait($seconds) {
+    $this->driver->manage()->timeouts()->implicitlyWait($seconds);
+  }
+
+  /**
+   * Get the DOM element matching the given xpath
+   * @param $xpath The xpath
+   * @return element|false
+   */
+  protected function byXpath($xpath) {
+    return $this->driver->findElement(WebDriverBy::xpath($xpath));
   }
 
   /**
@@ -114,12 +106,14 @@ abstract class SeleniumTestCase extends \PHPUnit_Extensions_Selenium2TestCase {
    * @param $password The password
    */
   protected function login($user, $password) {
-    $this->url(self::getAppUrl());
-    $this->timeouts()->implicitWait(5000);
-    $this->byName('user')->value($user);
-    $this->byName('password')->value($password);
-    $btn = $this->byXPath("//span[contains(text(),'Sign in')]");
-    $btn->click();
+    $this->driver->get(self::getAppUrl());
+    $this->driver->wait(10, 1000)->until(
+      WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::name('user'))
+    );
+    $this->takeScreenShot('login');
+    $this->driver->findElement(WebDriverBy::name('user'))->sendKeys($user);
+    $this->driver->findElement(WebDriverBy::name('password'))->sendKeys($password);
+    $this->byXpath("//span[contains(text(),'Sign in')]")->click();
   }
 }
 ?>

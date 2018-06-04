@@ -43,7 +43,8 @@
         "nao-pon/elfinder-nightly": "Use this package to integrate elFinder with MediaController",
         "eventviva/php-image-resize": "Use this package to resize images using Smarty plugins",
         "setasign/fpdi-fpdf": "Use this package to generate PDF files",
-        "zf1/zend-http": "Use this package, if you want to communicate to other wCMF instances over HTTP"
+        "zf1/zend-http": "Use this package, if you want to communicate to other wCMF instances over HTTP",
+        "facebook/webdriver": "Use this package, if you want to run tests with SeleniumTestCase"
     },
     "autoload": {
         "psr-4": {

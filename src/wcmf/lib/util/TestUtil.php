@@ -92,7 +92,7 @@ class TestUtil {
   }
 
   /**
-   * Start the built-in webserver
+   * Start the built-in webserver that serves the application under test
    * @param $documentRoot Document root directory
    * @param $router Router script filename (optional)
    * @param $killOnExit Boolean, whether to kill the server process after script execution or not (optional, default: false)
@@ -101,11 +101,10 @@ class TestUtil {
     if (!is_dir($documentRoot)) {
       throw new \Exception('Document root '.$documentRoot.' does not exist');
     }
-    if (!defined('SERVER_HOST')) {
-      define('SERVER_HOST', 'localhost');
-      define('SERVER_PORT', 8500);
+    if (!defined('TEST_SERVER')) {
+      throw new \RuntimeException("Constant TEST_SERVER not defined, e.g. define(TEST_SERVER, 'localhost:8500')");
     }
-    $cmd = sprintf('php -S %s:%d -t %s %s', SERVER_HOST, SERVER_PORT, $documentRoot, $router);
+    $cmd = sprintf('php -S %s:%d -t %s %s', TEST_SERVER, $documentRoot, $router);
 
     $descriptorspec = [
       0 => ['pipe', 'r'], // stdin
