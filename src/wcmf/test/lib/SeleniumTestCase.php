@@ -10,6 +10,8 @@
  */
 namespace wcmf\test\lib;
 
+use wcmf\lib\config\ConfigurationException;
+
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverExpectedCondition;
