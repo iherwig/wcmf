@@ -104,7 +104,7 @@ class TestUtil {
     if (!defined('TEST_SERVER')) {
       throw new \RuntimeException("Constant TEST_SERVER not defined, e.g. define(TEST_SERVER, 'localhost:8500')");
     }
-    $cmd = sprintf('php -S %s:%d -t %s %s', TEST_SERVER, $documentRoot, $router);
+    $cmd = sprintf('php -S %s -t %s %s', TEST_SERVER, $documentRoot, $router);
 
     $descriptorspec = [
       0 => ['pipe', 'r'], // stdin
