@@ -23,7 +23,7 @@ use wcmf\test\lib\DatabaseTestCase;
 class SoapTest extends DatabaseTestCase {
 
   protected static function getEndPoint() {
-    return "http://".SERVER_HOST.":".SERVER_PORT."/soap";
+    return "http://".TEST_SERVER."/soap";
   }
 
   protected function getDataSet() {
