@@ -18,7 +18,7 @@ if (is_file(WCMF_BASE.'app/public'.$requestedFile)) {
   return false;
 }
 else {
-  require_once(WCMF_BASE.'/vendor/autoload.php');
+  require_once(dirname(WCMF_BASE)."/vendor/autoload.php");
   new ClassLoader(WCMF_BASE);
 
   $logger = new MonologFileLogger('main', 'router-log.ini');
@@ -37,13 +37,15 @@ else {
     $application->run($request);
   }
   catch (Exception $ex) {
+    file_put_contents(__DIR__."/router-error.txt",
+        $ex->getMessage()."\n".$ex->getTraceAsString()."\nRequest:\n".$request->__toString());
     try {
       $application->handleException($ex);
     }
     catch (Exception $unhandledEx) {
       echo "Exception in request to ".$_SERVER["REQUEST_URI"]."\n".
-      $unhandledEx->getMessage()."\n".$unhandledEx->getTraceAsString()."\n".
-      file_get_contents(WCMF_BASE."app/log/".(new \DateTime())->format('Y-m-d').".log");
+          $unhandledEx->getMessage()."\n".$unhandledEx->getTraceAsString()."\n".
+          file_get_contents(WCMF_BASE."app/log/".(new \DateTime())->format('Y-m-d').".log");
     }
   }
 }
