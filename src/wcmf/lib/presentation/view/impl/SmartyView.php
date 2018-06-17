@@ -180,6 +180,8 @@ class SmartyView implements View {
     if (self::$sharedView == null) {
       self::$sharedView = ObjectFactory::getInstance('view');
     }
+    $fileUtil = new FileUtil();
+    $fileUtil->emptyDir(self::$sharedView->view->getCompileDir());
     return self::$sharedView->view->clearAllCache();
   }
 

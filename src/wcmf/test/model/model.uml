@@ -208,6 +208,9 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZ9aprEeaGbp23C_zkpg" name="PUT/permissions" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZ9qprEeaGbp23C_zkpg" value="action=setPermissions"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_ixIu8HHJEeiMGPqlQEELow" name="DELETE/cache" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_ixIu8XHJEeiMGPqlQEELow" value="action=clearCaches"/>
+                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZ96prEeaGbp23C_zkpg" name="GET/messages/{language}" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_86xZ-KprEeaGbp23C_zkpg" value="action=messages"/>
                 </ownedAttribute>
@@ -1095,6 +1098,9 @@
           </packagedElement>
           <packagedElement xmi:type="uml:Package" xmi:id="_14j9sLRmEeOfbtYsPp7Oyg" name="application">
             <packagedElement xmi:type="uml:Package" xmi:id="_3TWgsLRmEeOfbtYsPp7Oyg" name="controller">
+              <packagedElement xmi:type="uml:Class" xmi:id="_c-lMYHHHEeiMGPqlQEELow" name="AdminController">
+                <generalization xmi:type="uml:Generalization" xmi:id="_7LRNcHHHEeiMGPqlQEELow" general="_3TWiULQGEeOIMOFxCilDfw"/>
+              </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_fx-roLRnEeOfbtYsPp7Oyg" name="AssociateController">
                 <generalization xmi:type="uml:Generalization" xmi:id="_OsfJULRyEeOfbtYsPp7Oyg" general="_3TWiULQGEeOIMOFxCilDfw"/>
               </packagedElement>
@@ -1527,6 +1533,12 @@
                 </eAnnotations>
                 <ownedEnd xmi:type="uml:Property" xmi:id="_ER6pAC38EeeXlbGiPETVvw" name="csvimportcontroller" type="_xjVsAC3lEeeXlbGiPETVvw" association="_ER4z0C38EeeXlbGiPETVvw"/>
               </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_t9-FsHHHEeiMGPqlQEELow" name="clearCaches" memberEnd="_t9-swnHHEeiMGPqlQEELow _t9_T0nHHEeiMGPqlQEELow">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_t9-swHHHEeiMGPqlQEELow" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_t9-swXHHEeiMGPqlQEELow" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_t9_T0nHHEeiMGPqlQEELow" name="controller" type="_3TWiULQGEeOIMOFxCilDfw" association="_t9-FsHHHEeiMGPqlQEELow"/>
+              </packagedElement>
             </packagedElement>
           </packagedElement>
           <packagedElement xmi:type="uml:Package" xmi:id="_ufBl8LQGEeOIMOFxCilDfw" name="lib">
@@ -1679,6 +1691,10 @@
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_qYav4xezEeaOuvFJPYmwBw" name="deleteInRelation" type="_giVKgLRnEeOfbtYsPp7Oyg" association="_qYav4BezEeaOuvFJPYmwBw"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_ebrjgGIiEead5JLiLC2fdQ" name="historycontroller" type="_N8yIIGIiEead5JLiLC2fdQ" association="_ebmrAGIiEead5JLiLC2fdQ"/>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_6Ta_kC37EeeXlbGiPETVvw" name="csvimportcontroller" type="_xjVsAC3lEeeXlbGiPETVvw" association="_6TVgAC37EeeXlbGiPETVvw"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_t9-swnHHEeiMGPqlQEELow" name="admincontroller" type="_c-lMYHHHEeiMGPqlQEELow" association="_t9-FsHHHEeiMGPqlQEELow">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_t9_T0HHHEeiMGPqlQEELow"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_t9_T0XHHEeiMGPqlQEELow" value="1"/>
+                </ownedAttribute>
               </packagedElement>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_H-YbwLQ0EeOQ5oJFa1i8cg" name="security">
@@ -2459,4 +2475,6 @@
   <Chronos:ChiSystem xmi:id="_88FoIKprEeaGbp23C_zkpg" plattform="wcmf" config="security.ini" base_Class="_864HtKprEeaGbp23C_zkpg"/>
   <Chronos:ChiSystem xmi:id="_3txW4KpwEeaGbp23C_zkpg" plattform="wcmf" config="persistence.ini" base_Class="_3twIwKpwEeaGbp23C_zkpg"/>
   <Chronos:ChiController xmi:id="_dbuZcA9xEeildoXk6VHCVw" base_Class="_dbqIAA9xEeildoXk6VHCVw"/>
+  <Chronos:ChiController xmi:id="_sZmv8HHHEeiMGPqlQEELow" base_Class="_c-lMYHHHEeiMGPqlQEELow"/>
+  <Chronos:ChiActionKey xmi:id="_xYP0MHHHEeiMGPqlQEELow" action="clearCaches" base_Association="_t9-FsHHHEeiMGPqlQEELow"/>
 </xmi:XMI>

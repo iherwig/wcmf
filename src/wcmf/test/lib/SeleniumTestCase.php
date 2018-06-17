@@ -110,7 +110,7 @@ abstract class SeleniumTestCase extends DatabaseTestCase {
   protected function login($user, $password) {
     $this->driver->get(self::getAppUrl());
     $this->driver->wait(10, 1000)->until(
-      WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::name('user'))
+        WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::name('user'))
     );
     $this->takeScreenShot('login');
     $this->driver->findElement(WebDriverBy::name('user'))->sendKeys($user);
