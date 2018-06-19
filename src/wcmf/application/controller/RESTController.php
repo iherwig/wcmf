@@ -264,28 +264,32 @@ class RESTController extends Controller {
     $request = $this->getRequest();
 
     // create new object
+    $oidStr = null;
     $sourceOid = ObjectId::parse($request->getValue('sourceOid'));
     $relatedType = $this->getRelatedType($sourceOid, $request->getValue('relation'));
     $request->setValue('className', $relatedType);
-    $subResponseCreate = $this->executeSubAction('create');
+    $subResponse = $this->executeSubAction('create');
+    if (!$subResponse->hasErrors()) {
+      $createStatus = $subResponse->getStatus();
+      $targetOid = $subResponse->getValue('oid');
+      $targetOidStr = $targetOid->__toString();
 
-    $targetOid = $subResponseCreate->getValue('oid');
-    $targetOidStr = $targetOid->__toString();
+      // add new object to relation
+      $request->setValue('targetOid', $targetOidStr);
+      $request->setValue('role', $request->getValue('relation'));
+      $subResponse = $this->executeSubAction('associate');
+      if (!$subResponse->hasErrors()) {
+        // add related object to subresponse similar to default update action
+        $persistenceFacade = $this->getPersistenceFacade();
+        $targetObj = $persistenceFacade->load($targetOid);
+        $subResponse->setValue('oid', $targetOid);
+        $subResponse->setValue($targetOidStr, $targetObj);
+        $subResponse->setStatus($createStatus);
 
-    // add new object to relation
-    $request->setValue('targetOid', $targetOidStr);
-    $request->setValue('role', $request->getValue('relation'));
-    $subResponse = $this->executeSubAction('associate');
-
-    // add related object to subresponse similar to default update action
-    $persistenceFacade = $this->getPersistenceFacade();
-    $targetObj = $persistenceFacade->load($targetOid);
-    $subResponse->setValue('oid', $targetOid);
-    $subResponse->setValue($targetOidStr, $targetObj);
-    $subResponse->setStatus($subResponseCreate->getStatus());
-
-    // in case of success, return object only
-    $oidStr = $subResponse->hasValue('oid') ? $subResponse->getValue('oid')->__toString() : '';
+        // in case of success, return object only
+        $oidStr = $subResponse->hasValue('oid') ? $subResponse->getValue('oid')->__toString() : '';
+      }
+    }
     $this->handleSubResponse($subResponse, $oidStr);
   }
 
@@ -315,7 +319,7 @@ class RESTController extends Controller {
       $subResponse = $this->executeSubAction('moveBefore');
 
       // add sorted object to subresponse similar to default update action
-      if ($subResponse->getStatus() == 200) {
+      if (!$subResponse->hasErrors()) {
         $oid = ObjectId::parse($oidStr);
         $persistenceFacade = $this->getPersistenceFacade();
         $object = $persistenceFacade->load($oid);
@@ -366,7 +370,7 @@ class RESTController extends Controller {
       // NOTE: we need to update first, otherwise the update action might override
       // the foreign keys changes from the associate action
       $subResponse = $this->executeSubAction('update');
-      if ($subResponse->getStatus() == 200) {
+      if (!$subResponse->hasErrors()) {
         // and add object to relation
         // delegate to AssociateController
         $subResponse = $this->executeSubAction('associate');
@@ -374,7 +378,7 @@ class RESTController extends Controller {
     }
 
     // add related object to subresponse similar to default update action
-    if ($subResponse->getStatus() == 200) {
+    if (!$subResponse->hasErrors()) {
       $targetOidStr = $request->getValue('targetOid');
       $targetOid = ObjectId::parse($targetOidStr);
       $persistenceFacade = $this->getPersistenceFacade();
@@ -431,6 +435,7 @@ class RESTController extends Controller {
    * another controller
    * @param $subResponse The response returned from the other controller
    * @param $oidStr Serialized object id of the object to return (optional)
+   * @return Boolean whether an error occured or not
    */
   protected function handleSubResponse(Response $subResponse, $oidStr=null) {
     $response = $this->getResponse();
@@ -455,12 +460,13 @@ class RESTController extends Controller {
           $this->setLocationHeaderFromOid($oidStr);
         }
       }
+      return true;
     }
-    else {
-      // in case of error, return default response
-      $response->setValues($subResponse->getValues());
-      $response->setStatus(400);
-    }
+
+    // in case of error, return default response
+    $response->setValues($subResponse->getValues());
+    $response->setStatus(400);
+    return false;
   }
 
   /**
