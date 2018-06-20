@@ -464,7 +464,7 @@ class RESTController extends Controller {
     }
 
     // in case of error, return default response
-    $response->setValues($subResponse->getValues());
+    $response->setErrors($subResponse->getErrors());
     $response->setStatus(400);
     return false;
   }
