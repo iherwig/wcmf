@@ -26,6 +26,8 @@ matrix:
   - php: 7.0
   - php: 7.1
   - php: 7.2
+  allow_failures:
+  - php: 7.2
 
 before_script:
 - if [[ "$ENABLE_COVERAGE" == "0" && $TRAVIS_PHP_VERSION != 7.1 ]]; then phpenv config-rm xdebug.ini; fi
