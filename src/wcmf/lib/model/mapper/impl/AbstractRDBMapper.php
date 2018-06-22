@@ -606,16 +606,17 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
     $condition = $mapper->quoteIdentifier($tableName).".".$mapper->quoteIdentifier($columnName);
     $operator = $criteria->getOperator();
+    $operatorLC = strtolower($criteria->getOperator());
     $value = $criteria->getValue();
     if (($operator == '=' || $operator == '!=') && $value === null) {
       // handle null values
       $condition .= " IS ".($operator == '!=' ? "NOT " : "")."NULL";
       $placeholder = null;
     }
-    elseif (strtolower($operator) == 'in') {
+    elseif ($operatorLC == 'in' || $operatorLC == 'not in') {
       $array = !$placeholder ? array_map(array($mapper, 'quoteValue'), $value) :
           array_map(function($i) use ($placeholder) { return $placeholder.$i; }, range(0, sizeof($value)-1));
-      $condition .= " IN (".join(', ', $array).")";
+      $condition .= " ".$operator." (".join(', ', $array).")";
       $placeholder = !$placeholder ? null : $array;
     }
     else {
