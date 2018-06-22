@@ -616,7 +616,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     elseif ($operatorLC == 'in' || $operatorLC == 'not in') {
       $array = !$placeholder ? array_map(array($mapper, 'quoteValue'), $value) :
           array_map(function($i) use ($placeholder) { return $placeholder.$i; }, range(0, sizeof($value)-1));
-      $condition .= " ".$operator." (".join(', ', $array).")";
+      $condition .= " ".strtoupper($operator)." (".join(', ', $array).")";
       $placeholder = !$placeholder ? null : $array;
     }
     else {
