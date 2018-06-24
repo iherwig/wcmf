@@ -25,15 +25,18 @@ class PersistenceEvent extends Event {
 
   private $object = null;
   private $action = null;
+  private $oldOid = null;
 
   /**
    * Constructor.
    * @param $object PersistentObject instance.
    * @param $action One of the PersistenceAction values.
+   * @param $oldOid The object id of the object before the action was performed (optional)
    */
-  public function __construct(PersistentObject $object, $action) {
+  public function __construct(PersistentObject $object, $action, $oldOid=null) {
     $this->object = $object;
     $this->action = $action;
+    $this->oldOid = $oldOid == null ? $object->getOID() : $oldOid;
   }
 
   /**
@@ -50,6 +53,14 @@ class PersistenceEvent extends Event {
    */
   public function getAction() {
     return $this->action;
+  }
+
+  /**
+   * Get the old object id.
+   * @return ObjectId
+   */
+  public function getOldOid() {
+    return $this->oldOid;
   }
 }
 ?>

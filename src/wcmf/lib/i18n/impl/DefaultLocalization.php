@@ -12,6 +12,7 @@ namespace wcmf\lib\i18n\impl;
 
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\i18n\Localization;
@@ -21,9 +22,12 @@ use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceAction;
+use wcmf\lib\persistence\PersistenceEvent;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
+use wcmf\lib\persistence\TransactionEvent;
 
 /**
  * DefaultLocalization is a Localization implementation that saves translations
@@ -56,6 +60,7 @@ class DefaultLocalization implements Localization {
 
   private $persistenceFacade = null;
   private $configuration = null;
+  private $eventManager = null;
 
   private $supportedLanguages = null;
   private $defaultLanguage = null;
@@ -63,6 +68,7 @@ class DefaultLocalization implements Localization {
   private $languageType = null;
 
   private $translatedObjects = [];
+  private $createdTranslations = [];
 
   private static $isDebugEnabled = false;
   private static $logger = null;
@@ -71,12 +77,14 @@ class DefaultLocalization implements Localization {
    * Configuration
    * @param $persistenceFacade
    * @param $configuration
+   * @param $eventManager
    * @param $defaultLanguage
    * @param $translationType Entity type name
    * @param $languageType Entity type name
    */
   public function __construct(PersistenceFacade $persistenceFacade,
-          Configuration $configuration, $defaultLanguage, $translationType, $languageType) {
+      Configuration $configuration, EventManager $eventManager,
+      $defaultLanguage, $translationType, $languageType) {
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
@@ -84,6 +92,7 @@ class DefaultLocalization implements Localization {
 
     $this->persistenceFacade = $persistenceFacade;
     $this->configuration = $configuration;
+    $this->eventManager = $eventManager;
     $supportedLanguages = $this->getSupportedLanguages();
 
     if (!isset($supportedLanguages[$defaultLanguage])) {
@@ -100,6 +109,14 @@ class DefaultLocalization implements Localization {
       throw new IllegalArgumentException('The language type \''.$languageType.'\' is unknown.');
     }
     $this->languageType = $languageType;
+    $this->eventManager->addListener(PersistenceEvent::NAME, [$this, 'afterCreate']);
+  }
+
+  /**
+   * Destructor
+   */
+  public function __destruct() {
+    $this->eventManager->removeListener(PersistenceEvent::NAME, [$this, 'afterCreate']);
   }
 
   /**
@@ -403,10 +420,28 @@ class DefaultLocalization implements Localization {
       }
 
       // set all required properties
-      $translation->setValue('objectid', $object->getOID()->__toString());
+      $oid = $object->getOID()->__toString();
+      $translation->setValue('objectid', $oid);
       $translation->setValue('attribute', $valueName);
       $translation->setValue('translation', $object->getValue($valueName));
       $translation->setValue('language', $lang);
+
+      // store translation for oid update if necessary (see afterCreate())
+      $this->createdTranslations[$oid] = $translation;
+    }
+  }
+
+  /**
+   * Update oids after create
+   * @param $event
+   */
+  public function afterCreate(PersistenceEvent $event) {
+    if ($event->getAction() == PersistenceAction::CREATE) {
+      $oldOid = $event->getOldOid();
+      $oldOidStr = $oldOid != null ? $oldOid->__toString() : null;
+      if ($oldOidStr != null && isset($this->createdTranslations[$oldOidStr])) {
+        $this->createdTranslations[$oldOidStr]->setValue('objectid', $event->getObject()->getOID()->__toString());
+      }
     }
   }
 }
