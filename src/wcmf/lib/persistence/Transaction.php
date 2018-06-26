@@ -32,6 +32,13 @@ interface Transaction {
   public function commit();
 
   /**
+   * Dry run object changes. Acts like commit, but does not execute the actual statements.
+   * Sets the transaction to inactive.
+   * @return Array of statements to be executed (see PersistenceMapper::getStatements())
+   */
+  public function dryRun();
+
+  /**
    * Discard the object changes.
    * Sets the transaction to inactive.
    */

@@ -36,7 +36,10 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\security\PermissionManager;
+use Zend\EventManager\EventManager as ZendEventManager;
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\TableGateway\Feature\EventFeature;
+use Zend\Db\TableGateway\Feature\EventFeatureEventsInterface;
 use Zend\Db\TableGateway\TableGateway;
 
 /**
@@ -54,6 +57,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   private static $inTransaction = []; // registry for transaction status (boolean), key: connId
   private static $isDebugEnabled = false;
   private static $logger = null;
+  private static $dbEvents = null;
 
   private $connectionParams = null; // database connection parameters
   private $connId = null;  // a connection identifier composed of the connection parameters
@@ -67,6 +71,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   private $idSelectStmt = null;
   private $idInsertStmt = null;
   private $idUpdateStmt = null;
+
+  // statement collected inside a transaction
+  private $statements = [];
 
   // keeps track of currently loading relations to avoid circular loading
   private $loadingRelations = [];
@@ -90,6 +97,19 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
     self::$isDebugEnabled = self::$logger->isDebugEnabled();
+
+    // listen to db events
+    $this->dbEvents = new ZendEventManager();
+    $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_INSERT, [$this, 'handleDbEvent']);
+    $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$this, 'handleDbEvent']);
+    $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_DELETE, [$this, 'handleDbEvent']);
+  }
+
+  /**
+   * Destructor
+   */
+  public function __destruct() {
+    $this->dbEvents->detach([$this, 'handleDbEvent']);
   }
 
   /**
@@ -413,7 +433,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
     // execute the statement
     $affectedRows = 0;
-    $table = new TableGateway($tableName, $this->adapter);
+    $table = new TableGateway($tableName, $this->adapter, new EventFeature($this->dbEvents));
     try {
       if ($operation instanceof InsertOperation) {
         $affectedRows = $table->insert($translatedValues);
@@ -1048,6 +1068,17 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   }
 
   /**
+   * Handle an event triggered from the zend db layer
+   * @param $e
+   */
+  public function handleDbEvent($e) {
+    $statement = $e->getParam('statement', null);
+    if ($statement != null) {
+      $this->statements[] = [$statement->getSql(), $statement->getParameterContainer()->getNamedArray()];
+    }
+  }
+
+  /**
    * @see PersistenceMapper::beginTransaction()
    * Since all RDBMapper instances with the same connection parameters share
    * one connection, the call will be ignored, if the method was already called
@@ -1061,6 +1092,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       $this->getConnection()->beginTransaction();
       $this->setIsInTransaction(true);
     }
+    $this->statements = [];
   }
 
   /**
@@ -1077,6 +1109,14 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       $this->getConnection()->commit();
       $this->setIsInTransaction(false);
     }
+  }
+
+  /**
+   * @see PersistenceMapper::getStatements()
+   * This method an array of arrays with the first item being the sql string and the second the bind parameter array
+   */
+  public function getStatements() {
+    return $this->statements;
   }
 
   /**

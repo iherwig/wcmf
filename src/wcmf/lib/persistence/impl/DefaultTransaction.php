@@ -90,76 +90,14 @@ class DefaultTransaction implements Transaction {
    * @see Transaction::commit()
    */
   public function commit() {
-    if ($this->isInCommit) {
-      return;
-    }
-    if (self::$isInfoEnabled) {
-      self::$logger->info("Commit transaction");
-    }
-    $this->isInCommit = true;
-    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
-        TransactionEvent::BEFORE_COMMIT));
-    $insertedOids = [];
-    $updatedOids = [];
-    $deletedOids = [];
-    if ($this->isActive) {
-      $knowTypes = $this->persistenceFacade->getKnownTypes();
-      try {
-        // start transaction for each mapper
-        foreach ($knowTypes as $type) {
-          $mapper = $this->persistenceFacade->getMapper($type);
-          $mapper->beginTransaction();
-        }
-        // process the recorded object changes, since new
-        // object changes may occure during the commit, we
-        // loop until all queues are empty
-        $commitDone = false;
-        $emptyState = '0:0:0';
-        while (!$commitDone) {
-          // check queues before processing
-          $oldState = sizeof($this->newObjects).':'.
-                  sizeof($this->dirtyObjects).':'.
-                  sizeof($this->deletedObjects);
-          $insertedOids = array_merge($insertedOids, $this->processInserts());
-          $updatedOids = array_merge($updatedOids, $this->processUpdates());
-          $deletedOids = array_merge($deletedOids, $this->processDeletes());
-          // check queues after processing
-          $newState = sizeof($this->newObjects).':'.
-                  sizeof($this->dirtyObjects).':'.
-                  sizeof($this->deletedObjects);
-          // prevent recursion (queue sizes didn't change)
-          if ($oldState != $emptyState && $oldState == $newState) {
-            throw new PersistenceException("Recursion in transaction commit");
-          }
-          // check if all queues are empty
-          $commitDone = $newState == $emptyState;
-        }
-        // commit transaction for each mapper
-        if (self::$isInfoEnabled) {
-          self::$logger->info("Committing transaction");
-        }
-        foreach ($knowTypes as $type) {
-          $mapper = $this->persistenceFacade->getMapper($type);
-          $mapper->commitTransaction();
-        }
-      }
-      catch (Exception $ex) {
-        // rollback transaction for each mapper
-        self::$logger->error("Rolling back transaction. Exception: ".$ex->__toString());
-        foreach ($knowTypes as $type) {
-          $mapper = $this->persistenceFacade->getMapper($type);
-          $mapper->rollbackTransaction();
-        }
-        $this->rollback();
-        throw $ex;
-      }
-    }
-    // forget changes
-    $this->clear();
-    $this->isActive = false;
-    $this->isInCommit = false;
-    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
-        TransactionEvent::AFTER_COMMIT, $insertedOids, $updatedOids, $deletedOids));
+    return $this->commitImpl(false);
+  }
+
+  /**
+   * @see Transaction::dryRun()
+   */
+  public function dryRun() {
+    return $this->commitImpl(true);
   }
 
   /**
@@ -352,6 +290,93 @@ class DefaultTransaction implements Transaction {
     $this->deletedObjects[$key] = $object;
     return $object;
   }
+
+  /**
+   * Commit the transaction
+   * @param $dryRun
+   * @return Array of statement strings
+   */
+  protected function commitImpl($dryRun) {
+    if ($this->isInCommit) {
+      return;
+    }
+    if (self::$isInfoEnabled) {
+      self::$logger->info("Commit transaction".($dryRun ? " as dry run" : ""));
+    }
+    $this->isInCommit = true;
+    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+        TransactionEvent::BEFORE_COMMIT));
+    $insertedOids = [];
+    $updatedOids = [];
+    $deletedOids = [];
+    $statements = [];
+    if ($this->isActive) {
+      $knowTypes = $this->persistenceFacade->getKnownTypes();
+      try {
+        // start transaction for each mapper
+        foreach ($knowTypes as $type) {
+          $mapper = $this->persistenceFacade->getMapper($type);
+          $mapper->beginTransaction();
+        }
+        // process the recorded object changes, since new
+        // object changes may occure during the commit, we
+        // loop until all queues are empty
+        $commitDone = false;
+        $emptyState = '0:0:0';
+        while (!$commitDone) {
+          // check queues before processing
+          $oldState = sizeof($this->newObjects).':'.
+              sizeof($this->dirtyObjects).':'.
+              sizeof($this->deletedObjects);
+              $insertedOids = array_merge($insertedOids, $this->processInserts());
+              $updatedOids = array_merge($updatedOids, $this->processUpdates());
+              $deletedOids = array_merge($deletedOids, $this->processDeletes());
+              // check queues after processing
+              $newState = sizeof($this->newObjects).':'.
+                  sizeof($this->dirtyObjects).':'.
+                  sizeof($this->deletedObjects);
+                  // prevent recursion (queue sizes didn't change)
+                  if ($oldState != $emptyState && $oldState == $newState) {
+                    throw new PersistenceException("Recursion in transaction commit");
+                  }
+                  // check if all queues are empty
+                  $commitDone = $newState == $emptyState;
+        }
+        // commit transaction for each mapper
+        if (self::$isInfoEnabled) {
+          self::$logger->info("Committing transaction");
+        }
+        foreach ($knowTypes as $type) {
+          $mapper = $this->persistenceFacade->getMapper($type);
+          $statements = array_merge($statements, $mapper->getStatements());
+          if ($dryRun) {
+            $mapper->rollbackTransaction();
+          }
+          else {
+            $mapper->commitTransaction();
+          }
+        }
+      }
+      catch (Exception $ex) {
+        // rollback transaction for each mapper
+        self::$logger->error("Rolling back transaction. Exception: ".$ex->__toString());
+        foreach ($knowTypes as $type) {
+          $mapper = $this->persistenceFacade->getMapper($type);
+          $mapper->rollbackTransaction();
+        }
+        $this->rollback();
+        throw $ex;
+      }
+    }
+    // forget changes
+    $this->clear();
+    $this->isActive = false;
+    $this->isInCommit = false;
+    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+        TransactionEvent::AFTER_COMMIT, $insertedOids, $updatedOids, $deletedOids));
+    return $statements;
+  }
+
   /**
    * Clear all internal
    */

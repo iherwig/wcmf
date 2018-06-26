@@ -30,6 +30,7 @@
         "monolog/monolog": "~1.22",
         "zendframework/zend-db": "2.*",
         "zendframework/zendsearch": "^2.0@rc",
+        "zendframework/zend-eventmanager": "^3.2"
         "codecasts/nusoap-php7": "~0.9",
         "lcobucci/jwt": "~3.2"
     },

@@ -256,5 +256,12 @@ interface PersistenceMapper {
    * is started yet.
    */
   public function rollbackTransaction();
+
+  /**
+   * Get a list of all insert/update/delete statements that where executed in the last transaction.
+   * @note Different mapper implementations may return different representations
+   * @return Array of statements
+   */
+  public function getStatements();
 }
 ?>

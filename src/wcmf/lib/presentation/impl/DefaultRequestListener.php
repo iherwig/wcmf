@@ -102,7 +102,7 @@ class DefaultRequestListener {
       if (preg_match('/^limit\(([^\)]+)\)$/', $key, $matches)) {
         $rangeDefs = preg_split('/,/', $matches[1]);
         $limit = intval($rangeDefs[0]);
-        $offset = sizeof($rangeDefs) > 0 ? intval($rangeDefs[1]) : 0;
+        $offset = sizeof($rangeDefs) > 1 ? intval($rangeDefs[1]) : 0;
         $request->setValue('offset', $offset);
         $request->setValue('limit', $limit);
       }

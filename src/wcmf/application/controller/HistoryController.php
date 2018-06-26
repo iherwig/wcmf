@@ -100,16 +100,6 @@ class HistoryController extends ListController {
   protected function modifyModel(&$nodes) {
     parent::modifyModel($nodes);
 
-    // add search related values
-    $persistenceFacade = $this->getPersistenceFacade();
-    for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
-      $curNode = $nodes[$i];
-      $hit = $this->hits[$curNode->getOID()->__toString()];
-      $curNode->setValue('_displayValue', $curNode->getDisplayValue(), true);
-      $curNode->setValue('_summary', "... ".$hit['summary']." ...", true);
-      $curNode->setValue('_type', $persistenceFacade->getSimpleType($curNode->getType()), true);
-    }
-
     // sort
     $request = $this->getRequest();
     if ($request->hasValue('sortFieldName')) {
