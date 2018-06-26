@@ -220,5 +220,12 @@ class NullMapper implements PersistenceMapper {
    * @see PersistenceMapper::rollbackTransaction()
    */
   public function rollbackTransaction() {}
+
+  /**
+   * @see PersistenceMapper::getStatements()
+   */
+  public function getStatements() {
+    return [];
+  }
 }
 ?>
