@@ -256,12 +256,12 @@ abstract class AbstractMapper implements PersistenceMapper {
     if ($isDirty) {
       $object->afterUpdate();
       $this->eventManager->dispatch(PersistenceEvent::NAME,
-              new PersistenceEvent($object, PersistenceAction::UPDATE));
+              new PersistenceEvent($object, PersistenceAction::UPDATE, $oid));
     }
     elseif ($isNew) {
       $object->afterInsert();
       $this->eventManager->dispatch(PersistenceEvent::NAME,
-              new PersistenceEvent($object, PersistenceAction::CREATE));
+              new PersistenceEvent($object, PersistenceAction::CREATE, $oid));
     }
   }
 
@@ -290,7 +290,7 @@ abstract class AbstractMapper implements PersistenceMapper {
       // call lifecycle callback
       $object->afterDelete();
       $this->eventManager->dispatch(PersistenceEvent::NAME,
-              new PersistenceEvent($object, PersistenceAction::DELETE));
+            new PersistenceEvent($object, PersistenceAction::DELETE, $oid));
 
       // release any locks on the object
       $this->concurrencyManager->releaseLocks($oid);
