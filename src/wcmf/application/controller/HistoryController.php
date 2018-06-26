@@ -100,6 +100,14 @@ class HistoryController extends ListController {
   protected function modifyModel(&$nodes) {
     parent::modifyModel($nodes);
 
+    // add common values
+    $persistenceFacade = $this->getPersistenceFacade();
+    for ($i=0, $count=sizeof($nodes); $i<$count; $i++) {
+      $curNode = $nodes[$i];
+      $curNode->setValue('_displayValue', $curNode->getDisplayValue(), true);
+      $curNode->setValue('_type', $persistenceFacade->getSimpleType($curNode->getType()), true);
+    }
+
     // sort
     $request = $this->getRequest();
     if ($request->hasValue('sortFieldName')) {

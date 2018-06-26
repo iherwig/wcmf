@@ -27,7 +27,6 @@ use wcmf\lib\persistence\PersistenceEvent;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
-use wcmf\lib\persistence\TransactionEvent;
 
 /**
  * DefaultLocalization is a Localization implementation that saves translations
