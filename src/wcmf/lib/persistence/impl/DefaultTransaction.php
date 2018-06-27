@@ -94,9 +94,9 @@ class DefaultTransaction implements Transaction {
   }
 
   /**
-   * @see Transaction::dryRun()
+   * @see Transaction::commitCollect()
    */
-  public function dryRun() {
+  public function commitCollect() {
     return $this->commitImpl(true);
   }
 
@@ -292,22 +292,20 @@ class DefaultTransaction implements Transaction {
   }
 
   /**
-   * Commit or simulate the transaction
-   * @param $dryRun Boolean whether to simulate or really commit
-   * @return Array of statement strings
+   * Commit the transaction
+   * @param $collect
+   * @return Array of statements
    */
-  protected function commitImpl($dryRun) {
+  protected function commitImpl($collect) {
     if ($this->isInCommit) {
       return;
     }
     if (self::$isInfoEnabled) {
-      self::$logger->info("Commit transaction".($dryRun ? " as dry run" : ""));
+      self::$logger->info("Commit transaction [collect=".($collect ? "true" : "false")."]");
     }
     $this->isInCommit = true;
-    if (!$dryRun) {
-      $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
-          TransactionEvent::BEFORE_COMMIT));
-    }
+    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+        TransactionEvent::BEFORE_COMMIT));
     $insertedOids = [];
     $updatedOids = [];
     $deletedOids = [];
@@ -351,7 +349,7 @@ class DefaultTransaction implements Transaction {
         foreach ($knowTypes as $type) {
           $mapper = $this->persistenceFacade->getMapper($type);
           $statements = array_merge($statements, $mapper->getStatements());
-          if ($dryRun) {
+          if ($collect) {
             $mapper->rollbackTransaction();
           }
           else {
@@ -370,17 +368,12 @@ class DefaultTransaction implements Transaction {
         throw $ex;
       }
     }
-    if (!$dryRun) {
-      // forget changes
-      $this->clear();
-      $this->isActive = false;
-      $this->isInCommit = false;
-      $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
-          TransactionEvent::AFTER_COMMIT, $insertedOids, $updatedOids, $deletedOids));
-    }
-    else {
-      $this->isInCommit = false;
-    }
+    // forget changes
+    $this->clear();
+    $this->isActive = false;
+    $this->isInCommit = false;
+    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+        TransactionEvent::AFTER_COMMIT, $insertedOids, $updatedOids, $deletedOids));
     return $statements;
   }
 

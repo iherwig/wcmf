@@ -28,15 +28,16 @@ interface Transaction {
   /**
    * Commit the object changes to the storage.
    * Sets the transaction to inactive.
+   * @return Array of executed statements (see PersistenceMapper::getStatements())
    */
   public function commit();
 
   /**
-   * Dry run object changes. Acts like commit, but does not execute the actual statements.
+   * Collect object change statements. Acts like a normal commit, but does not execute the statements.
    * Sets the transaction to inactive.
    * @return Array of statements to be executed (see PersistenceMapper::getStatements())
    */
-  public function dryRun();
+  public function commitCollect();
 
   /**
    * Discard the object changes.
