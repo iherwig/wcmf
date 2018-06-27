@@ -147,7 +147,7 @@ class Criteria {
    */
   public function getId() {
     $str = "[".$this->combineOperator."] ".$this->type.".".$this->attribute.
-            " ".$this->operator;
+            " ".$this->operator.(is_array($this->value) ? sizeof($this->value) : "");
     return $str;
   }
 

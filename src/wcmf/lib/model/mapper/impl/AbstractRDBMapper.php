@@ -55,6 +55,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
   private static $adapters = [];      // registry for adapters, key: connId
   private static $inTransaction = []; // registry for transaction status (boolean), key: connId
+  private static $sequenceMapper = null;
   private static $isDebugEnabled = false;
   private static $logger = null;
   private static $dbEvents = null;
@@ -190,7 +191,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       isset($this->connectionParams['dbName'])) {
 
       $this->connId = join(',', [$this->connectionParams['dbType'], $this->connectionParams['dbHostName'],
-          $this->connectionParams['dbUserName'], $this->connectionParams['dbPassword'], $this->connectionParams['dbName']]);
+          $this->connectionParams['dbUserName'], $this->connectionParams['dbPassword'], $this->connectionParams['dbName'],
+          // make sure that the sequence mapper uses it's own connection for separate transaction management
+          $this->getType() == $this->getSequenceMapper()->getType()
+      ]);
 
       // reuse an existing adapter if possible
       if (isset(self::$adapters[$this->connId])) {
@@ -253,17 +257,29 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   }
 
   /**
+   * Get the sequence mapper
+   * @return PersistenceMapper
+   */
+  protected function getSequenceMapper() {
+    if (self::$sequenceMapper == null) {
+      self::$sequenceMapper = self::getMapper(self::SEQUENCE_CLASS);
+    }
+    return self::$sequenceMapper;
+  }
+
+  /**
    * Get a new id for inserting into the database
    * @return An id value.
    */
   protected function getNextId() {
     try {
-      // get sequence table mapper
-      $sequenceMapper = self::getMapper(self::SEQUENCE_CLASS);
+      $sequenceMapper = $this->getSequenceMapper();
       $sequenceTable = $sequenceMapper->getRealTableName();
       $sequenceConn = $sequenceMapper->getConnection();
       $tableName = strtolower($this->getRealTableName());
 
+      // run id sequence in it's own transaction
+      $sequenceConn->beginTransaction();
       if ($this->idSelectStmt == null) {
         $this->idSelectStmt = $sequenceConn->prepare("SELECT ".$this->quoteIdentifier("id").
                 " FROM ".$this->quoteIdentifier($sequenceTable)." WHERE ".
@@ -291,6 +307,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       $this->idUpdateStmt->execute();
       $this->idUpdateStmt->closeCursor();
       $this->idSelectStmt->closeCursor();
+      $sequenceConn->commit();
       return $id;
     }
     catch (\Exception $ex) {
@@ -1088,7 +1105,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     if ($this->adapter == null) {
       $this->connect();
     }
-    if (!$this->isInTransaction()) {
+    if (!$this->isInTransaction() && $this != $this->getSequenceMapper()) {
       $this->getConnection()->beginTransaction();
       $this->setIsInTransaction(true);
     }
@@ -1105,18 +1122,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     if ($this->adapter == null) {
       $this->connect();
     }
-    if ($this->isInTransaction()) {
+    if ($this->isInTransaction() && $this != $this->getSequenceMapper()) {
       $this->getConnection()->commit();
       $this->setIsInTransaction(false);
     }
-  }
-
-  /**
-   * @see PersistenceMapper::getStatements()
-   * This method an array of arrays with the first item being the sql string and the second the bind parameter array
-   */
-  public function getStatements() {
-    return $this->statements;
   }
 
   /**
@@ -1130,10 +1139,18 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     if ($this->adapter == null) {
       $this->connect();
     }
-    if ($this->isInTransaction()) {
+    if ($this->isInTransaction() && $this != $this->getSequenceMapper()) {
       $this->getConnection()->rollBack();
       $this->setIsInTransaction(false);
     }
+  }
+
+  /**
+   * @see PersistenceMapper::getStatements()
+   * This method an array of arrays with the first item being the sql string and the second the bind parameter array
+   */
+  public function getStatements() {
+    return $this->statements;
   }
 
   /**
