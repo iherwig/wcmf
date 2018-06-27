@@ -64,6 +64,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   private $connId = null;  // a connection identifier composed of the connection parameters
   private $adapter = null; // database adapter
   private $dbPrefix = '';  // database prefix (if given in the configuration file)
+  private $isFileDB = false;
 
   private $relations = null;
   private $attributes = null;
@@ -190,10 +191,13 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       isset($this->connectionParams['dbUserName']) && isset($this->connectionParams['dbPassword']) &&
       isset($this->connectionParams['dbName'])) {
 
+      $dbType = strtolower($this->connectionParams['dbType']);
+      $this->isFileDB = $dbType == 'sqlite' && strtolower($this->connectionParams['dbName']) != ':memory:';
+
       $this->connId = join(',', [$this->connectionParams['dbType'], $this->connectionParams['dbHostName'],
           $this->connectionParams['dbUserName'], $this->connectionParams['dbPassword'], $this->connectionParams['dbName'],
           // make sure that the sequence mapper uses it's own connection for separate transaction management
-          $this->getType() == $this->getSequenceMapper()->getType()
+          (!$this->isFileDB && $this->getType() == $this->getSequenceMapper()->getType())
       ]);
 
       // reuse an existing adapter if possible
@@ -204,7 +208,6 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
         try {
           $charSet = isset($this->connectionParams['dbCharSet']) ?
                   $this->connectionParams['dbCharSet'] : 'utf8';
-          $dbType = strtolower($this->connectionParams['dbType']);
 
           // create new connection
           $pdoParams = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
@@ -215,7 +218,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
               $pdoParams[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES ".$charSet;
               break;
             case 'sqlite':
-              if (strtolower($this->connectionParams['dbName']) == ':memory:') {
+              if (!$this->isFileDB) {
                 $pdoParams[PDO::ATTR_PERSISTENT] = true;
               }
               else {
@@ -278,8 +281,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       $sequenceConn = $sequenceMapper->getConnection();
       $tableName = strtolower($this->getRealTableName());
 
-      // run id sequence in it's own transaction
-      $sequenceConn->beginTransaction();
+      // run id sequence in it's own transaction, if supported
+      if (!$this->isFileDB) {
+        $sequenceConn->beginTransaction();
+      }
       if ($this->idSelectStmt == null) {
         $this->idSelectStmt = $sequenceConn->prepare("SELECT ".$this->quoteIdentifier("id").
                 " FROM ".$this->quoteIdentifier($sequenceTable)." WHERE ".
@@ -307,7 +312,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       $this->idUpdateStmt->execute();
       $this->idUpdateStmt->closeCursor();
       $this->idSelectStmt->closeCursor();
-      $sequenceConn->commit();
+      if (!$this->isFileDB) {
+        $sequenceConn->commit();
+      }
       return $id;
     }
     catch (\Exception $ex) {
@@ -1105,7 +1112,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     if ($this->adapter == null) {
       $this->connect();
     }
-    if (!$this->isInTransaction() && $this != $this->getSequenceMapper()) {
+    if (!$this->isInTransaction() && ($this->isFileDB || $this != $this->getSequenceMapper())) {
       $this->getConnection()->beginTransaction();
       $this->setIsInTransaction(true);
     }
@@ -1122,7 +1129,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     if ($this->adapter == null) {
       $this->connect();
     }
-    if ($this->isInTransaction() && $this != $this->getSequenceMapper()) {
+    if ($this->isInTransaction() && ($this->isFileDB || $this != $this->getSequenceMapper())) {
       $this->getConnection()->commit();
       $this->setIsInTransaction(false);
     }
@@ -1139,7 +1146,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     if ($this->adapter == null) {
       $this->connect();
     }
-    if ($this->isInTransaction() && $this != $this->getSequenceMapper()) {
+    if ($this->isInTransaction() && ($this->isFileDB || $this != $this->getSequenceMapper())) {
       $this->getConnection()->rollBack();
       $this->setIsInTransaction(false);
     }

@@ -292,8 +292,8 @@ class DefaultTransaction implements Transaction {
   }
 
   /**
-   * Commit the transaction
-   * @param $dryRun
+   * Commit or simulate the transaction
+   * @param $dryRun Boolean whether to simulate or really commit
    * @return Array of statement strings
    */
   protected function commitImpl($dryRun) {
@@ -304,8 +304,10 @@ class DefaultTransaction implements Transaction {
       self::$logger->info("Commit transaction".($dryRun ? " as dry run" : ""));
     }
     $this->isInCommit = true;
-    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
-        TransactionEvent::BEFORE_COMMIT));
+    if (!$dryRun) {
+      $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+          TransactionEvent::BEFORE_COMMIT));
+    }
     $insertedOids = [];
     $updatedOids = [];
     $deletedOids = [];
@@ -368,12 +370,17 @@ class DefaultTransaction implements Transaction {
         throw $ex;
       }
     }
-    // forget changes
-    $this->clear();
-    $this->isActive = false;
-    $this->isInCommit = false;
-    $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
-        TransactionEvent::AFTER_COMMIT, $insertedOids, $updatedOids, $deletedOids));
+    if (!$dryRun) {
+      // forget changes
+      $this->clear();
+      $this->isActive = false;
+      $this->isInCommit = false;
+      $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
+          TransactionEvent::AFTER_COMMIT, $insertedOids, $updatedOids, $deletedOids));
+    }
+    else {
+      $this->isInCommit = false;
+    }
     return $statements;
   }
 
