@@ -244,13 +244,14 @@ class NodeUtil {
    * @param $nodes A reference to the array of Node instances
    * @param $language The language code, if the translated values should be localized.
    *                 Optional, default is Localizat$objectgetDefaultLanguage()
+   * @param $itemDelim Delimiter string for array values (optional, default: ", ")
    */
-  public static function translateValues(&$nodes, $language=null) {
+  public static function translateValues(&$nodes, $language=null, $itemDelim=", ") {
     // translate the node values
     for($i=0; $i<sizeof($nodes); $i++) {
       $iter = new NodeValueIterator($nodes[$i], false);
       for($iter->rewind(); $iter->valid(); $iter->next()) {
-        self::translateValue($iter->currentNode(), $iter->key(), $language);
+        self::translateValue($iter->currentNode(), $iter->key(), $language, $itemDelim);
       }
     }
   }
@@ -260,11 +261,12 @@ class NodeUtil {
    * @param $object The object whose value to translate
    * @param $valueName The name of the value to translate
    * @param $language The language to use
+   * @param $itemDelim Delimiter string for array values (optional, default: ", ")
    */
-  public static function translateValue(PersistentObject $object, $valueName, $language) {
+  public static function translateValue(PersistentObject $object, $valueName, $language, $itemDelim=", ") {
     $value = $object->getValue($valueName);
     // translate list values
-    $value = ValueListProvider::translateValue($value, $object->getValueProperty($valueName, 'input_type'), $language);
+    $value = ValueListProvider::translateValue($value, $object->getValueProperty($valueName, 'input_type'), $language, $itemDelim);
     // force set (the rendered value may not be satisfy validation rules)
     $object->setValue($valueName, $value, true);
   }

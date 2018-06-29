@@ -77,9 +77,10 @@ class ValueListProvider {
    * @param $inputType The description of the control as given in the 'input_type' property of a value
    * @param $language The language if the value should be localized. Optional,
    *                 default is Localization::getDefaultLanguage()
+   * @param $itemDelim Delimiter string for array values (optional, default: ", ")
    * @return String
    */
-  public static function translateValue($value, $inputType, $language=null) {
+  public static function translateValue($value, $inputType, $language=null, $itemDelim=", ") {
     // get definition and list from inputType
     if (strPos($inputType, ':') && strlen($value) > 0) {
       $translated = '';
@@ -92,18 +93,20 @@ class ValueListProvider {
         $listDef = $decodedOptions['list'];
         $list = self::getList(json_encode($listDef), $language);
         $items = $list['items'];
+        // only split, if it's an array to avoid casting null values to strings
         if (strPos($value, ',')) {
           $value = preg_split('/,/', $value);
         }
         if (is_array($value)) {
+          $translatedItems = [];
           foreach($value as $curValue) {
             $curValue = trim($curValue);
-            $translated .= self::getItemValue($items, $curValue, false).", ";
+            $translatedItems[] = self::getItemValue($items, $curValue);
           }
-          $translated = StringUtil::removeTrailingComma($translated);
+          $translated = join($itemDelim, $translatedItems);
         }
         else {
-          $translated = self::getItemValue($items, $value, true);
+          $translated = self::getItemValue($items, $value);
         }
         return $translated;
       }
@@ -140,12 +143,12 @@ class ValueListProvider {
    * not exist in the list.
    * @param $list Array of associative arrays with keys 'key' and 'value'
    * @param $key The key to search
-   * @param $strict Boolean whether to check the key type as well (optional, default: __true__)
    * @return String
    */
-  protected static function getItemValue($list, $key, $strict=true) {
+  protected static function getItemValue($list, $key) {
     foreach ($list as $item) {
-      if (($strict && $item['key'] === $key) || (!$strict && $item['key'] == $key)) {
+      // strict comparison for null value
+      if (($key === null && $item['key'] === $key) || ($key !==null && $item['key'] == $key)) {
         return $item['value'];
       }
     }
