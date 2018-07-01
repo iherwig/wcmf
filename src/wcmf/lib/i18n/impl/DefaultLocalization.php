@@ -426,7 +426,10 @@ class DefaultLocalization implements Localization {
       $translation->setValue('language', $lang);
 
       // store translation for oid update if necessary (see afterCreate())
-      $this->createdTranslations[$oid] = $translation;
+      if (!isset($this->createdTranslations[$oid])) {
+        $this->createdTranslations[$oid] = [];
+      }
+      $this->createdTranslations[$oid][] = $translation;
     }
   }
 
@@ -439,7 +442,10 @@ class DefaultLocalization implements Localization {
       $oldOid = $event->getOldOid();
       $oldOidStr = $oldOid != null ? $oldOid->__toString() : null;
       if ($oldOidStr != null && isset($this->createdTranslations[$oldOidStr])) {
-        $this->createdTranslations[$oldOidStr]->setValue('objectid', $event->getObject()->getOID()->__toString());
+        foreach ($this->createdTranslations[$oldOidStr] as $translation) {
+          $translation->setValue('objectid', $event->getObject()->getOID()->__toString());
+        }
+
       }
     }
   }
