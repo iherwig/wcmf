@@ -9,6 +9,7 @@
  * additional information.
  */
 use wcmf\lib\util\URIUtil;
+use wcmf\lib\io\FileUtil;
 
 /**
  * Translate the given path into a path relative to the executed script.
@@ -21,13 +22,14 @@ use wcmf\lib\util\URIUtil;
  * @param $path The path
  * @param $base Relative path from the executed script to the location
  *                   that the given path is relative to.
+ * @param $strict Boolean whether the function should return null, if the url does not exist or not (optiona, default: false)
  * @return String
  */
-function smarty_modifier_translate_path($path, $base) {
+function smarty_modifier_translate_path($path, $base, $strict=false) {
   if (strlen($path) > 0) {
     $urls = URIUtil::translate($path, $base);
-    return $urls['relative'];
+    return FileUtil::fileExists($urls['relative']) || !$strict ? $urls['relative'] : null;
   }
-  return $path;
+  return null;
 }
 ?>

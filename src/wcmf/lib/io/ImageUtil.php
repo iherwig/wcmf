@@ -142,7 +142,7 @@ class ImageUtil {
    * @return String, if returnLocation is true
    */
   public static function getCachedImage($location, $returnLocation=false) {
-    $location = urldecode($location);
+    $location = rawurldecode($location);
 
     // strip the cache base from the location
     $cacheLocation = substr($location, strlen(self::IMAGE_CACHE_SECTION.'/'));
@@ -151,7 +151,7 @@ class ImageUtil {
     // the location is supposed to follow the pattern directory/{width}-basename
     $width = null;
     $basename = basename($cacheLocation);
-    if(preg_match('/^([0-9]+)-/', $basename, $matches)) {
+    if (preg_match('/^([0-9]+)-/', $basename, $matches)) {
       // get required width from location and remove it from location
       $width = $matches[1];
       $basename = preg_replace('/^'.$width.'-/', '', $basename);

@@ -445,7 +445,6 @@ class DefaultLocalization implements Localization {
         foreach ($this->createdTranslations[$oldOidStr] as $translation) {
           $translation->setValue('objectid', $event->getObject()->getOID()->__toString());
         }
-
       }
     }
   }
