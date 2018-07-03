@@ -74,8 +74,12 @@ class ImageUtil {
       return '';
     }
 
-    // skip srcset for fallback image
+    // create src entries
+    $hasSrcSet = sizeof($widths) > 0;
+    $widths = $hasSrcSet ? $widths : [$width];
     $srcset = [];
+
+    // skip processing for fallback image
     if ($imageFile != $fallbackFile) {
       // get file name and cache directory
       $baseName = basename($imageFile);
@@ -86,7 +90,6 @@ class ImageUtil {
         FileUtil::mkdirRec($directory);
       }
 
-      // create srcset entries
       for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
         $curWidth = intval($widths[$i]);
         if ($curWidth > 0) {
@@ -110,8 +113,16 @@ class ImageUtil {
               }
             }
           }
-          $srcset[] = preg_replace(['/ /', '/,/'], ['%20', '%2C'], $resizedFile).
-                  ' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
+
+          if ($hasSrcSet) {
+            // add to source set
+            $srcset[] = preg_replace(['/ /', '/,/'], ['%20', '%2C'], $resizedFile).
+            ' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
+          }
+          else {
+            // replace main source for single source entry
+            $imageFile = $resizedFile;
+          }
         }
       }
     }

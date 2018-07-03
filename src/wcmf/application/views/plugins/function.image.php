@@ -95,7 +95,7 @@ use wcmf\lib\io\ImageUtil;
 function smarty_function_image($params, Smarty_Internal_Template $template) {
   $file = $params['src'];
   $default = isset($params['default']) ? $params['default'] : '';
-  $widths = array_map('trim', explode(',', $params['widths']));
+  $widths = array_map('trim', isset($params['widths']) ? explode(',', $params['widths']) : []);
   $type = isset($params['type']) ? $params['type'] : 'w';
   $sizes = isset($params['sizes']) ? $params['sizes'] : '';
   $useDataAttributes = isset($params['useDataAttributes']) ? $params['useDataAttributes'] : false;
