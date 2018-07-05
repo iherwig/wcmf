@@ -29,6 +29,7 @@ class LocalizationTest extends DatabaseTestCase {
   const EXPECTED_DEFAULT_LANGUAGE_NAME = 'English';
   const TEST_OID1 = 'Book:301';
   const TEST_OID2 = 'Book:302';
+  const TEST_OID3 = 'Book:303';
   const TRANSLATION_TYPE = 'Translation';
 
   protected function getDataSet() {
@@ -48,8 +49,10 @@ class LocalizationTest extends DatabaseTestCase {
       'Book' => [
         ['id' => 301, 'title' => 'title [en]', 'description' => 'description [en]', 'year' => ''],
         ['id' => 302, 'title' => '', 'description' => '', 'year' => ''],
+        ['id' => 303, 'title' => 'title [en]', 'description' => '', 'year' => ''],
       ],
       'Translation' => [
+        ['id' => 501, 'objectid' => 'app.src.model.Book', 'attribute' => 'title', 'translation' => 'title [de]', 'language' => 'de']
       ],
     ]);
   }
@@ -178,7 +181,7 @@ class LocalizationTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testSaveEmptyValues() {
+  public function testDontCreateEntriesForEmptyValues() {
     TestUtil::startSession('admin', 'admin');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $transaction = $persistenceFacade->getTransaction();
@@ -190,18 +193,47 @@ class LocalizationTest extends DatabaseTestCase {
     $testObj = $persistenceFacade->load($oid);
     $transaction->detach($oid);
 
-    // store a translation all values empty
+    // store a translation for all values empty
     $tmp = clone $testObj;
     $tmp->clearValues();
     $localization->saveTranslation($tmp, 'de');
     $transaction->commit();
 
-    // there must be translations for the untranslated values in the translation table
+    // there must be no translations for the untranslated values in the translation table
     $transaction->begin();
-    $oids2 = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
+    $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
             [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())]);
-    $this->assertTrue(sizeof($oids2) > 0,
-      "There must be translations for the untranslated values in the translation table");
+    $this->assertEquals(0, sizeof($oids),
+        "There must be no translations for the untranslated values in the translation table");
+    $transaction->rollback();
+
+    TestUtil::endSession();
+  }
+
+  public function testDeleteEmptyValues() {
+    TestUtil::startSession('admin', 'admin');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $transaction = $persistenceFacade->getTransaction();
+    $localization = ObjectFactory::getInstance('localization');
+
+    // create a new object
+    $transaction->begin();
+    $oid = ObjectId::parse(self::TEST_OID3);
+    $testObj = $persistenceFacade->load($oid);
+    $transaction->detach($oid);
+
+    // store a translation for all values empty
+    $tmp = clone $testObj;
+    $tmp->clearValues();
+    $localization->saveTranslation($tmp, 'de');
+    $transaction->commit();
+
+    // there must be no translations for the untranslated values in the translation table
+    $transaction->begin();
+    $oids = $persistenceFacade->getOIDs(self::TRANSLATION_TYPE,
+        [new Criteria(self::TRANSLATION_TYPE, "objectid", "=", $oid->__toString())]);
+    $this->assertEquals(0, sizeof($oids),
+        "There must be no translations for the untranslated values in the translation table");
     $transaction->rollback();
 
     TestUtil::endSession();

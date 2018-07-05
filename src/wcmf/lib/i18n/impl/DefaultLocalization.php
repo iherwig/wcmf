@@ -413,9 +413,17 @@ class DefaultLocalization implements Localization {
         }
       }
 
-      // if not, create a new translation
-      if ($translation == null && $value !== null) {
+      $valueIsEmpty = $value === null || $value === '';
+
+      // if no translation exists and the value is not empty, create a new translation
+      if ($translation == null && !$valueIsEmpty) {
         $translation = $this->persistenceFacade->create($this->translationType);
+      }
+
+      // if a translation exists and the value is empty, remove the existing translation
+      if ($translation != null && $valueIsEmpty) {
+        $translation->delete();
+        $translation = null;
       }
 
       if ($translation) {
