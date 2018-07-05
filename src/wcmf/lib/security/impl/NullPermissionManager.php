@@ -17,7 +17,7 @@ use wcmf\lib\security\PermissionManager;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NullPermissionManager extends AbstractPermissionManager implements PermissionManager {
+class NullPermissionManager implements PermissionManager {
 
   private static $policies = [
     'allow' => [],
@@ -30,6 +30,31 @@ class NullPermissionManager extends AbstractPermissionManager implements Permiss
    */
   public function authorize($resource, $context, $action, $login=null) {
     return true;
+  }
+
+  /**
+   * @see PermissionManager::addTempPermission()
+   */
+  public function addTempPermission($resource, $context, $action) {
+  }
+
+  /**
+   * @see PermissionManager::removeTempPermission()
+   */
+  public function removeTempPermission($handle) {
+  }
+
+  /**
+   * @see PermissionManager::hasTempPermission()
+   */
+  public function hasTempPermission($resource, $context, $action) {
+    return true;
+  }
+
+  /**
+   * @see PermissionManager::clearTempPermissions()
+   */
+  public function clearTempPermissions() {
   }
 
   /**
