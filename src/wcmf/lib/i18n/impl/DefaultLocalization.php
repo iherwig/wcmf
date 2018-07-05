@@ -414,22 +414,24 @@ class DefaultLocalization implements Localization {
       }
 
       // if not, create a new translation
-      if ($translation == null) {
+      if ($translation == null && $value !== null) {
         $translation = $this->persistenceFacade->create($this->translationType);
       }
 
-      // set all required properties
-      $oid = $object->getOID()->__toString();
-      $translation->setValue('objectid', $oid);
-      $translation->setValue('attribute', $valueName);
-      $translation->setValue('translation', $object->getValue($valueName));
-      $translation->setValue('language', $lang);
+      if ($translation) {
+        // set all required properties
+        $oid = $object->getOID()->__toString();
+        $translation->setValue('objectid', $oid);
+        $translation->setValue('attribute', $valueName);
+        $translation->setValue('translation', $value);
+        $translation->setValue('language', $lang);
 
-      // store translation for oid update if necessary (see afterCreate())
-      if (!isset($this->createdTranslations[$oid])) {
-        $this->createdTranslations[$oid] = [];
+        // store translation for oid update if necessary (see afterCreate())
+        if (!isset($this->createdTranslations[$oid])) {
+          $this->createdTranslations[$oid] = [];
+        }
+        $this->createdTranslations[$oid][] = $translation;
       }
-      $this->createdTranslations[$oid][] = $translation;
     }
   }
 

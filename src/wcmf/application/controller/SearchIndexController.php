@@ -151,7 +151,9 @@ class SearchIndexController extends BatchController {
     foreach($oids as $oid) {
       if (ObjectId::isValid($oid)) {
         $obj = $persistenceFacade->load($oid);
-        $this->search->addToIndex($obj);
+        if ($obj) {
+          $this->search->addToIndex($obj);
+        }
       }
     }
     $this->search->commitIndex(false);
