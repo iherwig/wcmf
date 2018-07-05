@@ -140,8 +140,9 @@ class DefaultLockHandler implements LockHandler {
     foreach($locks as $lock) {
       // delete lock immediatly
       $lock->getMapper()->delete($lock);
-      $this->removeSessionLock($lock->getValue('objectid'));
     }
+    // delete all session locks
+    $this->removeSessonLocks();
   }
 
   /**
@@ -264,6 +265,13 @@ class DefaultLockHandler implements LockHandler {
         $this->session->set(self::SESSION_VARNAME, $locks);
       }
     }
+  }
+
+  /**
+   * Remove all Lock instances from the session
+   */
+  protected function removeSessonLocks() {
+    $this->session->remove(self::SESSION_VARNAME);
   }
 }
 ?>
