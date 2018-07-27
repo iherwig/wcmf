@@ -148,7 +148,7 @@ class ValueListProvider {
   protected static function getItemValue($list, $key) {
     foreach ($list as $item) {
       // strict comparison for null value
-      if (($key === null && $item['key'] === $key) || ($key !==null && $item['key'] == $key)) {
+      if (($key === null && $item['key'] === $key) || ($key !== null && strval($item['key']) === strval($key))) {
         return $item['value'];
       }
     }
