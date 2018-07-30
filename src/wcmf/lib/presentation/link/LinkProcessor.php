@@ -188,6 +188,15 @@ class LinkProcessor {
         }
         $urlConv .= $anchorOID;
       }
+      else {
+        $anchorName = InternalLink::getAnchorName($url);
+        if ($anchorName != null) {
+          if (strrpos($urlConv) !== 0) {
+            $urlConv .= '#';
+          }
+          $urlConv .= $anchorName;
+        }
+      }
     }
     return $urlConv;
   }
