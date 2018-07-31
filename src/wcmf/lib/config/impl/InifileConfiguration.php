@@ -271,7 +271,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $result = [];
     foreach ($values as $path) {
       $absPath = WCMF_BASE.$path;
-      $result[] = $this->fileUtil->realpath(dirname($absPath)).'/'.basename($absPath);
+      $result[] = $this->fileUtil->realpath(dirname($absPath)).'/'.$this->fileUtil->basename($absPath);
     }
 
     return $isArray ? $result : (sizeof($result) > 0 ? $result[0] : null);

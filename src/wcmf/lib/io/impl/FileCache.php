@@ -97,7 +97,7 @@ class FileCache implements Cache {
       $cachBaseDir = $this->getCacheDir();
       $directory = $cachBaseDir.dirname($section);
       if (is_dir($directory)) {
-        $pattern = '/^'.preg_replace('/\*$/', '', basename($section)).'/';
+        $pattern = '/^'.preg_replace('/\*$/', '', $this->fileUtil->basename($section)).'/';
         $files = $this->fileUtil->getFiles($directory, $pattern, true, true);
         foreach ($files as $file) {
           $this->clear(str_replace($cachBaseDir, '', $file));

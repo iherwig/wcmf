@@ -82,7 +82,7 @@ class ImageUtil {
     // skip processing for fallback image
     if ($imageFile != $fallbackFile) {
       // get file name and cache directory
-      $baseName = basename($imageFile);
+      $baseName = FileUtil::basename($imageFile);
       $directory = self::getCacheDir($imageFile);
 
       // create the cache directory if requested
@@ -161,7 +161,7 @@ class ImageUtil {
     // determine the width and source file from the location
     // the location is supposed to follow the pattern directory/{width}-basename
     $width = null;
-    $basename = basename($cacheLocation);
+    $basename = FileUtil::basename($cacheLocation);
     if (preg_match('/^([0-9]+)-/', $basename, $matches)) {
       // get required width from location and remove it from location
       $width = $matches[1];
@@ -184,7 +184,9 @@ class ImageUtil {
     }
 
     // return the image file
-    $file = FileUtil::fileExists($resizedFile) ? $resizedFile : $sourceFile;
+    $exists = FileUtil::fileExists('media/ensemble/Camil_Morariu.jpg');
+    $exists = FileUtil::fileExists('media/productions/Amy_love is/Amy/ბაკულას ღორები  (4).JPG');
+    $file = FileUtil::fileExists($resizedFile) ? $resizedFile : (FileUtil::fileExists($sourceFile) ? $sourceFile : null);
     if ($returnLocation) {
       return $file;
     }

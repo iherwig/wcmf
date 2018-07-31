@@ -46,7 +46,7 @@ class FileUtil {
 
     // check if we need a new name
     if ($override == false && file_exists($destName)) {
-      $pieces = preg_split('/\./', basename($destName));
+      $pieces = preg_split('/\./', self::basename($destName));
       $extension = array_pop($pieces);
       $name = join('.', $pieces);
       $destName = dirname($destName)."/".$name.uniqid(rand()).".".$extension;
@@ -55,8 +55,7 @@ class FileUtil {
     if ($result === false) {
       throw new IOException($message->getText("Failed to move %0% to %1%.", [$mediaFile['tmp_name'], $destName]));
     }
-    $filename = basename($destName);
-    return $filename;
+    return self::basename($destName);
   }
 
   /**
@@ -303,7 +302,16 @@ class FileUtil {
    * @return Boolean
    */
   public static function fileExists($file) {
-    return file_exists($file) || file_exists(iconv('utf-8', 'cp1252', $file));
+    return self::fixFilename($file) !== null;
+  }
+
+  /**
+   * Get the trailing name component of a path (locale independent)
+   * @param $file
+   * @return String
+   */
+  public static function basename($file) {
+    return end(explode('/', $file));
   }
 }
 ?>

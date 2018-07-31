@@ -49,7 +49,7 @@ class Image implements ValidateType {
 
     // translate path
     $absValue = WCMF_BASE.$value;
-    $value = FileUtil::fixFilename(FileUtil::realpath(dirname($absValue)).'/'.basename($absValue));
+    $value = FileUtil::fixFilename(FileUtil::realpath(dirname($absValue)).'/'.FileUtil::basename($absValue));
     if (!$value) {
       return false;
     }
