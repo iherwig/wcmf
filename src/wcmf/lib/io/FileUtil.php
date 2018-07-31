@@ -311,7 +311,8 @@ class FileUtil {
    * @return String
    */
   public static function basename($file) {
-    return end(explode('/', $file));
+    $parts = explode('/', $file);
+    return end($parts);
   }
 }
 ?>
