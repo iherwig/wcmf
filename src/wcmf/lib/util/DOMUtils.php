@@ -17,6 +17,19 @@ namespace wcmf\lib\util;
  */
 class DOMUtils {
   /**
+   * Process the given html fragment using the given function
+   * @param $content Html string
+   * @param $processor Function that accepts a DOMDocument as only parameter
+   * @return String
+   */
+  public static function processHtml($content, callable $processor) {
+    $doc = new \DOMDocument();
+    $doc->loadHTML('<html>'. $content.'</html>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    $processor($doc);
+    return str_replace(['<html>', '</html>'], '', $doc->saveHTML());
+  }
+
+  /**
    * Get the child nodes of a given type
    * @param \DOMElement $element
    * @param $type
@@ -55,6 +68,24 @@ class DOMUtils {
     $fragment = $element->ownerDocument->createDocumentFragment();
     $fragment->appendXML($html);
     $element->appendChild($fragment);
+  }
+
+
+  /**
+   * Remove double linebreaks and empty paragraphs
+   * @param $content
+   * @return String
+   */
+  public static function removeEmptyLines($html) {
+    // merge multiple linebreaks to one
+    $html = preg_replace("/(<br>\s*)+/", "<br>", $html);
+    // remove linebreaks at the beginning of a paragraph
+    $html = preg_replace("/<p>(\s|<br>)*/", "<p>", $html);
+    // remove linebreaks at the end of a paragraph
+    $html = preg_replace("/(\s|<br>)*<\/p>/", "</p>", $html);
+    // remove empty paragraphs
+    $html = preg_replace("/<p><\/p>/", "", $html);
+    return $html;
   }
 }
 ?>
