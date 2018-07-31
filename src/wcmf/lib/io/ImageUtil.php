@@ -184,8 +184,6 @@ class ImageUtil {
     }
 
     // return the image file
-    $exists = FileUtil::fileExists('media/ensemble/Camil_Morariu.jpg');
-    $exists = FileUtil::fileExists('media/productions/Amy_love is/Amy/ბაკულას ღორები  (4).JPG');
     $file = FileUtil::fileExists($resizedFile) ? $resizedFile : (FileUtil::fileExists($sourceFile) ? $sourceFile : null);
     if ($returnLocation) {
       return $file;
