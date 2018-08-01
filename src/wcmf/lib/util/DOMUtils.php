@@ -24,9 +24,9 @@ class DOMUtils {
    */
   public static function processHtml($content, callable $processor) {
     $doc = new \DOMDocument();
-    $doc->loadHTML('<html>'. $content.'</html>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    $doc->loadHTML('<html>'.trim($content).'</html>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
     $processor($doc);
-    return str_replace(['<html>', '</html>'], '', $doc->saveHTML());
+    return trim(str_replace(['<html>', '</html>'], '', $doc->saveHTML()));
   }
 
   /**
