@@ -251,7 +251,7 @@ class SortController extends Controller {
     $tpl = $query->getObjectTemplate($type);
     $tpl->setValue($sortkeyName, Criteria::asValue($sortDirection == 'ASC' ? '<' : '>', $sortkeyValue), true);
     $pagingInfo = new PagingInfo(1, true);
-    $objects = $query->execute(BuildDepth::SINGLE, [$sortkeyName." ".$sortDirection], $pagingInfo);
+    $objects = $query->execute(BuildDepth::SINGLE, [$sortkeyName." ".($sortDirection == 'ASC' ? 'DESC' : 'ASC')], $pagingInfo);
     return sizeof($objects) > 0 ? $objects[0] : null;
   }
 
