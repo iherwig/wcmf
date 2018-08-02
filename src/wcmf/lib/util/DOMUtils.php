@@ -30,19 +30,33 @@ class DOMUtils {
   }
 
   /**
-   * Get the child nodes of a given type
+   * Get the child nodes of a given element name
    * @param \DOMElement $element
-   * @param $type
+   * @param $elementName
    * @return \DOMNodeList[]
    */
-  public static function getChildNodesOfType(\DOMElement $element, $type) {
+  public static function getChildNodesOfName(\DOMElement $element, $elementName) {
     $result = [];
     foreach ($element->childNodes as $child) {
-      if ($child->nodeName == $type) {
+      if ($child->nodeName == $elementName) {
         $result[] = $child;
       }
     }
     return $result;
+  }
+
+  /**
+   * Get the next sibling of the given element type
+   * @param $element Reference element
+   * @param $elementType Element type (e.g. XML_ELEMENT_NODE)
+   * @return \DomElement
+   */
+  public static function getNextSiblingOfType(\DOMElement $element, $elementType) {
+    $nextSibling = $element->nextSibling;
+    while ($nextSibling && $nextSibling->nodeType != $elementType) {
+      $nextSibling = $nextSibling->nextSibling;
+    }
+    return $nextSibling;
   }
 
   /**
