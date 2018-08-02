@@ -433,12 +433,15 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
       return;
     }
     // construct the error message
-    $errorMessage = ObjectFactory::getInstance('message')->getText("The value of '%0%' (%1%) is invalid.", [$name, $value]);
-
-    // use configured message if existing
+    $messageInstance = ObjectFactory::getInstance('message');
     $validateDescription = $this->getValueProperty($name, 'validate_description');
     if (strlen($validateDescription) > 0) {
-      $errorMessage .= " ".$validateDescription;
+      // use configured message if existing
+      $errorMessage = $messageInstance->getText($validateDescription);
+    }
+    else {
+      // default text
+      $errorMessage = $messageInstance->getText("The value of '%0%' (%1%) is invalid.", [$messageInstance->getText($name), $value]);
     }
     throw new ValidationException($name, $value, $errorMessage);
   }

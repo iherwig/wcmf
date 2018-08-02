@@ -223,7 +223,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * Get all routes from the Routes configuration section that match the given
    * request path
    * @param $requestPath
-   * @return Array of arrays with keys 'numPathParameters', 'parameters', 'methods'
+   * @return Array of arrays with keys 'route', 'numPathParameters', 'numPathPatterns', 'parameters', 'methods'
    */
   protected function getMatchingRoutes($requestPath) {
     $matchingRoutes = [];
@@ -292,18 +292,37 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           parse_str($requestDef, $requestDefData);
           $requestParameters = array_merge($requestParameters, $requestDefData);
 
-          // store match
-          $matchingRoutes[] = [
+          $routeData = [
             'route' => $route,
             'numPathParameters' => (preg_match('/\*/', $route) ? PHP_INT_MAX : sizeof($params)),
             'numPathPatterns' => $numPatterns,
             'parameters' => $requestParameters,
             'methods' => $allowedMethods
           ];
+
+          // store match
+          if ($this->isMatch($routeData)) {
+            $matchingRoutes[] = $routeData;
+          }
+          else {
+            if (self::$logger->isDebugEnabled()) {
+              self::$logger->debug("Match removed by custom matching");
+            }
+          }
         }
       }
     }
     return $matchingRoutes;
+  }
+
+  /**
+   * Check if the given route data match a route definition
+   * @note Subclasses will override this to implement custom matching. The default implementation returns true.
+   * @param $routeData Array as single match returned from DefaultRequest::getMatchingRoutes()
+   * @return Boolean
+   */
+  protected function isMatch($routeData) {
+    return true;
   }
 
   /**
