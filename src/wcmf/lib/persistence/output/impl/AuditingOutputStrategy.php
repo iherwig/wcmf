@@ -63,15 +63,13 @@ class AuditingOutputStrategy implements OutputStrategy {
           break;
         // log update action
         case PersistentObject::STATE_DIRTY:
-          // get original values
-          $orignialValues = $obj->getOriginalValues();
           // collect differences
           $values = [];
           $valueNames = $obj->getValueNames(true);
           foreach($valueNames as $name) {
             $values[$name]['name'] = $name;
             $values[$name]['new'] = $obj->getValue($name);
-            $values[$name]['old'] = isset($orignialValues[$name]) ? $orignialValues[$name] : null;
+            $values[$name]['old'] = $obj->getOriginalValue($name);
           }
           // make diff string
           $diff = '';

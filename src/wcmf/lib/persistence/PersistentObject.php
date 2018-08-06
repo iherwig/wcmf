@@ -148,8 +148,8 @@ interface PersistentObject {
 
   /**
    * Get the value of an attribute.
-   * @param $name The name of the attribute to query.
-   * @return The value of the attribute / null if it doesn't exits.
+   * @param $name The name of the attribute.
+   * @return The value of the attribute / null if it doesn't exist.
    */
   public function getValue($name);
 
@@ -167,7 +167,7 @@ interface PersistentObject {
 
   /**
    * Check if the object has a given attribute.
-   * @param $name The name of the attribute to query.
+   * @param $name The name of the attribute.
    * @return Boolean whether the attribute exists or not.
    */
   public function hasValue($name);
@@ -208,10 +208,11 @@ interface PersistentObject {
   public function getChangedValues();
 
   /**
-   * Get the original data provided to the initialize method.
-   * @return Associative array with value names as keys and values as values
+   * Get the original of an attribute provided to the initialize method.
+   * @param $name The name of the attribute.
+   * @return The value of the attribute / null if it doesn't exist.
    */
-  public function getOriginalValues();
+  public function getOriginalValue($name);
 
   /**
    * Get the list of objects that must exist in the store, before
@@ -223,8 +224,8 @@ interface PersistentObject {
 
   /**
    * Get the value of a named property in the object.
-   * @param $name The name of the property to query.
-   * @return The value of the property / null if it doesn't exits.
+   * @param $name The name of the property.
+   * @return The value of the property / null if it doesn't exist.
    */
   public function getProperty($name);
 

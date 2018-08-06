@@ -292,10 +292,10 @@ class PersistentObjectProxy implements PersistentObject {
   }
 
   /**
-   * @see PersistentObject::getOriginalValues()
+   * @see PersistentObject::getOriginalValue()
    */
-  public function getOriginalValues() {
-    return $this->__call(__FUNCTION__, []);
+  public function getOriginalValue($name) {
+    return $this->__call(__FUNCTION__, [$name]);
   }
 
   /**

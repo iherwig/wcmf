@@ -454,10 +454,13 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   }
 
   /**
-   * @see PersistentObject::getOriginalValues()
+   * @see PersistentObject::getOriginalValue()
    */
-  public function getOriginalValues() {
-    return $this->originalData;
+  public function getOriginalValue($name) {
+    if (isset($this->originalData[$name])) {
+      return $this->originalData[$name];
+    }
+    return null;
   }
 
   /**
