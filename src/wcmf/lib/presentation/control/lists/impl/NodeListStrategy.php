@@ -11,6 +11,7 @@
 namespace wcmf\lib\presentation\control\lists\impl;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\presentation\control\lists\ListStrategy;
@@ -48,6 +49,7 @@ class NodeListStrategy implements ListStrategy {
     $types = $options['types'];
 
     $isSingleType = sizeof($types) == 1;
+    $localization = ObjectFactory::getInstance('localization');
 
     $list = [];
     foreach ($types as $type) {
@@ -57,6 +59,7 @@ class NodeListStrategy implements ListStrategy {
       }
       $objects = $query->execute(BuildDepth::SINGLE);
       foreach ($objects as $object) {
+        $object = $localization->loadTranslation($object, $language);
         $id = $isSingleType ? $object->getOID()->getFirstId() : $object->getOID()->__toString();
         $list[$id] = $object->getDisplayValue();
       }
