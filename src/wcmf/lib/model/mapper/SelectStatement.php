@@ -10,6 +10,7 @@
  */
 namespace wcmf\lib\model\mapper;
 
+use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
 use Zend\Db\Adapter\AdapterInterface;
@@ -34,6 +35,8 @@ class SelectStatement extends Select {
   protected $cachedSql = [];
 
   private $adapter = null;
+
+  private static $logger = null;
 
   /**
    * Get the SelectStatement instance with the given id.
@@ -66,6 +69,9 @@ class SelectStatement extends Select {
     $this->id = $id;
     $this->type = $mapper->getType();
     $this->adapter = $mapper->getAdapter();
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
+    }
   }
 
   /**
@@ -150,14 +156,18 @@ class SelectStatement extends Select {
    */
   public function getRowCount() {
     $adapter = $this->getAdapter();
-    $sql = preg_replace('/^SELECT (.+) FROM/i', 'SELECT COUNT(*) AS nRows FROM', $this->getSql());
-    $sql = preg_replace('/LIMIT [0-9]+ OFFSET [0-9]+$/i', '', $sql);
-    $sql = preg_replace('/ORDER BY .+$/i', '', $sql);
-    $stmt = $adapter->getDriver()->getConnection()->prepare(trim($sql));
-    $result = $stmt->execute($this->getParameters(true))->getResource();
+    $columns = $this->processSelect($adapter->getPlatform());
+    $firstColumn = $columns[$this->quantifier ? 1 : 0][0][0];
+
+    $countStatement = clone $this;
+    $countStatement->columns(array('nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.$firstColumn.')')));
+    $countStatement->reset(self::LIMIT);
+    $countStatement->reset(self::OFFSET);
+    $countStatement->reset(self::ORDER);
+    $countStatement->id = $this->id != self::NO_CACHE ? $this->id.'-count' : self::NO_CACHE;
+    $result = $countStatement->query();
     $row = $result->fetch();
-    $nRows = $row['nRows'];
-    return $nRows;
+    return $row['nRows'];
   }
 
   /**
@@ -230,6 +240,10 @@ class SelectStatement extends Select {
     $adapter = $this->getAdapter();
     $sql = $this->getSql();
     $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Execute statement: ".$sql);
+      self::$logger->debug($this->getParameters(true));
+    }
     return $stmt->execute($this->getParameters(true))->getResource();
   }
 
@@ -268,6 +282,9 @@ class SelectStatement extends Select {
   }
 
   public function __wakeup() {
+    if (self::$logger == null) {
+      self::$logger = LogManager::getLogger(__CLASS__);
+    }
   }
 }
 ?>
