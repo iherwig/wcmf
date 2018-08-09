@@ -406,7 +406,7 @@ class ObjectQuery extends AbstractQuery {
     foreach ($mapper->getRelations() as $relationDescription) {
       $children = $tpl->getValue($relationDescription->getOtherRole());
       if ($children) {
-        $children = is_array($children) ?: [$children];
+        $children = !is_array($children) ? [$children] : $children;
         for ($i=0, $count=sizeof($children); $i<$count; $i++) {
           $curChild = $children[$i];
           if ($curChild instanceof Node) {
