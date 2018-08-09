@@ -70,7 +70,7 @@ class NodeTest extends BaseTestCase {
     $this->assertNotNull($subChapter2->getValue('ParentChapter'));
 
     $normalImage = $chapter1->getFirstChild('NormalImage');
-    $this->assertEquals(1, sizeof($normalImage->getValue('NormalChapter')));
+    $this->assertNotNull($normalImage->getValue('NormalChapter'));
 
     $titleImage = $chapter1->getFirstChild('TitleImage');
     $this->assertEquals(1, sizeof($titleImage->getValue('TitleChapter')));
