@@ -130,5 +130,44 @@ class PagingInfo {
   public function isIgnoringTotalCount() {
     return $this->ignoreTotalCount;
   }
+
+  /**
+   * Get the pages for a pagination navigation
+   * @param $urlPattern Url string to use containing literal {page}, that will be replaced
+   * @param $maxDisplayPages Maximum number of pages to display (optional, default: 10)
+   * @return Array with keys 'first', 'last', 'current', 'prev', 'next', 'pages' and arrays with 'url', 'num' as values or null, if page count <= 1
+   */
+  public function getPagination($urlPattern, $maxDisplayPages=10) {
+    if ($this->getPageCount() <= 1) {
+      return null;
+    }
+
+    // calculate pages
+    $getPage = function($val) use ($urlPattern) {
+      return ['num' => $val, 'url' => str_replace('{page}', $val, $urlPattern)];
+    };
+
+    $first = 1;
+    $last = $this->getPageCount();
+    $page = $this->getPage();
+
+    $halfRange = floor($maxDisplayPages/2);
+    $startPage = ($page < $halfRange) ? $first : max([$page-$halfRange, $first]);
+    $endPage = $maxDisplayPages-1 + $startPage;
+    $endPage = ($last < $endPage) ? $last : $endPage;
+    $diff = $startPage - $endPage + $maxDisplayPages-1;
+    $startPage -= ($startPage - $diff > 0) ? $diff : 0;
+
+    $pages = array_map($getPage, range($startPage, $endPage));
+
+    return [
+        'first' => $getPage($first),
+        'last' => $getPage($last),
+        'current' => $getPage($page),
+        'prev' => $page > $startPage ? $getPage($page-1) : null,
+        'next' => $page < $endPage ? $getPage($page+1) : null,
+        'pages' => $pages,
+    ];
+  }
 }
 ?>
