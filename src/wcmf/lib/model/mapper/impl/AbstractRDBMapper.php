@@ -595,7 +595,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       $sortDef = $nmMapper->getOwnDefaultOrder($roleName);
       $sortType = $nmMapper->getType();
     }
-    if (sizeof($sortDef) == 0) {
+    if (!$sortDef || sizeof($sortDef) == 0) {
       // default: the order is defined in this mapper
       $sortDef = $this->getOwnDefaultOrder($roleName);
       $sortType = $this->getType();
