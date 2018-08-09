@@ -64,10 +64,10 @@ class NodeTest extends BaseTestCase {
     $chapter1 = $persistenceFacade->create('Chapter', 2);
     $subChapter1 = $chapter1->getFirstChild('SubChapter');
     $this->assertEquals(1, sizeof($subChapter1->getValue('SubChapter')));
-    $this->assertEquals(1, sizeof($subChapter1->getValue('ParentChapter')));
+    $this->assertNotNull($subChapter1->getValue('ParentChapter'));
     $subChapter2 = $subChapter1->getFirstChild('SubChapter');
     $this->assertNull($subChapter2->getValue('SubChapter'));
-    $this->assertEquals(1, sizeof($subChapter2->getValue('ParentChapter')));
+    $this->assertNotNull($subChapter2->getValue('ParentChapter'));
 
     $normalImage = $chapter1->getFirstChild('NormalImage');
     $this->assertEquals(1, sizeof($normalImage->getValue('NormalChapter')));
