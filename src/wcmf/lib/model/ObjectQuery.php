@@ -405,66 +405,64 @@ class ObjectQuery extends AbstractQuery {
     // and process children
     foreach ($mapper->getRelations() as $relationDescription) {
       $children = $tpl->getValue($relationDescription->getOtherRole());
-      if ($children != null && !is_array($children)) {
-        $children = [$children];
-      }
-      for($i=0, $count=sizeof($children); $i<$count; $i++) {
-        $curChild = $children[$i];
-        if ($curChild instanceof Node) {
-          // process relations
+      if ($children) {
+        $children = is_array($children) ?: [$children];
+        for ($i=0, $count=sizeof($children); $i<$count; $i++) {
+          $curChild = $children[$i];
+          if ($curChild instanceof Node) {
+            // process relations
 
-          // don't process the relation twice (e.g. in a many to many relation, both
-          // ends are child ends)
-          if (!isset($this->processedNodes[$curChild->getOID()->__toString()])) {
-            // don't join the tables twice
-            $childTableName = self::processTableName($curChild);
-            $fromPart = $selectStmt->getRawState(SelectStatement::TABLE);
-            if (!isset($fromPart[$childTableName['alias']])) {
-              $childMapper = self::getMapper($curChild->getType());
-              if ($relationDescription instanceof RDBManyToOneRelationDescription) {
-                $idAttr = $childMapper->getAttribute($relationDescription->getIdName());
-                $fkAttr = $mapper->getAttribute($relationDescription->getFkName());
-                $joinCondition = $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
-                        $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
+            // don't process the relation twice (e.g. in a many to many relation, both
+            // ends are child ends)
+            if (!isset($this->processedNodes[$curChild->getOID()->__toString()])) {
+              // don't join the tables twice
+              $childTableName = self::processTableName($curChild);
+              $fromPart = $selectStmt->getRawState(SelectStatement::TABLE);
+              if (!isset($fromPart[$childTableName['alias']])) {
+                $childMapper = self::getMapper($curChild->getType());
+                if ($relationDescription instanceof RDBManyToOneRelationDescription) {
+                  $idAttr = $childMapper->getAttribute($relationDescription->getIdName());
+                  $fkAttr = $mapper->getAttribute($relationDescription->getFkName());
+                  $joinCondition = $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
+                      $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
+                  $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition, []);
+                }
+                elseif ($relationDescription instanceof RDBOneToManyRelationDescription) {
+                  $idAttr = $mapper->getAttribute($relationDescription->getIdName());
+                  $fkAttr = $childMapper->getAttribute($relationDescription->getFkName());
+                  $joinCondition = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
+                      $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
+                  $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition, []);
+                }
+                elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
+                  $thisRelationDescription = $relationDescription->getThisEndRelation();
+                  $otherRelationDescription = $relationDescription->getOtherEndRelation();
 
-                $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition, []);
-              }
-              elseif ($relationDescription instanceof RDBOneToManyRelationDescription) {
-                $idAttr = $mapper->getAttribute($relationDescription->getIdName());
-                $fkAttr = $childMapper->getAttribute($relationDescription->getFkName());
-                $joinCondition = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$fkAttr->getColumn().' = '.
-                        $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.$idAttr->getColumn();
+                  $nmMapper = self::getMapper($thisRelationDescription->getOtherType());
+                  $otherFkAttr = $nmMapper->getAttribute($otherRelationDescription->getFkName());
+                  $otherIdAttr = $childMapper->getAttribute($otherRelationDescription->getIdName());
+                  $thisFkAttr = $nmMapper->getAttribute($thisRelationDescription->getFkName());
+                  $thisIdAttr = $mapper->getAttribute($thisRelationDescription->getIdName());
 
-                $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition, []);
-              }
-              elseif ($relationDescription instanceof RDBManyToManyRelationDescription) {
-                $thisRelationDescription = $relationDescription->getThisEndRelation();
-                $otherRelationDescription = $relationDescription->getOtherEndRelation();
+                  $joinCondition1 = $nmMapper->getRealTableName().'.'.$thisFkAttr->getColumn().' = '.
+                      $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.
+                      $thisIdAttr->getColumn();
+                  $joinCondition2 = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$otherIdAttr->getColumn().' = '.
+                      $nmMapper->getRealTableName().'.'.$otherFkAttr->getColumn();
 
-                $nmMapper = self::getMapper($thisRelationDescription->getOtherType());
-                $otherFkAttr = $nmMapper->getAttribute($otherRelationDescription->getFkName());
-                $otherIdAttr = $childMapper->getAttribute($otherRelationDescription->getIdName());
-                $thisFkAttr = $nmMapper->getAttribute($thisRelationDescription->getFkName());
-                $thisIdAttr = $mapper->getAttribute($thisRelationDescription->getIdName());
+                  $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, []);
+                  $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition2, []);
 
-                $joinCondition1 = $nmMapper->getRealTableName().'.'.$thisFkAttr->getColumn().' = '.
-                        $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.
-                        $thisIdAttr->getColumn();
-                $joinCondition2 = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$otherIdAttr->getColumn().' = '.
-                        $nmMapper->getRealTableName().'.'.$otherFkAttr->getColumn();
-
-                $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, []);
-                $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition2, []);
-
-                // register the nm type
-                $this->involvedTypes[$nmMapper->getType()] = true;
+                  // register the nm type
+                  $this->involvedTypes[$nmMapper->getType()] = true;
+                }
               }
             }
-          }
 
-          // process child
-          if (!in_array($curChild->getOID(), $this->groupedOIDs)) {
-            $this->processObjectTemplate($curChild, $selectStmt);
+            // process child
+            if (!in_array($curChild->getOID(), $this->groupedOIDs)) {
+              $this->processObjectTemplate($curChild, $selectStmt);
+            }
           }
         }
       }
