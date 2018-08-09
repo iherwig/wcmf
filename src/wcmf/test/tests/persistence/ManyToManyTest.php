@@ -105,8 +105,8 @@ class ManyToManyTest extends DatabaseTestCase {
     $transaction->begin();
     $user = $persistenceFacade->load(new ObjectId('User', [$userId]), 1);
     $role = $persistenceFacade->load(new ObjectId('Role', [$roleId]), 1);
-    $this->assertEquals(0, sizeof($user->getFirstChild('Role', null, null)), "No connection yet");
-    $this->assertEquals(0, sizeof($role->getFirstChild('User', null, null)), "No connection yet");
+    $this->assertEquals(null, $user->getFirstChild('Role', null, null), "No connection yet");
+    $this->assertEquals(null, $role->getFirstChild('User', null, null), "No connection yet");
 
     // add role first time
     $user->addNode($role);
