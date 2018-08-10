@@ -160,10 +160,22 @@ class SelectStatement extends Select {
     $firstColumn = $columns[$this->quantifier ? 1 : 0][0][0];
 
     $countStatement = clone $this;
+    $countStatement->reset(Select::COLUMNS);
+    $countStatement->reset(Select::LIMIT);
+    $countStatement->reset(Select::OFFSET);
+    $countStatement->reset(Select::ORDER);
+    $countStatement->reset(Select::GROUP);
+    // remove all join columns to prevent errors because of missing group by for non aggregated columns (42000 - 1140)
+    $joins = $countStatement->joins->getJoins();
+    $countStatement->reset(Select::JOINS);
+    foreach ($joins as $key => $join) {
+      // re add join without cols
+      $countStatement->join($join["name"], $join["on"], [], $join["type"]);
+    }
+
+    // create aggregation column
     $countStatement->columns(array('nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.$firstColumn.')')));
-    $countStatement->reset(self::LIMIT);
-    $countStatement->reset(self::OFFSET);
-    $countStatement->reset(self::ORDER);
+
     $countStatement->id = $this->id != self::NO_CACHE ? $this->id.'-count' : self::NO_CACHE;
     $result = $countStatement->query();
     $row = $result->fetch();
