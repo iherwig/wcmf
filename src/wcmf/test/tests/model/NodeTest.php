@@ -73,10 +73,10 @@ class NodeTest extends BaseTestCase {
     $this->assertNotNull($normalImage->getValue('NormalChapter'));
 
     $titleImage = $chapter1->getFirstChild('TitleImage');
-    $this->assertEquals(1, sizeof($titleImage->getValue('TitleChapter')));
+    $this->assertNotNull($titleImage->getValue('TitleChapter'));
 
     $chapter2 = $book3->getFirstChild('Chapter');
-    $this->assertEquals(1, sizeof($chapter2->getValue('Book')));
+    $this->assertNotNull($chapter2->getValue('Book'));
     $book4 = $chapter2->getValue('Book');
     $this->assertEquals($book4, $book3);
 
@@ -84,7 +84,7 @@ class NodeTest extends BaseTestCase {
     $this->assertNull($author1->getValue('Chapter'));
 
     $author2 = $persistenceFacade->create('Author', 1);
-    $this->assertEquals(1, sizeof($author2->getValue('Chapter')));
+    $this->assertNotNull($author2->getValue('Chapter'));
 
     // BuildDepth::INFINTE is not allowed for create
     try {
