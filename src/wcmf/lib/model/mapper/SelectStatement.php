@@ -294,6 +294,7 @@ class SelectStatement extends Select {
   }
 
   public function __wakeup() {
+    parent::__construct();
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
