@@ -7421,6 +7421,14 @@
           <element xmi:type="uml:Property" href="model.uml#_86xZxaprEeaGbp23C_zkpg"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_DG6o0VuLEeeJNLUV4A8xUw"/>
         </children>
+        <children xmi:type="notation:Shape" xmi:id="_TZT70KCZEei7lb2-f1ttTQ" type="Property_ClassAttributeLabel">
+          <styles xmi:type="notation:StringListValueStyle" xmi:id="_UqlWcKCZEei7lb2-f1ttTQ" name="maskLabel">
+            <stringListValue>defaultValue</stringListValue>
+            <stringListValue>name</stringListValue>
+          </styles>
+          <element xmi:type="uml:Property" href="model.uml#_ElzEMKCZEei7lb2-f1ttTQ"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_TZT70aCZEei7lb2-f1ttTQ"/>
+        </children>
         <styles xmi:type="notation:TitleStyle" xmi:id="_867Kx6prEeaGbp23C_zkpg"/>
         <styles xmi:type="notation:SortingStyle" xmi:id="_867KyKprEeaGbp23C_zkpg"/>
         <styles xmi:type="notation:FilteringStyle" xmi:id="_867KyaprEeaGbp23C_zkpg"/>
@@ -7450,7 +7458,7 @@
         <layoutConstraint xmi:type="notation:Location" xmi:id="_867K3KprEeaGbp23C_zkpg" y="5"/>
       </children>
       <element xmi:type="uml:Class" href="model.uml#_86xZvKprEeaGbp23C_zkpg"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_867K8KprEeaGbp23C_zkpg" x="15" y="675" width="226" height="106"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_867K8KprEeaGbp23C_zkpg" x="15" y="675" width="226" height="121"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_867K8aprEeaGbp23C_zkpg" type="Class_Shape" lineColor="0">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_867K8qprEeaGbp23C_zkpg" source="ShadowFigure">
@@ -8595,7 +8603,7 @@
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Y91Rz1uLEeeJNLUV4A8xUw"/>
       </children>
       <element xmi:type="uml:Class" href="model.uml#_H4XloFuLEeeJNLUV4A8xUw"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Y90DoVuLEeeJNLUV4A8xUw" x="15" y="795" width="226" height="61"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Y90DoVuLEeeJNLUV4A8xUw" x="15" y="810" width="226" height="61"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_Y97_c1uLEeeJNLUV4A8xUw" type="StereotypeComment">
       <styles xmi:type="notation:TitleStyle" xmi:id="_Y97_dFuLEeeJNLUV4A8xUw"/>
