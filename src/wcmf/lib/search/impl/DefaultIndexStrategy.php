@@ -34,7 +34,6 @@ class DefaultIndexStrategy implements IndexStrategy {
     $doc->addField($typeField);
     if ($language != null) {
       $languageField = Field::keyword('lang', $language, 'UTF-8');
-      $languageField->isStored = false;
       $doc->addField($languageField);
     }
 

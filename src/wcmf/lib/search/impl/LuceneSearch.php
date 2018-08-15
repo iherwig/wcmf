@@ -92,7 +92,9 @@ class LuceneSearch implements IndexedSearch {
     if (!is_writeable($this->indexPath)) {
       throw new ConfigurationException("Index path '".$indexPath."' is not writeable.");
     }
-    self::$logger->debug("Lucene index location: ".$this->indexPath);
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Lucene index location: ".$this->indexPath);
+    }
   }
 
   /**
@@ -153,13 +155,24 @@ class LuceneSearch implements IndexedSearch {
     if ($index) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $query = QueryParser::parse($searchTerm, 'UTF-8');
+      if (self::$logger->isDebugEnabled()) {
+        self::$logger->debug("Search term: ".$searchTerm);
+        self::$logger->debug("Parsed query: ".$query);
+        self::$logger->debug("Optimized query: ".$query->rewrite($index)->optimize($index));
+      }
       try {
         $hits = $index->find($query);
+        if (self::$logger->isDebugEnabled()) {
+          self::$logger->debug("Hits: ".sizeof($hits));
+        }
         if ($pagingInfo != null && $pagingInfo->getPageSize() > 0) {
           $pagingInfo->setTotalCount(sizeof($hits));
           $hits = array_slice($hits, $pagingInfo->getOffset(), $pagingInfo->getPageSize());
         }
         foreach($hits as $hit) {
+          if (self::$logger->isDebugEnabled()) {
+            self::$logger->debug(['oid' => $hit->oid, 'lang' => $hit->lang, 'document_id' => $hit->document_id, 'score' => $hit->score]);
+          }
           $oidStr = $hit->oid;
           $oid = ObjectId::parse($oidStr);
 
@@ -224,7 +237,9 @@ class LuceneSearch implements IndexedSearch {
    * @see IndexedSearch::commitIndex()
    */
   public function commitIndex($optimize = true) {
-    self::$logger->debug("Commit index");
+    if (self::$logger->isDebugEnabled()) {
+      self::$logger->debug("Commit index");
+    }
     if ($this->indexIsDirty) {
       $index = $this->getIndex(false);
       $index->commit();
