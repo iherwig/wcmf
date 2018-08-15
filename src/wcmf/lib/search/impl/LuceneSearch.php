@@ -241,6 +241,8 @@ class LuceneSearch implements IndexedSearch {
       $index = $this->getIndex();
       $oidStr = $obj->getOID()->__toString();
 
+      $this->deleteFromIndex($obj->getOID());
+
       // create document for each language
       $localization = ObjectFactory::getInstance('localization');
       foreach ($localization->getSupportedLanguages() as $language => $languageName) {
@@ -252,8 +254,6 @@ class LuceneSearch implements IndexedSearch {
         }
 
         $doc = $this->indexStrategy->getDocument($indexObj, $language);
-
-        $this->deleteFromIndex($obj->getOID());
         $index->addDocument($doc);
       }
       $this->indexIsDirty = true;
