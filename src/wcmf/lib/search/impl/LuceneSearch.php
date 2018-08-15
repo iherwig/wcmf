@@ -256,7 +256,7 @@ class LuceneSearch implements IndexedSearch {
       $localization = ObjectFactory::getInstance('localization');
       foreach ($localization->getSupportedLanguages() as $language => $languageName) {
         // load translation
-        $indexObj = $localization->loadTranslation($obj, $language, $this->useDefaultLanguage);
+        $indexObj = $localization->loadTranslation($obj, $language, $this->defaultLanguageFallback);
 
         if (self::$logger->isDebugEnabled()) {
           self::$logger->debug("Add/Update index for: ".$oidStr." language:".$language);
