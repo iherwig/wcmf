@@ -93,7 +93,7 @@ class ValueListController extends Controller {
       $displayText = $item['value'];
       if ((!$hasDisplayTextFilter || preg_match($displayTextFilter, $displayText)) &&
               (!$hasValueFilter || $valueFilter == $value)) {
-        $items[] = ['oid' => $i, 'value' => $value, 'displayText' => $displayText];
+        $items[] = ['oid' => $i+1, 'value' => $value, 'displayText' => $displayText];
       }
     }
 
