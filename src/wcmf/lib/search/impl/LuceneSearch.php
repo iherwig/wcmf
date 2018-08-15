@@ -44,6 +44,7 @@ class LuceneSearch implements IndexedSearch {
   private $indexStrategy;
   private $indexPath = '';
   private $liveUpdate = true;
+  private $defaultLanguageFallback = true;
   private $index;
   private $indexIsDirty = false;
 
@@ -118,6 +119,14 @@ class LuceneSearch implements IndexedSearch {
    */
   public function getLiveUpdate() {
     return $this->liveUpdate;
+  }
+
+  /**
+   * Set if the search index should use the default language, if a translation is missing
+   * @param $useDefaultLanguage Boolean
+   */
+  public function setDefaultLanguageFallback($defaultLanguageFallback) {
+    $this->defaultLanguageFallback = $defaultLanguageFallback;
   }
 
   /**
@@ -247,7 +256,7 @@ class LuceneSearch implements IndexedSearch {
       $localization = ObjectFactory::getInstance('localization');
       foreach ($localization->getSupportedLanguages() as $language => $languageName) {
         // load translation
-        $indexObj = $localization->loadTranslation($obj, $language, false);
+        $indexObj = $localization->loadTranslation($obj, $language, $this->useDefaultLanguage);
 
         if (self::$logger->isDebugEnabled()) {
           self::$logger->debug("Add/Update index for: ".$oidStr." language:".$language);
