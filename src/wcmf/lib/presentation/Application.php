@@ -169,13 +169,16 @@ class Application {
   public function outputHandler($buffer) {
     // log last error, if it's level is enabled
     $error = error_get_last();
-    if ($error !== null && $error['type'] == E_ERROR) {
+    if ($error !== null && ($error['type'] == E_ERROR || $error['type'] == E_PARSE)) {
       $errorStr = $error['file']."::".$error['line'].": ".$error['type'].": ".$error['message'];
       self::$logger->error($errorStr);
       // suppress error message in browser
       if (!$this->debug) {
         header('HTTP/1.1 500 Internal Server Error');
         $buffer = '';
+      }
+      else {
+        $buffer = "<pre>\n".$errorStr."\n</pre>";
       }
     }
     return trim($buffer);
