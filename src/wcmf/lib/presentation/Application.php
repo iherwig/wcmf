@@ -169,7 +169,7 @@ class Application {
   public function outputHandler($buffer) {
     // log last error, if it's level is enabled
     $error = error_get_last();
-    if ($error !== null && ($error['type'] == E_ERROR || $error['type'] == E_PARSE)) {
+    if ($error !== null && (in_array($error['type'], [E_ERROR, E_PARSE, E_COMPILE_ERROR]))) {
       $errorStr = $error['file']."::".$error['line'].": ".$error['type'].": ".$error['message'];
       self::$logger->error($errorStr);
       // suppress error message in browser

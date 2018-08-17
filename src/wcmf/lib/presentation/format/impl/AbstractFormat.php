@@ -50,7 +50,7 @@ abstract class AbstractFormat implements Format {
    * @see Format::getResponseHeaders()
    */
   public function getResponseHeaders(Response $response) {
-    $response->setHeader("Content-Type", $this->getMimeType()."; charset=utf-8");
+    $response->setHeader("Content-Type", $this->getMimeType($response)."; charset=utf-8");
     return $response->getHeaders();
   }
 

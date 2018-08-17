@@ -10,37 +10,54 @@
  */
 namespace wcmf\lib\presentation\format\impl;
 
+use wcmf\lib\io\Cache;
 use wcmf\lib\presentation\format\Format;
+use wcmf\lib\presentation\format\impl\CacheTrait;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
 
 /**
  * GenericFormat is used to output arbitrary responses. It prints the
- * content of the 'body' value of the response.
+ * content of the 'body' value of the response. The mime type is defined
+ * by the 'mime_type' value of the response. The default cache section can
+ * be set with the 'cache_section' value of the response.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class GenericFormat extends AbstractFormat {
+  use CacheTrait;
+
+  const CACHE_SECTION = 'genericformat';
+
+  protected $cache = null;
+
+  /**
+   * Constructor
+   * @param $dynamicCache Cache instance
+   */
+  public function __construct(Cache $dynamicCache) {
+    $this->cache = $dynamicCache;
+  }
 
   /**
    * @see Format::getMimeType()
    */
-  public function getMimeType() {
-    return '';
+  public function getMimeType(Response $response=null) {
+    return $response ? $response->getValue('mime_type') : '';
   }
 
   /**
-   * @see Format::isCached()
+   * @see CacheTrait::getCache()
    */
-  public function isCached(Response $response) {
-    return false;
+  protected function getCache() {
+    return $this->cache;
   }
 
   /**
-   * @see Format::getCacheDate()
+   * @see CacheTrait::getBaseCacheSection()
    */
-  public function getCacheDate(Response $response) {
-    return null;
+  protected function getBaseCacheSection() {
+    return self::CACHE_SECTION;
   }
 
   /**
@@ -54,8 +71,28 @@ class GenericFormat extends AbstractFormat {
    * @see AbstractFormat::serializeValues()
    */
   protected function serializeValues(Response $response) {
-    echo $response->getValue("body");
     return $response->getValues();
+  }
+
+  /**
+   * @see AbstractFormat::afterSerialize()
+   */
+  protected function afterSerialize(Response $response) {
+    // output response payload
+    $caching = $this->isCaching($response);
+    if (!$caching || !$this->isCached($response)) {
+      $payload = $response->getValue('body');
+      // cache result
+      if ($caching) {
+        $this->putInCache($response, $payload);
+      }
+    }
+    else {
+      $payload = $this->getFromCache($response);
+    }
+    print($payload);
+
+    return parent::afterSerialize($response);
   }
 }
 ?>

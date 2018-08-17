@@ -26,9 +26,10 @@ interface Format {
 
   /**
    * Get the MIME type of the format
+   * @param $response (optional)
    * @return String
    */
-  public function getMimeType();
+  public function getMimeType(Response $response=null);
 
   /**
    * Deserialize Request data from the external representation into Nodes and scalars/arrays.

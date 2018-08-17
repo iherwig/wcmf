@@ -35,7 +35,7 @@ class SoapFormat extends HierarchicalFormat {
   /**
    * @see Format::getMimeType()
    */
-  public function getMimeType() {
+  public function getMimeType(Response $response=null) {
     return 'application/soap+xml';
   }
 

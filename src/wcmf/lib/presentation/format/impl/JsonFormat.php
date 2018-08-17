@@ -13,6 +13,7 @@ namespace wcmf\lib\presentation\format\impl;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\io\Cache;
 use wcmf\lib\model\NodeSerializer;
+use wcmf\lib\presentation\format\impl\CacheTrait;
 use wcmf\lib\presentation\format\impl\HierarchicalFormat;
 use wcmf\lib\presentation\Response;
 
@@ -31,6 +32,7 @@ use wcmf\lib\presentation\Response;
  * @author ingo herwig <ingo@wemove.com>
  */
 class JsonFormat extends HierarchicalFormat {
+  use CacheTrait;
 
   const CACHE_SECTION = 'jsonformat';
 
@@ -53,67 +55,50 @@ class JsonFormat extends HierarchicalFormat {
   }
 
   /**
-   * Get the cache section for a response
-   * @param Response $response
-   * @return String
-   */
-  protected function getCacheSection(Response $response) {
-    $cacheId = $response->getCacheId();
-    return self::CACHE_SECTION.'-'.$cacheId;
-  }
-
-  /**
    * @see Format::getMimeType()
    */
-  public function getMimeType() {
+  public function getMimeType(Response $response=null) {
     return 'application/json';
   }
 
   /**
-   * @see Format::isCached()
+   * @see CacheTrait::getCache()
    */
-  public function isCached(Response $response) {
-    $cacheId = $response->getCacheId();
-    return $this->cache->exists($this->getCacheSection($response), $cacheId);
+  protected function getCache() {
+    return $this->cache;
   }
 
   /**
-   * @see Format::getCacheDate()
+   * @see CacheTrait::getBaseCacheSection()
    */
-  public function getCacheDate(Response $response) {
-    $cacheId = $response->getCacheId();
-    return $this->cache->getDate($this->getCacheSection($response), $cacheId);
+  protected function getBaseCacheSection() {
+    return self::CACHE_SECTION;
   }
 
   /**
-   * @see HierarchicalFormat::afterSerialize()
+   * @see AbstractFormat::afterSerialize()
    */
   protected function afterSerialize(Response $response) {
-    $values = $response->getValues();
-
-    $cacheId = $response->getCacheId();
-    $caching = strlen($cacheId) > 0;
+    // output response payload
+    $caching = $this->isCaching($response);
     if (!$caching || !$this->isCached($response)) {
       // encode data
-      $encoded = json_encode($values);
+      $payload = json_encode($response->getValues());
       if (self::$logger->isDebugEnabled()) {
         self::$logger->debug($values);
-        self::$logger->debug($encoded);
+        self::$logger->debug($payload);
       }
-
       // cache result
       if ($caching) {
-        $this->cache->put($this->getCacheSection($response), $cacheId, $encoded, $response->getCacheLifetime());
+        $this->putInCache($response, $payload);
       }
     }
     else {
-      $encoded = $this->cache->get($this->getCacheSection($response), $cacheId);
+      $payload = $this->getFromCache($response);
     }
+    print($payload);
 
-    // render
-    print($encoded);
-
-    return $values;
+    return parent::afterSerialize($response);
   }
 
   /**

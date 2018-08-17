@@ -43,7 +43,7 @@ class HtmlFormat extends AbstractFormat {
   /**
    * @see Format::getMimeType()
    */
-  public function getMimeType() {
+  public function getMimeType(Response $response=null) {
     return 'text/html';
   }
 
