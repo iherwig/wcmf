@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -55,7 +55,7 @@ class CSVImportController extends BatchController {
   const CACHE_KEY_STATS = 'stats';
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $NODES_PER_CALL = 50;
+  const NODES_PER_CALL = 50;
 
   private $cache = null;
 
@@ -92,7 +92,7 @@ class CSVImportController extends BatchController {
     if ($request->getAction() != 'continue') {
       // set defaults (will be stored with first request)
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
+        $request->setValue('nodesPerCall', self::NODES_PER_CALL);
       }
 
       // move the file upload

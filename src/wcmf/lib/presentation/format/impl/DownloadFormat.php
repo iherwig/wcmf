@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -41,7 +41,7 @@ class DownloadFormat extends AbstractFormat {
     $expireDate = null;
     if ($cacheLifetime !== null && $cacheDate !== null) {
       $expireDate = clone $cacheDate;
-      $expireDate->modify('+'.$lifetime.' seconds');
+      $expireDate->modify('+'.$cacheLifetime.' seconds');
     }
     return $expireDate === null || $expireDate < new \DateTime();
   }

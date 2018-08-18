@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -174,7 +174,7 @@ class SelectStatement extends Select {
     }
 
     // create aggregation column
-    $countStatement->columns(array('nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.$firstColumn.')')));
+    $countStatement->columns(['nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.$firstColumn.')')]);
 
     $countStatement->id = $this->id != self::NO_CACHE ? $this->id.'-count' : self::NO_CACHE;
     $result = $countStatement->query();

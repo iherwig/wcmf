@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -129,7 +129,7 @@ class HtmlFormat extends AbstractFormat {
     if (sizeof($pieces) != 3) {
       return null;
     }
-    $ignore = array_shift($pieces);
+    array_shift($pieces);
     $def['language'] = array_shift($pieces);
     $def['name'] = array_shift($pieces);
     $def['oid'] = array_shift($pieces);

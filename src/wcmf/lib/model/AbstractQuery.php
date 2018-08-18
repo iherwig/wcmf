@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -73,7 +73,6 @@ abstract class AbstractQuery {
   public function getQueryString($buildDepth=BuildDepth::SINGLE, $orderby=null) {
     $selectStmt = $this->buildQuery($buildDepth, $orderby);
     $str = $selectStmt->__toString();
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = self::getMapper($selectStmt->getType());
     foreach ($selectStmt->getParameters() as $key => $value) {
       $value = is_string($value) ? $mapper->quoteValue($value) : $value;

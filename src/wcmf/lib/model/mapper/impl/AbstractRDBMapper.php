@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -658,8 +658,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       $placeholder = null;
     }
     elseif ($operatorLC == 'in' || $operatorLC == 'not in') {
-      $array = !$placeholder ? array_map(array($mapper, 'quoteValue'), $value) :
-          array_map(function($i) use ($placeholder) { return $placeholder.$i; }, range(0, sizeof($value)-1));
+      $array = !$placeholder ? array_map([$mapper, 'quoteValue'], $value) :
+          array_map(function($i) use ($placeholder) {
+            return $placeholder.$i;
+          }, range(0, sizeof($value)-1));
       $condition .= " ".strtoupper($operator)." (".join(', ', $array).")";
       $placeholder = !$placeholder ? null : $array;
     }
@@ -1064,7 +1066,6 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     }
     // group relatedObjects by original objects
     $relativeMap = [];
-    $tx = $this->persistenceFacade->getTransaction();
     foreach ($relatedObjects as $i => $relatedObject) {
       // NOTE: we take the key from the original data, because the corresponding values in the objects might be
       // all the same, if the same object is related to multiple objects in a many to many relation

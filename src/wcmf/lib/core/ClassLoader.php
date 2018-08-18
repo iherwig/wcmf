@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -37,7 +37,7 @@ class ClassLoader {
    * Load the given class definition
    * @param $className The class name
    */
-  private function load($className) {
+  public function load($className) {
     // search under baseDir assuming that namespaces match directories
     $filename = $this->baseDir.str_replace("\\", "/", $className).'.php';
     if (file_exists($filename)) {

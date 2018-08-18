@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -53,7 +53,6 @@ class ActionKey {
    * @return The best matching key or an empty string if nothing matches.
    */
   public static function getBestMatch(ActionKeyProvider $actionKeyProvider, $resource, $context, $action) {
-    $result = null;
     $hasResource = strlen($resource) > 0;
     $hasContext = strlen($context) > 0;
     $hasAction = strlen($action) > 0;

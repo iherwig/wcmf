@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -85,7 +85,7 @@ class JsonFormat extends HierarchicalFormat {
       // encode data
       $payload = json_encode($response->getValues());
       if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug($values);
+        self::$logger->debug($response->getValues());
         self::$logger->debug($payload);
       }
       // cache result

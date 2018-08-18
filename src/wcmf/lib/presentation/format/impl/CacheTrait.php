@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -19,7 +19,6 @@ use wcmf\lib\presentation\Response;
  * @author ingo herwig <ingo@wemove.com>
  */
 trait CacheTrait {
-  protected $cache = null;
 
   /**
    * Get the cache to use

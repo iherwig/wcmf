@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -62,13 +62,13 @@ class XMLExportController extends BatchController {
   const ITERATOR_ID_VAR = 'XMLExportController.iteratorid';
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $DOCFILE = "export.xml";
-  private $DOCTYPE = "";
-  private $DTD = "";
-  private $DOCROOTELEMENT = "Root";
-  private $DOCLINEBREAK = "\n";
-  private $DOCINDENT = "  ";
-  private $NODES_PER_CALL = 10;
+  const DOCFILE = "export.xml";
+  const DOCTYPE = "";
+  const DTD = "";
+  const DOCROOTELEMENT = "Root";
+  const DOCLINEBREAK = "\n";
+  const DOCINDENT = "  ";
+  const NODES_PER_CALL = 10;
 
   private $cache = null;
   private $fileUtil = null;
@@ -108,25 +108,25 @@ class XMLExportController extends BatchController {
 
       // set defaults (will be stored with first request)
       if (!$request->hasValue('docFile')) {
-        $request->setValue('docFile', $this->DOCFILE);
+        $request->setValue('docFile', self::DOCFILE);
       }
       if (!$request->hasValue('docType')) {
-        $request->setValue('docType', $this->DOCTYPE);
+        $request->setValue('docType', self::DOCTYPE);
       }
       if (!$request->hasValue('dtd')) {
-        $request->setValue('dtd', $this->DTD);
+        $request->setValue('dtd', self::DTD);
       }
       if (!$request->hasValue('docRootElement')) {
-        $request->setValue('docRootElement', $this->DOCROOTELEMENT);
+        $request->setValue('docRootElement', self::DOCROOTELEMENT);
       }
       if (!$request->hasValue('docLinebreak')) {
-        $request->setValue('docLinebreak', $this->DOCLINEBREAK);
+        $request->setValue('docLinebreak', self::DOCLINEBREAK);
       }
       if (!$request->hasValue('docIndent')) {
-        $request->setValue('docIndent', $this->DOCINDENT);
+        $request->setValue('docIndent', self::DOCINDENT);
       }
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
+        $request->setValue('nodesPerCall', self::NODES_PER_CALL);
       }
 
       // set the cache section and directory for the download file

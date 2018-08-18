@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -22,8 +22,8 @@ use wcmf\lib\persistence\PersistentObject;
  */
 class DotOutputStrategy implements OutputStrategy {
 
-  private $DEFAULT_NODE_STYLE = 'height=0.1,width=1,shape=box,style=filled,color="#49B4CF",fillcolor="#49B4CF",fontcolor=white,fontsize=14,fontname="Helvetica-Bold"';
-  private $DEFAULT_EDGE_STYLE = 'color="#49B4CF"';
+  const DEFAULT_NODE_STYLE = 'height=0.1,width=1,shape=box,style=filled,color="#49B4CF",fillcolor="#49B4CF",fontcolor=white,fontsize=14,fontname="Helvetica-Bold"';
+  const DEFAULT_EDGE_STYLE = 'color="#49B4CF"';
 
   private $file = '';
   private $fp = 0;
@@ -51,13 +51,13 @@ class DotOutputStrategy implements OutputStrategy {
       $this->nodeStyle = $nodeStyle;
     }
     else {
-      $this->nodeStyle = $this->DEFAULT_NODE_STYLE;
+      $this->nodeStyle = self::DEFAULT_NODE_STYLE;
     }
     if ($edgeStyle != '') {
       $this->edgeStyle = $edgeStyle;
     }
     else {
-      $this->edgeStyle = $this->DEFAULT_EDGE_STYLE;
+      $this->edgeStyle = self::DEFAULT_EDGE_STYLE;
     }
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);

@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -326,8 +326,9 @@ class Node extends DefaultPersistentObject {
 
     // set role if missing
     if ($role == null) {
-      $relations = $mapper->getRelationsByType($other->getType());
-      $role = (sizeof($relations) > 0) ? $relations[0]->getOtherRole() : $type;
+      $otherType = $other->getType();
+      $relations = $mapper->getRelationsByType($otherType);
+      $role = (sizeof($relations) > 0) ? $relations[0]->getOtherRole() : $otherType;
     }
 
     // get the relation description
@@ -393,8 +394,9 @@ class Node extends DefaultPersistentObject {
 
     // set role if missing
     if ($role == null) {
-      $relations = $mapper->getRelationsByType($other->getType());
-      $role = (sizeof($relations) > 0) ? $relations[0]->getOtherRole() : $type;
+      $otherType = $other->getType();
+      $relations = $mapper->getRelationsByType($otherType);
+      $role = (sizeof($relations) > 0) ? $relations[0]->getOtherRole() : $otherType;
     }
 
     $nodes = $this->getValue($role);

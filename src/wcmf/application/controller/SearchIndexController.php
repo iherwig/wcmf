@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -48,10 +48,10 @@ class SearchIndexController extends BatchController {
   private $search = null;
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $NODES_PER_CALL = 1;
+  const NODES_PER_CALL = 1;
 
   // the number of nodes to index before optimizing the index
-  private static $OPTIMIZE_FREQ = 50;
+  const OPTIMIZE_FREQ = 50;
 
   /**
    * Constructor
@@ -85,7 +85,7 @@ class SearchIndexController extends BatchController {
     if ($request->getAction() != 'continue') {
       // set defaults (will be stored with first request)
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
+        $request->setValue('nodesPerCall', self::NODES_PER_CALL);
       }
     }
     // initialize parent controller after default request values are set
@@ -131,9 +131,9 @@ class SearchIndexController extends BatchController {
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     foreach ($types as $type) {
       $oids = $persistenceFacade->getOIDs($type);
-      $oidLists = array_chunk($oids, self::$OPTIMIZE_FREQ);
+      $oidLists = array_chunk($oids, self::OPTIMIZE_FREQ);
       for ($i=0, $count=sizeof($oidLists); $i<$count; $i++) {
-        $this->addWorkPackage($this->getMessage()->getText('Indexing %0% %1% objects, starting from %2%., ', [sizeof($oids), $type, ($i*self::$OPTIMIZE_FREQ+1)]),
+        $this->addWorkPackage($this->getMessage()->getText('Indexing %0% %1% objects, starting from %2%., ', [sizeof($oids), $type, ($i*self::OPTIMIZE_FREQ+1)]),
                 $nodesPerCall, $oidLists[$i], 'index');
         $this->addWorkPackage($this->getMessage()->getText('Optimizing index'),
                 1, [0], 'optimize');

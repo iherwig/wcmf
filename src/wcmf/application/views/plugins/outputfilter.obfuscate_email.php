@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -19,7 +19,7 @@
  */
 function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $template) {
   // don't encode those as not fully supported by IE & Chrome
-  $neverEncode = array('.', '@', '+');
+  $neverEncode = ['.', '@', '+'];
   $encodeChar = function($char) use ($neverEncode) {
     if (!in_array($char, $neverEncode) && mt_rand(1, 100) < 25) {
       $charCode = ord($char);

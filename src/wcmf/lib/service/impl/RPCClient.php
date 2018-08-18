@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -123,7 +123,7 @@ class RPCClient implements RemotingClient {
     if (!$response->getValue('success')) {
       // if the session expired, try to relogin
       if (strpos('Authorization failed', $response->getValue('errorMsg')) === 0 && !$isLogin) {
-        $this->doLogin($url);
+        $this->doLogin();
       }
       else {
         $this->handleError($response);

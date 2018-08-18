@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -140,7 +140,6 @@ class LinkProcessor {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $logger = LogManager::getLogger(__CLASS__);
       if ($oid != null) {
-        $type = $oid->getType();
         $object = $persistenceFacade->load($oid);
         if (!$object) {
           $logger->error("Linked object ".$oid." does not exist");

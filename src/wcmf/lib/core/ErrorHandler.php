@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -19,7 +19,7 @@ namespace wcmf\lib\core;
 class ErrorHandler {
 
   // fatal errors that can be handled with a user defined function
-  private static $FATAL_ERRORS = [E_USER_ERROR => '', E_RECOVERABLE_ERROR => ''];
+  private static $fatalErrors = [E_USER_ERROR => '', E_RECOVERABLE_ERROR => ''];
 
   private static $logger = null;
 
@@ -67,7 +67,7 @@ class ErrorHandler {
     $errorIsEnabled = (bool)($errno & ini_get('error_reporting'));
 
     // FATAL ERROR
-    if(isset(self::$FATAL_ERRORS[$errno]) && $errorIsEnabled) {
+    if(isset(self::$fatalErrors[$errno]) && $errorIsEnabled) {
       throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 

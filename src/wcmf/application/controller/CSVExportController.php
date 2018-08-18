@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -49,8 +49,8 @@ use wcmf\lib\presentation\Response;
 class CSVExportController extends BatchController {
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $DOCFILE = "export.csv";
-  private $NODES_PER_CALL = 50;
+  const DOCFILE = "export.csv";
+  const NODES_PER_CALL = 50;
 
   /**
    * @see Controller::initialize()
@@ -60,10 +60,10 @@ class CSVExportController extends BatchController {
     if ($request->getAction() != 'continue') {
       // set defaults (will be stored with first request)
       if (!$request->hasValue('docFile')) {
-        $request->setValue('docFile', $this->DOCFILE);
+        $request->setValue('docFile', self::DOCFILE);
       }
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
+        $request->setValue('nodesPerCall', self::NODES_PER_CALL);
       }
 
       // set the cache section and directory for the download file

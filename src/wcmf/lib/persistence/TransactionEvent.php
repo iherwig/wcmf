@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -43,7 +43,7 @@ class TransactionEvent extends Event {
   private $insertedOids = [];
   private $updatedOids = [];
   private $deletedOids = [];
-  
+
   /**
    * Constructor.
    * @param $phase The phase at which the event occurred.
@@ -74,7 +74,7 @@ class TransactionEvent extends Event {
   public function getInsertedOids() {
     return $this->insertedOids;
   }
-  
+
   /**
    * Get the list of oids of updated objects.
    * NOTE: This property is available after commit only
@@ -83,7 +83,7 @@ class TransactionEvent extends Event {
   public function getUpdatedOids() {
   	return $this->updatedOids;
   }
-  
+
   /**
    * Get the list of oids of deleted objects.
    * NOTE: This property is available after commit only

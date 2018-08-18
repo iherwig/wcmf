@@ -1,7 +1,7 @@
 <?php
 /**
  * wCMF - wemove Content Management Framework
- * Copyright (C) 2005-2017 wemove digital solutions GmbH
+ * Copyright (C) 2005-2018 wemove digital solutions GmbH
  *
  * Licensed under the terms of the MIT License.
  *
@@ -54,7 +54,7 @@ class BatchDisplayController extends BatchController {
   const ITERATOR_ID_VAR = 'BatchDisplayController.iteratorid';
 
   // default values, maybe overriden by corresponding request values (see above)
-  private $NODES_PER_CALL = 50;
+  const NODES_PER_CALL = 50;
 
   /**
    * @see Controller::initialize()
@@ -66,7 +66,7 @@ class BatchDisplayController extends BatchController {
 
       // set defaults (will be stored with first request)
       if (!$request->hasValue('nodesPerCall')) {
-        $request->setValue('nodesPerCall', $this->NODES_PER_CALL);
+        $request->setValue('nodesPerCall', self::NODES_PER_CALL);
       }
       if (!$request->hasValue('translateValues')) {
         $request->setValue('translateValues', true);
