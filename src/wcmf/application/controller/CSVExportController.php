@@ -13,12 +13,15 @@ namespace wcmf\application\controller;
 use wcmf\application\controller\BatchController;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\model\StringQuery;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\control\ValueListProvider;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\model\NodeUtil;
 
 /**
  * CSVExportController exports instances of one type into a CSV file. It uses
@@ -34,10 +37,12 @@ use wcmf\lib\presentation\Response;
  * | Parameter              | Description
  * |------------------------|-------------------------
  * | _in_ `docFile`         | The name of the file to write to (path relative to script main location) (default: 'export.csv')
- * | _in_ `className`       | The entity type to export instances of
+ * | _in_ `className`       | The entity type to export instances of or the source type, when exporting a relation (see sourceId, relation)
  * | _in_ `sortFieldName`   | The field name to sort the list by. Must be one of the fields of the type selected by the className parameter. If omitted, the sorting is undefined (optional)
  * | _in_ `sortDirection`   | The direction to sort the list. Must be either _asc_ for ascending or _desc_ for descending (optional, default: _asc_)
  * | _in_ `query`           | A query condition encoded in RQL to be used with StringQuery::setRQLConditionString()
+ * | _in_ `sourceId`        | When exporting a relation: Id of the object to which the exported objects are related (determines the object id together with _className_)
+ * | _in_ `relation`        | When exporting a relation: Name of the relation to the object defined by _sourceId_ (determines the type of the returned objects)
  * | _in_ `nodesPerCall`    | The number of nodes to process in one call (default: 50)
  * </div>
  * </div>
@@ -94,9 +99,32 @@ class CSVExportController extends BatchController {
         return false;
       }
       // check for permission to read instances of className
-      if (!$this->getPermissionManager()->authorize($request->getValue('className'), '', PersistenceAction::READ)) {
+      $permissionManager = $this->getPermissionManager();
+      if (!$permissionManager->authorize($request->getValue('className'), '', PersistenceAction::READ)) {
         $response->addError(ApplicationError::get('PERMISSION_DENIED'));
         return false;
+      }
+      // check permission to read sourceOid and relation instances
+      if ($request->hasValue('className') && $request->hasValue('sourceId')) {
+        $sourceOid = new ObjectId($request->getValue('className'), $request->getValue('sourceId'));
+        if (!$permissionManager->authorize($sourceOid, '', PersistenceAction::READ)) {
+          $response->addError(ApplicationError::get('PERMISSION_DENIED'));
+          return false;
+        }
+        if ($request->hasValue('relation')) {
+          $persistenceFacade = $this->getPersistenceFacade();
+          $sourceMapper = $persistenceFacade->getMapper($sourceOid->getType());
+          $relation = $sourceMapper->getRelation($request->getValue('relation'));
+          if (!$permissionManager->authorize($relation->getOtherType(), '', PersistenceAction::READ)) {
+            $response->addError(ApplicationError::get('PERMISSION_DENIED'));
+            return false;
+          }
+        }
+        else {
+          $response->addError(ApplicationError::get('PARAMETER_MISSING',
+              ['missingParameters' => ['relation']]));
+          return false;
+        }
       }
       if ($request->hasValue('sortFieldName') &&
         !$this->getPersistenceFacade()->getMapper($request->getValue('className'))->hasAttribute($request->hasValue('sortFieldName'))) {
@@ -143,7 +171,6 @@ class CSVExportController extends BatchController {
 
     // get document definition
     $docFile = $this->getDownloadFile();
-    $type =  $this->getRequestValue('className');
 
     // delete export file
     if (file_exists($docFile)) {
@@ -160,9 +187,27 @@ class CSVExportController extends BatchController {
       $sortArray = [$orderBy." ".$this->getRequestValue('sortDirection')];
     }
 
+    // determine the type
+    $type =  $this->getRequestValue('className');
+    $sourceId = $this->getRequestValue('sourceId');
+    $relation = $this->getRequestValue('relation');
+    if ($sourceId && $relation) {
+      // type is determined by the other end of the relation
+      $sourceNode = $persistenceFacade->load(new ObjectId($type, $sourceId));
+      $relationDescription = $sourceNode->getMapper()->getRelation($relation);
+      $type = $relationDescription->getOtherType();
+    }
+
     // get object ids of all nodes to export
     $query = new StringQuery($type);
     $query->setRQLConditionString($queryTerm);
+
+    // add relation query, if requested
+    if ($relation && $sourceNode) {
+      $existingQuery = $query->getConditionString();
+      $query->setConditionString((strlen($existingQuery) > 0 ? $existingQuery.' AND ' : '').NodeUtil::getRelationQueryCondition($sourceNode, $relation));
+    }
+
     $oids = $query->execute(false, $sortArray);
 
     // get csv columns
@@ -190,31 +235,33 @@ class CSVExportController extends BatchController {
    * @note This is a callback method called on a matching work package, see BatchController::addWorkPackage()
    */
   protected function exportNodes($oids) {
-    $persistenceFacade = $this->getPersistenceFacade();
-    $permissionManager = $this->getPermissionManager();
+    if (sizeof($oids) > 0) {
+      $persistenceFacade = $this->getPersistenceFacade();
+      $permissionManager = $this->getPermissionManager();
 
-    // get document definition
-    $docFile = $this->getDownloadFile();
-    $type = $this->getRequestValue('className');
+      // get document definition
+      $docFile = $this->getDownloadFile();
+      $type = $oids[0]->getType();
 
-    $mapper = $persistenceFacade->getMapper($type);
-    $attributes = $mapper->getAttributes();
+      $mapper = $persistenceFacade->getMapper($type);
+      $attributes = $mapper->getAttributes();
 
-    // process nodes
-    $fileHandle = fopen($docFile, "a");
-    foreach ($oids as $oid) {
-      if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
-        $node = $persistenceFacade->load($oid);
-        $values = [];
-        foreach ($attributes as $attribute) {
-          $inputType = $attribute->getInputType();
-          $values[] = ValueListProvider::translateValue(
-                  $node->getValue($attribute->getName()), $inputType);
+      // process nodes
+      $fileHandle = fopen($docFile, "a");
+      foreach ($oids as $oid) {
+        if ($permissionManager->authorize($oid, '', PersistenceAction::READ)) {
+          $node = $persistenceFacade->load($oid);
+          $values = [];
+          foreach ($attributes as $attribute) {
+            $inputType = $attribute->getInputType();
+            $values[] = ValueListProvider::translateValue(
+                $node->getValue($attribute->getName()), $inputType);
+          }
+          fputcsv($fileHandle, $values);
         }
-        fputcsv($fileHandle, $values);
       }
+      fclose($fileHandle);
     }
-    fclose($fileHandle);
   }
 
   /**

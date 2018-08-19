@@ -54,6 +54,14 @@ class StringQuery extends ObjectQuery {
   private $condition = '';
 
   /**
+   * Get the query condition string
+   * @return String
+   */
+  public function getConditionString() {
+    return $this->condition;
+  }
+
+  /**
    * Set the query condition string
    * @param $condition The query definition string
    */
