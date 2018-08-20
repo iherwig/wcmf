@@ -163,6 +163,11 @@ Besides this, wCMF uses the following built-in resources:
 The actions for the persistency related resources are properties of
 \link wcmf::lib::persistence::PersistenceAction `PersistenceAction`\endlink,
 e.g. \link wcmf::lib::persistence::PersistenceAction::READ `PersistenceAction::READ`\endlink.
+While all actions can be applied to instances, for properties only _read_ and _update_
+are taken into account.
+
+@note __Entity relations__ are treated like entity properties, which means that read and update
+access can be restricted.
 
 #### Dynamic roles ####
 

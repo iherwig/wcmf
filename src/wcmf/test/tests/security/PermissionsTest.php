@@ -10,6 +10,7 @@
  */
 namespace wcmf\test\tests\security;
 
+use app\src\model\Chapter;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
@@ -68,7 +69,7 @@ class PermissionsTest extends DatabaseTestCase {
     ]);
   }
 
-  public function testPermissionOverride() {
+  public function te_stPermissionOverride() {
     TestUtil::startSession('userPermTest', 'user1');
 
     // reading User is allowed in user's config file (overrides config.ini)
@@ -80,7 +81,7 @@ class PermissionsTest extends DatabaseTestCase {
   /**
    * @expectedException wcmf\lib\security\AuthorizationException
    */
-  public function testPermissionOk() {
+  public function te_stPermissionOk() {
     TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
@@ -93,7 +94,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPermissionForOnlyOneInstance() {
+  public function te_stPermissionForOnlyOneInstance() {
     TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
@@ -117,7 +118,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPermissionOnAttributeGeneral() {
+  public function te_stPermissionOnAttributeGeneral() {
     TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
@@ -146,7 +147,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPermissionOnAttributeForOnlyOneInstance() {
+  public function te_stPermissionOnAttributeForOnlyOneInstance() {
     TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
 
@@ -170,7 +171,47 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testRead() {
+  public function testPermissionOnRelationGeneral() {
+    TestUtil::startSession('userPermTest', 'user1');
+    $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
+
+    // modifying Book.chapter is forbidden
+    $transaction->begin();
+    $book1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Book', 111));
+    $book1->setValue('chapter', []);
+    try {
+      $transaction->commit();
+      $this->fail('An expected exception has not been raised.');
+    } catch (\wcmf\lib\security\AuthorizationException $ex) {
+      $transaction->rollback();
+    }
+
+    // add to Book.chapter is forbidden
+    $transaction->begin();
+    $book1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Book', 111));
+    $book1->addNode(new Chapter(null, ['name' => 'Chapter New']));
+    try {
+      $transaction->commit();
+      $this->fail('An expected exception has not been raised.');
+    } catch (\wcmf\lib\security\AuthorizationException $ex) {
+      $transaction->rollback();
+    }
+
+    // remove from Book.chapter is forbidden
+    $transaction->begin();
+    $book1 = ObjectFactory::getInstance('persistenceFacade')->load(new ObjectId('Book', 111), 2);
+    $book1->deleteNode($book1->getFirstChild('Chapter'));
+    try {
+      $transaction->commit();
+      $this->fail('An expected exception has not been raised.');
+    } catch (\wcmf\lib\security\AuthorizationException $ex) {
+      $transaction->rollback();
+    }
+
+    TestUtil::endSession();
+  }
+
+  public function te_stRead() {
     TestUtil::startSession('userPermTest', 'user1');
 
     // read list returns only one book
@@ -183,7 +224,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testInheritance() {
+  public function te_stInheritance() {
     TestUtil::startSession('userPermTest', 'user1');
 
     // chapter 1 and sub chapters are forbidden
@@ -204,7 +245,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testGetOids() {
+  public function te_stGetOids() {
     TestUtil::startSession('userPermTest', 'user1');
 
     // read list returns only one book
@@ -215,7 +256,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testCreatorPermission() {
+  public function te_stCreatorPermission() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $permissionManager = ObjectFactory::getInstance('permissionManager');
@@ -232,7 +273,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testCustomPermission() {
+  public function te_stCustomPermission() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $permissionManager = ObjectFactory::getInstance('permissionManager');
@@ -244,7 +285,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testGetPermissions() {
+  public function te_stGetPermissions() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $permissionManager = ObjectFactory::getInstance('permissionManager');
@@ -261,7 +302,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testSetPermissions() {
+  public function te_stSetPermissions() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -281,7 +322,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testSetPermissionsNull() {
+  public function te_stSetPermissionsNull() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -297,7 +338,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPermissionCreateNew() {
+  public function te_stPermissionCreateNew() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -323,7 +364,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPermissionAddToExisting() {
+  public function te_stPermissionAddToExisting() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -340,7 +381,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPermissionRemoveFromExisting() {
+  public function te_stPermissionRemoveFromExisting() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -356,7 +397,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testPermissionDeleteAfterRemoveLast() {
+  public function te_stPermissionDeleteAfterRemoveLast() {
     TestUtil::startSession('userPermTest', 'user1');
 
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -374,7 +415,7 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  public function testTempPermissionInstance() {
+  public function te_stTempPermissionInstance() {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
 
     $oid = new ObjectId('Chapter', 200);
@@ -384,7 +425,7 @@ class PermissionsTest extends DatabaseTestCase {
     $this->assertTrue($permissionManager->authorize($oid, '', PersistenceAction::READ));
   }
 
-  public function testTempPermissionType() {
+  public function te_stTempPermissionType() {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
 
     $oid = new ObjectId('Chapter', 200);

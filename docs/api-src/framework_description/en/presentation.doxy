@@ -222,9 +222,11 @@ routing. The default mapping logic is implemented in the
 \link wcmf::lib::presentation::impl::DefaultRequest::initialize `DefaultRequest::initialize`\endlink
 method. The method matches the _path part_ of the request uri against the entries
 of the `Routes` configuration section to find an appropriate action key.
-Variables declared in path segments will be automatically passed as request parameters,
+
+__Variables__ declared in path segments will be automatically passed as request parameters,
 but may be overwritten by explicit request parameters. The character <em>*</em> is used
-as wildcard.
+as _wildcard_. Regular expression __patterns__ can be added to variables to narrow
+the set of possibilities.
 
 The following example configuration taken from the \ref app "default application"
 illustrates the concept:
@@ -251,6 +253,24 @@ GET/* = action=cms
 @note Any requests on routes that are __not__ defined in the `Routes` configuration
 section will cause a `404` error. This is why this section is also considered the
 _public_ interface of the application.
+
+##### Precedence rules #####
+
+Due to the use of variables in route definitions several routes might match a given
+request. This leads to the question which route to take, since the application only 
+processes one per request. To find the best matching route 
+\link wcmf::lib::presentation::impl::DefaultRequest `DefaultRequest`\endlink orders
+all matching routes and takes the first one. The sorting is done under the assumption 
+that a more specific route is a better match. 
+
+The following __rules__ are implemented to find the more specific route:
+- the route with _less variables_ is more specific and if two routes have the same number of variables
+- the route with _more patterns_ in the variable definitions is more specific.
+
+In cases where these simple rules are not sufficient, you may configure a __custom__
+\link wcmf::lib::presentation::Request `Request`\endlink implementation (see \ref conf_di)
+which overrides the \link wcmf::lib::presentation::impl::DefaultRequest::isMatch `DefaultRequest::isMatch`\endlink
+method.
 
 ##### HTTP methods #####
 
