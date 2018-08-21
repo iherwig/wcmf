@@ -20,6 +20,7 @@ use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\util\StringUtil;
 
 /**
  * BatchDisplayController is used to load a tree of Node instances recursivly and
@@ -213,7 +214,7 @@ class BatchDisplayController extends BatchController {
 
     // restore the request values from session
     $language = $this->getRequestValue('language');
-    $translateValues = $this->getRequestValue('translateValues');
+    $translateValues = StringUtil::getBoolean($this->getRequestValue('translateValues'));
 
     // load the node
     $node = $persistenceFacade->load($oid);

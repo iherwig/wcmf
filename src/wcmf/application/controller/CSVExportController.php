@@ -12,6 +12,7 @@ namespace wcmf\application\controller;
 
 use wcmf\application\controller\BatchController;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
@@ -20,8 +21,7 @@ use wcmf\lib\presentation\control\ValueListProvider;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
-use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\NodeUtil;
+use wcmf\lib\util\StringUtil;
 
 /**
  * CSVExportController exports instances of one type into a CSV file. It uses
@@ -41,6 +41,7 @@ use wcmf\lib\model\NodeUtil;
  * | _in_ `sortFieldName`   | The field name to sort the list by. Must be one of the fields of the type selected by the className parameter. If omitted, the sorting is undefined (optional)
  * | _in_ `sortDirection`   | The direction to sort the list. Must be either _asc_ for ascending or _desc_ for descending (optional, default: _asc_)
  * | _in_ `query`           | A query condition encoded in RQL to be used with StringQuery::setRQLConditionString()
+ * | _in_ `translateValues` | Boolean whether list values should be translated to their display values (optional, default: _true_)
  * | _in_ `sourceId`        | When exporting a relation: Id of the object to which the exported objects are related (determines the object id together with _className_)
  * | _in_ `relation`        | When exporting a relation: Name of the relation to the object defined by _sourceId_ (determines the type of the returned objects)
  * | _in_ `nodesPerCall`    | The number of nodes to process in one call (default: 50)
@@ -66,6 +67,9 @@ class CSVExportController extends BatchController {
       // set defaults (will be stored with first request)
       if (!$request->hasValue('docFile')) {
         $request->setValue('docFile', self::DOCFILE);
+      }
+      if (!$request->hasValue('translateValues')) {
+        $request->setValue('translateValues', true);
       }
       if (!$request->hasValue('nodesPerCall')) {
         $request->setValue('nodesPerCall', self::NODES_PER_CALL);
@@ -246,6 +250,8 @@ class CSVExportController extends BatchController {
       $mapper = $persistenceFacade->getMapper($type);
       $attributes = $mapper->getAttributes();
 
+      $translateValues = StringUtil::getBoolean($this->getRequestValue('translateValues'));
+
       // process nodes
       $fileHandle = fopen($docFile, "a");
       foreach ($oids as $oid) {
@@ -254,8 +260,12 @@ class CSVExportController extends BatchController {
           $values = [];
           foreach ($attributes as $attribute) {
             $inputType = $attribute->getInputType();
-            $values[] = ValueListProvider::translateValue(
-                $node->getValue($attribute->getName()), $inputType);
+            $value = $node->getValue($attribute->getName());
+            // translate values if requested
+            if ($translateValues) {
+              $value = ValueListProvider::translateValue($value, $inputType);
+            }
+            $values[] = $value;
           }
           fputcsv($fileHandle, $values);
         }
