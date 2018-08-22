@@ -499,9 +499,9 @@ class DefaultTransaction implements Transaction {
   public function stateChanged(StateChangeEvent $event) {
     $object = $event->getObject();
 
-    // don't listen to detached object changes
-    if (in_array($object->getOID()->__toString(), array_map(function($obj) {
-      return $obj->getOID()->__toString();
+    // make sure the event contains an object and don't listen to detached object changes
+    if (!$object || in_array($object->getOID()->__toString(), array_map(function($obj) {
+      return $obj ? $obj->getOID()->__toString() : null;
     }, $this->detachedObjects))) {
       return;
     }
