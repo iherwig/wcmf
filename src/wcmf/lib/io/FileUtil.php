@@ -297,6 +297,20 @@ class FileUtil {
   }
 
   /**
+   * Url encode a file path
+   * @param $file
+   * @return String
+   */
+  public static function urlencodeFilename($file) {
+    $parts = explode('/', $file);
+    $result = [];
+    foreach ($parts as $part) {
+      $result[] = rawurlencode($part);
+    }
+    return join('/', $result);
+  }
+
+  /**
    * Check if the given file exists
    * @param $file
    * @return Boolean

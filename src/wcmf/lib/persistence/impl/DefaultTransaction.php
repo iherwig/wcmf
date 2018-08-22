@@ -500,7 +500,7 @@ class DefaultTransaction implements Transaction {
     $object = $event->getObject();
 
     // don't listen to detached object changes
-    if (in_array($object, array_values($this->detachedObjects))) {
+    if (in_array($object->getOID()->__toString(), array_keys($this->detachedObjects))) {
       return;
     }
 

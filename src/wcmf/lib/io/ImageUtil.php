@@ -116,8 +116,7 @@ class ImageUtil {
 
           if ($hasSrcSet) {
             // add to source set
-            $srcset[] = preg_replace(['/ /', '/,/'], ['%20', '%2C'], $resizedFile).
-            ' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
+            $srcset[] = FileUtil::urlencodeFilename($resizedFile).' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
           }
           else {
             // replace main source for single source entry
@@ -127,7 +126,7 @@ class ImageUtil {
       }
     }
 
-    $tag = '<img '.($useDataAttributes ? 'data-' : '').'src="'.$imageFile.'" alt="'.$alt.'"'.
+    $tag = '<img '.($useDataAttributes ? 'data-' : '').'src="'.FileUtil::urlencodeFilename($imageFile).'" alt="'.$alt.'"'.
       (strlen($class) > 0 ? ' class="'.$class.'"' : '').
       (strlen($title) > 0 ? ' title="'.$title.'"' : '');
     foreach ($data as $name => $value) {
