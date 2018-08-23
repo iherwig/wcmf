@@ -195,6 +195,29 @@ class ImageUtil {
   }
 
   /**
+   * Delete the cached images for the given image file
+   * @param $imageFile Image file located inside the upload directory of the application given as path relative to WCMF_BASE
+   */
+  public static function invalidateCache($imageFile) {
+    if (strlen($imageFile) > 0) {
+      $imageFile = URIUtil::makeRelative($imageFile, self::getMediaRootRelative());
+      $fixedFile = FileUtil::fixFilename($imageFile);
+
+      // get file name and cache directory
+      $baseName = FileUtil::basename($imageFile);
+      $directory = self::getCacheDir($imageFile);
+
+      // delete matches of the form ([0-9]+)-$fixedFile
+      foreach (FileUtil::getFiles($directory) as $file) {
+        $matches = [];
+        if (preg_match('/^([0-9]+)-/', $file, $matches) && $matches[1].'-'.$baseName === $file) {
+          unlink($directory.$file);
+        }
+      }
+    }
+  }
+
+  /**
    * Get the cache directory for the given source image file
    * @param $imageFile
    * @return String
