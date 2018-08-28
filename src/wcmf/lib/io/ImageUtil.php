@@ -208,10 +208,12 @@ class ImageUtil {
       $directory = self::getCacheDir($imageFile);
 
       // delete matches of the form ([0-9]+)-$fixedFile
-      foreach (FileUtil::getFiles($directory) as $file) {
-        $matches = [];
-        if (preg_match('/^([0-9]+)-/', $file, $matches) && $matches[1].'-'.$baseName === $file) {
-          unlink($directory.$file);
+      if (is_dir($directory)) {
+        foreach (FileUtil::getFiles($directory) as $file) {
+          $matches = [];
+          if (preg_match('/^([0-9]+)-/', $file, $matches) && $matches[1].'-'.$baseName === $file) {
+            unlink($directory.$file);
+          }
         }
       }
     }
