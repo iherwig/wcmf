@@ -11,6 +11,7 @@
 namespace wcmf\application\controller;
 
 use wcmf\lib\config\Configuration;
+use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
@@ -18,6 +19,7 @@ use wcmf\lib\i18n\Message;
 use wcmf\lib\model\Node;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
+use wcmf\lib\persistence\TransactionEvent;
 use wcmf\lib\presentation\ActionMapper;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\security\PermissionManager;
@@ -48,6 +50,8 @@ class UserController extends Controller {
   use \wcmf\lib\presentation\ControllerMethods;
 
   private $principalFactory = null;
+  private $eventManager = null;
+  private $tempPermissions = [];
 
   /**
    * Constructor
@@ -59,6 +63,7 @@ class UserController extends Controller {
    * @param $message
    * @param $configuration
    * @param $principalFactory
+   * @param $eventManager
    */
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
@@ -67,10 +72,14 @@ class UserController extends Controller {
           Localization $localization,
           Message $message,
           Configuration $configuration,
-          PrincipalFactory $principalFactory) {
+          PrincipalFactory $principalFactory,
+          EventManager $eventManager) {
     parent::__construct($session, $persistenceFacade, $permissionManager,
             $actionMapper, $localization, $message, $configuration);
     $this->principalFactory = $principalFactory;
+    $this->eventManager = $eventManager;
+    // add transaction listener
+    $this->eventManager->addListener(TransactionEvent::NAME, [$this, 'afterCommit']);
   }
 
   /**
@@ -94,20 +103,15 @@ class UserController extends Controller {
     if ($authUser) {
       // add permissions for this operation
       $oidStr = $authUser->getOID()->__toString();
-      $tmpPerm1 = $permissionManager->addTempPermission($oidStr, '', PersistenceAction::READ);
-      $tmpPerm2 = $permissionManager->addTempPermission($oidStr, '', PersistenceAction::UPDATE);
+      $this->tempPermissions[] = $permissionManager->addTempPermission($oidStr, '', PersistenceAction::READ);
+      $this->tempPermissions[] = $permissionManager->addTempPermission($oidStr.'.password', '', PersistenceAction::UPDATE);
 
       $this->changePasswordImpl($authUser, $request->getValue('oldpassword'),
           $request->getValue('newpassword1'), $request->getValue('newpassword2'));
-
-        // remove temporary permissions
-      $permissionManager->removeTempPermission($tmpPerm1);
-      $permissionManager->removeTempPermission($tmpPerm2);
     }
     // success
     $response->setAction('ok');
   }
-
 
   /**
    * Set a configuration for the user
@@ -206,6 +210,20 @@ class UserController extends Controller {
     }
     // set password
     $user->setPassword($newPassword);
+  }
+
+  /**
+   * Remove temporary permissions after commit
+   * @param $event
+   */
+  public function afterCommit(TransactionEvent $event) {
+    if ($event->getPhase() == TransactionEvent::AFTER_COMMIT) {
+      // remove temporary permissions
+      $permissionManager = $this->getPermissionManager();
+      foreach ($this->tempPermissions as $permission) {
+        $permissionManager->removeTempPermission($permission);
+      }
+    }
   }
 }
 ?>
