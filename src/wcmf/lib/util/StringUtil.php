@@ -27,58 +27,59 @@ class StringUtil {
   }
 
   /**
-   * Truncate a string up to a number of characters while preserving whole words and HTML tags
-   * code based on: http://www.dzone.com/snippets/truncate-text-preserving-html
+   * Truncate a string up to a number of characters while preserving whole words and HTML tags.
+   * Based on https://stackoverflow.com/questions/16583676/shorten-text-without-splitting-words-or-breaking-html-tags#answer-16584383
    * @param $text String to truncate.
-   * @param $length Length of returned string, excluding suffix.
-   * @param $suffix Ending to be appended to the trimmed string.
-   * @param $isHTML If true, HTML tags would be handled correctly
+   * @param $length Length of returned string (optional, default: 100)
+   * @param $suffix Ending to be appended to the trimmed string (optional, default: …)
+   * @param $exact Boolean whether to allow to cut inside a word or not (optional, default: false)
    * @return String
    */
-  public static function cropString($text, $length=100, $suffix='…', $isHTML=true) {
-    $i = 0;
-    $simpleTags=['br'=>true,'hr'=>true,'input'=>true,'image'=>true,'link'=>true,'meta'=>true];
-    $tags = [];
-    if($isHTML) {
-      preg_match_all('/<[^>]+>([^<]*)/', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-      foreach($m as $o) {
-        if($o[0][1] - $i >= $length) {
-          break;
-        }
-        $t = substr(strtok($o[0][0], " \t\n\r\0\x0B>"), 1);
-        // test if the tag is unpaired, then we mustn't save them
-        if($t[0] != '/' && (!isset($simpleTags[$t]))) {
-          $tags[] = $t;
-        }
-        elseif(end($tags) == substr($t, 1)) {
-          array_pop($tags);
-        }
-        $i += $o[1][1] - $o[0][1];
+  public static function cropString($text, $length=100, $suffix='…', $exact=false) {
+    $dom = new \DomDocument();
+    $dom->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+    $reachedLimit = false;
+    $totalLen = 0;
+    $toRemove = [];
+    $walk = function(\DomNode $node) use (&$reachedLimit, &$totalLen, &$toRemove, &$walk, $length, $suffix) {
+      if ($reachedLimit) {
+        $toRemove[] = $node;
       }
+      else {
+        // only text nodes should have text,
+        // so do the splitting here
+        if ($node instanceof \DomText) {
+          $totalLen += $nodeLen = strlen($node->nodeValue);
+
+          // use mb_strlen / mb_substr for UTF-8 support
+          if ($totalLen > $length) {
+            $spacePos = strpos($node->nodeValue, ' ', $nodeLen-($totalLen-$length)-1);
+            $node->nodeValue = $exact ? substr($node->nodeValue, 0, $nodeLen-($totalLen-$length)) :
+                substr($node->nodeValue, 0, $spacePos);
+            // don't add suffix to empty node
+            $node->nodeValue .= (strlen($node->nodeValue) > 0 ? $suffix : '');
+            $reachedLimit = true;
+          }
+        }
+
+        // if node has children, walk its child elements
+        if (isset($node->childNodes)) {
+          foreach ($node->childNodes as $child) {
+            $walk($child);
+          }
+        }
+      }
+      return $toRemove;
+    };
+
+    // remove any nodes that exceed limit
+    $toRemove = $walk($dom);
+    foreach ($toRemove as $child) {
+      $child->parentNode->removeChild($child);
     }
-    // output without closing tags
-    $output = substr($text, 0, $length = min(strlen($text), $length + $i));
-    // closing tags
-    $output2 = (count($tags = array_reverse($tags)) ? '' : '');
-    // Find last space or HTML tag (solving problem with last space in HTML tag eg. )
-    $pos = @(int)end(end(preg_split('/<.*>| /', $output, -1, PREG_SPLIT_OFFSET_CAPTURE)));
-    // Append closing tags to output
-    $output.=$output2;
-    // Get everything until last space
-    $one = substr($output, 0, $pos);
-    // Get the rest
-    $two = substr($output, $pos, (strlen($output) - $pos));
-    // Extract all tags from the last bit
-    preg_match_all('/<(.*?)>/s', $two, $tags);
-    // Add suffix if needed
-    if (strlen($text) > $length) {
-      $one .= $suffix;
-    }
-    // Re-attach tags
-    $output = $one . implode($tags[0]);
-    // Added to remove unnecessary closure
-    $output = str_replace('', '', $output);
-    return $output;
+
+    return $dom->saveHTML();
   }
 
   /**
