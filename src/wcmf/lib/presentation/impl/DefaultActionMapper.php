@@ -81,6 +81,7 @@ class DefaultActionMapper implements ActionMapper {
     $action = $request->getAction();
     $response->setSender($referrer);
     $response->setContext($context);
+    $response->setAction($action);
     $response->setFormat($request->getResponseFormat());
 
     // check authorization for controller/context/action triple
