@@ -444,13 +444,15 @@ class ObjectQuery extends AbstractQuery {
                   $thisFkAttr = $nmMapper->getAttribute($thisRelationDescription->getFkName());
                   $thisIdAttr = $mapper->getAttribute($thisRelationDescription->getIdName());
 
-                  $joinCondition1 = $nmMapper->getRealTableName().'.'.$thisFkAttr->getColumn().' = '.
+                  $nmAlias = $nmMapper->getRealTableName().ucfirst($childTableName['alias']);
+
+                  $joinCondition1 = $nmAlias.'.'.$thisFkAttr->getColumn().' = '.
                       $tpl->getProperty(self::PROPERTY_TABLE_NAME).'.'.
                       $thisIdAttr->getColumn();
                   $joinCondition2 = $curChild->getProperty(self::PROPERTY_TABLE_NAME).'.'.$otherIdAttr->getColumn().' = '.
-                      $nmMapper->getRealTableName().'.'.$otherFkAttr->getColumn();
+                      $nmAlias.'.'.$otherFkAttr->getColumn();
 
-                  $selectStmt->join($nmMapper->getRealTableName(), $joinCondition1, []);
+                  $selectStmt->join([$nmAlias => $nmMapper->getRealTableName()], $joinCondition1, []);
                   $selectStmt->join([$childTableName['alias'] => $childTableName['name']], $joinCondition2, []);
 
                   // register the nm type
