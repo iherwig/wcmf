@@ -149,9 +149,10 @@ class ImageUtil {
    * Output the cached image for the given cache location
    * @param $location
    * @param $returnLocation Boolean indicating if only the file location should be returned (optional)
+   * @param $callback Function called, after the cached image is created, receives the original and cached image as parameters (optional)
    * @return String, if returnLocation is true
    */
-  public static function getCachedImage($location, $returnLocation=false) {
+  public static function getCachedImage($location, $returnLocation=false, $callback=null) {
     $location = rawurldecode($location);
 
     // strip the cache base from the location
@@ -179,6 +180,9 @@ class ImageUtil {
       else {
         // just copy in case of undefined width
         copy($fixedFile, $resizedFile);
+      }
+      if (is_callable($callback)) {
+        $callback($fixedFile, $resizedFile);
       }
     }
 
