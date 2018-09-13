@@ -19,67 +19,151 @@ class StringUtil {
 
   /**
    * Get the dump of a variable as string.
-   * @param $var The variable to dump.
+   * code from: https://www.leaseweb.com/labs/2013/10/smart-alternative-phps-var_dump-function/
+   * @param $variable Variable to dump.
+   * @param $strlen Max length of characters of each string to display (full length is shown)
+   * @param $width Max number of elements of an array to display (full length is shown)
+   * @param $depth Max number of levels of nested objects/array to display
    * @return String
    */
-  public static function getDump($var) {
-    return print_r($var, true);
+  public static function getDump($variable, $strlen=100, $width=25, $depth=10, $i=0, &$objects = []) {
+    $search = ["\0", "\a", "\b", "\f", "\n", "\r", "\t", "\v"];
+    $replace = ['\0', '\a', '\b', '\f', '\n', '\r', '\t', '\v'];
+
+    $string = '';
+
+    switch(gettype($variable)) {
+      case 'boolean':      $string.= $variable?'true':'false'; break;
+      case 'integer':      $string.= $variable;                break;
+      case 'double':       $string.= $variable;                break;
+      case 'resource':     $string.= '[resource]';             break;
+      case 'NULL':         $string.= "null";                   break;
+      case 'unknown type': $string.= '???';                    break;
+      case 'string':
+        $len = strlen($variable);
+        $variable = str_replace($search, $replace,substr($variable, 0, $strlen), $count);
+        $variable = substr($variable, 0, $strlen);
+        if ($len < $strlen) {
+          $string.= '"'.$variable.'"';
+        }
+        else {
+          $string.= 'string('.$len.'): "'.$variable.'"...';
+        }
+        break;
+      case 'array':
+        $len = count($variable);
+        if ($i == $depth) {
+          $string.= 'array('.$len.') {...}';
+        }
+        elseif (!$len) {
+          $string.= 'array(0) {}';
+        }
+        else {
+          $keys = array_keys($variable);
+          $spaces = str_repeat(' ', $i*2);
+          $string.= "array($len)\n".$spaces.'{';
+          $count=0;
+          foreach ($keys as $key) {
+            if ($count == $width) {
+              $string.= "\n".$spaces."  ...";
+              break;
+            }
+            $string.= "\n".$spaces."  [$key] => ";
+            $string.= self::getDump($variable[$key], $strlen, $width, $depth, $i+1, $objects);
+            $count++;
+          }
+          $string.="\n".$spaces.'}';
+        }
+        break;
+      case 'object':
+        $id = array_search($variable, $objects, true);
+        if ($id !== false)
+          $string.=get_class($variable).'#'.($id+1).' {...}';
+          else if($i == $depth)
+            $string.=get_class($variable).' {...}';
+            else {
+              $id = array_push($objects, $variable);
+              $array = (array)$variable;
+              $spaces = str_repeat(' ', $i*2);
+              $string.= get_class($variable)."#$id\n".$spaces.'{';
+              $properties = array_keys($array);
+              foreach ($properties as $property) {
+                $name = str_replace("\0",':',trim($property));
+                $string.= "\n".$spaces."  [$name] => ";
+                $string.= self::getDump($array[$property], $strlen, $width, $depth, $i+1, $objects);
+              }
+              $string.= "\n".$spaces.'}';
+            }
+            break;
+    }
+
+    if ($i>0) {
+      return $string;
+    }
+    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+    do {
+      $caller = array_shift($backtrace);
+    }
+    while ($caller && !isset($caller['file']));
+    if ($caller) {
+      $string = $caller['file'].':'.$caller['line']."\n".$string;
+    }
+    return $string;
   }
 
   /**
-   * Truncate a string up to a number of characters while preserving whole words and HTML tags.
-   * Based on https://stackoverflow.com/questions/16583676/shorten-text-without-splitting-words-or-breaking-html-tags#answer-16584383
+   * Truncate a string up to a number of characters while preserving whole words and HTML tags
+   * code based on: http://www.dzone.com/snippets/truncate-text-preserving-html
    * @param $text String to truncate.
-   * @param $length Length of returned string (optional, default: 100)
-   * @param $suffix Ending to be appended to the trimmed string (optional, default: …)
-   * @param $exact Boolean whether to allow to cut inside a word or not (optional, default: false)
+   * @param $length Length of returned string, excluding suffix.
+   * @param $suffix Ending to be appended to the trimmed string.
+   * @param $isHTML If true, HTML tags would be handled correctly
    * @return String
    */
-  public static function cropString($text, $length=100, $suffix='…', $exact=false) {
-    $dom = new \DomDocument();
-    $dom->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-
-    $reachedLimit = false;
-    $totalLen = 0;
-    $toRemove = [];
-    $walk = function(\DomNode $node) use (&$reachedLimit, &$totalLen, &$toRemove, &$walk, $length, $suffix) {
-      if ($reachedLimit) {
-        $toRemove[] = $node;
-      }
-      else {
-        // only text nodes should have text,
-        // so do the splitting here
-        if ($node instanceof \DomText) {
-          $totalLen += $nodeLen = strlen($node->nodeValue);
-
-          // use mb_strlen / mb_substr for UTF-8 support
-          if ($totalLen > $length) {
-            $spacePos = strpos($node->nodeValue, ' ', $nodeLen-($totalLen-$length)-1);
-            $node->nodeValue = $exact ? substr($node->nodeValue, 0, $nodeLen-($totalLen-$length)) :
-                substr($node->nodeValue, 0, $spacePos);
-            // don't add suffix to empty node
-            $node->nodeValue .= (strlen($node->nodeValue) > 0 ? $suffix : '');
-            $reachedLimit = true;
-          }
+  public static function cropString($text, $length=100, $suffix='…', $isHTML=true) {
+    $i = 0;
+    $simpleTags=['br'=>true,'hr'=>true,'input'=>true,'image'=>true,'link'=>true,'meta'=>true];
+    $tags = [];
+    if($isHTML) {
+      preg_match_all('/<[^>]+>([^<]*)/', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+      foreach($m as $o) {
+        if($o[0][1] - $i >= $length) {
+          break;
         }
-
-        // if node has children, walk its child elements
-        if (isset($node->childNodes)) {
-          foreach ($node->childNodes as $child) {
-            $walk($child);
-          }
+        $t = substr(strtok($o[0][0], " \t\n\r\0\x0B>"), 1);
+        // test if the tag is unpaired, then we mustn't save them
+        if($t[0] != '/' && (!isset($simpleTags[$t]))) {
+          $tags[] = $t;
         }
+        elseif(end($tags) == substr($t, 1)) {
+          array_pop($tags);
+        }
+        $i += $o[1][1] - $o[0][1];
       }
-      return $toRemove;
-    };
-
-    // remove any nodes that exceed limit
-    $toRemove = $walk($dom);
-    foreach ($toRemove as $child) {
-      $child->parentNode->removeChild($child);
     }
-
-    return $dom->saveHTML();
+    // output without closing tags
+    $output = substr($text, 0, $length = min(strlen($text), $length + $i));
+    // closing tags
+    $output2 = (count($tags = array_reverse($tags)) ? '' : '');
+    // Find last space or HTML tag (solving problem with last space in HTML tag eg. )
+    $pos = @(int)end(end(preg_split('/<.*>| /', $output, -1, PREG_SPLIT_OFFSET_CAPTURE)));
+    // Append closing tags to output
+    $output.=$output2;
+    // Get everything until last space
+    $one = substr($output, 0, $pos);
+    // Get the rest
+    $two = substr($output, $pos, (strlen($output) - $pos));
+    // Extract all tags from the last bit
+    preg_match_all('/<(.*?)>/s', $two, $tags);
+    // Add suffix if needed
+    if (strlen($text) > $length) {
+      $one .= $suffix;
+    }
+    // Re-attach tags
+    $output = $one . implode($tags[0]);
+    // Added to remove unnecessary closure
+    $output = str_replace('', '', $output);
+    return $output;
   }
 
   /**
