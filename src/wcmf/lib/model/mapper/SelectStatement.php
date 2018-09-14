@@ -232,6 +232,25 @@ class SelectStatement extends Select {
   }
 
   /**
+   * Get the alias names for a table name
+   * @param $tables
+   * @return Array
+   */
+  public function getAliasNames($table) {
+    $names = [];
+    if (is_array($this->table) && current($this->table) == $table) {
+      $names[] = key($this->table);
+    }
+    foreach ($this->joins->getJoins() as $join) {
+      $joinName = $join['name'];
+      if (is_array($joinName) && current($joinName) == $table) {
+        $names[] = key($joinName);
+      }
+    }
+    return $names;
+  }
+
+  /**
    * Get the sql string for this statement
    * @return String
    */

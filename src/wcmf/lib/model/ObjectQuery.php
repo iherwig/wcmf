@@ -509,6 +509,11 @@ class ObjectQuery extends AbstractQuery {
         }
         if ($orderTypeMapper) {
           $orderTableName = $orderTypeMapper->getRealTableName();
+          // get table alias if defined and if type was not set explicitly
+          if (!$orderType) {
+            $aliasNames = $selectStmt->getAliasNames($orderTableName);
+            $orderTableName = sizeof($aliasNames) > 0 ? $aliasNames[0] : $orderTableName;
+          }
           $orderAttributeDesc = $orderTypeMapper->getAttribute($orderAttribute);
           $orderColumnName = $orderAttributeDesc->getColumn();
 

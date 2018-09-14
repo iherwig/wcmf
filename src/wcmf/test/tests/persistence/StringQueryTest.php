@@ -129,8 +129,8 @@ class StringQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Publisher`.`id` AS `id`, `Publisher`.`name` AS `name`, ".
       "`Publisher`.`created` AS `created`, `Publisher`.`creator` AS `creator`, `Publisher`.`modified` AS `modified`, `Publisher`.`last_editor` AS `last_editor` ".
-      "FROM `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` ".
-      "INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
+      "FROM `Publisher` INNER JOIN `NMPublisherAuthor` AS `NMPublisherAuthorAuthor` ON `NMPublisherAuthorAuthor`.`fk_publisher_id` = `Publisher`.`id` ".
+      "INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthorAuthor`.`fk_author_id` ".
       "WHERE `Publisher`.`name` LIKE '%Publisher 1%' AND `Author`.`name` = 'Author 2' ORDER BY `Publisher`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
     $this->executeSql('Publisher', $sql);

@@ -187,7 +187,7 @@ class ObjectQueryTest extends DatabaseTestCase {
     $sql = $query->getQueryString();
     $expected = "SELECT DISTINCT `Publisher`.`id` AS `id`, `Publisher`.`name` AS `name`, `Publisher`.`created` AS `created`, `Publisher`.`creator` AS `creator`, ".
       "`Publisher`.`modified` AS `modified`, `Publisher`.`last_editor` AS `last_editor` ".
-      "FROM `Publisher` AS `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
+      "FROM `Publisher` AS `Publisher` INNER JOIN `NMPublisherAuthor` AS `NMPublisherAuthorAuthor` ON `NMPublisherAuthorAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthorAuthor`.`fk_author_id` ".
       "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `Publisher`.`name` ASC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
     $this->executeSql('Publisher', $sql);
@@ -202,9 +202,9 @@ class ObjectQueryTest extends DatabaseTestCase {
     $publisherTpl->addNode($authorTpl);
     $sql = $query->getQueryString(BuildDepth::SINGLE, ['sortkey_publisher DESC']);
     $expected = "SELECT DISTINCT `Publisher`.`id` AS `id`, `Publisher`.`name` AS `name`, `Publisher`.`created` AS `created`, `Publisher`.`creator` AS `creator`, `Publisher`.`modified` AS `modified`, `Publisher`.`last_editor` AS `last_editor`, ".
-      "`NMPublisherAuthor`.`sortkey_publisher` AS `sortkey_publisher` ".
-      "FROM `Publisher` AS `Publisher` INNER JOIN `NMPublisherAuthor` ON `NMPublisherAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthor`.`fk_author_id` ".
-      "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `NMPublisherAuthor`.`sortkey_publisher` DESC";
+      "`NMPublisherAuthorAuthor`.`sortkey_publisher` AS `sortkey_publisher` ".
+      "FROM `Publisher` AS `Publisher` INNER JOIN `NMPublisherAuthor` AS `NMPublisherAuthorAuthor` ON `NMPublisherAuthorAuthor`.`fk_publisher_id` = `Publisher`.`id` INNER JOIN `Author` AS `Author` ON `Author`.`id` = `NMPublisherAuthorAuthor`.`fk_author_id` ".
+      "WHERE (`Publisher`.`name` LIKE '%Publisher 1%') AND (`Author`.`name` = 'Author') ORDER BY `NMPublisherAuthorAuthor`.`sortkey_publisher` DESC";
     $this->assertEquals($this->fixQueryQuotes($expected, 'Publisher'), str_replace("\n", "", $sql));
     $this->executeSql('Publisher', $sql);
   }

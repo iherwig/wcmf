@@ -91,7 +91,7 @@ class ControllerChainTest extends ControllerTestCase {
 
     // test
     $this->assertEquals(4, $response->getValue('value'));
-    $this->assertEquals(null, $response->getAction());
+    $this->assertEquals('calcChainBreak', $response->getAction());
     $this->assertEquals('app\src\controller\CalcController::calcContinueSameActionKey', trim($response->getValue('stack')));
 
     TestUtil::endSession();
