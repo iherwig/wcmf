@@ -32,7 +32,7 @@ class StringUtil {
 
     $string = '';
 
-    switch(gettype($variable)) {
+    switch (gettype($variable)) {
       case 'boolean':
         $string .= $variable ? 'true' : 'false';
         break;
@@ -92,7 +92,7 @@ class StringUtil {
         if ($id !== false) {
           $string .= get_class($variable).'#'.($id+1).' {...}';
         }
-        else if ($i == $depth) {
+        elseif ($i == $depth) {
           $string .= get_class($variable).' {...}';
         }
         else {
@@ -109,7 +109,6 @@ class StringUtil {
           $string .= "\n".$spaces.'}';
         }
         break;
-      }
     }
 
     if ($i>0) {
