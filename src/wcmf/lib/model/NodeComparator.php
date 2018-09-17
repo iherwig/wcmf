@@ -11,27 +11,27 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\model\Node;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
- * NodeComparator is used to compare nodes by given criterias.
+ * NodeComparator is used to compare persistent objects by given criterias.
  *
  * The following example shows the usage:
  *
  * @code
- * $nodeList = [...]; // array of Node instances
+ * $objectList = [...]; // array of PersistentObject instances
  *
  * // simple sort by creator attribute
  * $comparator = new NodeComparator('creator');
- * usort($nodeList, [$comparator, 'compare']);
+ * usort($objectList, [$comparator, 'compare']);
  *
  * // sort by creator attribute with direction
  * $comparator = new NodeComparator('creator DESC');
- * usort($nodeList, [$comparator, 'compare']);
+ * usort($objectList, [$comparator, 'compare']);
  *
  * // sort by multiple attributes with direction
  * $comparator = new NodeComparator(['creator DESC', 'created ASC']);
- * usort($nodeList, [$comparator, 'compare']);
+ * usort($objectList, [$comparator, 'compare']);
  *
  * // more complex example with different attributes
  * $sortCriteria = [
@@ -39,7 +39,7 @@ use wcmf\lib\model\Node;
  *   'created' => NodeComparator::SORTTYPE_DESC
  * ];
  * $comparator = new NodeComparator($sortCriteria);
- * usort($nodeList, [$comparator, 'compare']);
+ * usort($objectList, [$comparator, 'compare']);
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -76,13 +76,13 @@ class NodeComparator {
   }
 
   /**
-   * Compare function for sorting Nodes by the list of criterias
-   * @param $a First Node instance
-   * @param $b First Node instance
+   * Compare function for sorting PersitentObject instances by the list of criterias
+   * @param $a First PersitentObject instance
+   * @param $b First PersitentObject instance
    * @return -1, 0 or 1 whether a is less, equal or greater than b
    *   in respect of the criteria
    */
-  public function compare(Node $a, Node $b) {
+  public function compare(PersistentObject $a, PersistentObject $b) {
     // we compare for each criteria and sum the results for $a, $b
     // afterwards we compare the sums and return -1,0,1 appropriate
     $sumA = 0;
