@@ -199,6 +199,19 @@ class ImageUtil {
   }
 
   /**
+   * Get the cache location for the given image and width
+   * @param $imageFile Image file located inside the upload directory of the application given as path relative to WCMF_BASE
+   * @param $width
+   * @return String
+   */
+  public static function getCacheLocation($imageFile, $width) {
+    // get file name and cache directory
+    $baseName = FileUtil::basename($imageFile);
+    $directory = self::getCacheDir($imageFile);
+    return self::makeRelative($directory.(strlen($width) > 0 ? $width.'-' : '').$baseName);
+  }
+
+  /**
    * Delete the cached images for the given image file
    * @param $imageFile Image file located inside the upload directory of the application given as path relative to WCMF_BASE
    */
