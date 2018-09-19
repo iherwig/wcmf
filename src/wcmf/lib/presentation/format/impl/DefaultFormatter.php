@@ -97,7 +97,9 @@ class DefaultFormatter implements Formatter {
       $maxAge = $response->getCacheLifetime() !== null ? $response->getCacheLifetime() : 31536000;
 
       // send caching headers
-      $response->setHeader("Cache-Control", "public, max-age=".$maxAge);
+      if (!$response->hasHeader("Cache-Control")) {
+        $response->setHeader("Cache-Control", "public, max-age=".$maxAge);
+      }
       $response->setHeader("Last-Modified", $lastModified->format("D, d M Y H:i:s")." GMT");
       $response->setHeader("ETag", $etag);
 
