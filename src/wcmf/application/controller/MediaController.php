@@ -92,7 +92,7 @@ class MediaController extends Controller {
                 'nfc' => true,
                 'nfkc' => true,
                 'umlauts' => true,
-                'lowercase' => false,
+                'lowercase' => true,
                 'convmap' => []
             ],
             'Sanitizer' => [
