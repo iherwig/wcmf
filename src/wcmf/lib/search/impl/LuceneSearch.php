@@ -311,7 +311,12 @@ class LuceneSearch implements IndexedSearch {
       // add inserted/updated objects
       foreach (array_merge(array_values($event->getInsertedOids()), $event->getUpdatedOids()) as $oid) {
         $object = $persistenceFacade->load(ObjectId::parse($oid));
-        $this->addToIndex($object);
+        if ($object) {
+          $this->addToIndex($object);
+        }
+        else {
+          self::$logger->warn("Could not index object with oid ".$oid." because it does not exist");
+        }
       }
       // remove deleted objects
       foreach ($event->getDeletedOids() as $oid) {
