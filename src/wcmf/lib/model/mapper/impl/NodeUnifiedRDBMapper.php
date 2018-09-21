@@ -74,12 +74,12 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
         $value = join('', $object->getOID()->getId());
         foreach ($this->getRelations() as $curRelationDesc) {
           $sortkeyDef = $this->getSortkey($curRelationDesc->getOtherRole());
-          if ($sortkeyDef != null) {
+          if ($sortkeyDef != null && $object->getValue($sortkeyDef['sortFieldName']) === null) {
             $object->setValue($sortkeyDef['sortFieldName'], $value);
           }
         }
         $sortkeyDef = $this->getSortkey();
-        if ($sortkeyDef != null) {
+        if ($sortkeyDef != null && $object->getValue($sortkeyDef['sortFieldName']) === null) {
           $object->setValue($sortkeyDef['sortFieldName'], $value);
         }
       }
