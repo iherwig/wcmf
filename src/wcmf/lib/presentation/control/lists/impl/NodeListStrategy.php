@@ -15,6 +15,7 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\StringQuery;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 use wcmf\lib\util\StringUtil;
 
@@ -55,16 +56,18 @@ class NodeListStrategy implements ListStrategy {
    * @see ListStrategy::getList
    * $options is an associative array with keys 'types' and 'query' (optional)
    */
-  public function getList($options, $language=null) {
+  public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['types'])) {
       throw new ConfigurationException("No 'types' given in list options: "+StringUtil::getDump($options));
     }
+    $localization = ObjectFactory::getInstance('localization');
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+
     $types = $options['types'];
 
     $isSingleType = sizeof($types) == 1;
-    $hasQuery = isset($options['query']) && strlen($options['query']) > 0;
-
-    $localization = $language != null ? ObjectFactory::getInstance('localization') : null;
+    $hasQuery = (isset($options['query']) && strlen($options['query']) > 0) || $valuePattern || $key;
+    $needsTranslation = $language != null && $language != $localization->getDefaultLanguage();
 
     // set cache id for unfiltered result
     $cacheId = !$hasQuery ? md5(json_encode($options)) : null;
@@ -74,18 +77,39 @@ class NodeListStrategy implements ListStrategy {
       $list = $this->cache->get(self::CACHE_SECTION, $cacheId);
     }
     else {
-      foreach ($types as $type) {
-        $query = new StringQuery($type);
-        if ($hasQuery) {
-          $query->setConditionString($options['query']);
-        }
-        $objects = $query->execute(BuildDepth::SINGLE);
-        foreach ($objects as $object) {
-          if ($language != null) {
-            $object = $localization->loadTranslation($object, $language);
+      if ($key) {
+        // load single object
+        $oid = $isSingleType ? new ObjectId($types[0], $key) : ObjectId::parse($key);
+        $object = $persistenceFacade->load($oid);
+        $list[$key] = $object ? $object->getDisplayValue() : '';
+      }
+      else {
+        foreach ($types as $type) {
+          $query = new StringQuery($type);
+          if ($hasQuery) {
+            $query->setConditionString($options['query']);
           }
-          $id = $isSingleType ? $object->getOID()->getFirstId() : $object->getOID()->__toString();
-          $list[$id] = $object->getDisplayValue();
+          // add display value query
+          if ($valuePattern) {
+            $dbPattern = preg_replace('/^\/|\/$/', '', $valuePattern);
+            $valuePatterns = [];
+            $mapper = $persistenceFacade->getMapper($type);
+            foreach ($mapper->getProperties()['displayValues'] as $displayValue) {
+              $valuePatterns[] = $type.'.'.$displayValue.' REGEXP '.$mapper->quoteValue($dbPattern);
+            }
+            if (sizeof($valuePatterns) > 0) {
+              $existingQuery = $query->getConditionString();
+              $query->setConditionString($existingQuery.(strlen($existingQuery) > 0 ? ' AND ' : ' ').'('.join(' OR ', $valuePatterns).')');
+            }
+          }
+          $objects = $query->execute(BuildDepth::SINGLE);
+          foreach ($objects as $object) {
+            if ($needsTranslation) {
+              $object = $localization->loadTranslation($object, $language);
+            }
+            $id = $isSingleType ? $object->getOID()->getFirstId() : $object->getOID()->__toString();
+            $list[$id] = $object->getDisplayValue();
+          }
         }
       }
       if ($cacheId) {

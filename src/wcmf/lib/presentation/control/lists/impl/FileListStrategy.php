@@ -39,12 +39,12 @@ class FileListStrategy implements ListStrategy {
    * @see ListStrategy::getList
    * $options is an associative array with keys 'paths' and 'pattern' (optional)
    */
-  public function getList($options, $language=null) {
+  public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['paths']) || !is_array($options['paths'])) {
       throw new ConfigurationException("No array 'paths' given in list options: "+StringUtil::getDump($options));
     }
     $paths = $options['paths'];
-    $pattern = isset($options['pattern']) ? '/'.$options['pattern'].'/' : '/./';
+    $pattern = $valuePattern ? $valuePattern : (isset($options['pattern']) ? '/'.$options['pattern'].'/' : '/./');
 
     $fileUtil = new FileUtil();
     $list = [];
@@ -58,7 +58,9 @@ class FileListStrategy implements ListStrategy {
 
       $files = $fileUtil->getFiles($path, $pattern, $prependDirectory, $recursive);
       foreach ($files as $file) {
-        $list[$file] = $file;
+        if (!$key || $key == $file) {
+          $list[$file] = $file;
+        }
       }
     }
     return $list;

@@ -35,7 +35,7 @@ class ConfigListStrategy implements ListStrategy {
    * @see ListStrategy::getList
    * $options is an associative array with key 'section'
    */
-  public function getList($options, $language=null) {
+  public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['section'])) {
       throw new ConfigurationException("No 'pattern' given in list options: "+StringUtil::getDump($options));
     }
@@ -46,8 +46,11 @@ class ConfigListStrategy implements ListStrategy {
       $map = $config->getSection($section);
       $result = [];
       $message = ObjectFactory::getInstance('message');
-      foreach ($map as $key => $value) {
-        $result[$key] = $message->getText($value, null, $language);
+      foreach ($map as $curKey => $curValue) {
+        $displayValue = $message->getText($curValue, null, $language);
+        if ((!$valuePattern || preg_match($valuePattern, $displayValue)) && (!$key || $key == $curKey)) {
+          $result[$curKey] = $displayValue;
+        }
       }
       $this->lists[$listKey] = $result;
     }

@@ -68,33 +68,26 @@ class ValueListController extends Controller {
     $language = $request->getValue('language');
 
     // get the filter for the display text
+    $displayTextFilter = null;
     $displayTextParam = $request->getValue('displayText');
-    $hasDisplayTextFilter = false;
-    if ($displayTextParam && preg_match('/^match=/', $displayTextParam)) {
-      $hasDisplayTextFilter = true;
+    if ($displayTextParam && preg_match('/^match=/', $displayTextParam) && $displayTextParam != 'match=**') {
       $filterParts = explode('=', $displayTextParam);
       $displayTextFilter = '/^'.preg_replace('/\*/', '.*', $filterParts[1]).'/';
     }
 
     // get the filter for the value
+    $valueFilter = null;
     $valueParam = $request->getValue('value');
-    $hasValueFilter = false;
     if ($valueParam && preg_match('/^eq=/', $valueParam)) {
-      $hasValueFilter = true;
       $filterParts = explode('=', $valueParam);
       $valueFilter = $filterParts[1] == 'null' ? null : $filterParts[1];
     }
 
-    $list = ValueListProvider::getList($listDef, $language);
+    $list = ValueListProvider::getList($listDef, $displayTextFilter, $valueFilter, $language);
     $items = [];
-    for($i=0, $count=sizeof($list['items']); $i<$count; $i++) {
+    for ($i=0, $count=sizeof($list['items']); $i<$count; $i++) {
       $item = $list['items'][$i];
-      $value = $item['key'];
-      $displayText = $item['value'];
-      if ((!$hasDisplayTextFilter || preg_match($displayTextFilter, $displayText)) &&
-              (!$hasValueFilter || $valueFilter == $value)) {
-        $items[] = ['oid' => $i+1, 'value' => $value, 'displayText' => $displayText];
-      }
+      $items[] = ['oid' => $i+1, 'value' => $item['key'], 'displayText' => $item['value']];
     }
 
     $response->setValue('list', $items);

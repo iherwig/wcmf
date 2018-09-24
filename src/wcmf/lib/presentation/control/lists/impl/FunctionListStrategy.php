@@ -35,7 +35,7 @@ class FunctionListStrategy implements ListStrategy {
    * @see ListStrategy::getList
    * $options is an associative array with keys 'name' and 'params' (optional)
    */
-  public function getList($options, $language=null) {
+  public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['name'])) {
       throw new ConfigurationException("No 'name' given in list options: "+StringUtil::getDump($options));
     }
@@ -48,7 +48,16 @@ class FunctionListStrategy implements ListStrategy {
     else {
       throw new ConfigurationException('Function '.$name.' is not defined globally!');
     }
-    return $map;
+
+    // translate values
+    $result = [];
+    foreach ($map as $curKey => $curValue) {
+      $displayValue = $message->getText($curValue, null, $language);
+      if ((!$valuePattern || preg_match($valuePattern, $displayValue)) && (!$key || $key == $curKey)) {
+        $result[$curKey] = $displayValue;
+      }
+    }
+    return $result;
   }
 
   /**

@@ -38,7 +38,7 @@ class FixedListStrategy implements ListStrategy {
    * @see ListStrategy::getList
    * $options is an associative array with keys 'items'
    */
-  public function getList($options, $language=null) {
+  public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['items'])) {
       throw new ConfigurationException("No 'items' given in list options: "+StringUtil::getDump($options));
     }
@@ -58,9 +58,12 @@ class FixedListStrategy implements ListStrategy {
 
     // translate values
     $result = [];
-      $message = ObjectFactory::getInstance('message');
-    foreach ($items as $key => $value) {
-      $result[$key] = $message->getText($value, null, $language);
+    $message = ObjectFactory::getInstance('message');
+    foreach ($items as $curKey => $curValue) {
+      $displayValue = $message->getText($curValue, null, $language);
+      if ((!$valuePattern || preg_match($valuePattern, $displayValue)) && (!$key || $key == $curKey)) {
+        $result[$curKey] = $displayValue;
+      }
     }
     return $result;
   }

@@ -31,12 +31,13 @@ class ValueListProvider {
    * Get a list of key/value pairs defined by the given configuration.
    * @param $definition The list definition as given in the input_type definition
    *                  in the 'list' parameter (e.g. '{"type":"config","section":"EntityStage"}')
-   * @param $language The language if the values should be localized. Optional,
-   *                  default is Localization::getDefaultLanguage()
+   * @param $valuePattern A regular expression pattern that the returned values should match (optional)
+   * @param $key A key value, if only one item should be returned (optional)
+   * @param $language The language if the values should be localized (optional, default: Localization::getDefaultLanguage())
    * @return An assoziative array with keys 'items' (array of arrays with keys 'key' and 'value'),
    *                  'isStatic' (indicating if the list may change of not)
    */
-  public static function getList($definition, $language=null) {
+  public static function getList($definition, $valuePattern=null, $key=null, $language=null) {
 
     $decodedDefinition = json_decode($definition, true);
     if ($decodedDefinition === null) {
@@ -60,7 +61,7 @@ class ValueListProvider {
     }
 
     // build list
-    foreach($strategy->getList($decodedDefinition, $language) as $key => $value) {
+    foreach($strategy->getList($decodedDefinition, $valuePattern, $key, $language) as $key => $value) {
       $items[] = ['key' => $key, 'value' => $value];
     }
 
