@@ -11,6 +11,7 @@
 namespace wcmf\lib\presentation\control\lists\impl;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\control\lists\ListStrategy;
 use wcmf\lib\util\StringUtil;
 
@@ -51,6 +52,7 @@ class FunctionListStrategy implements ListStrategy {
 
     // translate values
     $result = [];
+    $message = ObjectFactory::getInstance('message');
     foreach ($map as $curKey => $curValue) {
       $displayValue = $message->getText($curValue, null, $language);
       if ((!$valuePattern || preg_match($valuePattern, $displayValue)) && (!$key || $key == $curKey)) {
