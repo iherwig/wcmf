@@ -404,7 +404,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
     $parameters = [];
     $idPlaceholder = ':'.$nmTableName.'_'.$otherFkAttr->getName();
     for ($i=0, $count=sizeof($otherObjectProxies); $i<$count; $i++) {
-      $dbid = $otherObjectProxies[$i]->getValue($thisRelationDesc->getIdName());
+      $dbid = $otherObjectProxies[$i]->getValue($otherRelationDesc->getIdName());
       if ($dbid === null) {
         $dbid = SQLConst::NULL();
       }
@@ -456,7 +456,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
 
     // set parameters
     $selectStmt->setParameters($parameters);
-    return [$selectStmt, $thisRelationDesc->getIdName(), self::INTERNAL_VALUE_PREFIX.'id'];
+    return [$selectStmt, $otherRelationDesc->getIdName(), self::INTERNAL_VALUE_PREFIX.'id'];
   }
 
   /**
