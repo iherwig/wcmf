@@ -31,30 +31,33 @@ function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $
   };
 
   $output = preg_replace_callback(
-    '!<a\s([^>]*)href=["\']mailto:([^"\']+)["\']([^>]*)>(.*?)</a[^>]*>!is',
+    '!<a\s([^>]*)href=["\']mailto:([^"\'\?]+)([^"\']*)["\']([^>]*)>(.*?)</a[^>]*>!is',
     function($matches) use ($encodeChar) {
       // $matches[0] contains full matched string: <a href="...">...</a>
       // $matches[1] contains additional parameters
       // $matches[2] contains the email address which was specified as href
-      // $matches[3] contains additional parameters
-      // $matches[4] contains the text between the opening and closing <a> tag
+      // $matches[3] contains parameters such as subject and body
+      // $matches[4] contains additional parameters
+      // $matches[5] contains the text between the opening and closing <a> tag
 
       $address = $matches[2];
       $obfuscatedAddress = preg_replace_callback('/./', function($m) use ($encodeChar) {
         return $encodeChar($m[0]);
       }, $address);
 
-      $extra = trim($matches[1]." ".$matches[3]);
+      $params = trim($matches[3]);
+
+      $extra = trim($matches[1]." ".$matches[4]);
       // tell search engines to ignore obfuscated uri
       if (!preg_match('/rel=["\']nofollow["\']/', $extra)) {
         $extra = trim($extra.' rel="nofollow"');
       }
-      $text = $matches[4];
+      $text = $matches[5];
       $obfuscatedText = preg_replace_callback('/./', function($m) use ($encodeChar) {
         return $encodeChar($m[0]);
       }, $text);
 
-      $replace = '<a href="mailto:'.$obfuscatedAddress.'" '.$extra.'>'.urldecode($obfuscatedText).'</a>';
+      $replace = '<a href="mailto:'.$obfuscatedAddress.$params.'" '.$extra.'>'.urldecode($obfuscatedText).'</a>';
 
       return $replace;
     }, $output);
