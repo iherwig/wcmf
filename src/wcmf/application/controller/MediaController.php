@@ -84,6 +84,10 @@ class MediaController extends Controller {
     $response->setValue('rootUrl', $rootUrl);
     $response->setValue('rootPath', $rootPath);
 
+    // get configuration
+    $config = $this->getConfiguration();
+    $lowercase = $config->hasValue('lowercase', 'media') ? $config->getBooleanValue('lowercase', 'media') : true;
+
     if ($request->getAction() == "browseMedia") {
       $opts = [
         'plugin' => [
@@ -92,7 +96,7 @@ class MediaController extends Controller {
                 'nfc' => true,
                 'nfkc' => true,
                 'umlauts' => true,
-                'lowercase' => true,
+                'lowercase' => $lowercase,
                 'convmap' => []
             ],
             'Sanitizer' => [
