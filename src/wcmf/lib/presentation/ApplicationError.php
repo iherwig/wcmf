@@ -14,6 +14,7 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\util\StringUtil;
+use wcmf\lib\security\AuthorizationException;
 
 /**
  * ApplicationError is used to signal errors that occur
@@ -171,6 +172,9 @@ class ApplicationError {
   public static function fromException(\Exception $ex) {
     if ($ex instanceof ApplicationException) {
       return $ex->getError();
+    }
+    if ($ex instanceof AuthorizationException) {
+      return self::get(PERMISSION_DENIED);
     }
     return self::getGeneral($ex->getMessage());
   }

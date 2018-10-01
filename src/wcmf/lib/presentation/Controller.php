@@ -150,11 +150,15 @@ abstract class Controller {
       }
       catch (\Exception $ex) {
         if ($ex instanceof ApplicationException) {
-          $this->response->addError($ex->getError());
+          $error = $ex->getError();
+          $this->response->addError($error);
+          $this->response->setStatus($error->getStatusCode());
         }
         else {
           $this->getLogger()->error($ex);
-          $this->response->addError(ApplicationError::fromException($ex));
+          $error = ApplicationError::fromException($ex);
+          $this->response->addError($error);
+          $this->response->setStatus($error->getStatusCode());
         }
         $this->endTransaction(false);
       }
