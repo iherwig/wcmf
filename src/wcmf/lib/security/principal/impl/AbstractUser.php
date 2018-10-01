@@ -237,8 +237,15 @@ abstract class AbstractUser extends Node implements User {
 
     // validate the super_user property
     if ($name == 'super_user') {
-      if ($this->getState() != self::STATE_NEW && $this->getValue('super_user') != $value) {
-        throw new ValidationException($name, $value, $message->getText("The super user property can't be changed after creation"));
+      if ((bool)$this->getValue('super_user') != (bool)$value) {
+        $authUser = $this->getAuthUser();
+        if  (!$authUser || !$authUser->isSuperUser()) {
+          throw new ValidationException($name, $value, $message->getText("The super user property can only be changed by super users"));
+        }
+        // super user property cannot be withdrawn by self
+        if (!$value && $this->getLogin() == $authUser->getLogin()) {
+          throw new ValidationException($name, $value, $message->getText("The super user property cannot be withdrawn by self"));
+        }
       }
     }
   }
@@ -256,6 +263,16 @@ abstract class AbstractUser extends Node implements User {
       }
     }
     return self::$roleConfig;
+  }
+
+  /**
+   * Get the currently authenticated user
+   * @return User
+   */
+  protected function getAuthUser() {
+    $principalFactory = ObjectFactory::getInstance('principalFactory');
+    $session = ObjectFactory::getInstance('session');
+    return $principalFactory->getUser($session->getAuthUser());
   }
 }
 ?>

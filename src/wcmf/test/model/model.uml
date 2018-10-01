@@ -62,6 +62,11 @@
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_86xZmaprEeaGbp23C_zkpg" name="Media">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_hZZ10MVhEeiZwfj3tKWs6A" name="lowercase" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hZZ10cVhEeiZwfj3tKWs6A" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hZZ10sVhEeiZwfj3tKWs6A" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_hZZ108VhEeiZwfj3tKWs6A" value="0"/>
+                </ownedAttribute>
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_86xZmqprEeaGbp23C_zkpg" name="uploadDir" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_86xZm6prEeaGbp23C_zkpg" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_86xZnKprEeaGbp23C_zkpg" value="1"/>
