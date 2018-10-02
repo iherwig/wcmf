@@ -15,7 +15,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\core\Session;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\i18n\Message;
-use wcmf\lib\model\NodeComparator;
+use wcmf\lib\persistence\ObjectComparator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -130,9 +130,9 @@ class SearchController extends ListController {
       $sortDir = $request->hasValue('sortDirection') ? $request->getValue('sortDirection') : 'asc';
       $sortCriteria = [
          $request->getValue('sortFieldName') => $sortDir == 'asc' ?
-              NodeComparator::SORTTYPE_ASC : NodeComparator::SORTTYPE_DESC
+            ObjectComparator::SORTTYPE_ASC : ObjectComparator::SORTTYPE_DESC
       ];
-      $comparator = new NodeComparator($sortCriteria);
+      $comparator = new ObjectComparator($sortCriteria);
       usort($nodes, [$comparator, 'compare']);
     }
   }

@@ -11,16 +11,16 @@
 namespace wcmf\test\tests\model;
 
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\NodeComparator;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\ObjectComparator;
 use wcmf\test\lib\BaseTestCase;
 
 /**
- * NodeComparatorTest.
+ * ObjectComparatorTest.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class NodeComparatorTest extends BaseTestCase {
+class ObjectComparatorTest extends BaseTestCase {
 
   private $nodes = [];
 
@@ -48,7 +48,7 @@ class NodeComparatorTest extends BaseTestCase {
   }
 
   public function testAttributeOnly() {
-    $comparator = new NodeComparator('created');
+    $comparator = new ObjectComparator('created');
     usort($this->nodes, [$comparator, 'compare']);
     $this->assertEquals(3, $this->nodes[0]->getValue('id'));
     $this->assertEquals(2, $this->nodes[1]->getValue('id'));
@@ -56,7 +56,7 @@ class NodeComparatorTest extends BaseTestCase {
   }
 
   public function testAttributeDir() {
-    $comparator = new NodeComparator('created DESC');
+    $comparator = new ObjectComparator('created DESC');
     usort($this->nodes, [$comparator, 'compare']);
     $this->assertEquals(1, $this->nodes[0]->getValue('id'));
     $this->assertEquals(2, $this->nodes[1]->getValue('id'));
@@ -64,7 +64,7 @@ class NodeComparatorTest extends BaseTestCase {
   }
 
   public function testArrayAttributeOnly() {
-    $comparator = new NodeComparator(['name', 'created']);
+    $comparator = new ObjectComparator(['name', 'created']);
     usort($this->nodes, [$comparator, 'compare']);
     $this->assertEquals(3, $this->nodes[0]->getValue('id'));
     $this->assertEquals(1, $this->nodes[1]->getValue('id'));
@@ -72,7 +72,7 @@ class NodeComparatorTest extends BaseTestCase {
   }
 
   public function testArrayAttributeDir() {
-    $comparator = new NodeComparator(['name DESC', 'created DESC']);
+    $comparator = new ObjectComparator(['name DESC', 'created DESC']);
     usort($this->nodes, [$comparator, 'compare']);
     $this->assertEquals(2, $this->nodes[0]->getValue('id'));
     $this->assertEquals(1, $this->nodes[1]->getValue('id'));
@@ -80,8 +80,8 @@ class NodeComparatorTest extends BaseTestCase {
   }
 
   public function testArrayComplex() {
-    $comparator = new NodeComparator(['name' => NodeComparator::SORTTYPE_DESC,
-        'created' => NodeComparator::SORTTYPE_DESC]);
+    $comparator = new ObjectComparator(['name' => ObjectComparator::SORTTYPE_DESC,
+        'created' => ObjectComparator::SORTTYPE_DESC]);
     usort($this->nodes, [$comparator, 'compare']);
     $this->assertEquals(2, $this->nodes[0]->getValue('id'));
     $this->assertEquals(1, $this->nodes[1]->getValue('id'));
@@ -89,7 +89,7 @@ class NodeComparatorTest extends BaseTestCase {
   }
 
   public function testOid() {
-    $comparator = new NodeComparator([NodeComparator::ATTRIB_OID => NodeComparator::SORTTYPE_DESC]);
+    $comparator = new ObjectComparator([ObjectComparator::ATTRIB_OID => ObjectComparator::SORTTYPE_DESC]);
     usort($this->nodes, [$comparator, 'compare']);
     $this->assertEquals(3, $this->nodes[0]->getValue('id'));
     $this->assertEquals(2, $this->nodes[1]->getValue('id'));

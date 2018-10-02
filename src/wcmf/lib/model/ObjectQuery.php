@@ -277,7 +277,7 @@ class ObjectQuery extends AbstractQuery {
   /**
    * @see AbstractQuery::getQueryType()
    */
-  protected function getQueryType() {
+  public function getQueryType() {
     return $this->typeNode->getType();
   }
 

@@ -34,7 +34,6 @@
     </testsuite>
     <testsuite name="Model">
       <file>tests/model/IteratorTest.php</file>
-      <file>tests/model/NodeComparatorTest.php</file>
       <file>tests/model/NodeTest.php</file>
       <file>tests/model/NodeUtilTest.php</file>
     </testsuite>
@@ -43,6 +42,7 @@
       <file>tests/persistence/ManyToManyTest.php</file>
       <file>tests/persistence/NodeRelationTest.php</file>
       <file>tests/persistence/NodeUnifiedRDBMapperTest.php</file>
+      <file>tests/persistence/ObjectComparatorTest.php</file>
       <file>tests/persistence/ObjectIdTest.php</file>
       <file>tests/persistence/ObjectQueryTest.php</file>
       <file>tests/persistence/PersistentFacadeTest.php</file>

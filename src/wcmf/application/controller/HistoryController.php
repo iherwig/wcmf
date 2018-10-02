@@ -11,8 +11,8 @@
 namespace wcmf\application\controller;
 
 use wcmf\application\controller\ListController;
-use wcmf\lib\model\NodeComparator;
 use wcmf\lib\persistence\BuildDepth;
+use wcmf\lib\persistence\ObjectComparator;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -114,9 +114,9 @@ class HistoryController extends ListController {
       $sortDir = $request->hasValue('sortDirection') ? $request->getValue('sortDirection') : 'asc';
       $sortCriteria = [
          $request->getValue('sortFieldName') => $sortDir == 'asc' ?
-              NodeComparator::SORTTYPE_ASC : NodeComparator::SORTTYPE_DESC
+            ObjectComparator::SORTTYPE_ASC : ObjectComparator::SORTTYPE_DESC
       ];
-      $comparator = new NodeComparator($sortCriteria);
+      $comparator = new ObjectComparator($sortCriteria);
       usort($nodes, [$comparator, 'compare']);
     }
   }
