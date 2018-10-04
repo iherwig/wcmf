@@ -92,7 +92,7 @@ class ValueListProvider {
       }
       if (isset($decodedOptions['list'])) {
         $listDef = $decodedOptions['list'];
-        $list = self::getList(json_encode($listDef), $language);
+        $list = self::getList(json_encode($listDef), null, null, $language);
         $items = $list['items'];
         // only split, if it's an array to avoid casting null values to strings
         if (strPos($value, ',')) {
