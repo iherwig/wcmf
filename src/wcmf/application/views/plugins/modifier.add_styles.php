@@ -20,17 +20,21 @@ use wcmf\lib\util\DOMUtils;
  *
  * @param $string The html string
  * @param $styles Map with element names as keys and string with class names as values
+ * @param $onlyIfUnstyled Boolean indicating whether to add styles only, if the element has no classes or always (default: true)
  * @return String
  */
-function smarty_modifier_add_styles($html, $styles) {
-  return strlen($html) > 0 ? DOMUtils::processHtml($html, function(\DOMDocument $doc) use ($styles) {
+function smarty_modifier_add_styles($html, $styles, $onlyIfUnstyled=true) {
+  return strlen($html) > 0 ? DOMUtils::processHtml($html, function(\DOMDocument $doc) use ($styles, $onlyIfUnstyled) {
     $xpath = new \DOMXpath($doc);
     foreach ($styles as $name => $classes) {
       $elements = $xpath->query("//".$name);
       foreach ($elements as $element) {
-        $existingClasses = explode(" ", $element->getAttribute("class"));
-        $allClasses = array_unique(array_merge($existingClasses, explode(" ", $classes)));
-        $element->setAttribute("class", join(" ", $allClasses));
+        $classAttr = trim($element->getAttribute("class"));
+        if (strlen($classAttr) == 0 || !$onlyIfUnstyled) {
+          $existingClasses = explode(" ", $element->getAttribute("class"));
+          $allClasses = array_unique(array_merge($existingClasses, explode(" ", $classes)));
+          $element->setAttribute("class", join(" ", $allClasses));
+        }
       }
     }
   }) : '';
