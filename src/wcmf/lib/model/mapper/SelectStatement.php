@@ -157,7 +157,10 @@ class SelectStatement extends Select {
   public function getRowCount() {
     $adapter = $this->getAdapter();
     $columns = $this->processSelect($adapter->getPlatform());
-    $firstColumn = $columns[$this->quantifier ? 1 : 0][0][0];
+    $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($this->type);
+    $pkColumns = array_map(function($valueName) use ($mapper, $columns) {
+      return $columns[$this->quantifier ? 2 : 1].'.'.$mapper->getAttribute($valueName)->getColumn();
+    }, $mapper->getPkNames());
 
     $countStatement = clone $this;
     $countStatement->reset(Select::COLUMNS);
@@ -174,7 +177,7 @@ class SelectStatement extends Select {
     }
 
     // create aggregation column
-    $countStatement->columns(['nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.$firstColumn.')')]);
+    $countStatement->columns(['nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.join(', ', $pkColumns).')')]);
 
     $countStatement->id = $this->id != self::NO_CACHE ? $this->id.'-count' : self::NO_CACHE;
     $result = $countStatement->query();

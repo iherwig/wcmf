@@ -17,6 +17,7 @@ use wcmf\lib\model\mapper\SelectStatement;
 use wcmf\lib\model\NodeUtil;
 use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\PagingInfo;
+use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -270,7 +271,21 @@ class StringQuery extends ObjectQuery {
    */
   protected static function mapToDatabase($type, $valueName) {
     $mapper = self::getMapper($type);
-    $attributeDescription = $mapper->getAttribute($valueName);
+    if ($mapper->hasAttribute($valueName)) {
+      $attributeDescription = $mapper->getAttribute($valueName);
+    }
+    else {
+      // if the attribute does not exist, it might be the column name already
+      foreach ($mapper->getAttributes() as $curAttributeDesc) {
+        if ($curAttributeDesc->getColumn() == $valueName) {
+          $attributeDescription = $curAttributeDesc;
+          break;
+        }
+      }
+    }
+    if (!$attributeDescription) {
+      throw new PersistenceException("No attribute '".$valueName."' exists in '".$type."'");
+    }
 
     $table = $mapper->getRealTableName();
     $column = $attributeDescription->getColumn();

@@ -366,7 +366,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
       $selectStmt->where($this->quoteIdentifier($tableName).'.'.
-              $this->quoteIdentifier($thisAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
+              $this->quoteIdentifier($thisAttr->getColumn()).' IN('.join(',', array_keys($parameters)).')');
       // order
       $this->addOrderBy($selectStmt, $orderby, $this->getType(), $tableName, $this->getDefaultOrder($otherRole));
       // additional conditions
