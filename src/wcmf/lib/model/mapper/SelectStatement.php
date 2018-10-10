@@ -13,6 +13,7 @@ namespace wcmf\lib\model\mapper;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\mapper\RDBMapper;
+use wcmf\lib\persistence\PersistenceException;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
@@ -180,9 +181,15 @@ class SelectStatement extends Select {
     $countStatement->columns(['nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.join(', ', $pkColumns).')')]);
 
     $countStatement->id = $this->id != self::NO_CACHE ? $this->id.'-count' : self::NO_CACHE;
-    $result = $countStatement->query();
-    $row = $result->fetch();
-    return $row['nRows'];
+    try {
+      $result = $countStatement->query();
+      $row = $result->fetch();
+      return $row['nRows'];
+    }
+    catch (\Exception $ex) {
+      self::$logger->error("The query: ".$countStatement->__toString()."\ncaused the following exception:\n".$ex->getMessage());
+      throw new PersistenceException("Error in persistent operation. See log file for details.");
+    }
   }
 
   /**

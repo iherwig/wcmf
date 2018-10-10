@@ -423,10 +423,10 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
       $tableName = $this->getRealTableName();
       $selectStmt->from($tableName, '');
       $this->addColumns($selectStmt, $tableName);
-      $joinCond = $nmTableName.'.'.$thisFkAttr->getName().'='.$tableName.'.'.$thisIdAttr->getName();
+      $joinCond = $nmTableName.'.'.$thisFkAttr->getColumn().'='.$tableName.'.'.$thisIdAttr->getColumn();
       $joinColumns = [];
       $selectStmt->where($this->quoteIdentifier($nmTableName).'.'.
-              $this->quoteIdentifier($otherFkAttr->getName()).' IN('.join(',', array_keys($parameters)).')');
+          $this->quoteIdentifier($otherFkAttr->getColumn()).' IN('.join(',', array_keys($parameters)).')');
       // order (in this case we use the order of the many to many objects)
       $nmSortDefs = $nmMapper->getDefaultOrder($otherRole);
       $hasNmOrder = sizeof($nmSortDefs) > 0;
@@ -440,7 +440,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
         $joinColumns[$nmSortAttributeDesc->getName()] = $nmSortAttributeDesc->getColumn();
       }
       // add proxy id
-      $joinColumns[self::INTERNAL_VALUE_PREFIX.'id'] = $otherFkAttr->getName();
+      $joinColumns[self::INTERNAL_VALUE_PREFIX.'id'] = $otherFkAttr->getColumn();
       $selectStmt->join($nmTableName, $joinCond, $joinColumns);
       // additional conditions
       $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $nmTableName));
