@@ -156,13 +156,20 @@ class SelectStatement extends Select {
    * @return Integer
    */
   public function getRowCount() {
-    $adapter = $this->getAdapter();
-    $columns = $this->processSelect($adapter->getPlatform());
     $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($this->type);
-    $pkColumns = array_map(function($valueName) use ($mapper, $columns) {
-      // table name is provided in $columns but may have an alias name
-      return preg_replace('/^.* AS /', '', $columns[$this->quantifier ? 2 : 1]).'.'.$mapper->quoteIdentifier($mapper->getAttribute($valueName)->getColumn());
-    }, $mapper->getPkNames());
+    if ($this->table) {
+      $table = !is_array($this->table) ? $this-> table : key($this->table);
+      // use pk columns for counting
+      $countColumns = array_map(function($valueName) use ($mapper, $table) {
+        return $mapper->quoteIdentifier($table).'.'.$mapper->quoteIdentifier($mapper->getAttribute($valueName)->getColumn());
+      }, $mapper->getPkNames());
+    }
+    else {
+      // fallback if table is not defined: take first column
+      $adapter = $this->getAdapter();
+      $columns = $this->processSelect($adapter->getPlatform());
+      $countColumns = [$columns[$this->quantifier ? 1 : 0][0][0]];
+    }
 
     $countStatement = clone $this;
     $countStatement->reset(Select::COLUMNS);
@@ -179,7 +186,7 @@ class SelectStatement extends Select {
     }
 
     // create aggregation column
-    $countStatement->columns(['nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.join(', ', $pkColumns).')')]);
+    $countStatement->columns(['nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.join(', ', $countColumns).')')]);
 
     $countStatement->id = $this->id != self::NO_CACHE ? $this->id.'-count' : self::NO_CACHE;
     try {
