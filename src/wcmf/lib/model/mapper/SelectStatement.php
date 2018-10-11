@@ -160,7 +160,8 @@ class SelectStatement extends Select {
     $columns = $this->processSelect($adapter->getPlatform());
     $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($this->type);
     $pkColumns = array_map(function($valueName) use ($mapper, $columns) {
-      return $columns[$this->quantifier ? 2 : 1].'.'.$mapper->getAttribute($valueName)->getColumn();
+      // table name is provided in $columns but may have an alias name
+      return preg_replace('/^.* AS /', '', $columns[$this->quantifier ? 2 : 1]).'.'.$mapper->quoteIdentifier($mapper->getAttribute($valueName)->getColumn());
     }, $mapper->getPkNames());
 
     $countStatement = clone $this;
