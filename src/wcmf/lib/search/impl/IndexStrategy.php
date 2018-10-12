@@ -21,7 +21,7 @@ interface IndexStrategy {
    * Get the lucene document for a PersistentObject
    * @param $obj PersistenceObject instance
    * @param $language The language
-   * @return Document
+   * @return Document or null, if object should not be contained in the index
    */
   public function getDocument(PersistentObject $obj, $language);
 

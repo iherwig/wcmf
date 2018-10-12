@@ -240,12 +240,20 @@ class DefaultLocalization implements Localization {
         $tpl = $query->getObjectTemplate($this->translationType);
         $tpl->setValue('objectid', Criteria::asValue('=', $oidStr));
         $tpl->setValue('language', Criteria::asValue('=', $lang));
-        $translations = $query->execute(BuildDepth::SINGLE);
+        $translationInstances = $query->execute(BuildDepth::SINGLE);
+
+        // create map for faster access
+        $translations = [];
+        foreach ($translationInstances as $translationInstance) {
+          $translations[$translationInstance->getValue('attribute')] = $translationInstance->getValue('translation');
+        }
 
         // set the translated values in the object
         $iter = new NodeValueIterator($object, false);
         for($iter->rewind(); $iter->valid(); $iter->next()) {
-          $this->setTranslatedValue($translatedObject, $iter->key(), $translations, $useDefaults);
+          $valueName = $iter->key();
+          $translation = isset($translations[$valueName]) ? $translations[$valueName] : '';
+          $this->setTranslatedValue($translatedObject, $valueName, $translation, $useDefaults);
         }
       }
       $this->translatedObjects[$cacheKey] = $translatedObject;
@@ -294,7 +302,13 @@ class DefaultLocalization implements Localization {
       $tpl = $query->getObjectTemplate($this->translationType);
       $tpl->setValue('objectid', Criteria::asValue('=', $object->getOID()->__toString()));
       $tpl->setValue('language', Criteria::asValue('=', $lang));
-      $translations = $query->execute(BuildDepth::SINGLE);
+      $translationInstances = $query->execute(BuildDepth::SINGLE);
+
+      // create map for faster access
+      $translations = [];
+      foreach ($translationInstances as $translationInstance) {
+        $translations[$translationInstance->getValue('attribute')] = $translationInstance;
+      }
 
       // save the translations, ignore pk values
       $pkNames = $object->getMapper()->getPkNames();
@@ -303,7 +317,8 @@ class DefaultLocalization implements Localization {
         $valueName = $iter->key();
         if (!in_array($valueName, $pkNames)) {
           $curIterNode = $iter->currentNode();
-          $this->saveTranslatedValue($curIterNode, $valueName, $translations, $lang);
+          $translation = isset($translations[$valueName]) ? $translations[$valueName] : null;
+          $this->saveTranslatedValue($curIterNode, $valueName, $translation, $lang);
         }
       }
     }
@@ -363,11 +378,11 @@ class DefaultLocalization implements Localization {
    * @param $object The object to set the value on. The object
    *    is supposed to have it's values in the default language.
    * @param $valueName The name of the value to translate
-   * @param $translations An array of translation instances for the object.
+   * @param $translation Translation for the value.
    * @param $useDefaults Boolean whether to use the default language if no
    *    translation is found or not.
    */
-  private function setTranslatedValue(PersistentObject $object, $valueName, array $translations, $useDefaults) {
+  private function setTranslatedValue(PersistentObject $object, $valueName, $translation, $useDefaults) {
     $mapper = $object->getMapper();
     $isTranslatable = $mapper != null && $mapper->hasAttribute($valueName) ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
     if ($isTranslatable) {
@@ -376,15 +391,8 @@ class DefaultLocalization implements Localization {
         $object->setValue($valueName, null, true);
       }
       // translate the value
-      for ($i=0, $count=sizeof($translations); $i<$count; $i++) {
-        $curValueName = $translations[$i]->getValue('attribute');
-        if ($curValueName == $valueName) {
-          $translation = $translations[$i]->getValue('translation');
-          if (!($useDefaults && strlen($translation) == 0)) {
-            $object->setValue($valueName, $translation, true);
-          }
-          break;
-        }
+      if (!($useDefaults && strlen($translation) == 0)) {
+        $object->setValue($valueName, $translation, true);
       }
     }
   }
@@ -393,26 +401,15 @@ class DefaultLocalization implements Localization {
    * Save translated values for the given object
    * @param $object The object to save the translations on
    * @param $valueName The name of the value to translate
-   * @param $existingTranslations An array of already existing translation
-   *    instances for the object.
+   * @param $existingTranslation Existing translation instance for the value (might be null).
    * @param $lang The language of the translations.
    */
-  private function saveTranslatedValue(PersistentObject $object, $valueName, array $existingTranslations, $lang) {
+  private function saveTranslatedValue(PersistentObject $object, $valueName, $existingTranslation, $lang) {
     $mapper = $object->getMapper();
     $isTranslatable = $mapper != null && $mapper->hasAttribute($valueName) ? $mapper->getAttribute($valueName)->hasTag('TRANSLATABLE') : false;
     if ($isTranslatable) {
       $value = $object->getValue($valueName);
-      $translation = null;
-
-      // check if a translation already exists
-      for ($i=0, $count=sizeof($existingTranslations); $i<$count; $i++) {
-        $curValueName = $existingTranslations[$i]->getValue('attribute');
-        if ($curValueName == $valueName) {
-          $translation = &$existingTranslations[$i];
-          break;
-        }
-      }
-
+      $translation = $existingTranslation;
       $valueIsEmpty = $value === null || $value === '';
 
       // if no translation exists and the value is not empty, create a new translation

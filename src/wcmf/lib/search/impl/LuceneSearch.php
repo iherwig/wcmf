@@ -278,7 +278,9 @@ class LuceneSearch implements IndexedSearch {
         }
 
         $doc = $this->indexStrategy->getDocument($indexObj, $language);
-        $index->addDocument($doc);
+        if ($doc) {
+          $index->addDocument($doc);
+        }
       }
       $this->indexIsDirty = true;
     }
