@@ -73,7 +73,7 @@ abstract class AbstractPermissionManager implements PermissionManager {
   /**
    * @see PermissionManager::authorize()
    */
-  public function authorize($resource, $context, $action, $login=null) {
+  public function authorize($resource, $context, $action, $login=null, $applyDefaultPolicy=true) {
     // get authenticated user, if no user is given
     if ($login == null) {
       $login = $this->session->getAuthUser();
@@ -175,7 +175,7 @@ abstract class AbstractPermissionManager implements PermissionManager {
       }
     }
 
-    if ($authorized === null) {
+    if ($authorized === null && $applyDefaultPolicy) {
       $authorized = $this->getDefaultPolicy($login);
     }
     if (self::$logger->isDebugEnabled()) {

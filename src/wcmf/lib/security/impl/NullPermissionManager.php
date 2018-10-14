@@ -28,7 +28,7 @@ class NullPermissionManager implements PermissionManager {
   /**
    * @see PermissionManager::authorize()
    */
-  public function authorize($resource, $context, $action, $login=null) {
+  public function authorize($resource, $context, $action, $login=null, $applyDefaultPolicy=true) {
     return true;
   }
 

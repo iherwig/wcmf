@@ -97,13 +97,13 @@ class MediaController extends Controller {
                 'nfkc' => true,
                 'umlauts' => true,
                 'lowercase' => $lowercase,
-                'convmap' => []
+                'convmap' => [],
             ],
             'Sanitizer' => [
                 'enable' => true,
                 'targets'  => ['\\','/',':','*','?','"','<','>','|'],
-                'replace'  => '_'
-            ]
+                'replace'  => '_',
+            ],
         ],
         // 'debug' => true,
         'roots' => [[
@@ -112,7 +112,8 @@ class MediaController extends Controller {
             'URL' => $rootUrl,
             'alias' => 'Media',
             'tmbBgColor' => 'transparent',
-            'startPath' => str_replace('/', DIRECTORY_SEPARATOR, rtrim($absDirectory, '/'))
+            'startPath' => str_replace('/', DIRECTORY_SEPARATOR, rtrim($absDirectory, '/')),
+            'accessControl' => [$this, 'access'],
         ]],
         'bind' => [
             'rename rm paste' => [$this, 'onFileMoved'],
@@ -129,8 +130,8 @@ class MediaController extends Controller {
             'upload.presave' => [
                 'Plugin.Sanitizer.onUpLoadPreSave',
                 'Plugin.Normalizer.onUpLoadPreSave'
-            ]
-        ]
+            ],
+        ],
       ];
 
       // run elFinder
@@ -159,6 +160,21 @@ class MediaController extends Controller {
     }
     $logger = $this->getLogger();
     $logger->debug($cmd." file: ".$source." -> ".$target);
+  }
+
+  /**
+   * Access control
+   * @param  $attr Attribute name (read|write|locked|hidden)
+   * @param  $path Absolute file path
+   * @param  $data Value of volume option `accessControlData`
+   * @param  $volume elFinder volume driver object
+   * @param  $isDir Path is directory (true: directory, false: file, null: unknown)
+   * @param  $relpath File path relative to volume root directory started with directory separator
+   * @return Boolean or null (elFinder decides)
+   **/
+  public function access($attr, $path, $data, $volume, $isDir, $relpath) {
+    // authorize using permission manager, but use no default policy
+    return $this->getPermissionManager()->authorize('media:'.$relpath, '', $attr, null, false);
   }
 
   /**

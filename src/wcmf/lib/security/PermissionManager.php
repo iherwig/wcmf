@@ -34,11 +34,11 @@ interface PermissionManager {
    * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
    * @param $context The context in which the action takes place.
    * @param $action The action to process.
-   * @param $login The login of the user to use for authorization (optional,
-   *              default: the value of Session::getAuthUser())
-   * @return Boolean whether authorization succeeded/failed.
+   * @param $login The login of the user to use for authorization (optional, default: the value of Session::getAuthUser())
+   * @param $applyDefaultPolicy Boolean whether to apply a default policy, if no authorization rule is set for this request (optional, default: true)
+   * @return Boolean whether authorization succeeded/failed or null, if no rule is set and no default policy is applied
    */
-  public function authorize($resource, $context, $action, $login=null);
+  public function authorize($resource, $context, $action, $login=null, $applyDefaultPolicy=true);
 
   /**
    * Add a temporary permission for the current user. The permission
