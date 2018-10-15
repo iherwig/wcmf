@@ -379,6 +379,28 @@ In this example all `Author` instances are loaded which have names starting with
 _A_ or _B_ and which have `Article` instances connected that are created in the
 year _2014_.
 
+It is possible to combine several object queries to apply pagination over __multiple entity types__
+using the \link wcmf::lib::persistence::UnionQuery `UnionQuery`\endlink class:
+
+~~~~~~~~~~~~~{.php}
+// create a Author query
+$authorQuery = new ObjectQuery('Author');
+// ... define query
+
+// create a Publisher query
+$publisherQuery = new ObjectQuery('Publisher');
+// ... define query
+
+// setup paging
+$pagingInfo = new PagingInfo(25);
+$pagingInfo->setOffset(50);
+
+// load Author and Publisher instances ordered by creation date
+$queryProvider = new ObjectQueryUnionQueryProvider([$authorQuery, $publisherQuery]);
+$order = ['created'];
+$objects = UnionQuery::execute($queryProvider, BuildDepth::SINGLE, $order, $pagingInfo);
+~~~~~~~~~~~~~
+
 Besides this, wCMF integrates the
 [Lucene](http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html)
 search engine in the class \link wcmf::lib::search::impl::LuceneSearch `LuceneSearch`\endlink.

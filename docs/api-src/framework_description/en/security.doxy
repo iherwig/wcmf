@@ -159,8 +159,10 @@ Besides this, wCMF uses the following built-in resources:
   (e.g. `app.src.model.wcmf.User:123`)
 - _Entity instance propery_ to restrict access on a certain property of one
   entity instance (e.g. `app.src.model.wcmf.User:123.login`)
+- _Media_ to restrict access to file resources
+  (e.g. `media:/folderA??hidden = +*`)
 
-The actions for the persistency related resources are properties of
+The __actions for the persistency related resources__ are properties of
 \link wcmf::lib::persistence::PersistenceAction `PersistenceAction`\endlink,
 e.g. \link wcmf::lib::persistence::PersistenceAction::READ `PersistenceAction::READ`\endlink.
 While all actions can be applied to instances, for properties only _read_ and _update_
@@ -168,6 +170,8 @@ are taken into account.
 
 @note __Entity relations__ are treated like entity properties, which means that read and update
 access can be restricted.
+
+The __actions for the file related resources__ are _read_, _write_, _locked_ (read only) and _hidden_.
 
 #### Dynamic roles ####
 
