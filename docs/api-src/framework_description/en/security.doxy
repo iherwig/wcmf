@@ -132,6 +132,19 @@ and is equivalent to
 resource?context?action = +allowedRole
 ~~~~~~~~~~~~~
 
+#### Default policy ####
+
+If no permissions are defined on a resource, a _default policy_ will be applied by default.
+\link wcmf::lib::security::impl::AbstractPermissionManager `AbstractPermissionManager`\endlink implements the 
+default policy as follows:
+
+- If the current user is __not authorized__, the default policy denies all actions
+- If the current user is __authorized__, the default policy allows all actions
+
+The \link wcmf::lib::security::PermissionManager::authorize `PermissionManager::authorize`\endlink method
+allows to ignore the default policy by passing `false` as the `$applyDefaultPolicy` parameter, in which
+case the method returns null, if no permissions are defined for the resource.
+
 #### Operator precedence ####
 
 Granted roles are evaluated before denied ones. That means that the following
@@ -160,7 +173,7 @@ Besides this, wCMF uses the following built-in resources:
 - _Entity instance propery_ to restrict access on a certain property of one
   entity instance (e.g. `app.src.model.wcmf.User:123.login`)
 - _Media_ to restrict access to file resources
-  (e.g. `media:/folderA??hidden = +*`)
+  (e.g. `media:/folderA??hidden`)
 
 The __actions for the persistency related resources__ are properties of
 \link wcmf::lib::persistence::PersistenceAction `PersistenceAction`\endlink,
@@ -239,6 +252,11 @@ app.src.model.Chapter:555??read = +tester +administrators
 
 // tester role is not allowed to execute SaveController
 wcmf\application\controller\SaveController?? = -tester
+
+// the tmp directory is hidden for everyone
+// only administrators can rename or delete the uploads directory
+media:/tmp??hidden = +*
+media:/uploads??locked = -administrators +*
 
 // custom permissions
 customPermission??start = +tester
