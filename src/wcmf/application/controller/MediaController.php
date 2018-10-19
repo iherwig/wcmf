@@ -113,6 +113,8 @@ class MediaController extends Controller {
             'alias' => 'Media',
             'tmbBgColor' => 'transparent',
             'startPath' => str_replace('/', DIRECTORY_SEPARATOR, rtrim($absDirectory, '/')),
+            'checkSubfolders' => false,
+            'treeDeep' => 1,
             'accessControl' => [$this, 'access'],
         ]],
         'bind' => [
