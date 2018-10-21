@@ -1007,6 +1007,16 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_864HsqprEeaGbp23C_zkpg" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_864Hs6prEeaGbp23C_zkpg" value="+administrators"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_PJGmkNVtEeiVDdUgawH0bw" name="app.src.model.wcmf.User.super_user??update" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_PJGmkdVtEeiVDdUgawH0bw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_PJGmktVtEeiVDdUgawH0bw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_PJGmk9VtEeiVDdUgawH0bw" value="+othersuperuser"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_QCjXENVtEeiVDdUgawH0bw" name="app.src.model.wcmf.User.active??update" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QCjXEdVtEeiVDdUgawH0bw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QCjXEtVtEeiVDdUgawH0bw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_QCjXE9VtEeiVDdUgawH0bw" value="+othersuperuser"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_864HtKprEeaGbp23C_zkpg" name="DefaultPermissionManager">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_864HtaprEeaGbp23C_zkpg" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
@@ -1041,12 +1051,36 @@
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_XVX_w0ZOEeeLZa5OKBzA3A" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_XVX_xEZOEeeLZa5OKBzA3A" value="$creatorRole"/>
                 </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_kSJSUNVsEeiVDdUgawH0bw" name="superuser" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kSJSUdVsEeiVDdUgawH0bw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kSJSUtVsEeiVDdUgawH0bw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_kSJSU9VsEeiVDdUgawH0bw" value="$superUserRole"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_kYNeENVsEeiVDdUgawH0bw" name="othersuperuser" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kYNeEdVsEeiVDdUgawH0bw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kYNeEtVsEeiVDdUgawH0bw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_kYNeE9VsEeiVDdUgawH0bw" value="$otherSuperUserRole"/>
+                </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:Class" xmi:id="_dVhkUEZOEeeLZa5OKBzA3A" name="CreatorRole">
                 <ownedAttribute xmi:type="uml:Property" xmi:id="_dVhkUUZOEeeLZa5OKBzA3A" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
                   <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dVhkUkZOEeeLZa5OKBzA3A" value="1"/>
                   <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dVhkU0ZOEeeLZa5OKBzA3A" value="1"/>
                   <defaultValue xmi:type="uml:LiteralString" xmi:id="_dVhkVEZOEeeLZa5OKBzA3A" value="wcmf\lib\security\principal\impl\CreatorRole"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_6tDZINVsEeiVDdUgawH0bw" name="SuperUserRole">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_6tDZIdVsEeiVDdUgawH0bw" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_6tDZItVsEeiVDdUgawH0bw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6tDZI9VsEeiVDdUgawH0bw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_6tDZJNVsEeiVDdUgawH0bw" value="wcmf\lib\security\principal\impl\SuperUserRole"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_6xJ2ANVsEeiVDdUgawH0bw" name="OtherSuperUserRole">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_6xJ2AdVsEeiVDdUgawH0bw" name="__class" visibility="public" type="_agg3ALQwEeOLlbB2YLI0iw">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_6xJ2AtVsEeiVDdUgawH0bw" value="1"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6xJ2A9VsEeiVDdUgawH0bw" value="1"/>
+                  <defaultValue xmi:type="uml:LiteralString" xmi:id="_6xJ2BNVsEeiVDdUgawH0bw" value="wcmf\lib\security\principal\impl\OtherSuperUserRole"/>
                 </ownedAttribute>
               </packagedElement>
             </packagedElement>
@@ -2341,7 +2375,7 @@
   <Chronos:ChiSystem xmi:id="_MBHNwKvxEeaQUopA1XIUeQ" plattform="wcmf" config="server.ini" base_Class="_MBFYkKvxEeaQUopA1XIUeQ"/>
   <Chronos:ChiActionKey xmi:id="_ttsKMKv-Eeaj6N1_K8Qzaw" action="cms" base_Association="_gQEHcKv-Eeaj6N1_K8Qzaw"/>
   <Chronos:ChiValue xmi:id="_KXEGoMNyEeabSe-F2MKJtA" db_data_type="INT(1)" is_editable="true" input_type="binarycheckbox" display_type="check" base_Property="_KXBDUMNyEeabSe-F2MKJtA"/>
-  <Chronos:ChiValue xmi:id="_bUTD0MNyEeabSe-F2MKJtA" db_data_type="INT(1)" input_type="binarycheckbox" display_type="check" base_Property="_bUR1sMNyEeabSe-F2MKJtA"/>
+  <Chronos:ChiValue xmi:id="_bUTD0MNyEeabSe-F2MKJtA" db_data_type="INT(1)" is_editable="true" input_type="binarycheckbox" display_type="check" base_Property="_bUR1sMNyEeabSe-F2MKJtA"/>
   <Chronos:ChiSystem xmi:id="_qxaPwVxJEeeaovNgIyUZeA" plattform="wcmf" config="server.ini" base_Class="_qxaPwFxJEeeaovNgIyUZeA"/>
   <Chronos:ChiSystem xmi:id="_874z0aprEeaGbp23C_zkpg" plattform="wcmf" config="persistence.ini" base_Class="_861ECqprEeaGbp23C_zkpg"/>
   <Chronos:ChiSystem xmi:id="_88Dy8aprEeaGbp23C_zkpg" plattform="wcmf" config="security.ini" base_Class="_864HOqprEeaGbp23C_zkpg"/>
@@ -2498,4 +2532,6 @@
   <Chronos:ChiController xmi:id="_sZmv8HHHEeiMGPqlQEELow" base_Class="_c-lMYHHHEeiMGPqlQEELow"/>
   <Chronos:ChiActionKey xmi:id="_xYP0MHHHEeiMGPqlQEELow" action="clearCaches" base_Association="_t9-FsHHHEeiMGPqlQEELow"/>
   <Chronos:ChiActionKey xmi:id="_4as7wKU3Eeiq044YkPmXeA" context="image" base_Association="_2p2CIKU3Eeiq044YkPmXeA"/>
+  <Chronos:ChiSystem xmi:id="_6tFOUNVsEeiVDdUgawH0bw" plattform="wcmf" config="security.ini" base_Class="_6tDZINVsEeiVDdUgawH0bw"/>
+  <Chronos:ChiSystem xmi:id="_6xLrMNVsEeiVDdUgawH0bw" plattform="wcmf" config="security.ini" base_Class="_6xJ2ANVsEeiVDdUgawH0bw"/>
 </xmi:XMI>
