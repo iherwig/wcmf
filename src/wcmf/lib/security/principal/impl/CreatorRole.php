@@ -17,7 +17,7 @@ use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\security\principal\DynamicRole;
 
 /**
- * CreatorRole matches if a user created an entity.
+ * CreatorRole matches if the user created an entity.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

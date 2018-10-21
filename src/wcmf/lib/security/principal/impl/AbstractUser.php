@@ -227,27 +227,6 @@ abstract class AbstractUser extends Node implements User {
         throw new ValidationException($name, $value, $message->getText("The password can't be empty"));
       }
     }
-
-    // validate the active property
-    if ($name == 'active') {
-      if ($this->isSuperUser() && intval($value) !== 1) {
-        throw new ValidationException($name, $value, $message->getText("Super users must be active"));
-      }
-    }
-
-    // validate the super_user property
-    if ($name == 'super_user') {
-      if ((bool)$this->getValue('super_user') != (bool)$value) {
-        $authUser = $this->getAuthUser();
-        if  (!$authUser || !$authUser->isSuperUser()) {
-          throw new ValidationException($name, $value, $message->getText("The super user property can only be changed by super users"));
-        }
-        // super user property cannot be withdrawn by self
-        if (!$value && $this->getLogin() == $authUser->getLogin()) {
-          throw new ValidationException($name, $value, $message->getText("The super user property cannot be withdrawn by self"));
-        }
-      }
-    }
   }
 
   /**
