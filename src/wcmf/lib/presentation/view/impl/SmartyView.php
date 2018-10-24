@@ -206,7 +206,7 @@ class SmartyView implements View {
       return null;
     }
     $tpl = self::$sharedView->view->createTemplate($tplFile, $cacheId);
-    return \DateTime::createFromFormat('U', $tpl->cached->timestamp);
+    return (new \DateTime())->setTimeStamp($tpl->cached->timestamp);
   }
 
   /**
