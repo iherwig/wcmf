@@ -10,11 +10,11 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
-use app\src\model\wcmf\User;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\security\principal\DynamicRole;
+use wcmf\lib\security\principal\User;
 
 /**
  * CreatorRole matches if the user created an entity.

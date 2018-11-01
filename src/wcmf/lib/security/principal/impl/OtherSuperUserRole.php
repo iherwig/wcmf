@@ -10,10 +10,10 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
-use app\src\model\wcmf\User;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\security\principal\DynamicRole;
+use wcmf\lib\security\principal\User;
 
 /**
  * OtherSuperUserRole matches if the user has the super user attribute

@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\security\principal;
 
-use app\src\model\wcmf\User;
+use wcmf\lib\security\principal\User;
 
 /**
  * DynamicRole is the interface for user roles based on attributes.
