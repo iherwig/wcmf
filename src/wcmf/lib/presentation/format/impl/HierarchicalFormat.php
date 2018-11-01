@@ -88,20 +88,22 @@ abstract class HierarchicalFormat extends AbstractFormat {
       $values = $this->serializeNode($values);
     }
     else {
-      foreach ($values as $key => $value) {
-        if ($value != null && !is_scalar($value)) {
-          // array/object value
-          $result = $this->serializeHierarchy($value);
-          if (ObjectId::isValid($key)) {
-            $values = $result;
+      if (is_array($values) || ($values instanceof \Traversable)) {
+        foreach ($values as $key => $value) {
+          if ($value != null && !is_scalar($value)) {
+            // array/object value
+            $result = $this->serializeHierarchy($value);
+            if (ObjectId::isValid($key)) {
+              $values = $result;
+            }
+            else {
+              $values[$key] = $result;
+            }
           }
           else {
-            $values[$key] = $result;
+            // string value
+            $values[$key] = $value;
           }
-        }
-        else {
-          // string value
-          $values[$key] = $value;
         }
       }
     }
