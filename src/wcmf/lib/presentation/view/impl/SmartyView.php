@@ -181,7 +181,8 @@ class SmartyView implements View {
       self::$sharedView = ObjectFactory::getInstance('view');
     }
     if ($tplFile) {
-      return self::$sharedView->view->clearCache($tplFile, $cacheId);
+      $tpl = self::$sharedView->view->createTemplate($tplFile, $cacheId);
+      return $tpl->smarty->clearCache($tplFile, $cacheId);
     }
     else {
       $fileUtil = new FileUtil();
