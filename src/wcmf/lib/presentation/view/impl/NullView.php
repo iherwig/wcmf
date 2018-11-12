@@ -55,7 +55,7 @@ class NullView implements View {
   /**
    * @see View::clearCache()
    */
-  public static function clearCache() {
+  public static function clearCache($tplFile=null, $cacheId=null) {
     return 0;
   }
 

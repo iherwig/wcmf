@@ -176,13 +176,18 @@ class SmartyView implements View {
   /**
    * @see View::clearCache()
    */
-  public static function clearCache() {
+  public static function clearCache($tplFile=null, $cacheId=null) {
     if (self::$sharedView == null) {
       self::$sharedView = ObjectFactory::getInstance('view');
     }
-    $fileUtil = new FileUtil();
-    $fileUtil->emptyDir(self::$sharedView->view->getCompileDir());
-    return self::$sharedView->view->clearAllCache();
+    if ($tplFile) {
+      return self::$sharedView->view->clearCache($tplFile, $cacheId);
+    }
+    else {
+      $fileUtil = new FileUtil();
+      $fileUtil->emptyDir(self::$sharedView->view->getCompileDir());
+      return self::$sharedView->view->clearAllCache();
+    }
   }
 
   /**

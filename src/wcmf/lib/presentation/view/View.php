@@ -45,7 +45,7 @@ interface View {
   /**
    * Render the given template
    * @param $tplFile The template file
-   * @param $cacheId The id of the view (optional, @see Response::getCacheId())
+   * @param $cacheId The id of the view (optional, @see Response::getCacheId()) (optional: default: null)
    * @param $cacheLifetime The cache lifetime in seconds (optional, default: implementation specific)
    * @param $display Boolean whether to output the result or return it (default: _true_)
    */
@@ -53,21 +53,23 @@ interface View {
 
   /**
    * Clear the cache
+   * @param $tplFile The template file (optional, default: null), null to clear the complete cache
+   * @param $cacheId The id of the view (@see Controller::getCacheId()) (optional: default: null)
    * @return Integer number of cache files deleted
    */
-  public static function clearCache();
+  public static function clearCache($tplFile=null, $cacheId=null);
 
   /**
    * Check if a view is cached
    * @param $tplFile The template file
-   * @param $cacheId The id of the view (@see Controller::getCacheId())
+   * @param $cacheId The id of the view (@see Controller::getCacheId()) (optional: default: null)
    */
   public static function isCached($tplFile, $cacheId=null);
 
   /**
    * Get the date of the cache entry, if the view is cached
    * @param $tplFile The template file
-   * @param $cacheId The id of the view (@see Controller::getCacheId())
+   * @param $cacheId The id of the view (@see Controller::getCacheId()) (optional: default: null)
    * @return DateTime or null, if not cached
    */
   public static function getCacheDate($tplFile, $cacheId=null);
