@@ -260,7 +260,6 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
       // limit
       if ($pagingInfo != null) {
         $selectStmt->limit($pagingInfo->getPageSize());
-        $selectStmt->offset($pagingInfo->getOffset());
       }
     }
     else {
@@ -271,6 +270,11 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
 
     // set parameters
     $selectStmt->setParameters($parameters);
+
+    // always update offset, since it's most likely not contained in the cache id
+    if ($pagingInfo != null) {
+      $selectStmt->offset($pagingInfo->getOffset());
+    }
     return $selectStmt;
   }
 

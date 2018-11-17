@@ -54,5 +54,17 @@ class ObjectQueryUnionQueryProvider implements UnionQueryProvider {
     }
     return $query->execute($buildDepth, $orderby, $pagingInfo);
   }
+
+  /**
+   * Get the last query strings
+   * @return Array of string
+   */
+  public function getLastQueryStrings() {
+    $result = [];
+    foreach ($this->queries as $query) {
+      $result[] = $query->getLastQueryString();
+    }
+    return $result;
+  }
 }
 ?>

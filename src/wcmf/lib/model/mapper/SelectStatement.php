@@ -288,6 +288,8 @@ class SelectStatement extends Select {
   public function query() {
     $adapter = $this->getAdapter();
     $sql = $this->getSql();
+    // always update offset, since it's most likely not contained in the cache id
+    $sql = preg_replace('/OFFSET\s+[0-9]+/i', 'OFFSET '.$this->getRawState(Select::OFFSET), $sql);
     $stmt = $adapter->getDriver()->getConnection()->prepare($sql);
     if (self::$logger->isDebugEnabled()) {
       self::$logger->debug("Execute statement: ".$sql);
