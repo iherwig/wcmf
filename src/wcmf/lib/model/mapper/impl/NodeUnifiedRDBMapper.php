@@ -378,7 +378,6 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
       // limit
       if ($pagingInfo != null) {
         $selectStmt->limit($pagingInfo->getPageSize());
-        $selectStmt->offset($pagingInfo->getOffset());
       }
     }
     else {
@@ -388,6 +387,11 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
 
     // set parameters
     $selectStmt->setParameters($parameters);
+
+    // always update offset, since it's most likely not contained in the cache id
+    if ($pagingInfo != null) {
+      $selectStmt->offset($pagingInfo->getOffset());
+    }
     return $selectStmt;
   }
 
@@ -450,7 +454,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
       $parameters = array_merge($parameters, $this->addCriteria($selectStmt, $criteria, $nmTableName));
       // limit
       if ($pagingInfo != null) {
-        $selectStmt->limit($pagingInfo->getPageSize(), $pagingInfo->getOffset());
+        $selectStmt->limit($pagingInfo->getPageSize());
       }
     }
     else {
@@ -460,6 +464,11 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
 
     // set parameters
     $selectStmt->setParameters($parameters);
+
+    // always update offset, since it's most likely not contained in the cache id
+    if ($pagingInfo != null) {
+      $selectStmt->offset($pagingInfo->getOffset());
+    }
     return [$selectStmt, $otherRelationDesc->getIdName(), self::INTERNAL_VALUE_PREFIX.'id'];
   }
 
