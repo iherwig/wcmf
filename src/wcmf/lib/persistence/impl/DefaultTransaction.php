@@ -126,6 +126,8 @@ class DefaultTransaction implements Transaction {
    * @see Transaction::attach()
    */
   public function attach(PersistentObject $object) {
+    unset($this->detachedObjects[$object->getOID()->__toString()]);
+
     $state = $object->getState();
     if (!$this->isActive() && $state != PersistentObject::STATE_CLEAN) {
       return $object;
