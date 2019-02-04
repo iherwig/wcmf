@@ -62,6 +62,20 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     }
   }
 
+  public function __toString() {
+    $configArray = $this->configArray;
+    ksort($configArray);
+    $result = '';
+    foreach($configArray as $section => $config) {
+      $result .= PHP_EOL.'['.$section.']'.PHP_EOL;
+      ksort($config);
+      foreach ($config as $key => $value) {
+        $result .= $key.' = '.json_encode($value).PHP_EOL;
+      }
+    }
+    return $result;
+  }
+
   /**
    * Get the file system path to the configuration files.
    * @return The path, either absolute or relative to the executed script
