@@ -134,11 +134,12 @@ interface ControllerMessage {
   /**
    * Get a value
    * @param $name The name of the variable
-   * @param $default The default value if the value is not defined (optional, default: _null_)
+   * @param $default The default value if the value is not defined or invalid while exceptions are suppressed (optional, default: _null_)
    * @param $validateDesc An validation description to be used with Validator::validate() (optional, default: _null_)
+   * @param $suppressException Boolean whether to suppress a validation exception or not (optional, default: _false_)
    * @return The (filtered) value or default, if it does not exist
    */
-  public function getValue($name, $default=null, $validateDesc=null);
+  public function getValue($name, $default=null, $validateDesc=null, $suppressException=false);
 
   /**
    * Get a value as boolean
