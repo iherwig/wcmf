@@ -12,6 +12,7 @@ namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\format\impl\AbstractFormat;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -21,7 +22,7 @@ use wcmf\lib\util\StringUtil;
  * HtmlFormat implements the HTML request/response format. Since all data
  * from the external representation arrives in form fields, grouping of values
  * has to be done via the field names. So Nodes are represented by their values
- * whose field names are of the form value-`name`-`oid`. All of these
+ * whose field names are of the form value-`language`-`name`-`oid`. All of these
  * values will be removed from the request and replaced by Node instances
  * representing the data. Each node is stored under its object id in the data array.
  *
@@ -76,15 +77,21 @@ class HtmlFormat extends AbstractFormat {
    */
   protected function deserializeValues(Request $request) {
     // construct nodes from values serialized as form fields
-    // nodes are encoded in separated fields with names value-<name>-<oid>
+    // nodes are encoded in separated fields with names value-<language>-<name>-<oid>
     $values = $request->getValues();
     foreach ($values as $key => $value) {
       $valueDef = self::getValueDefFromInputControlName($key);
       if ($valueDef != null) {
-        $oidStr = $valueDef['oid'];
-        if (strlen($oidStr) > 0) {
-          $node = &$this->getNode($oidStr);
-          $node->setValue($valueDef['name'], $value);
+        // fix oid parameter (PHP replaces dots by underscore)
+        $oidStr = preg_replace('/_/', '.', $valueDef['oid']);
+        $oid = ObjectId::parse($oidStr);
+        if ($oid) {
+          $node = &$this->getNode($oid);
+          $pkNames = $node->getMapper()->getPkNames();
+          $valueName = $valueDef['name'];
+          if (!in_array($valueName, $pkNames)) {
+            $node->setValue($valueName, $value);
+          }
           unset($values[$key]);
           $values[$oidStr] = $node;
         }
@@ -115,18 +122,18 @@ class HtmlFormat extends AbstractFormat {
 
   /**
    * Get the object value definition from a HTML input field name.
-   * @param $name The name of input field in the format value-`name`-`oid`, where name is the name
+   * @param $name The name of input field in the format value-`language`-`name`-`oid`, where name is the name
    *              of the attribute belonging to the node defined by oid
    * @return An associative array with keys 'oid', 'language', 'name' or null if the name is not valid
    */
   protected static function getValueDefFromInputControlName($name) {
-    if (!(strpos($name, 'value') == 0)) {
+    if (strpos($name, 'value') !== 0) {
       return null;
     }
     $def = [];
     $fieldDelimiter = StringUtil::escapeForRegex(self::$inputFieldNameDelimiter);
     $pieces = preg_split('/'.$fieldDelimiter.'/', $name);
-    if (sizeof($pieces) != 3) {
+    if (sizeof($pieces) != 4) {
       return null;
     }
     array_shift($pieces);
