@@ -87,9 +87,10 @@ class HtmlFormat extends AbstractFormat {
         $oid = ObjectId::parse($oidStr);
         if ($oid) {
           $node = &$this->getNode($oid);
-          $pkNames = $node->getMapper()->getPkNames();
+          $mapper = $node->getMapper();
+          $pkNames = $mapper->getPkNames();
           $valueName = $valueDef['name'];
-          if (!in_array($valueName, $pkNames)) {
+          if ($mapper->hasAttribute($valueName) && !in_array($valueName, $pkNames)) {
             $node->setValue($valueName, $value);
           }
           unset($values[$key]);

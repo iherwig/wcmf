@@ -211,6 +211,7 @@ class SaveController extends Controller {
                   // create a new object, if this is an insert request. set the object id
                   // of the request object for correct assignement in save arrays
                   $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
+                  $curNode->setOID($curOid);
                 }
                 else {
                   // load the existing object, if this is a save request in order to merge
@@ -457,7 +458,7 @@ class SaveController extends Controller {
         $persistenceFacade = $this->getPersistenceFacade();
         $type = $persistenceFacade->getSimpleType($oid->getType());
         // check if uploadDir.type is defined in the configuration
-        if ($type && ($dir = $config->getDirectoryValue('uploadDir.'.$type, 'media')) !== false) {
+        if ($type && $config->hasValue('uploadDir.'.$type, 'media') && ($dir = $config->getDirectoryValue('uploadDir.'.$type, 'media')) !== false) {
           $uploadDir = $dir;
         }
         else {

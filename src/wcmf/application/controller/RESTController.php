@@ -243,6 +243,11 @@ class RESTController extends Controller {
     // return object only
     $oidStr = $subResponse->hasValue('oid') ? $subResponse->getValue('oid')->__toString() : null;
     $this->handleSubResponse($subResponse, $oidStr);
+
+    // prevent commit
+    if ($subResponse->hasErrors()) {
+      $this->endTransaction(false);
+    }
   }
 
   /**
@@ -290,6 +295,11 @@ class RESTController extends Controller {
         $oidStr = $subResponse->hasValue('oid') ? $subResponse->getValue('oid')->__toString() : '';
       }
     }
+
+    // prevent commit
+    if ($subResponse->hasErrors()) {
+      $this->endTransaction(false);
+    }
     $this->handleSubResponse($subResponse, $oidStr);
   }
 
@@ -332,6 +342,10 @@ class RESTController extends Controller {
       $subResponse = $this->executeSubAction('update');
     }
 
+    // prevent commit
+    if ($subResponse->hasErrors()) {
+      $this->endTransaction(false);
+    }
     $this->handleSubResponse($subResponse, $oidStr);
   }
 
@@ -387,6 +401,10 @@ class RESTController extends Controller {
       $subResponse->setValue($targetOidStr, $targetObj);
     }
 
+    // prevent commit
+    if ($subResponse->hasErrors()) {
+      $this->endTransaction(false);
+    }
     $this->handleSubResponse($subResponse, $targetOidStr);
   }
 
@@ -403,6 +421,11 @@ class RESTController extends Controller {
     $this->requireTransaction();
     // delegate to DeleteController
     $subResponse = $this->executeSubAction('delete');
+
+    // prevent commit
+    if ($subResponse->hasErrors()) {
+      $this->endTransaction(false);
+    }
     $this->handleSubResponse($subResponse);
   }
 
@@ -427,6 +450,11 @@ class RESTController extends Controller {
 
     // delegate to AssociateController
     $subResponse = $this->executeSubAction('disassociate');
+
+    // prevent commit
+    if ($subResponse->hasErrors()) {
+      $this->endTransaction(false);
+    }
     $this->handleSubResponse($subResponse);
   }
 
