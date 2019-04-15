@@ -7,12 +7,12 @@ PHP web application, e.g. CRM, CMS from an UML model.
 
 [![Build Status](https://img.shields.io/travis/iherwig/wcmf/master.svg?style=flat-square)](https://travis-ci.org/iherwig/wcmf)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=iherwig_wcmf&metric=alert_status)](https://sonarcloud.io/dashboard?id=iherwig_wcmf) 
-<!--[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=iherwig_wcmf&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=iherwig_wcmf)-->
-[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=iherwig_wcmf&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=iherwig_wcmf)
-[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=iherwig_wcmf&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=iherwig_wcmf)
 [![Packagist License](https://img.shields.io/packagist/l/wcmf/wcmf.svg?style=flat-square)](https://github.com/iherwig/wcmf/blob/master/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/wcmf/wcmf.svg?style=flat-square)](https://packagist.org/packages/wcmf/wcmf)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/wcmf/wcmf.svg?style=flat-square)](https://packagist.org/packages/wcmf/wcmf)
+<!--[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=iherwig_wcmf&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=iherwig_wcmf)-->
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=iherwig_wcmf&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=iherwig_wcmf)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=iherwig_wcmf&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=iherwig_wcmf)
 
 Features
 --------
