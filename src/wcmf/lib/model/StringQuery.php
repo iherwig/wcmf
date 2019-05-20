@@ -235,6 +235,7 @@ class StringQuery extends ObjectQuery {
           // strip slashes from regexp
           if ($sqlOp === 'regexp') {
             $value = preg_replace('/^\/|\/[a-zA-Z]*$/', '', $value);
+            $isNumber = false; // quote value
           }
 
           // handle null values

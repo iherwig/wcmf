@@ -394,11 +394,16 @@ abstract class Controller {
    * Create a CSRF token, store it in the session and set it in the response.
    * The name of the response parameter is Controller::CSRF_TOKEN_PARAM.
    * @param $name The name of the token to be used in Controller::validateCsrfToken()
+   * @param $refresh Boolean indicating whether an existing token should be invalidated or reused (optional, default: _true_)
    */
-  protected function generateCsrfToken($name) {
-    // generate token and store in session
-    $token = base64_encode(openssl_random_pseudo_bytes(32));
-    $this->getSession()->set(self::CSRF_TOKEN_PARAM.'_'.$name, $token);
+  protected function generateCsrfToken($name, $refresh=true) {
+    $session = $this->getSession();
+    $token = $session->get(self::CSRF_TOKEN_PARAM.'_'.$name);
+    if (!$token || $refresh) {
+      // generate token and store in session
+      $token = base64_encode(openssl_random_pseudo_bytes(32));
+      $session->set(self::CSRF_TOKEN_PARAM.'_'.$name, $token);
+    }
 
     // set token in response
     $response = $this->getResponse();
@@ -409,9 +414,10 @@ abstract class Controller {
    * Validate the CSRF token contained in the request against the token stored
    * in the session. The name of the request parameter is Controller::CSRF_TOKEN_PARAM.
    * @param $name The name of the token as set in Controller::generateCsrfToken()
+   * @param $invalidate Boolean whether to delete the stored token or not (optional: default: _true_)
    * @return boolean
    */
-  protected function validateCsrfToken($name) {
+  protected function validateCsrfToken($name, $invalidate=true) {
     // get token from session
     $session = $this->getSession();
     $tokenKey = self::CSRF_TOKEN_PARAM.'_'.$name;
@@ -419,7 +425,9 @@ abstract class Controller {
       return false;
     }
     $storedToken = $session->get($tokenKey);
-    $session->remove($tokenKey);
+    if ($invalidate) {
+      $session->remove($tokenKey);
+    }
 
     // compare session token with request token
     $token = $this->getRequest()->getValue(self::CSRF_TOKEN_PARAM);
