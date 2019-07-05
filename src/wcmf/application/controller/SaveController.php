@@ -211,7 +211,9 @@ class SaveController extends Controller {
                   // create a new object, if this is an insert request. set the object id
                   // of the request object for correct assignement in save arrays
                   $curNode = $persistenceFacade->create($curOid->getType(), BuildDepth::SINGLE);
+                  $transaction->detach($curNode->getOID());
                   $curNode->setOID($curOid);
+                  $transaction->attach($curNode);
                 }
                 else {
                   // load the existing object, if this is a save request in order to merge
