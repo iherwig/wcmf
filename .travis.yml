@@ -4,6 +4,8 @@ addons:
   apt:
     packages:
     - oracle-java8-installer
+  sonarcloud:
+    organization: "iherwig-github"
 
 services:
   - mysql
@@ -26,10 +28,11 @@ matrix:
   - php: 7.0
   - php: 7.1
   - php: 7.2
+  - php: 7.3
   allow_failures:
 
 before_script:
-- if [[ "$ENABLE_COVERAGE" == "0" && $TRAVIS_PHP_VERSION != 7.1 ]]; then phpenv config-rm xdebug.ini; fi
+- if [[ "$ENABLE_COVERAGE" == "0" ]]; then phpenv config-rm xdebug.ini; fi
 - mysql -e 'CREATE DATABASE wcmf_testapp;'
 - composer self-update
 - composer install
@@ -39,6 +42,7 @@ before_script:
 script:
 - if [[ "$ENABLE_COVERAGE" == "1" ]]; then cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml; fi
 - if [[ "$ENABLE_COVERAGE" == "0" ]]; then cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --bootstrap bootstrap.php -c configuration.xml; fi
+- sonar-scanner
 
 after_script:
 - if [[ "$ENABLE_COVERAGE" == "1" ]]; then cd $TRAVIS_BUILD_DIR && php $VENDOR_DIR/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml; fi
