@@ -101,7 +101,7 @@ class ClientSideSession implements TokenBasedSession {
     // don't encode auth token value
     $encodedValue = ($key !== $this->getCookieName())  ? $this->serializeValue($value) : $value;
     if (!headers_sent()) {
-      setcookie($key, $encodedValue, 0, '/', '', URIUtil::isHttps(), false);
+      setcookie($key, $encodedValue, 0, '/', '', URIUtil::isHttps(), true);
     }
     $_COOKIE[$key] = $encodedValue;
   }
@@ -111,7 +111,7 @@ class ClientSideSession implements TokenBasedSession {
    */
   public function remove($key) {
     if (!headers_sent()) {
-      setcookie($key, false, 0, '/', '', URIUtil::isHttps(), false);
+      setcookie($key, false, 0, '/', '', URIUtil::isHttps(), true);
     }
     unset($_COOKIE[$key]);
   }
