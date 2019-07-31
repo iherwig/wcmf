@@ -45,5 +45,9 @@ script:
 - if [[ "$ENABLE_COVERAGE" == "0" ]]; then cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --bootstrap bootstrap.php -c configuration.xml; fi
 - sonar-scanner
 
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
+
 after_script:
 - if [[ "$ENABLE_COVERAGE" == "1" ]]; then cd $TRAVIS_BUILD_DIR && php $VENDOR_DIR/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml; fi
