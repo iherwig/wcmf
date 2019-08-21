@@ -142,11 +142,8 @@ class Node extends DefaultPersistentObject {
       $this->relationStates[$name] = self::RELATION_STATE_INITIALIZED;
       return $result;
     }
-    else {
-      // default behaviour
-      return parent::setValue($name, $value, $forceSet, $trackChange);
-    }
-    return true;
+    // default behaviour
+    return parent::setValue($name, $value, $forceSet, $trackChange);
   }
 
   /**

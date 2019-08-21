@@ -28,7 +28,8 @@ class Application {
   private $debug = false;
 
   private static $logger = null;
-
+  private static $errorHandler = null;
+  
   /**
    * Constructor
    */
@@ -38,7 +39,7 @@ class Application {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
     ob_start([$this, "outputHandler"]);
-    new ErrorHandler();
+    self::$errorHandler = new ErrorHandler();
   }
 
   /**

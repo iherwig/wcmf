@@ -126,10 +126,6 @@ abstract class AbstractPermissionManager implements PermissionManager {
         }
         break;
 
-      case (self::RESOURCE_TYPE_ENTITY_TYPE_PROPERTY):
-        $authorized = $this->authorizeAction($type, $type, $context, $action, $login);
-        break;
-
       default:
         $authorized = $this->authorizeAction($resourceStr, $resourceStr, $context, $action, $login);
         break;

@@ -311,9 +311,7 @@ class RemoteCapablePersistenceFacade extends DefaultPersistenceFacade {
    */
   protected function registerRemoteObject(ObjectId $umi, PersistentObject $obj, $buildDepth) {
     // TODO: fix caching remote objects (invalidate cache entry, if an association to the object changes)
-    return;
-
-    $this->registerObject($umi, $obj, $buildDepth, self::REMOTE_OBJECTS_SESSION_VARNAME);
+    //$this->registerObject($umi, $obj, $buildDepth, self::REMOTE_OBJECTS_SESSION_VARNAME);
   }
 
   /**
