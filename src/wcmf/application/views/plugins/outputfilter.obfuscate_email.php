@@ -77,11 +77,15 @@ function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $
 
       // obfuscate text
       $text = $matches[5];
-      $obfuscatedText = preg_replace_callback('/./', function($m) use ($octHexEncodeChar) {
-        return $octHexEncodeChar($m[0]);
-      }, $text);
+      // obfuscate text only, if it contains the email address
+      $obfuscatedText = null;
+      if (strpos($text, $address) !== false) {
+        $obfuscatedText = preg_replace_callback('/./', function($m) use ($octHexEncodeChar) {
+          return $octHexEncodeChar($m[0]);
+        }, $text);
+      }
 
-      $replace = '<a href="'.$obfuscatedLink.$params.'" '.$extra.'>'.$obfuscatedText.'</a>';
+      $replace = '<a href="'.$obfuscatedLink.$params.'" '.$extra.'>'.($obfuscatedText ? urldecode($obfuscatedText) : $text).'</a>';
 
       return $replace;
     }, $output);

@@ -135,6 +135,10 @@ class StringUtil {
    * @return String
    */
   public static function cropString($text, $length=100, $suffix='…', $exact=false) {
+    if (strlen($text) <= $length) {
+      return $text;
+    }
+
     $dom = new \DomDocument();
     $dom->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
