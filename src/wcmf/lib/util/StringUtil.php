@@ -139,13 +139,15 @@ class StringUtil {
       return $text;
     }
 
+    $isHtml = strip_tags($text) !== $text;
+
     $dom = new \DomDocument();
-    $dom->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    $dom->loadHTML(mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
     $reachedLimit = false;
     $totalLen = 0;
     $toRemove = [];
-    $walk = function(\DomNode $node) use (&$reachedLimit, &$totalLen, &$toRemove, &$walk, $length, $suffix) {
+    $walk = function(\DomNode $node) use (&$reachedLimit, &$totalLen, &$toRemove, &$walk, $length, $suffix, $exact) {
       if ($reachedLimit) {
         $toRemove[] = $node;
       }
@@ -154,12 +156,9 @@ class StringUtil {
         // so do the splitting here
         if ($node instanceof \DomText) {
           $totalLen += $nodeLen = strlen($node->nodeValue);
-
-          // use mb_strlen / mb_substr for UTF-8 support
           if ($totalLen > $length) {
             $spacePos = strpos($node->nodeValue, ' ', $nodeLen-($totalLen-$length)-1);
-            $node->nodeValue = $exact ? substr($node->nodeValue, 0, $nodeLen-($totalLen-$length)) :
-                substr($node->nodeValue, 0, $spacePos);
+            $node->nodeValue = $exact ? substr($node->nodeValue, 0, $nodeLen-($totalLen-$length)) : substr($node->nodeValue, 0, $spacePos);
             // don't add suffix to empty node
             $node->nodeValue .= (strlen($node->nodeValue) > 0 ? $suffix : '');
             $reachedLimit = true;
@@ -182,7 +181,8 @@ class StringUtil {
       $child->parentNode->removeChild($child);
     }
 
-    return $dom->saveHTML();
+    $result = $dom->saveHTML();
+    return $isHtml ? $result : html_entity_decode(strip_tags($result));
   }
 
   /**
