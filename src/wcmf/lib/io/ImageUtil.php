@@ -65,62 +65,67 @@ class ImageUtil {
       }
     }
 
-    $fixedFile = FileUtil::fixFilename($imageFile);
-
-    // get the image size in order to see if we have to resize
-    $imageInfo = getimagesize($fixedFile);
-    if ($imageInfo == false) {
-      // the file is no image
-      return '';
-    }
-
-    // create src entries
-    $hasSrcSet = sizeof($widths) > 0;
-    $widths = $hasSrcSet ? $widths : [$width];
     $srcset = [];
 
-    // skip processing for fallback image
-    if ($imageFile != $fallbackFile) {
-      // get file name and cache directory
-      $baseName = FileUtil::basename($imageFile);
-      $directory = self::getCacheDir($imageFile);
+    // don't resize animated gifs
+    $isAnimated = self::isAnimated($imageFile);
+    if (!$isAnimated) {
+      $fixedFile = FileUtil::fixFilename($imageFile);
 
-      // create the cache directory if requested
-      if ($generate) {
-        FileUtil::mkdirRec($directory);
+      // get the image size in order to see if we have to resize
+      $imageInfo = getimagesize($fixedFile);
+      if ($imageInfo == false) {
+        // the file is no image
+        return '';
       }
 
-      for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
-        $curWidth = intval($widths[$i]);
-        if ($curWidth > 0) {
-          $resizedFile = self::makeRelative($directory.$curWidth.'-'.$baseName);
+      // create src entries
+      $hasSrcSet = sizeof($widths) > 0;
+      $widths = $hasSrcSet ? $widths : [$width];
 
-          // create the cached file if requested
-          if ($generate) {
-            // only if the requested width is smaller than the image width
-            if ($curWidth < $imageInfo[0]) {
-              // if the file does not exist in the cache or is older
-              // than the source file, we create it
-              $dateOrig = @filemtime($fixedFile);
-              $dateCache = @filemtime($resizedFile);
-              if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
-                self::resizeImage($fixedFile, $resizedFile, $curWidth);
-              }
+      // skip processing for fallback image
+      if ($imageFile != $fallbackFile) {
+        // get file name and cache directory
+        $baseName = FileUtil::basename($imageFile);
+        $directory = self::getCacheDir($imageFile);
 
-              // fallback to source file, if cached file could not be created
-              if (!file_exists($resizedFile)) {
-                $resizedFile = $imageFile;
+        // create the cache directory if requested
+        if ($generate) {
+          FileUtil::mkdirRec($directory);
+        }
+
+        for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
+          $curWidth = intval($widths[$i]);
+          if ($curWidth > 0) {
+            $resizedFile = self::makeRelative($directory.$curWidth.'-'.$baseName);
+
+            // create the cached file if requested
+            if ($generate) {
+              // only if the requested width is smaller than the image width
+              if ($curWidth < $imageInfo[0]) {
+                // if the file does not exist in the cache or is older
+                // than the source file, we create it
+                $dateOrig = @filemtime($fixedFile);
+                $dateCache = @filemtime($resizedFile);
+                if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
+                  self::resizeImage($fixedFile, $resizedFile, $curWidth);
+                }
+
+                // fallback to source file, if cached file could not be created
+                if (!file_exists($resizedFile)) {
+                  $resizedFile = $imageFile;
+                }
               }
             }
-          }
 
-          if ($hasSrcSet) {
-            // add to source set
-            $srcset[] = FileUtil::urlencodeFilename($resizedFile).' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
-          }
-          else {
-            // replace main source for single source entry
-            $imageFile = $resizedFile;
+            if ($hasSrcSet) {
+              // add to source set
+              $srcset[] = FileUtil::urlencodeFilename($resizedFile).' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
+            }
+            else {
+              // replace main source for single source entry
+              $imageFile = $resizedFile;
+            }
           }
         }
       }
@@ -296,6 +301,33 @@ class ImageUtil {
     $image = new \Gumlet\ImageResize($sourceFile);
     $image->resizeToWidth($width);
     $image->save($destFile);
+  }
+
+  /**
+   * Check if an image file is animated
+   * @param $imageFile
+   * @return boolean
+   */
+  private static function isAnimated($imageFile) {
+    if (!($fh = @fopen($imageFile, 'rb'))) {
+      return false;
+    }
+    $count = 0;
+    //an animated gif contains multiple "frames", with each frame having a
+    //header made up of:
+    // * a static 4-byte sequence (\x00\x21\xF9\x04)
+    // * 4 variable bytes
+    // * a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
+
+    // We read through the file til we reach the end of the file, or we've found
+    // at least 2 frame headers
+    while (!feof($fh) && $count < 2) {
+      $chunk = fread($fh, 1024 * 100); //read 100kb at a time
+      $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+    }
+
+    fclose($fh);
+    return $count > 1;
   }
 }
 ?>
