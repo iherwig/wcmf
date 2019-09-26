@@ -71,7 +71,9 @@ class AuthTokenSession extends DefaultSession implements TokenBasedSession {
       if (!headers_sent()) {
         // NOTE: this cookie is intentionally not httpOnly to allow the client to read the value
         // in order to send it via the auth token header (see Double Submit Cookie pattern)
+        // @sonar-ignore
         setcookie($this->tokenName, $token, 0, '/', '', URIUtil::isHttps(), false);
+        // @sonar-ignore-end
       }
       $this->set($this->tokenName, $token);
     }
