@@ -176,12 +176,11 @@ class ClientSideSession implements TokenBasedSession {
    */
   protected function createToken($login) {
     $jwt = (new Builder())
-            ->setIssuer($this->getTokenIssuer())
-            ->setIssuedAt(time())
-            ->setExpiration(time()+3600)
-            ->set(self::AUTH_USER_NAME, $login)
-            ->sign($this->getTokenSigner(), $this->key)
-            ->getToken();
+            ->issueBy($this->getTokenIssuer())
+            ->issuedAt(time())
+            ->expiresAt(time()+3600)
+            ->withClaim(self::AUTH_USER_NAME, $login)
+            ->getToken($this->getTokenSigner(), $this->key);
     return $jwt->__toString();
   }
 

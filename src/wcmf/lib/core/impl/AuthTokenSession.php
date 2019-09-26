@@ -69,8 +69,11 @@ class AuthTokenSession extends DefaultSession implements TokenBasedSession {
       $this->isTokenValid = true;
       // NOTE: prevent "headers already sent" errors in phpunit tests
       if (!headers_sent()) {
-        setcookie($this->tokenName, $token, 0, '/', '', URIUtil::isHttps(), true);
+        // NOTE: this cookie is intentionally not httpOnly to allow the client to read the value
+        // in order to send it via the auth token header (see Double Submit Cookie pattern)
+        setcookie($this->tokenName, $token, 0, '/', '', URIUtil::isHttps(), false);
       }
+      $this->set($this->tokenName, $token);
     }
   }
 
@@ -93,7 +96,8 @@ class AuthTokenSession extends DefaultSession implements TokenBasedSession {
     $request = ObjectFactory::getInstance('request');
     $token = $request->hasHeader(self::TOKEN_HEADER) ? $request->getHeader(self::TOKEN_HEADER) :
         $request->getValue(self::TOKEN_HEADER, null);
-    $this->isTokenValid = $token != null && $token == $_COOKIE[$this->tokenName];
+    // NOTE: we compare to the cookie value sent by the client and the original value stored in the session
+    $this->isTokenValid = $token != null && $token == $_COOKIE[$this->tokenName] && $token == $this->get($this->tokenName);
     return $this->isTokenValid;
   }
 }
