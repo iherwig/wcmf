@@ -90,7 +90,15 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
           $filesystem = new FilesystemCache($cacheRootAbs);
           $writer = new AssetWriter($cacheRootAbs);
 
-          $cacheFile = (isset($params['name']) ? $params['name'] : uniqid()).'.min.'.$type;
+          // hash content for cache busting
+          $hash = hash_init('sha1');
+          foreach (array_merge($files['min'], $files['src']) as $file) {
+            $content = file_exists($file) ? file_get_contents($file) : '';
+            hash_update($hash, $content);
+          }
+          $hash = substr(hash_final($hash), 0, 7);
+
+          $cacheFile = (isset($params['name']) ? $params['name'] : '').'-'.$hash.'.min.'.$type;
           $cachePathRel = $cacheRootRel.$cacheFile;
 
           // create filters
