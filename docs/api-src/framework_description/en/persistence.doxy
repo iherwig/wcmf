@@ -60,8 +60,8 @@ the persistent storage (see \ref arch_main). These classes implement the
 \link wcmf::lib::persistence::PersistenceMapper `PersistenceMapper`\endlink interface,
 which defines methods for all persistence actions. By using this pattern wCMF
 does not make any assumptions about the actual storage, which can be flat files,
-a database or anything else a mapper is able to handle. This approach also makes
-it easy to connect an existing storage to a newly created wCMF application.
+a database, a remote service or anything else a mapper is able to handle. This approach 
+also makes it easy to connect an existing storage to a newly created wCMF application.
 
 To simplify the implementation of mapper classes, wCMF already contains
 a class hierarchy for a common mapping approach, which maps each concrete class
@@ -96,8 +96,8 @@ that is the _properties_ and the _relations_ - are defined by the related
 
 So if no additional domain logic is required in the domain class, it would be
 sufficient to use \link wcmf::lib::model::Node `Node`\endlink as domain class.
-But in many cases you will want to execute custom code for \ref pers_hooks or
-\ref pers_validation and therefor create a custom subclass of
+But in many cases you will want to execute custom code for \ref pers_hooks,
+\ref pers_validation and other business logic and therefor create a custom subclass of
 \link wcmf::lib::model::Node `Node`\endlink.
 
 @note All domain classes, that are created by the generator are
@@ -724,4 +724,42 @@ made to newly created objects or objects loaded from the store. In these cases y
 can use the method
 \link wcmf::lib::persistence::Transaction::detach `Transaction::detach`\endlink
 to disconnect the object from the transaction.
+
+### Dry runs ### {#pers_tx_dry}
+
+Normally wCMF applies all database changes directly when doing a commit. But there
+might be situations where  this is not wanted or not possible. For example if you want
+to review the changes bevor applying them or if the work to be done inside a transaction
+would exceed the provided resources (e.g. time and/or memory). For these cases wCMF transactions
+offer the \link wcmf::lib::persistence::Transaction::detach `Transaction::commitCollect`\endlink
+method, which returns all statements that would be executed, if the transaction would be
+commited regularly.
+
+The following script shows how to do a dry run and commit the statements later:
+
+~~~~~~~~~~~~~{.php}
+$persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+$transaction = $this->persistenceFacade->getTransaction();
+
+// create/modify/delete objects inside transaction
+$transaction->begin();
+// ...
+// dry run after finish
+$statements = $transaction->commitCollect();
+
+// apply collected statements to the database
+try {
+  $transaction->begin();
+  $conn = $this->persistenceFacade->getMapper('Project')->getConnection();
+  foreach ($statements as $statement) {
+    list($stmt, $params) = $statement;
+    $conn->prepare($stmt)->execute($params);
+  }
+  $transaction->commit();
+}
+catch (\Exception $ex) {
+  $transaction->rollback();
+}
+~~~~~~~~~~~~~
+
 */
