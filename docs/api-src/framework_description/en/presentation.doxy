@@ -170,7 +170,7 @@ keys to controllers is defined in the `ActionMapping` configuration section.
 
 If the executed controller together with the _context_ and _action_ parameters of
 the response match another action key, the corresponding controller
-will be executed afterwards. This allows to chain several actions together. If no
+will be executed afterwards. This allows to __chain actions__ together. If no
 matching action key is found, the response is returned to the client.
 
 The following code is taken from the \ref app "default application" configuration
@@ -319,9 +319,20 @@ Controllers can _redirect_ to other controllers by using the
 \link wcmf::lib::presentation::Controller::redirect `Controller::redirect`\endlink
 method.
 
-If variables need be shared between several requests to one controller they can
+If variables need be shared between several requests to the same controller they can
 be stored in _local session variables_ to avoid side effects (see
 \link wcmf::lib::presentation::Controller::setLocalSessionValue `Controller::setLocalSessionValue`\endlink).
+
+### Action composition ### {#pres_controllers_composite}
+
+The \ref pres_routingint section describes how chaining controller actions works.
+This is usefull, if there is a sequence of actions to be executed. If a complex action
+can be composed from simpler (already existing) actions, it is also possible to
+execute another controller _inside_ a controller action and return to that action afterwards.
+This is done using the 
+\link wcmf::lib::presentation::Controller::executeSubAction `Controller::executeSubAction`\endlink
+method. An example is \link wcmf::application::controller::RESTController `RESTController`\endlink
+which serves as a facade to the CRUD controllers.
 
 ### Error handling ### {#pres_errors}
 

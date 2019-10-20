@@ -727,15 +727,19 @@ to disconnect the object from the transaction.
 
 ### Dry runs ### {#pers_tx_dry}
 
-Normally wCMF applies all database changes directly when doing a commit. But there
-might be situations where  this is not wanted or not possible. For example if you want
-to review the changes bevor applying them or if the work to be done inside a transaction
-would exceed the provided resources (e.g. time and/or memory). For these cases wCMF transactions
-offer the \link wcmf::lib::persistence::Transaction::detach `Transaction::commitCollect`\endlink
+wCMF applies all database changes directly when committing the database transaction.
+
+But there are situations where this is not desirable or just not possible. For example you might want
+to review the changes bevor applying them finally. Or the work to be done inside the transaction
+would exceed the provided resources (time and/or memory) and therefor must be split into smaller
+pieces but still need to be carried out in a one fails, all fail manner. A typical use case for the
+latter would be a large data import from external sources.
+
+For these cases wCMF transactions offer the \link wcmf::lib::persistence::Transaction::commitCollect `Transaction::commitCollect`\endlink
 method, which returns all statements that would be executed, if the transaction would be
 commited regularly.
 
-The following script shows how to do a dry run and commit the statements later:
+The following script shows how to do a dry run first and commit the collected statements later:
 
 ~~~~~~~~~~~~~{.php}
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
