@@ -257,11 +257,11 @@ _public_ interface of the application.
 ##### Precedence rules #####
 
 Due to the use of variables in route definitions several routes might match a given
-request. This leads to the question which route to take, since the application only 
-processes one per request. To find the best matching route 
+request. This leads to the question which route to take, since the application only
+processes one per request. To find the best matching route
 \link wcmf::lib::presentation::impl::DefaultRequest `DefaultRequest`\endlink orders
-all matching routes and takes the first one. The sorting is done under the assumption 
-that a more specific route is a better match. 
+all matching routes and takes the first one. The sorting is done under the assumption
+that a more specific route is a better match.
 
 The following __rules__ are implemented to find the more specific route:
 - the route with _less variables_ is more specific and if two routes have the same number of variables
@@ -323,17 +323,6 @@ If variables need be shared between several requests to the same controller they
 be stored in _local session variables_ to avoid side effects (see
 \link wcmf::lib::presentation::Controller::setLocalSessionValue `Controller::setLocalSessionValue`\endlink).
 
-### Action composition ### {#pres_controllers_composite}
-
-The \ref pres_routingint section describes how chaining controller actions works.
-This is usefull, if there is a sequence of actions to be executed. If a complex action
-can be composed from simpler (already existing) actions, it is also possible to
-execute another controller _inside_ a controller action and return to that action afterwards.
-This is done using the 
-\link wcmf::lib::presentation::Controller::executeSubAction `Controller::executeSubAction`\endlink
-method. An example is \link wcmf::application::controller::RESTController `RESTController`\endlink
-which serves as a facade to the CRUD controllers.
-
 ### Error handling ### {#pres_errors}
 
 Errors are typically divided into __fatal errors__ and __non-fatal errors__.
@@ -371,6 +360,17 @@ situations:
 $response->addError(ApplicationError::get('PARAMETER_INVALID',
   ['invalidParameters' => ['type']]));
 ~~~~~~~~~~~~~
+
+### Action composition ### {#pres_controllers_composite}
+
+The \ref pres_routingint section describes how chaining controller actions works.
+This is usefull, if there is a sequence of actions to be executed. If a complex action
+can be composed from simpler (already existing) actions, it is also possible to
+execute another controller _inside_ a controller action and return to that action afterwards.
+This is done using the
+\link wcmf::lib::presentation::Controller::executeSubAction `Controller::executeSubAction`\endlink
+method. An example is \link wcmf::application::controller::RESTController `RESTController`\endlink
+which serves as a facade to the CRUD controllers.
 
 ### Long running requests ### {#pres_longrequest}
 

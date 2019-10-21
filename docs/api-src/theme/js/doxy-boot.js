@@ -40,7 +40,9 @@ $(document).ready(function() {
   $("table.directory").addClass("table table-striped");
   $("div.summary > a").addClass("btn btn-default btn-xs");
   $("table.fieldtable").addClass("table");
-  $(".fragment").addClass("well").removeClass("fragment");
+  $(".fragment").addClass("well").removeClass("fragment").each(function(i, node) {
+    hljs.highlightBlock(node);
+  });
   $(".line").each(function() {
     $(this).find("a[name], span.lineno").hide();
     $(this).html($(this).html().replace(/^&nbsp;/g, ''));
