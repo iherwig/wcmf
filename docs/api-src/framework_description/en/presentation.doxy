@@ -25,9 +25,11 @@ may be used as a [service locator](https://en.wikipedia.org/wiki/Service_locator
 
 The following example shows how to get the persistence service at any code location:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-~~~~~~~~~~~~~
+```
+</div>
 
 ## Application ## {#pres_application}
 
@@ -40,7 +42,8 @@ described procedure inside the
 following code demonstrates the usage of this class in the main entry script of
 the \ref app "default application".
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $application = new Application();
 try {
   // initialize the application
@@ -57,7 +60,8 @@ catch (Exception $ex) {
     echo("An unhandled exception occured. Please see log file for details.");
   }
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 The example shows the three important methods of the
 \link wcmf::lib::presentation::Application `Application`\endlink class:
@@ -142,7 +146,8 @@ formats (see
 Formats are defined in the `Formats` configuration section as shown in the following
 example:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Formats]
 html = $htmlFormat
 null = $nullFormat
@@ -152,7 +157,8 @@ __class = wcmf\lib\presentation\format\impl\HtmlFormat
 
 [NullFormat]
 __class = wcmf\lib\presentation\format\impl\NullFormat
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Routing ### {#pres_routing}
 
@@ -176,12 +182,14 @@ matching action key is found, the response is returned to the client.
 The following code is taken from the \ref app "default application" configuration
 and shows the configuration of the indexing process (see \ref pres_longrequest):
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [ActionMapping]
 ??indexAll = wcmf\application\controller\SearchIndexController
 wcmf\application\controller\SearchIndexController??continue =
                             wcmf\application\controller\SearchIndexController
-~~~~~~~~~~~~~
+```
+</div>
 
 - The first line states that the action _indexAll_ called from _any_ controller and
   in _any_ context will invoke
@@ -204,12 +212,14 @@ a method to be called. In these cases, the framework calls the default method
 Alternatively a specific __controller method__ to be called may be defined in the
 action mapping, like illustrated in the following example:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [ActionMapping]
 ??indexAll = wcmf\application\controller\SearchIndexController::doBegin
 wcmf\application\controller\SearchIndexController??continue =
                             wcmf\application\controller\SearchIndexController::doContinue
-~~~~~~~~~~~~~
+```
+</div>
 
 In this case \link wcmf::application::controller::SearchIndexController `SearchIndexController`\endlink
 would have to define the methods `doBegin` and `doContinue` which are called
@@ -231,14 +241,16 @@ the set of possibilities.
 The following example configuration taken from the \ref app "default application"
 illustrates the concept:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Routes]
 POST/session = action=login
 DELETE/session = action=logout
 /rest/{language}/{className} = action=restAction&collection=1
 /rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
 GET/* = action=cms
-~~~~~~~~~~~~~
+```
+</div>
 
 - The first two entries define the login and logout routes using the appropriate
   HTTP methods.
@@ -279,12 +291,14 @@ the route definition. In the following example the _cms_ action is only availabl
 for the _GET_ method, while the other actions accept _GET_, _POST_, _PUT_ and
 _DELETE_ requests:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Routes]
 GET/ = action=cms
 GET,POST,PUT,DELETE/rest/{language}/{className} = action=restAction&collection=1
 GET,POST,PUT,DELETE/rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
-~~~~~~~~~~~~~
+```
+</div>
 
 If no method is added to a route, all methods are accepted.
 
@@ -356,10 +370,12 @@ situations:
   method to retrieve predefined errors. The following example shows how to signal
   an invalid _type_ parameter while request validation:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $response->addError(ApplicationError::get('PARAMETER_INVALID',
   ['invalidParameters' => ['type']]));
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Action composition ### {#pres_controllers_composite}
 
@@ -408,7 +424,8 @@ The following example shows the configuration of the
 \link wcmf::lib::presentation::view::impl::SmartyView `SmartyView`\endlink class
 and the mapping of action keys to views in the \ref app "default application":
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [View]
 __class = wcmf\lib\presentation\view\impl\SmartyView
 __shared = false
@@ -419,7 +436,8 @@ cacheDir = app/cache/smarty/
 
 [Views]
 app\src\controller\RootController?? = app/src/views/cms.tpl
-~~~~~~~~~~~~~
+```
+</div>
 
 Since the \ref app "default application" only uses an HTML page to bootstrap the
 actual [Dojo](https://dojotoolkit.org/) application, there is only one view mapping
@@ -457,7 +475,8 @@ the action specific controller.
 The following example shows the configuration of the RESTful interface in the
 \ref app "default application":
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Routes]
 /rest/{language}/{className} = action=restAction&collection=1
 /rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
@@ -466,7 +485,8 @@ The following example shows the configuration of the RESTful interface in the
 
 [ActionMapping]
 ??restAction = wcmf\application\controller\RESTController
-~~~~~~~~~~~~~
+```
+</div>
 
 The `Routes` configuration section defines the urls for the interface. They all
 call the action _restAction_ internally, which is handled by
@@ -490,13 +510,15 @@ is generated by the code generator into a file called _soap-interface.php_
 The following example shows the configuration of the SOAP interface in the
 \ref app "default application":
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Routes]
 /soap = action=soapAction
 
 [ActionMapping]
 ??soapAction = wcmf\application\controller\SOAPController
-~~~~~~~~~~~~~
+```
+</div>
 
 The `Routes` configuration section defines that the url <em>/soap</em> redirects
 to the action _soapAction_ internally. The `ActionMapping` section defines that
@@ -517,15 +539,18 @@ The following example shows the configuration of a
 \link wcmf::lib::io::impl::FileCache `FileCache`\endlink instance in the
 \ref app "default application":
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Cache]
 __class = wcmf\lib\io\impl\FileCache
 cacheDir = app/cache/
-~~~~~~~~~~~~~
+```
+</div>
 
 The usage of this cache is illustrated in the code example:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $cache = ObjectFactory::getInstance('cache');
 $cacheSection = 'calculations';
 
@@ -539,7 +564,8 @@ else {
   // retrieve the result from the cache
   $resultA = $cache->get($cacheSection, $cacheKey);
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 Supposed that `complexCalculationA` in this example takes long to finish, it
 should only run once at the first time the result is needed. So we check if
@@ -564,13 +590,15 @@ it will provide the _last modified date_ from the cached data.
 \link wcmf::lib::presentation::format::impl::DefaultFormatter `DefaultFormatter`\endlink
 will then use this information to create the `Etag` and `Last Modified` headers:
 
-~~~~~~~~~~~~~
+<div class="shell">
+```
 ...
 Cache-Control:public
 ETag:"93256174cf75e43ba8172a6ce01ceded"
 Last-Modified:Fri, 07 Oct 2016 19:19:13 GMT
 ...
-~~~~~~~~~~~~~
+```
+</div>
 
 Another advantage of using a _cache identifier_ is the possibility to avoid
 expensive calculations in \link wcmf::lib::presentation::Controller `Controller`\endlink
@@ -578,7 +606,8 @@ implementations by using the
 \link wcmf::lib::presentation::Response::isCached `Response::isCached`\endlink
 method. The following example shows it's usage:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // define a unique id for the request data and set it on the response
 $cacheId = $pageId.$language;
 $response->setCacheId($cacheId);
@@ -587,7 +616,8 @@ if (!$response->isCached()) {
   // this will be executed only, if the response is not cached yet
   ...
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 ## Events ## {#pres_events}
 
@@ -621,7 +651,8 @@ The event system may be extended by custom events by inheriting from the
 The class below is a basic example for a listener that subscribes to persistence
 events:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 class PersistenceEventListener {
   private $_eventListener = null;
 
@@ -644,7 +675,8 @@ class PersistenceEventListener {
     // do something on any create/update/delete
   }
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 @note To prevent memory leaks the
 \link wcmf::lib::core::EventManager::removeListener `EventManager::removeListener`\endlink
@@ -652,11 +684,13 @@ method __must__ be called, if the event listener is destroyed.
 
 To send a persistence event, the following code is used:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $eventListener = ObjectFactory::getInstance('eventManager');
 $eventListener->dispatch(PersistenceEvent::NAME,
         new PersistenceEvent($object, PersistenceAction::UPDATE));
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Implicit listener installation ### {#pres_listeners}
 
@@ -669,10 +703,12 @@ initializes all instances listed there.
 The \ref app "default application" defines two listeners as shown in the following
 example:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Application]
 listeners = {Search, EventListener}
-~~~~~~~~~~~~~
+```
+</div>
 
 Each entry in the `listeners` array is supposed to refer to an instance
 configuration (see \ref conf_di).
@@ -688,17 +724,21 @@ instance and passing it to the
 \link wcmf::lib::core::LogManager::configure `LogManager::configure`\endlink
 method as shown for _Monolog_ in the following example:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $logger = new MonologFileLogger('main', WCMF_BASE.'app/config/log.ini');
 LogManager::configure($logger);
-~~~~~~~~~~~~~
+```
+</div>
 
 Afterwards \link wcmf::lib::core::Logger `Logger`\endlink instances can be retrieved
 using the following code:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $logger = LogManager::getLogger(__CLASS__);
-~~~~~~~~~~~~~
+```
+</div>
 
 The parameter used in the
 \link wcmf::lib::core::LogManager::getLogger `LogManager::getLogger`\endlink method
@@ -710,7 +750,9 @@ The following example shows how to log an error message with a stack trace
 appended (see
 \link wcmf::lib::core::ErrorHandler::getStackTrace `ErrorHandler::getStackTrace`\endlink):
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $logger->error("An error occured.\n".ErrorHandler::getStackTrace());
-~~~~~~~~~~~~~
+```
+</div>
 */

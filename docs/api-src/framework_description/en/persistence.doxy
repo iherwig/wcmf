@@ -154,7 +154,8 @@ for which domain classes. This assignment is defined in the `TypeMapping`
 configuration section. The following example shows the appropriate entries
 for the `Author` domain class:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [PersistenceFacade]
 __class = wcmf\lib\persistence\impl\DefaultPersistenceFacade
 mappers = $typeMapping
@@ -178,7 +179,8 @@ dbName = app/test-db.sq3
 dbUserName =
 dbPassword =
 dbCharSet = utf8
-~~~~~~~~~~~~~
+```
+</div>
 
 ## Usage ## {#pers_usage}
 
@@ -193,7 +195,8 @@ To load a __single object__, the
 \link wcmf::lib::persistence::PersistenceFacade::load `PersistenceFacade::load`\endlink
 method is used:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $oid = new ObjectId('Author', 1);
 
 // load the Author instance with id 1
@@ -203,7 +206,8 @@ $author = ObjectFactory::getInstance('persistenceFacade')->load($oid);
 if($author == null) {
   echo("An Author with object id ".$oid." does not exist.");
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 In the example the `Author` instance with id _1_ is loaded.
 
@@ -211,10 +215,12 @@ A __list of objects__ is loaded using the
 \link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
 method:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // load all Author instances
 $authors = ObjectFactory::getInstance('persistenceFacade')->loadObjects('Author');
-~~~~~~~~~~~~~
+```
+</div>
 
 This \link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
 method provides several parameters that allow to specify which instances should
@@ -233,12 +239,14 @@ actually accessed. To perform _eager loading_, a
 \link wcmf::lib::persistence::BuildDepth `BuildDepth`\endlink
 value may be passed in the method calls:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $oid = new ObjectId('Author', 1);
 
 // load the Author instance with id 1 together with all related objects
 $author = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::INFINITE);
-~~~~~~~~~~~~~
+```
+</div>
 
 In this example the `Author` instance with id _1_ is loaded together with all related
 objects recursively.
@@ -270,7 +278,8 @@ A list of already loaded \link wcmf::lib::model::Node `Node`\endlink
 instances may be sorted by using \link wcmf::lib::model::NodeComparator `NodeComparator`\endlink
 in the following way:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $nodeList = [...];
 
 // set up a comparator for node type and created date
@@ -282,7 +291,8 @@ $comparator = new NodeComparator($sortCriteria);
 
 // sort node list
 usort($nodeList, [$comparator, 'compare']);
-~~~~~~~~~~~~~
+```
+</div>
 
 #### Pagination #### {#pers_pagination}
 
@@ -295,18 +305,21 @@ implements the concept.
 The following code shows how to load _25_ `Author` instances starting from
 position _50_:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // setup paging
 $pagingInfo = new PagingInfo(25);
 $pagingInfo->setOffset(50);
 
 // load Author instances
 $authors = ObjectFactory::getInstance('persistenceFacade')->loadObjects('Author', BuildDepth::SINGLE, null, null, $pagingInfo);
-~~~~~~~~~~~~~
+```
+</div>
 
 Pagination is also possible over __multiple entity types__:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // setup paging
 $pagingInfo = new PagingInfo(25);
 $pagingInfo->setOffset(50);
@@ -315,7 +328,8 @@ $pagingInfo->setOffset(50);
 $types = ['Author', 'Publisher'];
 $order = ['created'];
 $objects = ObjectFactory::getInstance('persistenceFacade')->loadObjects($types, BuildDepth::SINGLE, null, $order, $pagingInfo);
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Searching objects ### {#pers_search}
 
@@ -323,7 +337,8 @@ To search objects in the store the
 \link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
 method may be used. It allows to set the conditions that loaded objects should match.
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $criteria = [
   new Criteria("Article", "title", "LIKE", "A%"),
   new Criteria("Article", "year", ">=", "2014")
@@ -331,7 +346,8 @@ $criteria = [
 
 // load all Article instances with titles starting with A and release date 2014 or later
 $articles = ObjectFactory::getInstance('persistenceFacade')->loadObjects("Article", BuildDepth::SINGLE, $criteria);
-~~~~~~~~~~~~~
+```
+</div>
 
 In this example all `Article` instances with titles starting with _A_ and release date
 _2014 or later_ are loaded.
@@ -340,10 +356,12 @@ _2014 or later_ are loaded.
 
 Null values are matched/not matched using the following criteria:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 new Criteria("Article", "title", "=", null); // translates to Article.title IS NULL
 new Criteria("Article", "title", "!=", null); // translates to Article.title IS NOT NULL
-~~~~~~~~~~~~~
+```
+</div>
 
 #### Object queries #### {#pers_search_object_queries}
 
@@ -351,7 +369,8 @@ More complex use cases are supported by the \link wcmf::lib::model::ObjectQuery 
 class. For example it allows to set search constraints on connected objects as
 shown in the following example:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // create a Author query
 $query = new ObjectQuery('Author');
 
@@ -373,7 +392,8 @@ $authorTpl1->addNode($articleTpl2);
 
 // load result
 $authorList = $query->execute(BuildDepth::SINGLE);
-~~~~~~~~~~~~~
+```
+</div>
 
 In this example all `Author` instances are loaded which have names starting with
 _A_ or _B_ and which have `Article` instances connected that are created in the
@@ -382,7 +402,8 @@ year _2014_.
 It is possible to combine several object queries to apply pagination over __multiple entity types__
 using the \link wcmf::lib::persistence::UnionQuery `UnionQuery`\endlink class:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // create a Author query
 $authorQuery = new ObjectQuery('Author');
 // ... define query
@@ -399,7 +420,8 @@ $pagingInfo->setOffset(50);
 $queryProvider = new ObjectQueryUnionQueryProvider([$authorQuery, $publisherQuery]);
 $order = ['created'];
 $objects = UnionQuery::execute($queryProvider, BuildDepth::SINGLE, $order, $pagingInfo);
-~~~~~~~~~~~~~
+```
+</div>
 
 Besides this, wCMF integrates the
 [Lucene](http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html)
@@ -414,19 +436,22 @@ classes for traversing objects and values.
 object graphs starting from a root \link wcmf::lib::model::Node `Node`\endlink.
 The algorithm used is [depth-first search](http://en.wikipedia.org/wiki/Depth-first_search).
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // traverse $root and all descendents
 $it = new NodeIterator($root);
 foreach($it as $oid => $obj) {
   echo "current object id: $oid";
   echo "current object: $obj";
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 \link wcmf::lib::model::NodeValueIterator `NodeValueIterator`\endlink is used
 to iterate over all persistent values of a \link wcmf::lib::model::Node `Node`\endlink.
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // traverse all values of $object
 $it = new NodeValueIterator($object);
 for($it->rewind(); $it->valid(); $it->next()) {
@@ -434,13 +459,15 @@ for($it->rewind(); $it->valid(); $it->next()) {
   echo "current attribute name: ".$it->key();
   echo "current attribute value: ".$it->current();
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 \link wcmf::lib::model::PersistentIterator `PersistentIterator`\endlink allows
 to traverse object graphs as well, but it's state may be persisted to split the
 iteration of large lists into smaller parts.
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // traverse 10 nodes starting from $oid
 $counter = 0;
 $it = new PersistentIterator($oid);
@@ -459,7 +486,8 @@ while($it->valid()) {
   echo "current object: ".$it->currentNode();
   $it->next();
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Creating / Modifying objects ### {#pers_create_modify}
 
@@ -473,7 +501,8 @@ is committed (see \ref pers_tx). Objects are removed from the store by calling t
 \link wcmf::lib::persistence::PersistentObject::delete `PersistentObject::delete`\endlink
 method.
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 $tx = $persistenceFacade->getTransaction();
 
@@ -498,7 +527,8 @@ $author->delete();
 
 // save everything
 $tx->commit();
-~~~~~~~~~~~~~
+```
+</div>
 
 ## Validation ## {#pers_validation}
 
@@ -535,57 +565,69 @@ Currently the following validation types exist (the examples show their usage
 in a validation description string):
 
 \link wcmf::lib::validation::impl::Date `Date`\endlink
-validates against a date format,
-e.g.
-~~~~~~~~~~~~~{.php}
+validates against a date format, e.g.
+
+<div class="php">
+```
 // validate against the default date format ('Y-m-d')
 date
 
 // validate against a custom date format ('Y-m-d')
 date:{"format":"j-M-Y"}
-~~~~~~~~~~~~~
+```
+</div>
 
 \link wcmf::lib::validation::impl::Filter `Filter`\endlink
-validates against a PHP filter (see [filter_var](http://php.net/manual/en/function.filter-var.php)),
-e.g.
-~~~~~~~~~~~~~{.php}
+validates against a PHP filter (see [filter_var](http://php.net/manual/en/function.filter-var.php)), e.g.
+
+<div class="php">
+```
 // FILTER_VALIDATE_INT with min_range option and FILTER_FLAG_ALLOW_HEX flag
 filter:{"type":"int","options":{"options":{"min_range":0},"flags":2}}
-~~~~~~~~~~~~~
+```
+</div>
 
 \link wcmf::lib::validation::impl::Image `Image`\endlink
-checks _width_ and _height_ of the referred image file
-e.g.
-~~~~~~~~~~~~~{.php}
+checks _width_ and _height_ of the referred image file e.g.
+
+<div class="php">
+```
 // image width exactly 200px, height less than 100px
 image:{"width":[200,1],"height":[100,0]}
-~~~~~~~~~~~~~
+```
+</div>
 
 \link wcmf::lib::validation::impl::RegExp `RegExp`\endlink
-validates against a regular expression (see [preg_match](http://php.net/manual/en/function.preg-match.php))
-e.g.
-~~~~~~~~~~~~~{.php}
+validates against a regular expression (see [preg_match](http://php.net/manual/en/function.preg-match.php)) e.g.
+
+<div class="php">
+```
 // integer or empty
 regexp:{"pattern":"/^[0-9]*$/"}
-~~~~~~~~~~~~~
+```
+</div>
 
 \link wcmf::lib::validation::impl::Required `Required`\endlink
-checks if the value is not empty
-e.g.
-~~~~~~~~~~~~~{.php}
+checks if the value is not empty e.g.
+
+<div class="php">
+```
 required
-~~~~~~~~~~~~~
+```
+</div>
 
 \link wcmf::lib::validation::impl::Unique `Unique`\endlink
-checks if the value is unique regarding the given entity attribute
-e.g.
-~~~~~~~~~~~~~{.php}
+checks if the value is unique regarding the given entity attribute e.g.
+
+<div class="php">
+```
 // explicitly define Keyword.name as being unique ...
 unique:{"type":"Keyword","value":"name"}
 
 // ... or implicitly when used in the entity validation context of the Keyword.name
 unique
-~~~~~~~~~~~~~
+```
+</div>
 
 \note The validation type is derived from the part of the configuration string,
 that precedes the first colon.
@@ -593,7 +635,8 @@ that precedes the first colon.
 Custom validation types may be added in the configuration. For example
 after adding `myValidator` (implemented in `MyValidator` class):
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Validators]
 regexp = $regexpValidator
 filter = $filterValidator
@@ -602,13 +645,16 @@ myValidator = $myValidator
 
 [MyValidator]
 __class = path\to\MyValidator
-~~~~~~~~~~~~~
+```
+</div>
 
 it may be used in the following way:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 myValidator:custom_configuration_string_passed_by_MyValidator
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Complex validation ### {#pers_validation_custom}
 
@@ -643,7 +689,8 @@ and released using
 \link wcmf::lib::persistence::concurrency::ConcurrencyManager::releaseLock `ConcurrencyManager::releaseLock`\endlink
 like shown in the following example:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // object id of the object to lock
 $oid = new ObjectId('Author', 1);
 
@@ -660,7 +707,8 @@ catch(PessimisticLockException $ex) {
 
 // release lock later
 $concurrencyManager->releaseLock($oid, $lockType);
-~~~~~~~~~~~~~
+```
+</div>
 
 The actual storage and retrieval of
 \link wcmf::lib::persistence::concurrency::Lock `Lock`\endlink instances is
@@ -668,7 +716,8 @@ delegated to
 \link wcmf::lib::persistence::concurrency::LockHandler `LockHandler`\endlink.
 The following lines show the concurrency configuration in the \ref app "default application":
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [ConcurrencyManager]
 __class = wcmf\lib\persistence\concurrency\impl\DefaultConcurrencyManager
 lockHandler = $lockHandler
@@ -676,7 +725,8 @@ lockHandler = $lockHandler
 [LockHandler]
 __class = wcmf\lib\persistence\concurrency\impl\DefaultLockHandler
 lockType = app.src.model.wcmf.Lock
-~~~~~~~~~~~~~
+```
+</div>
 
 As you can see the
 \link wcmf::lib::persistence::concurrency::LockHandler `LockHandler`\endlink
@@ -693,7 +743,8 @@ method and reset on commit or rollback.
 
 The following example shows, how to use transactions:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 
 // get the current transaction and start it
@@ -712,7 +763,8 @@ catch(Exception $ex) {
   echo $ex->getMessage();
   $transaction->rollback();
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 \note Even if not obtained explicitely, there is always a transaction existing
 in the background, to which objects loaded from the store are attached. But to
@@ -741,7 +793,8 @@ commited regularly.
 
 The following script shows how to do a dry run first and commit the collected statements later:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 $transaction = $this->persistenceFacade->getTransaction();
 
@@ -764,6 +817,6 @@ try {
 catch (\Exception $ex) {
   $transaction->rollback();
 }
-~~~~~~~~~~~~~
-
+```
+</div>
 */

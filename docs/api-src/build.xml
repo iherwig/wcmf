@@ -2,7 +2,8 @@
   <description>wCMF documentation build file</description>
 
   <target name="properties" description="define properties">
-    <property name="dist.dir" value="../api-gen/html"/>
+    <property name="gen.dir" value="../api-gen"/>
+    <property name="dist.dir" value="${gen.dir}/html"/>
   </target>
 
   <target name="dist" depends="properties" description="build the documentation" >
@@ -15,6 +16,13 @@
     <exec executable="doxygen">
       <arg value="doxyfile.txt"/>
     </exec>
+    <copy file="search.js" tofile="${dist.dir}/search/search.js" overwrite="true" force="true"/>
+    <concat destfile="${dist.dir}/search.html" append="true"><![CDATA[<script id="searchdata" type="text/xmldata">]]></concat>
+    <concat destfile="${dist.dir}/search.html" append="true">
+      <filelist dir="${gen.dir}" files="searchdata.xml"/>
+    </concat>    
+    <concat destfile="${dist.dir}/search.html" append="true"><![CDATA[</script>]]></concat>
+    <delete file="${gen.dir}/searchdata.xml"/>
   </target>
 
   <target name="clean" depends="properties" description="clean up" >

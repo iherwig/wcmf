@@ -6,5 +6,6 @@ src/app
 src/install
 src/wcmf/test/model/model-transformed
 vendor
+!docs/api-src/theme/vendor
 /composer.lock
 /src/wcmf/test/log/testdox.txt

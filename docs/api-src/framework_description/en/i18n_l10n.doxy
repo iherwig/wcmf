@@ -18,7 +18,8 @@ only so called _text identifiers_ are used in these places and the actual
 translation is retrieved by calling the
 \link wcmf::lib::i18n::Message::getText `Message::getText`\endlink method:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $textId = 'An error occured';
 
 // retrieve the translation
@@ -27,7 +28,8 @@ $errorText = $message->getText($textId);
 
 // use the translation
 $ex = new Exception($errorText);
-~~~~~~~~~~~~~
+```
+</div>
 
 @note Implementations of \link wcmf::lib::i18n::Message `Message`\endlink
 must return the _text identifier_, if no translation is found or the translation
@@ -48,7 +50,8 @@ put  __variables__ into the text identifier. Variable names are `%0%`, `%1%`, ..
 and they are replaced in the order of the values passed into the
 \link wcmf::lib::i18n::Message::getText `Message::getText`\endlink method:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $textId = 'Logged in as %0% since %1%';
 $parameters = [$username, $date];
 
@@ -58,7 +61,8 @@ $loginMessage = $message->getText($textId, $parameters);
 
 // use the translation
 $view->setValue('loginMessage', $loginMessage);
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Template text ### {#i18n_static_tpl}
 
@@ -66,12 +70,14 @@ wCMF provides the `translate` plugin for embedding language dependent text into
 _Smarty_ templates. The plugin is automatically included and used in the following
 way:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 {translate text="An error occured"}
 
 {* with variables *}
 {translate text="Logged in as %0% since %1%" r0=$login r1=$logindate}
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Localization ### {#i18n_static_locale}
 
@@ -90,21 +96,25 @@ the values are the translations in the appropriate language.
 
 <em>messages_en.php</em>
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $messages_en = [];
 $messages_en['%0% selected'] = '';
 $messages_en['Author'] = '';
 $messages_en['Book'] = '';
-~~~~~~~~~~~~~
+```
+</div>
 
 <em>messages_de.php</em>
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $messages_de = [];
 $messages_de['%0% selected'] = '%0% ausgewählt';
 $messages_de['Author'] = 'Autor';
 $messages_de['Book'] = 'Buch';
-~~~~~~~~~~~~~
+```
+</div>
 
 @note Note that the text identifiers are in the application's default language
 (_en_) and therefor no translations need to be provided.
@@ -112,12 +122,14 @@ $messages_de['Book'] = 'Buch';
 The default __configuration__ of \link wcmf::lib::i18n::Message `Message`\endlink
 is as follows:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Message]
 __class = wcmf\lib\i18n\impl\FileMessage
 localeDir = app/locale/
 language = en
-~~~~~~~~~~~~~
+```
+</div>
 
 The parameter `localeDir` defines the directory where
 \link wcmf::lib::i18n::impl::FileMessage `FileMessage`\endlink searchs for
@@ -147,7 +159,8 @@ files.
 The tool's configuration is defined in the file _config.ini_ in the tool's directory
 and defaults to:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Application]
 localeDir = app/locale/
 
@@ -155,7 +168,8 @@ localeDir = app/locale/
 searchDirs = {vendor/wcmf/wcmf/src/wcmf, app/}
 exclude = {vendor, .git, .svn, test}
 languages = {de, en}
-~~~~~~~~~~~~~
+```
+</div>
 
 ## Model content ## {#i18n_dynamic}
 
@@ -166,13 +180,15 @@ Localization of the model content is done by using implementations of
 methods for loading and saving localized model content. The following code
 demonstrates how to use it to get translated content:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $oid = new ObjectId('Book', 1);
 
 // retrieve a localized entity instance
 $localization = ObjectFactory::getInstance('localization');
 $bookDe = $localization->loadTranslatedObject($oid, 'de');
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Localization ### {#i18n_dynamic_locale}
 
@@ -204,7 +220,8 @@ The __language entity type__ must have the following attributes:
 The following __example__ demonstrates the creation of localized content
 using the \link wcmf::lib::i18n::Localization `Localization`\endlink interface:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $oid = new ObjectId('Book', 1);
 
 // retrieve the original entity instance
@@ -217,12 +234,14 @@ $book->setValue('title', 'Übersetzter Titel');
 // save the translation
 $localization = ObjectFactory::getInstance('localization');
 $localization->saveTranslation($book, 'de');
-~~~~~~~~~~~~~
+```
+</div>
 
 The localization __configuration__ of the \ref app "default application" is the
 following:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Localization]
 __class = wcmf\lib\i18n\impl\DefaultLocalization
 defaultLanguage = en
@@ -232,7 +251,8 @@ translationType = app.src.model.wcmf.Translation
 [Languages]
 de = Deutsch
 en = English
-~~~~~~~~~~~~~
+```
+</div>
 
 In this example the _default model language_ is set to English and the
 _language entity type_ is ignored, because the available languages are defined

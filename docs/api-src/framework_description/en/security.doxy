@@ -40,7 +40,8 @@ are provided by implementations of
 The following code demonstrates the authentication process as implemented
 in \link wcmf::application::controller::LoginController `LoginController`\endlink:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // get the user credentials from the request
 $login = $request->getValue('user');
 $password = $request->getValue('password');
@@ -61,7 +62,8 @@ if ($authUser) {
   // login succeeded
   $session->setAuthUser($authUser->getLogin());
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 @note The login of the user, that is associated with the current session -
 the _current user_ - is obtained using the
@@ -72,7 +74,8 @@ method. Before successful authentication, this login is
 The configuration of the authentication process in the \ref app "default application"
 looks like the following:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [AuthenticationManager]
 __class = wcmf\lib\security\impl\DefaultAuthenticationManager
 principalFactory = $principalFactory
@@ -81,7 +84,8 @@ principalFactory = $principalFactory
 __class = wcmf\lib\security\principal\impl\DefaultPrincipalFactory
 userType = app.src.model.wcmf.User
 roleType = app.src.model.wcmf.Role
-~~~~~~~~~~~~~
+```
+</div>
 
 Since
 \link wcmf::lib::security::principal::impl::DefaultPrincipalFactory `DefaultPrincipalFactory`\endlink
@@ -110,9 +114,11 @@ A permission definition in wCMF consists of two parts:
 
 The following code illustrates the __format__:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 resource?context?action = +allowedRole -deniedRole ...
-~~~~~~~~~~~~~
+```
+</div>
 
 #### Implicit denial ####
 
@@ -122,15 +128,19 @@ not explicitly listed.
 
 The following code grants the permission only to _allowedRole_
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 resource?context?action = +allowedRole -*
-~~~~~~~~~~~~~
+```
+</div>
 
 and is equivalent to
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 resource?context?action = +allowedRole
-~~~~~~~~~~~~~
+```
+</div>
 
 #### Default policy ####
 
@@ -151,9 +161,11 @@ Granted roles are evaluated before denied ones. That means that the following
 code grants the permission to a user who has both roles (_allowedRole_ and _deniedRole_)
 although the permission is denied for one of the roles.
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 resource?context?action = +allowedRole -deniedRole
-~~~~~~~~~~~~~
+```
+</div>
 
 #### Built-in resources ####
 
@@ -200,13 +212,15 @@ The following example shows the configuration of the
 \link wcmf::lib::security::principal::impl::CreatorRole `CreatorRole`\endlink in
 the \ref app "default application":.
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [DynamicRoles]
 creator = $creatorRole
 
 [CreatorRole]
 __class = wcmf\lib\security\principal\impl\CreatorRole
-~~~~~~~~~~~~~
+```
+</div>
 
 @note Dynamic roles are checked before static role assignments. That means you
 could define a dynamic role with the same name as a static role and add custom
@@ -228,40 +242,42 @@ explicitly granting the permission on the object in question.
 
 The following code shows some permission examples:
 
-~~~~~~~~~~~~~{.ini}
-// tester role is not allowed to update any authors except for the specified one
-// tester role is not allowed to update any authors stage attribute
+<div class="ini">
+```
+# tester role is not allowed to update any authors except for the specified one
+# tester role is not allowed to update any authors stage attribute
 app.src.model.Author??update = -tester
 app.src.model.Author:111??update = +tester
 app.src.model.Author.stage??update = +administrators
 
-// tester role is not allowed to update any publishers name except for the specified one
-// tester role is not allowed to update any authors stage attribute
+# tester role is not allowed to update any publishers name except for the specified one
+# tester role is not allowed to update any authors stage attribute
 app.src.model.Publisher.name??update = -tester
 app.src.model.Publisher:111.name??update = +tester
 
-// tester role is not allowed to read any book name except for the specified one
+# tester role is not allowed to read any book name except for the specified one
 app.src.model.Book??read = -tester
 app.src.model.Book:111??read = +tester
 
-// tester is not allowed to read chapter 111 and due to inheritance also not sub chapter 222,
-// and sub sub chapter 333, sub chapter 555 explicitly allowed and due to inheritance
-// also sub sub chapter 666
+# tester is not allowed to read chapter 111 and due to inheritance also not sub chapter 222,
+# and sub sub chapter 333, sub chapter 555 explicitly allowed and due to inheritance
+# also sub sub chapter 666
 app.src.model.Chapter:111??read = -tester +administrators
 app.src.model.Chapter:555??read = +tester +administrators
 
-// tester role is not allowed to execute SaveController
+# tester role is not allowed to execute SaveController
 wcmf\application\controller\SaveController?? = -tester
 
-// the tmp directory is hidden for everyone
-// only administrators can rename or delete the uploads directory
+# the tmp directory is hidden for everyone
+# only administrators can rename or delete the uploads directory
 media:/tmp??hidden = +*
 media:/uploads??locked = -administrators +*
 
-// custom permissions
+# custom permissions
 customPermission??start = +tester
 customPermission??stop = -tester
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Permission management ### {#sec_perm_manage}
 
@@ -291,7 +307,8 @@ several implementations of the
   permissions are stored in the `Authorization` configuration section like shown
   in the following code:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Authorization]
 ??login = +*
 ??logout = +*
@@ -301,7 +318,8 @@ app.src.model.wcmf.User??read = +administrators
 app.src.model.wcmf.User??update = +administrators
 app.src.model.wcmf.User??delete = +administrators
 app.src.model.wcmf.User??create = +administrators
-~~~~~~~~~~~~~
+```
+</div>
 
 - \link wcmf::lib::security::impl::DefaultPermissionManager `DefaultPermissionManager`\endlink
   handles permissions that are stored in the database. The entity type that actually
@@ -309,11 +327,13 @@ app.src.model.wcmf.User??create = +administrators
   and _roles_ attribute and is defined in the application configuration. The
   following lines are taken from the configuration of the \ref app "default application":
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [DefaultPermissionManager]
 __class = wcmf\lib\security\impl\DefaultPermissionManager
 permissionType = app.src.model.wcmf.Permission
-~~~~~~~~~~~~~
+```
+</div>
 
 - \link wcmf::lib::security::impl::ChainedPermissionManager `ChainedPermissionManager`\endlink
   is used to combine different
@@ -323,7 +343,8 @@ permissionType = app.src.model.wcmf.Permission
   first contained manager. An example configuration of this manager is shown in
   the code below:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [PermissionManager]
 __class = wcmf\lib\security\impl\ChainedPermissionManager
 managers = {$defaultPermissionManager, $staticPermissionManager}
@@ -334,7 +355,8 @@ permissionType = app.src.model.wcmf.Permission
 
 [StaticPermissionManager]
 __class = wcmf\lib\security\impl\StaticPermissionManager
-~~~~~~~~~~~~~
+```
+</div>
 
 - \link wcmf::lib::security::impl::NullPermissionManager `NullPermissionManager`\endlink
   acts like there is no permission manager and is merely used for testing.
@@ -354,7 +376,8 @@ to read user instances. To accomplish this,
 \link wcmf::lib::security::PermissionManager `PermissionManager`\endlink allows
 to set a transient, temporary permission like in the following example:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $permissionManager = ObjectFactory::getInstance('permissionManager');
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 $userType = 'app.src.model.wcmf.User';
@@ -368,7 +391,8 @@ $user = $persistenceFacade->loadFirstObject($userType, BuildDepth::SINGLE, [
 
 // remove the temporary permission
 $permissionManager->removeTempPermission($userType, '', PersistenceAction::READ);
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Checking permissions ### {#sec_perm_check}
 
@@ -381,9 +405,11 @@ or not.
 The following code shows how to determine, if the current user is allowed to read
 the given object:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $canRead = $permissionManager->authorize($object->getOID(), '', PersistenceAction::READ);
-~~~~~~~~~~~~~
+```
+</div>
 
 #### Default policies #### {#sec_perm_default_policies}
 
@@ -431,14 +457,16 @@ and `null` is returned if validation fails.
 
 The following code demonstrates the usage:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 // validate an email value
 $email = $request->getValue('email', '', 'filter:{"type":"validate_email"}');
 
 // validate a date using a regular expression and return the current date on failure
 $today = date('Y-m-d');
 $date = $request->getValue('date', $today, 'regex:{"pattern":"/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/"}');
-~~~~~~~~~~~~~
+```
+</div>
 
 For more information about validation see \ref pers_validation.
 
@@ -456,7 +484,8 @@ The following example demonstrates the usage of these methods.
 
 A new token value is generated each time the form is displayed:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 class UserController {
 
   public function render() {
@@ -465,18 +494,22 @@ class UserController {
 
   }
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 This creates the `csrf_token` response variable. The variable is used to add
 the token as a hidden field to the form:
 
-~~~~~~~~~~~~~{.php}
+<div class="html">
+```
 <input type="hidden" name="csrf_token" value="{$csrf_token}">
-~~~~~~~~~~~~~
+```
+</div>
 
 After form submission the controller validates the token and acts appropriately:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 class UserController {
 
   public function login() {
@@ -490,5 +523,6 @@ class UserController {
 
   }
 }
-~~~~~~~~~~~~~
+```
+</div>
 */

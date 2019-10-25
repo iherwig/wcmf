@@ -13,7 +13,8 @@ The following code demonstrates how to set up and use the
 \link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink
 configuration in code:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $configPath = WCMF_BASE.'app/config/';
 
 // setup configuration
@@ -26,7 +27,8 @@ ObjectFactory::registerInstance('configuration', $configuration);
 // get a configuration value
 $configuration = ObjectFactory::getInstance('configuration');
 $tz = $configuration->getValue('timezone', 'application');
-~~~~~~~~~~~~~
+```
+</div>
 
 ## Configuration Format ## {#conf_format}
 
@@ -35,14 +37,16 @@ Currently wCMF provides an implementation for using the
 \link wcmf::lib::config::impl::InifileConfiguration `InifileConfiguration`\endlink
 handles ini files that consist of __key-value pairs__ that are grouped in __sections__:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [SectionA]
 key1 = value1
 key2 = value2
 
 [SectionB]
 key3 = value3
-~~~~~~~~~~~~~
+```
+</div>
 
 @note Configuration section and key names are treated case-insensitive.
 
@@ -56,10 +60,12 @@ adding the `__inherit` configuration key to the section and setting it to _false
 The following example shows how to include an array of additional configuration
 files to separate concerns:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Config]
 include = {server.ini, persistence.ini, presentation.ini, security.ini}
-~~~~~~~~~~~~~
+```
+</div>
 
 Configuration sections from following files override identically named sections
 from preceding files.
@@ -96,7 +102,8 @@ it is instantiated as an associative array.
 The following example demonstrates the pattern by means of the
 \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink instance:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [PersistenceFacade]
 __class = wcmf\lib\persistence\impl\DefaultPersistenceFacade
 mappers = $typeMapping
@@ -127,7 +134,8 @@ dbCharSet = utf8
 
 [EventManager]
 __class = wcmf\lib\core\impl\DefaultEventManager
-~~~~~~~~~~~~~
+```
+</div>
 
 The first section defines that the instance named _PersistenceFacade_ is an object of
 the class \link wcmf::lib::persistence::impl::DefaultPersistenceFacade `DefaultPersistenceFacade`\endlink.
@@ -135,7 +143,8 @@ the class \link wcmf::lib::persistence::impl::DefaultPersistenceFacade `DefaultP
 So let's have a look at the relevant code in
 \link wcmf::lib::persistence::impl::DefaultPersistenceFacade `DefaultPersistenceFacade`\endlink:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 class DefaultPersistenceFacade implements PersistenceFacade {
 
   public function __construct(EventManager $eventManager,
@@ -147,7 +156,8 @@ class DefaultPersistenceFacade implements PersistenceFacade {
     ...
   }
 }
-~~~~~~~~~~~~~
+```
+</div>
 
 When requested the first time, the _PersistenceFacade_ instance is created in
 the following steps:
@@ -178,9 +188,11 @@ the following steps:
 The \link wcmf::lib::persistence::PersistenceFacade `PersistenceFacade`\endlink
 instance can be retrieved by using the following code:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-~~~~~~~~~~~~~
+```
+</div>
 
 @note An exception is thrown if a constructor parameter can't be resolved. That means if a
 constructor parameter is supposed to be optional, a default value must be provided.
@@ -195,7 +207,8 @@ you must use the `__shared` key in the configuration and set it to _false_.
 The following example shows the configuration of a non-shared
 \link wcmf::lib::presentation::view::View `View`\endlink instance:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [View]
 __class = wcmf\lib\presentation\view\impl\SmartyView
 __shared = false
@@ -203,7 +216,8 @@ compileCheck = true
 caching = false
 cacheLifetime = 3600
 cacheDir = app/cache/smarty/
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Aliases ### {#conf_aliasdi}
 
@@ -214,7 +228,8 @@ sections.
 The following example shows the configuration of different caches, that actually
 use the same configuration.
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Cache]
 __class = wcmf\lib\io\impl\FileCache
 cacheDir = app/cache/
@@ -224,7 +239,8 @@ __ref = $cache
 
 [ActionKeyCache]
 __ref = $cache
-~~~~~~~~~~~~~
+```
+</div>
 
 ### Circular dependencies ### {#conf_circulardi}
 
@@ -246,10 +262,12 @@ If two keys have the same name the one from the user configuration overwrites th
 Using the `RoleConfig` configuration section, you can easily assign configuration files
 to groups:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [RoleConfig]
 administrators = admin.ini
-~~~~~~~~~~~~~
+```
+</div>
 
 If a user is added to a listed role, the given configuration file will be automatically
 assigned to it, if no individual configuration is set yet.
@@ -258,7 +276,8 @@ assigned to it, if no individual configuration is set yet.
 
 The \ref app "default application" uses some special configuration sections:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Application]
 title = WCMF TEST MODEL
 color = #428BCA
@@ -268,7 +287,8 @@ listeners = {Search, EventListener}
 
 [Media]
 uploadDir = app/public/media/
-~~~~~~~~~~~~~
+```
+</div>
 
 - `Application`
   - `title` Application title
@@ -301,10 +321,12 @@ To use the _log4php_ library, instantiate
 \link wcmf::lib::core::impl::MonologFileLogger `MonologFileLogger`\endlink in the
 following way:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $logger = new MonologFileLogger('main', WCMF_BASE.'app/config/log.ini');
 LogManager::configure($logger);
-~~~~~~~~~~~~~
+```
+</div>
 
 \link wcmf::lib::core::impl::MonologFileLogger `MonologFileLogger`\endlink is
 a simple wrapper class that allows logging to files or streams. The configuration is defined
@@ -327,14 +349,16 @@ The following configuration sets the default log level to `ERROR` and the
 log level for the
 \link wcmf::lib::presentation::Controller `Controller`\endlink class to `DEBUG`:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 [Root]
 level = ERROR
 target = app/log/
 
 [Logger]
 wcmf\lib\presentation\Controller = DEBUG
-~~~~~~~~~~~~~
+```
+</div>
 
 ### log4php ### {#conf_log4php}
 
@@ -342,10 +366,12 @@ To use the _log4php_ library, instantiate
 \link wcmf::lib::core::impl::Log4phpLogger `Log4phpLogger`\endlink in the following
 way:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 $logger = new Log4phpLogger('main', WCMF_BASE.'app/config/log4php.php');
 LogManager::configure($logger);
-~~~~~~~~~~~~~
+```
+</div>
 
 The configuration file _log4php.php_ uses log4php's
 [PHP configuration format](https://logging.apache.org/log4php/docs/configuration.html#PHP).
@@ -354,7 +380,8 @@ The following configuration sets the default log level to `ERROR` and the
 log level for the
 \link wcmf::lib::presentation::Controller `Controller`\endlink class to `DEBUG`:
 
-~~~~~~~~~~~~~{.php}
+<div class="php">
+```
 return [
   'rootLogger' => [
     'level' => 'ERROR',
@@ -367,5 +394,6 @@ return [
 
   ...
 ];
-~~~~~~~~~~~~~
+```
+</div>
 */

@@ -1,72 +1,24 @@
-.jumbotron h2 {
-  line-height: 1.2;
+nav[data-toggle="toc"] {
+  top: 90px;
+  z-index: 990;
 }
 
-.tocify {
-  width: 175px;
-  margin-left: 0;
-  border: none;
-  border-radius: 0;
+.headertitle .title {
+  display: none;
 }
 
-.tocify ul, .tocify li {
-  line-height: inherit;
-}
-
-.tocify-header li,
-.tocify-subheader li,
-.tocify-subheader .tocify-subheader li {
-  text-indent: 0;
-}
-
-.tocify-header li {
-  text-transform: uppercase;
-}
-
-.tocify-subheader li {
-  text-transform: none;
-  font-size: inherit;
-}
-
-.tocify-subheader .tocify-subheader li {
-  font-style: italic;
-}
-
-.tocify-subheader .tocify-subheader .tocify-subheader li a:before {
-  content: "- ";
-}
-
-.tocify .nav-list > .active > a, .tocify .nav-list > .active > a:hover {
-  font-weight: bold;
-  border-left: medium solid #428bca;
-}
-
-.tocify .nav > li > a:hover, .tocify .nav > li > a:focus {
-  font-weight: bold;
-  background: none;
-}
-
-.tocify .nav-list > li > a {
-  padding: 10px;
+.jumbotron kbd {
+  padding: 0 .4rem;
 }
 
 .header-link {
   position: relative;
   font-size: 0.7em;
   left: 0;
-  bottom: -1.4em;
-  margin-left: -1.3em;
+  bottom: -1.6em;
+  margin-left: -1.6em;
   opacity: 0;
-
-  -webkit-transition: opacity 0.1s ease-in-out 0.1s;
-  -moz-transition: opacity 0.1s ease-in-out 0.1s;
-  -ms-transition: opacity 0.1s ease-in-out 0.1s;
-}
-
-i.fa-slack {
-  -ms-transform: rotate(19deg);
-  -webkit-transform: rotate(19deg);
-  transform: rotate(19deg);
+  transition: opacity 0.1s ease-in-out 0.1s;
 }
 
 h2:hover .header-link,
@@ -123,10 +75,6 @@ td.entry {
   font-style: italic;
 }
 
-.panel-default {
-  border: none;
-}
-
 .textblock h2, .textblock h3, .textblock h4, .textblock h5 {
   margin-top: 20px;
 }
@@ -134,38 +82,17 @@ td.entry {
 /* Code */
 
 div.line {
-  text-indent: 0;
-  padding-left: 0;
+	font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size: 0.8rem;
+	white-space: pre-wrap;
 }
 
-/* Search */
+div.hljs {
+  margin-bottom: 0.5em;
+}
 
-#MSearchSelectWindow {
+/* Hide doxygen search */
+
+#MSearchSelectWindow, #MSearchResultsWindow {
   display: none;
-}
-
-#MSearchResultsWindow {
-  display: none;
-}
-
-#MSearchResults {
-  width: 300px;
-  height: 200px;
-}
-
-.SRChildren {
-  padding-left: 10px;
-  padding-bottom: .5em
-}
-
-.SRPage .SRChildren {
-  display: none;
-}
-
-a.SRScope {
-  display: block;
-}
-
-span.SRScope {
-  padding-left: 4px;
 }

@@ -11,15 +11,19 @@ are located in the _src/wcmf/test_ directory.
 
 Before running the tests the code generator is used to generate the environment:
 
-~~~~~~~~~~~~~
+<div class="shell">
+```
 $ cd src/wcmf/test/model & ant
-~~~~~~~~~~~~~
+```
+</div>
 
 To run all tests, execute the following command in the _src/wcmf/test_ directory:
 
-~~~~~~~~~~~~~
+<div class="shell">
+```
 $ phpunit --bootstrap bootstrap.php --configuration configuration.xml
-~~~~~~~~~~~~~
+```
+</div>
 
 The tests use PHP's built-in web server where necessary and operate on a file
 based database ([SQLite](https://www.sqlite.org/)).

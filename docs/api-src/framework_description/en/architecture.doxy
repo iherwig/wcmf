@@ -106,9 +106,11 @@ actions may be arbitrary strings.
 
 The string representation of an action key is as follows:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 controller?context?action
-~~~~~~~~~~~~~
+```
+</div>
 
 @note Since question marks (?) are used to separate the parts of an action key,
 a question mark is not allowed inside the parts itself.
@@ -135,7 +137,8 @@ implemented in the method
 It checks action key lists against the following search values until a match is
 found:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
  1. controller?context?action
  2. controller??action
  3. controller?context?
@@ -143,7 +146,8 @@ found:
  5. ??action
  6. controller??
  7. ?context?
-~~~~~~~~~~~~~
+```
+</div>
 
 As a rule of thumb the action key which describes the state of the application the
 most accurate is favored.
@@ -157,14 +161,18 @@ to execute for a given action key (see \ref pres_routingint).
 Always execute \link wcmf::application::controller::SaveController `SaveController`\endlink
 when action _update_ is requested, no matter which state the application is in:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 ??update = wcmf\application\controller\SaveController
-~~~~~~~~~~~~~
+```
+</div>
 
 Always execute `AuthorController` when the application context is _author_ as
 long as no action is specified:
 
-~~~~~~~~~~~~~{.ini}
+<div class="ini">
+```
 ?author? = app\src\controller\AuthorController
-~~~~~~~~~~~~~
+```
+</div>
 */

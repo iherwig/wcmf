@@ -6,7 +6,7 @@
   <h1>wCMF</h1>
   <h2>A MDSD framework for building<br><kbd>reliable</kbd> <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications with PHP</h2>
   <a href="gettingstarted.html" class="btn btn-success btn-lg">Getting started</a>
-  <a href="https://github.com/iherwig/wcmf/releases" class="btn btn-info btn-lg"><i class="fa fa-download"></i> Download</a>
+  <a href="https://github.com/iherwig/wcmf/releases" class="btn btn-info btn-lg"><i class="fas fa-download"></i> Download</a>
 </div>
 
 <h2>Model-Driven Software Development</h2>
@@ -21,29 +21,29 @@ wCMF features a pragmatic Model-Driven Software Development (<em>MDSD</em>) appr
 <br>Creating a wCMF-based application basically involves three steps:<br><br>
 
 <div class="row">
-  <div class="col-md-4"><h3><i class="fa fa-sitemap fa-2x pull-left"></i> Model</h3>
+  <div class="col-md-4"><h3><i class="fas fa-sitemap float-left mt-2 mr-2"></i> Model</h3>
     Start by modeling your application in wCMF's UML based Domain Specific Language (<em>DSL</em>).
     It not only supports defining the domain model, controllers and views, but also configuration and application flow.
     Graphical editors are available from the <a href="http://www.eclipse.org/papyrus/" target="_blank">Eclipse</a> and
     <a href="http://sourceforge.net/projects/olympos/" target="_blank">Olympos</a> projects.
-    <i class="fa fa-angle-double-right"></i> <a href="model.html">Read more</a>
+    <a href="model.html">Read more</a>
   </div>
-  <div class="col-md-4"><h3><i class="fa fa-gears fa-2x pull-left"></i> Build</h3>
+  <div class="col-md-4"><h3><i class="fas fa-cogs float-left mt-2 mr-2"></i> Build</h3>
     Run the code generator to create persistence mappers, controllers, views and configuration files from the model.
     After that a web application based on the <a href="http://dojotoolkit.org/" target="_blank">Dojo Toolkit</a> is ready to be used.
     It allows to manage entity instances and includes a full text search, localization support and user/role management.
-    <i class="fa fa-angle-double-right"></i> <a href="model.html#Generator">Read more</a>
+    <a href="model.html#Generator">Read more</a>
   </div>
-  <div class="col-md-4"><h3><i class="fa fa-expand fa-2x pull-left"></i> Extend</h3>
+  <div class="col-md-4"><h3><i class="fas fa-expand-arrows-alt float-left mt-2 mr-2"></i> Extend</h3>
     wCMF's clear object oriented design is based on well known design patterns, that allow to extend the application in every aspect.
     Custom code is protected from subsequent generator runs, which ensures that future requirements can be implemented
     while model and code stay in synch.
-    <i class="fa fa-angle-double-right"></i> <a href="architecture.html">Read more</a>
+    <a href="architecture.html">Read more</a>
   </div>
 </div>
 
+<h2>Features</h2>
 <div class="row">
-  <h2>Features</h2>
   <div class="col-md-6">
     <ul>
       <li>Full featured object <a href="persistence.html">persistence layer</a>:
