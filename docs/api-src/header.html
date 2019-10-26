@@ -25,6 +25,8 @@
   <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
   <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
 
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+
   <script src="theme/vendor/highlight/highlight.pack.js"></script>
   <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
 
@@ -32,10 +34,6 @@
   <script src="dynsections.js"></script>
 
   <link href="theme/css/style.css" rel="stylesheet">
-
-  <script src="search/search.js"></script>
-  <script src="search/searchdata.js"></script>
-
 </head>
 <body data-spy="scroll" data-target="#toc">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
@@ -84,7 +82,7 @@
       <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search API">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
     </form>
   </div>
 </nav>

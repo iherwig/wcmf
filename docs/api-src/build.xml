@@ -16,13 +16,10 @@
     <exec executable="doxygen">
       <arg value="doxyfile.txt"/>
     </exec>
-    <copy file="search.js" tofile="${dist.dir}/search/search.js" overwrite="true" force="true"/>
-    <concat destfile="${dist.dir}/search.html" append="true"><![CDATA[<script id="searchdata" type="text/xmldata">]]></concat>
-    <concat destfile="${dist.dir}/search.html" append="true">
-      <filelist dir="${gen.dir}" files="searchdata.xml"/>
-    </concat>    
-    <concat destfile="${dist.dir}/search.html" append="true"><![CDATA[</script>]]></concat>
-    <delete file="${gen.dir}/searchdata.xml"/>
+    <replace dir="${dist.dir}" value="//var searchBox = new SearchBox">
+      <include name="**/*.html"/>
+      <replacetoken>var searchBox = new SearchBox</replacetoken>
+    </replace>
   </target>
 
   <target name="clean" depends="properties" description="clean up" >

@@ -24,6 +24,41 @@ $(function() {
     }
   });
 
+  // search
+  var searchField = $('#search-field');
+  searchField.prop('disabled', true);
+  $.ajax({
+    type: "GET" ,
+    url: "search/searchdata.xml" ,
+    dataType: "xml" ,
+    success: function(xml) {
+      var docs = $(xml).find('doc');
+      searchField.prop('disabled', false);
+      searchField.typeahead({
+        source: function(query, result) {
+          $(".typeahead.dropdown-menu").addClass('dropdown-menu-right');
+          var results = [];
+          docs.each(function() {
+            var fields = $(this).children();
+            var type = fields[0].textContent;
+            var name = fields[1].textContent;
+            var url = fields[2].textContent;
+            var text = fields[4].textContent;
+            if ((name.toLowerCase().indexOf(query.toLowerCase()) >= 0 || text.toLowerCase().indexOf(query.toLowerCase()) >= 0) && 
+                  url.match('.+\.html(#[0-9]+)?')) {
+              var item = {name: '['+type+'] '+name, url: url};
+              results.push(item);
+            }
+          });
+          result(results);
+        },
+        afterSelect: function(item) {
+          document.location = item.url;
+        }
+      });
+    }
+  });
+
   // change visual styles
 
   // header
