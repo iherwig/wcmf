@@ -35,19 +35,23 @@ $(function() {
       var docs = $(xml).find('doc');
       searchField.prop('disabled', false);
       searchField.typeahead({
+        items: 15,
+        minLength: 1,
         source: function(query, result) {
           $(".typeahead.dropdown-menu").addClass('dropdown-menu-right');
           var results = [];
+          var urls = {};
           docs.each(function() {
             var fields = $(this).children();
             var type = fields[0].textContent;
             var name = fields[1].textContent;
-            var url = fields[2].textContent;
+            var url = fields[2].textContent.split('#')[0];
             var text = fields[4].textContent;
             if ((name.toLowerCase().indexOf(query.toLowerCase()) >= 0 || text.toLowerCase().indexOf(query.toLowerCase()) >= 0) && 
-                  url.match('.+\.html(#[0-9]+)?')) {
+                  url.match('.+\.html(#[0-9]+)?') && !urls[url]) {
               var item = {name: '['+type+'] '+name, url: url};
               results.push(item);
+              urls[url] = true;
             }
           });
           result(results);
@@ -102,11 +106,6 @@ $(function() {
 
   $(".fragment").removeClass("fragment").addClass("card").each(function(i, node) {
     hljs.highlightBlock(node);    
-  });
-  $(".line").each(function() {
-    var el = $(this);
-    el.find("a[name], span.lineno").hide();
-    el.html(el.html().replace(/^&nbsp;/g, ''));
   });
   $(".memtitle").hide();
   $(".memitem").addClass("card border border-secondary rounded mb-2");
