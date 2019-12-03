@@ -227,7 +227,7 @@ method provides several parameters that allow to specify which instances should
 be loaded and how the list should be ordered. The next sections explain these
 parameters.
 
-#### Build depth #### {#pers_builddepth}
+#### Eager relation loading #### {#pers_builddepth}
 
 When loading objects we generally distinguish between __eager__ and __lazy__ loading
 (see [Lazy loading](http://en.wikipedia.org/wiki/Lazy_loading)).
@@ -237,7 +237,7 @@ performs _lazy loading_ by using _virtual proxies_ (instances of
 That means that related objects are retrieved from the store, only when they are
 actually accessed. To perform _eager loading_, a
 \link wcmf::lib::persistence::BuildDepth `BuildDepth`\endlink
-value may be passed in the method calls:
+value is passed in the method calls:
 
 <div class="php">
 ```
@@ -252,7 +252,7 @@ In this example the `Author` instance with id _1_ is loaded together with all re
 objects recursively.
 
 Instead of a \link wcmf::lib::persistence::BuildDepth `BuildDepth`\endlink
-value, an integer number may be passed indicating the depth of relations to load.
+value, an integer number could be passed indicating the depth of relations to load.
 The following image illustrates the _build depth_ parameter for a simple model.
 
 \image html builddepth.png "Build depth"
@@ -275,7 +275,7 @@ of _ChiNode_, see \ref model_chinode). Besides this, all loading methods (e.g.
 accept an `orderby` parameter for explicitly setting a different order.
 
 A list of already loaded \link wcmf::lib::model::Node `Node`\endlink
-instances may be sorted by using \link wcmf::lib::model::NodeComparator `NodeComparator`\endlink
+instances is sorted by using \link wcmf::lib::model::NodeComparator `NodeComparator`\endlink
 in the following way:
 
 <div class="php">
@@ -296,9 +296,9 @@ usort($nodeList, [$comparator, 'compare']);
 
 #### Pagination #### {#pers_pagination}
 
-To reduce the response time of your application when displaying large lists
-of objects, [pagination](http://en.wikipedia.org/wiki/Pagination#Pagination_in_web_content)
-may be used. This technique splits the list into smaller parts (_pages_) that are displayed
+A common pattern for reducing the response time of an application when displaying large lists
+of objects is [pagination](http://en.wikipedia.org/wiki/Pagination#Pagination_in_web_content).
+This technique splits the list into smaller parts (_pages_) that are displayed
 one by one. In wCMF the class \link wcmf::lib::persistence::PagingInfo `PagingInfo`\endlink
 implements the concept.
 
@@ -335,7 +335,7 @@ $objects = ObjectFactory::getInstance('persistenceFacade')->loadObjects($types, 
 
 To search objects in the store the
 \link wcmf::lib::persistence::PersistenceFacade::loadObjects `PersistenceFacade::loadObjects`\endlink
-method may be used. It allows to set the conditions that loaded objects should match.
+method is used. It allows to set the conditions that loaded objects should match.
 
 <div class="php">
 ```
@@ -463,7 +463,7 @@ for($it->rewind(); $it->valid(); $it->next()) {
 </div>
 
 \link wcmf::lib::model::PersistentIterator `PersistentIterator`\endlink allows
-to traverse object graphs as well, but it's state may be persisted to split the
+to traverse object graphs as well, but it's state could be persisted to split the
 iteration of large lists into smaller parts.
 
 <div class="php">
@@ -632,7 +632,7 @@ unique
 \note The validation type is derived from the part of the configuration string,
 that precedes the first colon.
 
-Custom validation types may be added in the configuration. For example
+Custom validation types can be added in the configuration. For example
 after adding `myValidator` (implemented in `MyValidator` class):
 
 <div class="ini">
@@ -648,7 +648,7 @@ __class = path\to\MyValidator
 ```
 </div>
 
-it may be used in the following way:
+it is used in the following way:
 
 <div class="php">
 ```
@@ -661,7 +661,7 @@ myValidator:custom_configuration_string_passed_by_MyValidator
 The described validation types only operate on one attribute. If more complex
 validation is required, e.g. if dependencies between several attributes exist, the method
 \link wcmf::lib::persistence::PersistentObject::validateValue `PersistentObject::validateValue`\endlink
-may be overriden in the appropriate domain class.
+could be overriden in the appropriate domain class.
 
 ## Concurrency ## {#pers_concurrency}
 
@@ -735,7 +735,7 @@ implementation is exchangeable.
 ## Transactions ## {#pers_tx}
 
 wCMF supports [database transactions](http://en.wikipedia.org/wiki/Database_transaction).
-There is only __one transaction at the same time__ and it may be obtained using the
+There is only __one transaction at the same time__ and it is be obtained using the
 \link wcmf::lib::persistence::PersistenceFacade::getTransaction `PersistenceFacade::getTransaction`\endlink
 method. The transaction has an _active_ state, which is set in the
 \link wcmf::lib::persistence::Transaction::begin `Transaction::begin`\endlink

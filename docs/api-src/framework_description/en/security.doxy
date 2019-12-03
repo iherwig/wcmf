@@ -90,7 +90,7 @@ roleType = app.src.model.wcmf.Role
 Since
 \link wcmf::lib::security::principal::impl::DefaultPrincipalFactory `DefaultPrincipalFactory`\endlink
 retrieves user instances from the storage, it needs to configured with the
-appropriate entity types. If required, the default user type may be replaced
+appropriate entity types. If required, the default user type can be replaced
 by custom implementations of \link wcmf::lib::security::principal::User `User`\endlink.
 
 ## Authorization ## {#sec_authorization}

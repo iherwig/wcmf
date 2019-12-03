@@ -35,7 +35,7 @@ To simplify setting up the testing enviroment, wCMF provides the
 starting the test server, initializing the framework, starting sessions and
 simulating requests.
 
-For developing custom test cases, the following base classes may be used:
+For developing custom test cases, the following base classes are provided:
 
 - \link wcmf::test::lib::BaseTestCase `BaseTestCase`\endlink is used as
   base class for all test cases. It initializes the framework before each test.

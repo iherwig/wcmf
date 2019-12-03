@@ -58,7 +58,7 @@ The following __stereotypes__ are used to model persistent domain classes and th
 
 | Name | UML meta class | Description | Example
 |------|----------------|-------------|--------
-| _ChiNode_ | Class | Persistent domain class, must inherit from the \link wcmf::lib::model::Node `Node`\endlink | _Article_
+| _ChiNode_ | Class | Persistent domain class, must inherit from \link wcmf::lib::model::Node `Node`\endlink | _Article_
 | _ChiValue_ | Attribute | Persistent attribute in a _ChiNode_ | _headline_ of Article
 | _ChiValueRef_ | Attribute | ReadOnly-reference to an attribute of another _ChiNode_ | _author_name_ in Article references _name_ in Author
 | _ChiManyToMany_ | Class | Connection class in a many to many relation between _ChiNode_ classes, must inherit from \link wcmf::lib::model::Node `Node`\endlink | One _Author_ writes nultiple _Articles_ and one _Article_ has multiple _Authors_
@@ -179,7 +179,7 @@ The multiplicity at the association ends limits the amount of instances that
 are allowed at that relation end. In a typical parent-child relation the parent
 end has a value of `1` and the child end has a value of `0..*` meaning that a
 child instance is connected to exactly one parent instance, while any number
-of child instances may be connected to the parent instance (including zero).
+of child instances can be connected to the parent instance (including zero).
 This kind of relation is called __one-to-many relation__ and is easy to realize
 in a database by using a _foreign key_ column.
 
@@ -234,7 +234,7 @@ The following diagram illustrates the given example:
 #### Inheritance #### {#model_inheritance}
 
 If different domain classes should have the same attributes, a common base class
-can make these available to inheriting classes. An example may be an `EntityBase` type,
+can make these available to inheriting classes. An example would be an `EntityBase` type,
 which defines meta information like creation date and last modification date for
 all domain classes. The diagram below illustrates the concept.
 
@@ -264,7 +264,7 @@ The following __stereotypes__ are used to model user interaction.
 | _ChiActionKey_ | Association | Associates two _ChiController_ instances (to define a control flow) or a _ChiView_ with a _ChiController_ (to define a view attachment), must be _one directional_ | |
 
 \note _ChiActionKey_ realizes the concept of _action keys_ (see \ref arch_actionkey).
-Multiple action keys may be defined between controllers or controllers and views
+Multiple action keys can be defined between controllers or controllers and views
 each one used in a different context and/or for a different action.
 
 #### ChiController #### {#model_chicontroller}
@@ -326,7 +326,7 @@ the method. The following diagram illustrates the concept:
 
 #### Request parameters #### {#model_controller_parameters}
 
-Parameters may be added to controller methods. The generator will create code
+Parameters can be added to controller methods. The generator will create code
 that extracts and validates the input parameters from the requests or sets
 default values if they are absent. Output parameters will be added to the response.
 
@@ -427,8 +427,8 @@ cartridges one of which is the wCMF cartridge. Cartridges are written in the
 _Xtent/Xpand_ language.
 
 If you are using [Composer](https://getcomposer.org/), the generator will be installed
-as a dependency in the directory _vendor/olympos/chronos-generator_. It may also
-be downloaded from [SourceForge](https://sourceforge.net/projects/olympos/files/ChronosGenerator-wCMF/).
+as a dependency in the directory _vendor/olympos/chronos-generator_. It is also
+available at [SourceForge](https://sourceforge.net/projects/olympos/files/ChronosGenerator-wCMF/).
 
 ### Configuration ### {#generator_config}
 

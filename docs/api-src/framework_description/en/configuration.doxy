@@ -93,7 +93,7 @@ Assembly details for client instances are defined in the application configurati
 in special sections containing a `__class` key. The value of the key denotes the
 class to be used to create the client instance. All other keys are tried to be
 mapped to constructor parameters or setters/members of that class. Complex
-dependencies of an instance may be set by using the `$` notation, which refers
+dependencies of an instance are set by using the `$` notation, which refers
 to another configuration section. If a section does not contain a `__class` key
 it is instantiated as an associative array.
 
@@ -221,7 +221,7 @@ cacheDir = app/cache/smarty/
 
 ### Aliases ### {#conf_aliasdi}
 
-The same instance may be referenced using different names (_aliases_). To define
+The same instance can be referenced using different names (_aliases_). To define
 an alias, the `__ref` key is used. Aliases help avoiding duplicate configuration
 sections.
 
@@ -256,7 +256,7 @@ when constructing the child dependency.
 ## Configuration for individual users ## {#conf_peruser}
 
 wCMF's user base class \link wcmf::lib::security::principal::impl::AbstractUser `AbstractUser`\endlink
-has a persistent property `config` which may be used to set a individual configuration
+has a persistent property `config` which is used to set an individual configuration
 for a user. This will be loaded after the standard configuration and extends its settings.
 If two keys have the same name the one from the user configuration overwrites the standard one.
 Using the `RoleConfig` configuration section, you can easily assign configuration files

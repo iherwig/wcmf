@@ -124,7 +124,7 @@ $(function() {
   $("div.ttc").hide();
 
   // tables
-  $("table.doxtable").addClass('table').addClass('table-striped');
+  $("table.doxtable, table.markdownTable").removeClass("markdownTable").addClass('table').addClass('table-striped');
   $("table.doxtable tr").each(function() {
     $(this).children("td:nth(0)").addClass("text-nowrap");
   });

@@ -21,7 +21,7 @@ possible (e.g. a global function that is used by third party code). Since most
 of these services are registered with
 \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink, it's
 \link wcmf::lib::core::ObjectFactory::getInstance `getInstance`\endlink method
-may be used as a [service locator](https://en.wikipedia.org/wiki/Service_locator_pattern).
+is used as a [service locator](https://en.wikipedia.org/wiki/Service_locator_pattern).
 
 The following example shows how to get the persistence service at any code location:
 
@@ -69,7 +69,7 @@ The example shows the three important methods of the
 - The \link wcmf::lib::presentation::Application::initialize `initialize`\endlink
   method is used to __setup__ the
   \link wcmf::lib::presentation::Application `Application`\endlink. It returns a
-  \link wcmf::lib::presentation::Request `Request`\endlink instance, that may be
+  \link wcmf::lib::presentation::Request `Request`\endlink instance, that could be
   modified before execution.
 - The \link wcmf::lib::presentation::Application::run `run`\endlink method is
   called to __execute__ the given request. The method returns a
@@ -209,7 +209,7 @@ The previous example maps the action keys to a controller class without specifyi
 a method to be called. In these cases, the framework calls the default method
 `doExecute`, which must then be defined in the controller class (see \ref pres_controllers).
 
-Alternatively a specific __controller method__ to be called may be defined in the
+Alternatively a specific __controller method__ to be called could be defined in the
 action mapping, like illustrated in the following example:
 
 <div class="ini">
@@ -234,7 +234,7 @@ method. The method matches the _path part_ of the request uri against the entrie
 of the `Routes` configuration section to find an appropriate action key.
 
 __Variables__ declared in path segments will be automatically passed as request parameters,
-but may be overwritten by explicit request parameters. The character <em>*</em> is used
+but would be overwritten by explicit request parameters if provided. The character <em>*</em> is used
 as _wildcard_. Regular expression __patterns__ can be added to variables to narrow
 the set of possibilities.
 
@@ -279,14 +279,14 @@ The following __rules__ are implemented to find the more specific route:
 - the route with _less variables_ is more specific and if two routes have the same number of variables
 - the route with _more patterns_ in the variable definitions is more specific.
 
-In cases where these simple rules are not sufficient, you may configure a __custom__
+In cases where these simple rules are not sufficient, you could configure a __custom__
 \link wcmf::lib::presentation::Request `Request`\endlink implementation (see \ref conf_di)
 which overrides the \link wcmf::lib::presentation::impl::DefaultRequest::isMatch `DefaultRequest::isMatch`\endlink
 method.
 
 ##### HTTP methods #####
 
-To restrict a path to one or more __HTTP methods__, they may be added in front of
+To restrict a path to one or more __HTTP methods__, they are added in front of
 the route definition. In the following example the _cms_ action is only available
 for the _GET_ method, while the other actions accept _GET_, _POST_, _PUT_ and
 _DELETE_ requests:
@@ -318,7 +318,7 @@ methods defined in this class, which are called by
   is called directly after instantiation of the controller. The current
   \link wcmf::lib::presentation::Request `Request`\endlink and
   \link wcmf::lib::presentation::Response `Response`\endlink instances are passed
-  as parameters and subclasses may override this method to implement task specific
+  as parameters and subclasses can override this method to implement task specific
   initializations.
 2. \link wcmf::lib::presentation::Controller::validate `Controller::validate`\endlink
   is called afterwards to check the validity of the request parameters. The default
@@ -416,8 +416,8 @@ is set to _text/html_ (see \ref pres_format). The appropriate
 \link wcmf::lib::presentation::format::impl::HtmlFormat `HtmlFormat`\endlink.
 It renders the response into a template file using the configured
 \link wcmf::lib::presentation::view::View `View`\endlink implementation. The format
-of the template files depends on the chosen that implementation. Since different
-actions may require different views to be displayed, a mapping of action keys to
+of the template files depends on that implementation. Since different
+actions could require different views to be displayed, a mapping of action keys to
 view templates is defined in the `Views` configuration section.
 
 The following example shows the configuration of the
@@ -455,7 +455,7 @@ the value to _mobile_ would select the template file _home-mobile.tpl_. If the
 requested version does not exist, it is ignored and the default template is used
 (_home.tpl_ in this example).
 
-## Webservice APIs ##
+## Webservice APIs ## {#pres_apis}
 
 Besides the user interface driven \ref app "default application" wCMF provides
 APIs for using the application as a [web service](https://en.wikipedia.org/wiki/Web_service).
@@ -492,7 +492,7 @@ The `Routes` configuration section defines the urls for the interface. They all
 call the action _restAction_ internally, which is handled by
 \link wcmf::application::controller::RESTController `RESTController`\endlink as
 defined in the `ActionMapping` section. For example the english version of
-the `Author` instance with id _1_ may be retrieved by making a GET request to
+the `Author` instance with id _1_ is retrieved by making a GET request to
 the url <em>/rest/en/Author/1</em>.
 
 ### SOAP API ###
@@ -530,7 +530,7 @@ The interface description is available at the url <em>/soap?wsdl</em>.
 
 Caching is an effective method to improve application performance. Caches in wCMF
 are supposed to be divided into sections, which hold key-value pairs (see
-\link wcmf::lib::io::Cache `Cache`\endlink interface). Cache instances may be
+\link wcmf::lib::io::Cache `Cache`\endlink interface). Cache instances are
 defined in the application configuration and retrieved by using
 \link wcmf::lib::core::ObjectFactory `ObjectFactory`\endlink, which makes it easy
 to exchange the underlying caching implementation.
@@ -645,7 +645,7 @@ The following events are defined in wCMF:
 - \link wcmf::lib::presentation::ApplicationEvent `ApplicationEvent`\endlink
   allows to listen to the different steps of the request handling process.
 
-The event system may be extended by custom events by inheriting from the
+The event system can be extended by custom events by inheriting from the
 \link wcmf::lib::core::Event `Event`\endlink class.
 
 The class below is a basic example for a listener that subscribes to persistence
@@ -694,7 +694,7 @@ $eventListener->dispatch(PersistenceEvent::NAME,
 
 ### Implicit listener installation ### {#pres_listeners}
 
-In some cases you may want to install event listeners without explicitely
+In some cases you might want to install event listeners without explicitely
 instantiating them, because there is no appropriate place for that. For these
 cases the \link wcmf::lib::presentation::Application `Application`\endlink class
 reads the `listeners` value of the `Application` configuration section and

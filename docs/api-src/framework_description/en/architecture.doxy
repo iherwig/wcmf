@@ -7,14 +7,14 @@
 The main architectural concept of wCMF is the well known [Model-View-Controller]
 (http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) pattern.
 The following sections describe it's implementation in wCMF and introduce some
-other key concepts, that are useful to know when using wCMF.
+other key concepts, that are useful to know when using the framework.
 
 ## Model ## {#arch_model}
 
 An application is usually based on a _domain model_ that represents the real-world
 concepts of the domain of interest. In object oriented programming this model is
 implemented using classes. Depending on the application requirements the instances
-of several of these classes have to be persisted in a storage to keep the contained
+of some of these classes have to be persisted in a storage to keep the contained
 data. These classes represent the _data model_. The classes that provide the
 infrastructure for storing data form the _persistence layer_.
 
@@ -58,8 +58,8 @@ The _presentation layer_ of a wCMF application enables users to interact with th
 domain model.
 
 Each interaction is initiated by a _request_ and results in a _response_. In a web
-application the request data is sent by the user's browser to the server as GET or
-POST variables.
+application the request data is sent by the user's browser to the server as GET, POST, etc.
+variables.
 
 wCMF's \link wcmf::lib::presentation::Application `Application`\endlink class
 transforms the request data into a \link wcmf::lib::presentation::Request `Request`\endlink
@@ -77,7 +77,7 @@ The controller is determined by matching specific request parameters against a l
 of so called _action keys_ (see \ref arch_actionkey). As the result of it's execution
 each controller returns action key parameters in the response data. If these parameters
 match an existing action key, the associated controller will be executed by passing
-the current response as input. In this way complex tasks may be executed by chaining
+the current response as input. In this way complex tasks can be executed by chaining
 several controller calls together.
 
 To support various data representations, a
@@ -102,7 +102,7 @@ An important concept of wCMF is that of _Action Keys_. An action key describes t
 state of the application together with the __action__ to be performed next. The state,
 which the application is in, results from the current __controller__ and the __context__,
 in which it is executed. Controllers must exist as classes, whereas contexts and
-actions may be arbitrary strings.
+actions can be arbitrary strings.
 
 The string representation of an action key is as follows:
 
@@ -115,9 +115,9 @@ controller?context?action
 @note Since question marks (?) are used to separate the parts of an action key,
 a question mark is not allowed inside the parts itself.
 
-wCMF uses action keys for the following concerns:
+wCMF uses action keys in the following places:
 
-1. In __routing definitions__ controller names are assigned action keys.
+1. In __routing definitions__ controller names are assigned to action keys.
    \link wcmf::lib::presentation::ActionMapper `ActionMapper`\endlink uses these
    definitions to execute the correct controller when the application is in a
    certain state.
@@ -131,7 +131,7 @@ wCMF uses action keys for the following concerns:
    this when checking permissions on a given resource.
 
 Since parts of the action key can be omitted in the definition, an algorithm has
-to choose, which action key fits a given value triplet best. This algorithm is
+to choose, which action key fits a given value triple best. This algorithm is
 implemented in the method
 \link wcmf::lib::config::ActionKey::getBestMatch `ActionKey::getBestMatch`\endlink.
 It checks action key lists against the following search values until a match is

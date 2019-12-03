@@ -9,17 +9,17 @@ application template.
 
 ## wCMF Framework ## {#framework}
 
-The wCMF framework provides the infrastructure to create PHP web applications based
-on the model-view-controller pattern. The project's source code is hosted at
+The wCMF framework provides the foundation for creating PHP web applications based
+on the model-view-controller pattern. The project's source code is hosted on
 [GitHub](https://github.com/iherwig/wcmf) and can be forked or downloaded from there.
 
-If you manage your dependencies using [Composer](https://getcomposer.org/) you may
-want to add the following lines to your `composer.json`:
+If you manage your dependencies using [Composer](https://getcomposer.org/) you just need
+add the following lines to your `composer.json`:
 
 <div class="json">
 ```
 {
-    "require-dev": {
+    "require": {
         "wcmf/wcmf": "dev-master"
     }
 }
@@ -54,7 +54,7 @@ To modify the demo model you additionally need:
 - UML Modeling tool (e.g. [Eclipse Papyrus](http://www.eclipse.org/papyrus/) or
   [Chronos Web Modeler](http://sourceforge.net/projects/olympos/))
   
-@note A development environment based on Docker containers and the Eclipe IDE is
+@note A development environment based on Docker containers and the Eclipse IDE is
 provided in the [wcmf-workspace](https://github.com/iherwig/wcmf-workspace) project.
 
 ### Installation ### {#app_install}
@@ -64,7 +64,7 @@ and mapped to the url `http://localhost/wcmf-default-app`.
 
 #### GitHub #### {#app_install_github}
 
-The application's source code may be cloned from
+The application's source code can be cloned from
 [GitHub](https://github.com/iherwig/wcmf-default-app) using the following command:
 
 <div class="shell">
@@ -116,14 +116,14 @@ $ composer create-project wcmf/wcmf-default-app wcmf-default-app dev-master
 
 ### Model the domain ### {#app_model}
 
-The application ships with a demo UML model that may be used as a quick start.
+The application ships with a demo UML model that can be used as a quick start.
 It's located in `model/model.uml`. Base models for those who want to start
 from scratch are located in _model/base/cwm/_ and _model/base/papyrus/_. An
-in-depth guide on modeling for wCMF may be found in the section \ref model.
+in-depth guide on modeling for wCMF is provided in the \ref model section.
 
 ### Generate the code ### {#app_gen}
 
-A code generator is used to generate class- and configuration files from the domain
+A code \ref model_generator is used to generate class- and configuration files from the domain
 model. Execute the following command in the _build_ directory of the application in
 order to run the generator:
 
