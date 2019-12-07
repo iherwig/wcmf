@@ -100,7 +100,7 @@ $(function() {
   $("div.levels > span").addClass("btn btn-secondary btn-sm");
   $("div.levels > span").css("margin-right", "0.25em");
 
-  $("table.directory").addClass("table table-striped");
+  $("table.directory").addClass("table");
   $("div.summary > a").addClass("btn btn-secondary btn-sm");
   $("table.fieldtable").addClass("table");
 
@@ -124,13 +124,12 @@ $(function() {
   $("div.ttc").hide();
 
   // tables
-  $("table.doxtable, table.markdownTable").removeClass("markdownTable").addClass('table').addClass('table-striped');
+  $("table.doxtable, table.markdownTable").removeClass("markdownTable").addClass('table');
   $("table.doxtable tr").each(function() {
     $(this).children("td:nth(0)").addClass("text-nowrap");
   });
 
   // image tables
-  $("div.image-table table").removeClass('table-striped');
   $("div.image-table th").addClass("text-center");
 
   // controller action tables
