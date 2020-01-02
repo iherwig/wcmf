@@ -173,6 +173,7 @@ class HtmlFormat extends AbstractFormat {
     // give precedence to format specific file
     $finalTplFile = isset($formatViewTplFile) && file_exists($formatViewTplFile) ?
             $formatViewTplFile : $viewTplFile;
+    $response->setProperty('html_tpl', $finalTplFile);
     return $finalTplFile;
   }
 }
