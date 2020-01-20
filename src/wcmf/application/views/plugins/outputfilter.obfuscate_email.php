@@ -23,8 +23,8 @@ function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $
   // encoding functions
   $alwaysEncode = ['.', '@', '+'];
   $octHexEncodeChar = function($char) use ($alwaysEncode, $encodePercentage) {
-    if (in_array($char, $alwaysEncode) || mt_rand(1, 100) < $encodePercentage) {
-      if (mt_rand(0, 1)) {
+    if (in_array($char, $alwaysEncode) || random_int(1, 100) < $encodePercentage) {
+      if (random_int(0, 1)) {
         return '&#'.ord($char).';';
       }
       else {
@@ -37,7 +37,7 @@ function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $
   };
   $neverEncode = ['.', '@', '+']; // don't encode those as not fully supported by IE & Chrome
   $urlEncodeChar = function($char) use ($neverEncode, $encodePercentage) {
-    if (!in_array($char, $neverEncode) && mt_rand(1, 100) < $encodePercentage) {
+    if (!in_array($char, $neverEncode) && random_int(1, 100) < $encodePercentage) {
       $charCode = ord($char);
       return '%'.dechex(($charCode >> 4) & 0xF).dechex($charCode & 0xF);
     }

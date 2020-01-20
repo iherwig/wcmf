@@ -240,7 +240,9 @@ class JsonFormatTest extends DatabaseTestCase {
             ]);
 
     $format = $this->createFormat();
+    ob_start();
     $format->serialize($message);
+    ob_end_clean();
 
     // test
     $data = $message->getValues();
@@ -274,7 +276,9 @@ class JsonFormatTest extends DatabaseTestCase {
             ]);
 
     $format = $this->createFormat();
+    ob_start();
     $format->serialize($message);
+    ob_end_clean();
 
     // test
     $data = $message->getValues();
@@ -283,7 +287,7 @@ class JsonFormatTest extends DatabaseTestCase {
     $this->assertEquals('app.src.model.Book:123', $data['oid']);
     $this->assertEquals('app.src.model.Book', $data['className']);
     $this->assertEquals(false, $data['isReference']);
-    $this->assertEquals(1317420061, $data['lastChange']);
+    $this->assertEquals(strtotime($book->getValue('modified')), $data['lastChange']);
 
     $attributes = $data['attributes'];
     $this->assertTrue(is_array($attributes));
@@ -322,7 +326,9 @@ class JsonFormatTest extends DatabaseTestCase {
         ]);
 
     $format = $this->createFormat();
+    ob_start();
     $format->serialize($message);
+    ob_end_clean();
 
     // test
     $data = $message->getValues();
@@ -380,7 +386,9 @@ class JsonFormatTest extends DatabaseTestCase {
                 'list' => $list1]);
 
     $format = $this->createFormat();
+    ob_start();
     $format->serialize($message);
+    ob_end_clean();
 
     // test
     $data = $message->getValues();

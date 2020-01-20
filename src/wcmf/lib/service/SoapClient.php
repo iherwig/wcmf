@@ -79,17 +79,16 @@ class SoapClient extends \SoapClient {
 
   /**
    * Create the WS-Security authentication header for the given credentials
+   * NOTE The password is sent as clear text and therefore this message should be sent over a confidential channel.
    * @param $user
    * @param $password
    * @return SoapHeader
    */
   private function generateWSSecurityHeader($user, $password) {
-    $nonce = sha1(mt_rand());
     $xml = '<wsse:Security SOAP-ENV:mustUnderstand="1" xmlns:wsse="'.self::OASIS.'/oasis-200401-wss-wssecurity-secext-1.0.xsd">
         <wsse:UsernameToken>
           <wsse:Username>'.$user.'</wsse:Username>
           <wsse:Password Type="'.self::OASIS.'/oasis-200401-wss-username-token-profile-1.0#PasswordText">'.$password.'</wsse:Password>
-          <wsse:Nonce EncodingType="'.self::OASIS.'/oasis-200401-wss-soap-message-security-1.0#Base64Binary">'.$nonce.'</wsse:Nonce>
         </wsse:UsernameToken>
       </wsse:Security>';
     return new \SoapHeader(self::OASIS.'/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', new \SoapVar($xml, XSD_ANYXML), true);

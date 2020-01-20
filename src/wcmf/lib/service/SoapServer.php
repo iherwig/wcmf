@@ -21,6 +21,10 @@ use wcmf\lib\util\URIUtil;
  * SoapServer extends nusoap server to actually process
  * requests inside the application context.
  *
+ * Soap requests must include credentials in the form of a wsse:UsernameToken header as 
+ * described in the WS-Security UsernameToken Profile. Passwords must be sent as plain text
+ * using the PasswordText type and therefore should be sent over a confidential channel.
+ *
  * @author ingo herwig <ingo@wemove.com>
  */
 class SoapServer extends \nusoap_server {
@@ -36,8 +40,6 @@ class SoapServer extends \nusoap_server {
    * Constructor
    */
   public function __construct() {
-    //$this->debugLevel = 9;
-    //$this->debug_flag = true;
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
@@ -45,6 +47,7 @@ class SoapServer extends \nusoap_server {
     $endpoint = dirname($scriptURL).'/soap';
     $this->configureWSDL('SOAPService', self::TNS, $endpoint, 'document');
     $this->wsdl->schemaTargetNamespace = self::TNS;
+    $this->debugLevel = 9;
 
     // register default complex types
     $this->wsdl->addComplexType(
@@ -96,6 +99,7 @@ class SoapServer extends \nusoap_server {
     }
     try {
       $oldErrorReporting = error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+      $this->debug_flag = ObjectFactory::getInstance('configuration')->getBooleanValue('debug', 'Application');
       // call service method, but suppress output
       ob_start(function($buffer) {
         $this->serverResponse = $buffer;

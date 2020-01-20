@@ -70,7 +70,7 @@ class SoapTest extends DatabaseTestCase {
   public function testSearch() {
     $this->markTestIncomplete('Relies on lucene search.');
 
-    $options = ['trace' => 1, 'exceptions' => 0];
+    $options = ['trace' => 1, 'exceptions' => 1];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $params = ['query' => 'Test'];
@@ -80,7 +80,7 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testList() {
-    $options = ['trace' => 1, 'exceptions' => 0];
+    $options = ['trace' => 1, 'exceptions' => 1];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $result = $client->call("getAuthorList");
@@ -93,7 +93,7 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testRead() {
-    $options = ['trace' => 1, 'exceptions' => 0];
+    $options = ['trace' => 1, 'exceptions' => 1];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $params = ['oid' => 'app.src.model.Author:202', 'depth' => 1];
@@ -112,7 +112,7 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testUpdate() {
-    $options = ['trace' => 1, 'exceptions' => 0];
+    $options = ['trace' => 1, 'exceptions' => 1];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
@@ -144,7 +144,7 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testCreate() {
-    $options = ['trace' => 1, 'exceptions' => 0];
+    $options = ['trace' => 1, 'exceptions' => 1];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $author = new \stdClass();
@@ -175,7 +175,7 @@ class SoapTest extends DatabaseTestCase {
   }
 
   public function testDelete() {
-    $options = ['trace' => 1, 'exceptions' => 0];
+    $options = ['trace' => 1, 'exceptions' => 1];
     $client = new SoapClient(self::getEndPoint().'?wsdl', 'admin', 'admin', $options);
 
     $params = ['oid' => 'app.src.model.Author:202'];

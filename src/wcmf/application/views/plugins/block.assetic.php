@@ -84,6 +84,7 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
         $basePath = dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/';
         $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'FrontendCache');
         $cacheRootRel = URIUtil::makeRelative($cacheRootAbs, $basePath);
+        $hmacKey = $config->getValue('secret', 'application');
 
         // process resources
         foreach ($resources as $type => $files) {
@@ -91,7 +92,7 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
           $writer = new AssetWriter($cacheRootAbs);
 
           // hash content for cache busting
-          $hash = hash_init('sha1');
+          $hash = hash_init('sha1', HASH_HMAC, $hmacKey);
           foreach (array_merge($files['min'], $files['src']) as $file) {
             $content = file_exists($file) ? file_get_contents($file) : '';
             hash_update($hash, $content);

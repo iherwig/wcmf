@@ -25,7 +25,7 @@
         }
     ],
     "require": {
-        "php": ">=5.6.0",
+        "php": ">=7.0",
         "olympos/chronos-generator": "1.0.*",
         "monolog/monolog": "~1.22",
         "zendframework/zend-db": "2.*",
