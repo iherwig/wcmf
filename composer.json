@@ -31,7 +31,7 @@
         "zendframework/zend-db": "2.*",
         "zendframework/zendsearch": "^2.0@rc",
         "zendframework/zend-eventmanager": "^3.2",
-        "codecasts/nusoap-php7": "~0.9",
+        "econea/nusoap": "~0.9.7",
         "lcobucci/jwt": "~3.2"
     },
     "require-dev": {
@@ -45,7 +45,7 @@
         "eventviva/php-image-resize": "Use this package to resize images using Smarty plugins",
         "setasign/fpdi-fpdf": "Use this package to generate PDF files",
         "zf1/zend-http": "Use this package, if you want to communicate to other wCMF instances over HTTP",
-        "facebook/webdriver": "Use this package, if you want to run tests with SeleniumTestCase"
+        "php-webdriver/webdriver": "Use this package, if you want to run tests with SeleniumTestCase"
     },
     "autoload": {
         "psr-4": {
