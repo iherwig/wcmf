@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\model;
 
-use wcmf\lib\model\Node;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 

@@ -36,11 +36,11 @@ use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\security\PermissionManager;
-use Zend\EventManager\EventManager as ZendEventManager;
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\TableGateway\Feature\EventFeature;
-use Zend\Db\TableGateway\Feature\EventFeatureEventsInterface;
-use Zend\Db\TableGateway\TableGateway;
+use Laminas\EventManager\EventManager as LaminasEventManager;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\TableGateway\Feature\EventFeature;
+use Laminas\Db\TableGateway\Feature\EventFeatureEventsInterface;
+use Laminas\Db\TableGateway\TableGateway;
 
 /**
  * AbstractRDBMapper maps objects of one type to a relational database schema.
@@ -101,7 +101,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     self::$isDebugEnabled = self::$logger->isDebugEnabled();
 
     // listen to db events
-    $this->dbEvents = new ZendEventManager();
+    $this->dbEvents = new LaminasEventManager();
     $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_INSERT, [$this, 'handleDbEvent']);
     $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$this, 'handleDbEvent']);
     $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_DELETE, [$this, 'handleDbEvent']);
@@ -1093,7 +1093,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   }
 
   /**
-   * Handle an event triggered from the zend db layer
+   * Handle an event triggered from the laminas db layer
    * @param $e
    */
   public function handleDbEvent($e) {

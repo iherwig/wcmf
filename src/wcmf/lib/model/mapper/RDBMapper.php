@@ -31,7 +31,7 @@ interface RDBMapper extends PersistenceMapper {
 
   /**
    * Get the database adapter.
-   * @return Zend\Db\Adapter\AdapterInterface
+   * @return Laminas\Db\Adapter\AdapterInterface
    */
   public function getAdapter();
 

@@ -73,7 +73,7 @@ class SaveControllerTest extends ControllerTestCase {
     $data = [
       $oid->__toString() => $testObj
     ];
-    $response = $this->runRequest('update', $data);
+    $this->runRequest('update', $data);
 
     // test
     $obj = $persistenceFacade->load($oid, BuildDepth::SINGLE);
@@ -98,7 +98,7 @@ class SaveControllerTest extends ControllerTestCase {
       $oid->__toString() => $testObj,
       'language' => 'de'
     ];
-    $response = $this->runRequest('update', $data);
+    $this->runRequest('update', $data);
 
     // test
     $translatedObj = ObjectFactory::getInstance('localization')->loadTranslatedObject($oid, 'de');

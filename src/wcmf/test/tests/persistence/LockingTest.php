@@ -51,7 +51,7 @@ class LockingTest extends DatabaseTestCase {
     $oid = ObjectId::parse($this->bookOidStr);
 
     // lock
-    $sid1 = TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('user1', 'user1');
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
@@ -61,7 +61,7 @@ class LockingTest extends DatabaseTestCase {
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
 
     // release
-    $sid2 = TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('user1', 'user1');
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->releaseLock($oid);
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
@@ -75,14 +75,14 @@ class LockingTest extends DatabaseTestCase {
     $oid = ObjectId::parse($this->bookOidStr);
 
     // user 1 locks the object
-    $sid1 = TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('user1', 'user1');
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     TestUtil::endSession();
 
     // user 2 tries to lock the object
-    $sid2 = TestUtil::startSession('user2', 'user2');
+    TestUtil::startSession('user2', 'user2');
     try {
       ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     }
@@ -99,14 +99,14 @@ class LockingTest extends DatabaseTestCase {
     $oid = ObjectId::parse($this->bookOidStr);
 
     // user 1 locks the object
-    $sid1 = TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('user1', 'user1');
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     TestUtil::endSession();
 
     // user 2 tries to update the object
-    $sid2 = TestUtil::startSession('user2', 'user2');
+    TestUtil::startSession('user2', 'user2');
     $objectTitle = '';
     try {
       $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
@@ -130,14 +130,14 @@ class LockingTest extends DatabaseTestCase {
     $oid = ObjectId::parse($this->bookOidStr);
 
     // user 1 locks the object
-    $sid1 = TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('user1', 'user1');
     $this->assertEquals(0, $this->getNumPessimisticLocks($oid, 'user1'));
     ObjectFactory::getInstance('concurrencyManager')->aquireLock($oid, Lock::TYPE_PESSIMISTIC);
     $this->assertEquals(1, $this->getNumPessimisticLocks($oid, 'user1'));
     TestUtil::endSession();
 
     // user 2 tries to delete the object
-    $sid2 = TestUtil::startSession('user2', 'user2');
+    TestUtil::startSession('user2', 'user2');
     try {
       $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
       $transaction->begin();
@@ -159,7 +159,7 @@ class LockingTest extends DatabaseTestCase {
     $oid = ObjectId::parse($this->bookOidStr);
 
     // user 1 locks the object and modifies it
-    $sid1 = TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('user1', 'user1');
     $transaction1 = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction1->begin();
     $object1 = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
@@ -181,7 +181,7 @@ class LockingTest extends DatabaseTestCase {
     $oid = ObjectId::parse($this->bookOidStr);
 
     // user 1 locks the object
-    $sid1 = TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('user1', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);
@@ -212,7 +212,7 @@ class LockingTest extends DatabaseTestCase {
     $oid = ObjectId::parse($this->bookOidStr);
 
     // user 1 locks the object
-    $sid1 = TestUtil::startSession('user1', 'user1');
+    TestUtil::startSession('user1', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();
     $object = ObjectFactory::getInstance('persistenceFacade')->load($oid, BuildDepth::SINGLE);

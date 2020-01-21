@@ -12,11 +12,10 @@ namespace wcmf\lib\model\mapper;
 
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\persistence\PersistenceException;
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Sql;
 
 /**
  * Select statement
@@ -186,7 +185,7 @@ class SelectStatement extends Select {
     }
 
     // create aggregation column
-    $countStatement->columns(['nRows' => new \Zend\Db\Sql\Expression('COUNT('.$this->quantifier.' '.join(', ', $countColumns).')')]);
+    $countStatement->columns(['nRows' => new \Laminas\Db\Sql\Expression('COUNT('.$this->quantifier.' '.join(', ', $countColumns).')')]);
 
     $countStatement->id = $this->id != self::NO_CACHE ? $this->id.'-count' : self::NO_CACHE;
     try {

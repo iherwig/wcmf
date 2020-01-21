@@ -73,7 +73,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $data = [
       'oid' => $oid
     ];
-    $response = $this->runRequest('delete', $data);
+    $this->runRequest('delete', $data);
 
     // test
     $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE1);
@@ -112,7 +112,7 @@ class DeleteControllerTest extends ControllerTestCase {
       'oid' => $oid->__toString(),
       'language' => 'de'
     ];
-    $response = $this->runRequest('delete', $data);
+    $this->runRequest('delete', $data);
 
     // tests
     $oids = $persistenceFacade->getOIDs(DeleteControllerTest::TEST_TYPE2);
@@ -152,7 +152,7 @@ class DeleteControllerTest extends ControllerTestCase {
     $data = [
       'oid' => $oid->__toString()
     ];
-    $response = $this->runRequest('delete', $data);
+    $this->runRequest('delete', $data);
 
     // test
     $object = $persistenceFacade->create(self::TEST_TYPE1);

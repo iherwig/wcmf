@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\model\mapper;
 
-use Zend\Db\Sql\Predicate\Expression;
+use Laminas\Db\Sql\Predicate\Expression;
 
 /**
  * Constant expression used in sql statements
