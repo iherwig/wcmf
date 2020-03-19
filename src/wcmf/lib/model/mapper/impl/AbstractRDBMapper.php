@@ -101,17 +101,17 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     self::$isDebugEnabled = self::$logger->isDebugEnabled();
 
     // listen to db events
-    $this->dbEvents = new LaminasEventManager();
-    $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_INSERT, [$this, 'handleDbEvent']);
-    $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$this, 'handleDbEvent']);
-    $this->dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_DELETE, [$this, 'handleDbEvent']);
+    self::$dbEvents = new LaminasEventManager();
+    self::$dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_INSERT, [$this, 'handleDbEvent']);
+    self::$dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$this, 'handleDbEvent']);
+    self::$dbEvents->attach(EventFeatureEventsInterface::EVENT_POST_DELETE, [$this, 'handleDbEvent']);
   }
 
   /**
    * Destructor
    */
   public function __destruct() {
-    $this->dbEvents->detach([$this, 'handleDbEvent']);
+    self::$dbEvents->detach([$this, 'handleDbEvent']);
   }
 
   /**
@@ -457,7 +457,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
     // execute the statement
     $affectedRows = 0;
-    $table = new TableGateway($tableName, $this->adapter, new EventFeature($this->dbEvents));
+    $table = new TableGateway($tableName, $this->adapter, new EventFeature(self::$dbEvents));
     try {
       if ($operation instanceof InsertOperation) {
         $affectedRows = $table->insert($translatedValues);
