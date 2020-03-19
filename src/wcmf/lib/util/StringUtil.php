@@ -366,7 +366,7 @@ class StringUtil {
     if (is_string($string)) {
       $str = str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
       if ($firstLowerCase) {
-        $str{0} = strtolower($str{0});
+        $str[0] = strtolower($str[0]);
       }
       return $str;
     }
