@@ -138,6 +138,10 @@ class ObjectId implements \Serializable, \JsonSerializable {
     }
 
     $oidParts = self::parseOidString($oid);
+    if (!$oidParts) {
+      return null;
+    }
+
     $type = $oidParts['type'];
     $ids = $oidParts['id'];
     $prefix = $oidParts['prefix'];
