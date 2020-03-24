@@ -153,8 +153,9 @@ class HtmlFormat extends AbstractFormat {
     if (self::$sharedView == null) {
       self::$sharedView = ObjectFactory::getInstance('view');
     }
-    // check if a view template is defined
-    $viewTpl = self::$sharedView->getTemplate($response->getSender(),
+    // check if a view template is defined, prefer template property over configuration
+    $viewTpl = $response->getProperty('html_tpl_file') !== null ? $response->getProperty('html_tpl_file') :
+      self::$sharedView->getTemplate($response->getSender(),
                   $response->getContext(), $response->getAction());
     if (!$viewTpl) {
       throw new ConfigurationException("View definition missing for ".

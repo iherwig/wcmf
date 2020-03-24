@@ -449,11 +449,11 @@ for `RootController`.
 allows to provide different versions of a view template. This is especially
 useful, if you want to deliver device dependent content for the same action key.
 
-To select a specific template version, the value `html_tpl_format` has to be set
-on the response instance. E.g. if the template file would be _home.tpl_, setting
-the value to _mobile_ would select the template file _home-mobile.tpl_. If the
-requested version does not exist, it is ignored and the default template is used
-(_home.tpl_ in this example).
+To select a specific template version, the property `html_tpl_format` has to be set
+on the response instance (see \link wcmf::lib::presentation::ControllerMessage::setProperty `ControllerMessage::setProperty`\endlink). 
+E.g. if the template file would be _home.tpl_, setting the value to _mobile_ would 
+select the template file _home-mobile.tpl_. If the requested version does not exist, 
+it is ignored and the default template is used (_home.tpl_ in this example).
 
 ## Webservice APIs ## {#pres_apis}
 
