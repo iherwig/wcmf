@@ -26,6 +26,9 @@ use wcmf\lib\util\StringUtil;
  *
  * // key/value pairs provided by global function g_getListValues with parameters
  * {"type":"function","name":"g_getListValues","params":["param1","param2"]}
+ *
+ * // key/value pairs provided by static method getValues in class ListValueProvider
+ * {"type":"function","name":"name\\\\space\\\\ListValueProvider::getValues"}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -43,11 +46,18 @@ class FunctionListStrategy implements ListStrategy {
     $name = $options['name'];
     $params = isset($options['params']) ? $options['params'] : null;
 
-    if (function_exists($name)) {
-      $map = call_user_func_array($name, $params);
+    $nameParts = explode('::', $options['name']);
+    if (count($nameParts) == 1 && function_exists($nameParts[0])) {
+      $functionName = $nameParts[0];
+      $map = call_user_func_array($functionName, $params === null ? [] : $params);
+    }
+    elseif (count($nameParts) == 2 && method_exists($nameParts[0], $nameParts[1])) {
+      $className = $nameParts[0];
+      $methodName = $nameParts[1];
+      $map = $params === null ? $className::$methodName() : $className::$methodName(...$params);
     }
     else {
-      throw new ConfigurationException('Function '.$name.' is not defined globally!');
+      throw new ConfigurationException('Function or method '.$name.' is not defined!');
     }
 
     // translate values
