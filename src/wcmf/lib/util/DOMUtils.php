@@ -79,9 +79,18 @@ class DOMUtils {
    * @param $html
    */
   public static function setInnerHtml(\DOMElement $element, $html) {
-    $fragment = $element->ownerDocument->createDocumentFragment();
-    $fragment->appendXML($html);
-    $element->appendChild($fragment);
+    $doc = new \DOMDocument();
+    $doc->loadHTML('<body>'.trim(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8')).'</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    $contentNode = $doc->getElementsByTagName('body')->item(0);
+    $contentNode = $element->ownerDocument->importNode($contentNode, true);
+    $oldChildren = $element->childNodes;
+    foreach ($oldChildren as $child) {
+      $element->removeChild($child);
+    }
+    $newChildren = $contentNode->childNodes;
+    foreach ($newChildren as $child) {
+      $element->appendChild($child->cloneNode(true));
+    }
   }
 
 
