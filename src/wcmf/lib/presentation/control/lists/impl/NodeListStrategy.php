@@ -70,7 +70,7 @@ class NodeListStrategy implements ListStrategy {
     $needsTranslation = $language != null && $language != $localization->getDefaultLanguage();
 
     // set cache id for unfiltered result
-    $cacheId = !$hasQuery ? md5(json_encode($options)) : null;
+    $cacheId = !$hasQuery ? md5(join('+', [json_encode($options), $valuePattern, $key, $language])) : null;
 
     $list = [];
     if ($cacheId && $this->cache->exists(self::CACHE_SECTION, $cacheId)) {
