@@ -11,11 +11,17 @@
 namespace wcmf\lib\presentation;
 
 /**
- * Interface for content modules.
+ * Interface for smarty content modules.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 interface ContentModule {
+  /**
+   * Initialize the instance
+   * @param $parentTemplate Template object that includes this content module
+   * @param $params Associative array of parameters passed to the smarty {module} tag
+   */
+  public function initialize(\Smarty_Internal_Template $parentTemplate, array $params);
 
   /**
    * Render the content

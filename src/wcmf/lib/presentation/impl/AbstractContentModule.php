@@ -20,9 +20,9 @@ use wcmf\lib\presentation\view\View;
  *
  * Each content module is supposed to be associated with a template file that defines the output.
  *
- * The cache id of the template is calculated from the cacheId of the parent template and the name of the module
- * and an optional "cacheId" plugin parameter that is only necessary, if the same module is used several times in
- * the same parent template.
+ * If output caching is activated, the cache id of the template is calculated from the cacheId of the parent template
+ * and the name of the module and an optional "cacheId" plugin parameter that is only necessary, if the same module is used
+ * several times in the same parent template.
  */
 abstract class AbstractContentModule {
 
@@ -33,13 +33,10 @@ abstract class AbstractContentModule {
   private $logger = null;
 
   /**
-   * Constructor
-   * @param $name Template filename name without .tpl extension (must exist in templates/modules)
-   * @param $parentTemplate Template object that includes this content module
-   * @param $params Associative array of parameters passed to the smarty plugin
+   * @see ContentModule::initialize()
    */
-  public function __construct($name, \Smarty_Internal_Template $parentTemplate, array $params) {
-    $this->name = $name;
+  public function initialize(\Smarty_Internal_Template $parentTemplate, array $params) {
+    $this->name = $params['name'];
     $this->tpl = $this->getTemplateFile();
     if (!file_exists($this->tpl)) {
       throw new IllegalArgumentException('The template file \''.$this->tpl.'\' does not exist.');
@@ -47,39 +44,44 @@ abstract class AbstractContentModule {
     $this->view = ObjectFactory::getInstance('view');
     $this->logger = LogManager::getLogger(get_class($this));
 
+    $isCaching = !$parentTemplate->cached->has_nocache_code;
+
     // calculate cache id
-    $this->cacheId = $parentTemplate->cache_id.'-'.$name.(isset($params['cacheId']) ? $params['cacheId'] : '');
+    $this->cacheId = $isCaching ? $parentTemplate->cache_id.'-'.$this->name.(isset($params['cacheId']) ? $params['cacheId'] : '') : null;
 
     // handle parameters depending on the cache state of the parent template
     $cache = ObjectFactory::getInstance('dynamicCache');
-    if ($parentTemplate->isCached()) {
+    if ($isCaching && $parentTemplate->isCached()) {
       // get cached parameters
       $parentParams = $cache->exists('module-cache', $parentTemplate->cache_id) ? $cache->get('module-cache', $parentTemplate->cache_id)['params'] : [];
       $this->params = $cache->exists('module-cache', $this->cacheId) ? $cache->get('module-cache', $this->cacheId)['params'] : array_merge($parentParams, $params);
     }
     else {
-      // use fresh parameters
-      $this->params = $params;
-      foreach ($this->getRequiredTemplateVars() as $var) {
-        $this->params[$var] = $parentTemplate->getTemplateVars($var);
+      // use fresh parameters (including parent template variables)
+      $this->params = array_merge($params, $parentTemplate->getTemplateVars());
+
+      if ($isCaching) {
+        // store parameters for later use
+        $cache->put('module-cache', $this->cacheId, ['params' => $this->params]);
+        $cache->put('module-cache', $parentTemplate->cache_id, ['params' => $this->params]);
       }
-      // store parameters for later use
-      $cache->put('module-cache', $this->cacheId, ['params' => $this->params]);
-      $cache->put('module-cache', $parentTemplate->cache_id, ['params' => $this->params]);
     }
-    // check parameters and assign them to the view
+
+    // check parameters
     foreach ($this->getRequiredTemplateVars() as $var) {
       if (!isset($this->params[$var])) {
         $this->logger->error('Parameter \''.$var.'\' is undefined.');
       }
-      else {
-        $this->view->setValue($var, $this->params[$var]);
-      }
+    }
+
+    // assign paramters to the view
+    foreach (array_keys($this->params) as $var) {
+      $this->view->setValue($var, $this->params[$var]);
     }
   }
 
   /**
-   * Render the module
+   * @see ContentModule::render()
    */
   public function render() {
     if (!$this->view->isCached($this->tpl, $this->cacheId)) {

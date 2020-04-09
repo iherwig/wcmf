@@ -20,10 +20,15 @@ use wcmf\lib\core\ObjectFactory;
  *
  * [ContentModule]
  * next_events = \app\src\lib\content\NextEvents
+ * form = \app\src\lib\content\Form
+ *
+ * Module output is cached by default. To prevent it from being cached it must be
+ * wrapped within a {nocache} tag.
  *
  * Usage example:
  * @code
- * {module name='next_events' ...}
+ * {module name='next_events' ...} {* cache module output *}
+ * {nocache}{module name='form' ...}{/nocache} {* don't cache module output *}
  * @endcode
  *
  * @param $params Array with keys:
@@ -42,7 +47,8 @@ function smarty_function_module($params, Smarty_Internal_Template $template) {
   $name = $params['name'];
   $moduleClass = isset($modules[$name]) ? $modules[$name] : null;
   if ($moduleClass && class_exists($moduleClass) && in_array($requiredInterface, class_implements($moduleClass))) {
-    $contentModule = new $moduleClass($name, $template, $params);
+    $contentModule = new $moduleClass();
+    $contentModule->initialize($template, $params);
   }
   else {
     LogManager::getLogger(__FILE__)->error('Content class \''.$moduleClass.'\' for content module \''.$name.'\' does not exist or does not implement interface \''.$requiredInterface.'\'');
