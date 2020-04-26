@@ -334,22 +334,24 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     // order matching routes by number of parameters
     $method = $this->getMethod();
     usort($routes, function($a, $b) use ($method) {
-      $numParamsA = $a['numPathParameters'];
-      $numParamsB = $b['numPathParameters'];
-      if ($numParamsA == $numParamsB) {
-        $numPatternsA = $a['numPathPatterns'];
-        $numPatternsB = $b['numPathPatterns'];
-        if ($numPatternsA == $numPatternsB) {
-          $hasMethodA = in_array($method, $a['methods']);
-          $hasMethodB = in_array($method, $b['methods']);
-          return ($hasMethodA && !$hasMethodB) ? -1 :
-                  ((!$hasMethodA && $hasMethodB) ? 1 : 0);
+      $hasMethodA = in_array($method, $a['methods']);
+      $hasMethodB = in_array($method, $b['methods']);
+      if ($hasMethodA && $hasMethodB) {
+        $numParamsA = $a['numPathParameters'];
+        $numParamsB = $b['numPathParameters'];
+        if ($numParamsA == $numParamsB) {
+          $numPatternsA = $a['numPathPatterns'];
+          $numPatternsB = $b['numPathPatterns'];
+          if ($numPatternsA == $numPatternsB) {
+            return 0;
+          }
+          // more patterns is more specific
+          return ($numPatternsA < $numPatternsB) ? 1 : -1;
         }
-        // more patterns is more specific
-        return ($numPatternsA < $numPatternsB) ? 1 : -1;
+        // less parameters is more specific
+        return ($numParamsA > $numParamsB) ? 1 : -1;
       }
-      // less parameters is more specific
-      return ($numParamsA > $numParamsB) ? 1 : -1;
+      return ($hasMethodA && !$hasMethodB) ? -1 : 1;
     });
 
     if (self::$logger->isDebugEnabled()) {
