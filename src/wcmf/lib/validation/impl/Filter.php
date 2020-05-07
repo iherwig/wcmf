@@ -27,6 +27,9 @@ use wcmf\lib\validation\ValidateType;
  *
  * // FILTER_VALIDATE_REGEXP with regexp option
  * filter:{"type":"validate_regexp","options":{"options":{"regexp":"/^[0-9]*$/"}}}
+ *
+ * // FILTER_UNSAFE_RAW with FILTER_REQUIRE_ARRAY flag
+ * filter:{"type":"unsafe_raw","options":16777216}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
