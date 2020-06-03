@@ -346,11 +346,15 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           if ($numPatternsA == $numPatternsB) {
             $result = 0;
           }
-          // more patterns is more specific
-          $result = ($numPatternsA < $numPatternsB) ? 1 : -1;
+          else {
+            // more patterns is more specific
+            $result = ($numPatternsA < $numPatternsB) ? 1 : -1;
+          }
         }
-        // less parameters is more specific
-        $result = ($numParamsA > $numParamsB) ? 1 : -1;
+        else {
+          // less parameters is more specific
+          $result = ($numParamsA > $numParamsB) ? 1 : -1;
+        }
       }
       return $result;
     });
