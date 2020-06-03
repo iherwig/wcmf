@@ -336,6 +336,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
     usort($routes, function($a, $b) use ($method) {
       $hasMethodA = in_array($method, $a['methods']);
       $hasMethodB = in_array($method, $b['methods']);
+      $result = ($hasMethodA && !$hasMethodB) ? -1 : 1;
       if ($hasMethodA && $hasMethodB) {
         $numParamsA = $a['numPathParameters'];
         $numParamsB = $b['numPathParameters'];
@@ -343,15 +344,15 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
           $numPatternsA = $a['numPathPatterns'];
           $numPatternsB = $b['numPathPatterns'];
           if ($numPatternsA == $numPatternsB) {
-            return 0;
+            $result = 0;
           }
           // more patterns is more specific
-          return ($numPatternsA < $numPatternsB) ? 1 : -1;
+          $result = ($numPatternsA < $numPatternsB) ? 1 : -1;
         }
         // less parameters is more specific
-        return ($numParamsA > $numParamsB) ? 1 : -1;
+        $result = ($numParamsA > $numParamsB) ? 1 : -1;
       }
-      return ($hasMethodA && !$hasMethodB) ? -1 : 1;
+      return $result;
     });
 
     if (self::$logger->isDebugEnabled()) {
