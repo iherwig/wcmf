@@ -236,7 +236,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
    * @return Boolean
    */
   public static function isDummyId($id) {
-    return (strlen($id) == 36 && strpos($id, 'wcmf') === 0);
+    return (strlen($id) == 68 && strpos($id, 'wcmf') === 0);
   }
 
   /**
