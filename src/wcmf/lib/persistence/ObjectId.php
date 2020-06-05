@@ -11,6 +11,7 @@
 namespace wcmf\lib\persistence;
 
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\util\StringUtil;
 
 /**
  * ObjectId is the unique identifier of an object.
@@ -227,7 +228,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
    * @return String
    */
   public static function getDummyId() {
-    return 'wcmf'.hash('sha256', uniqid(ip2long(@$_SERVER['REMOTE_ADDR']) ^ (int)@$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space(sys_get_temp_dir()), 1));
+    return 'wcmf'.str_replace('-', '', StringUtil::guidv4());
   }
 
   /**
@@ -236,7 +237,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
    * @return Boolean
    */
   public static function isDummyId($id) {
-    return (strlen($id) == 68 && strpos($id, 'wcmf') === 0);
+    return (strlen($id) == 36 && strpos($id, 'wcmf') === 0);
   }
 
   /**
