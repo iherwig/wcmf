@@ -49,7 +49,7 @@ class FileUtil {
       $pieces = preg_split('/\./', self::basename($destName));
       $extension = array_pop($pieces);
       $name = join('.', $pieces);
-      $destName = dirname($destName)."/".$name.uniqid(rand()).".".$extension;
+      $destName = dirname($destName)."/".$name.uniqid(mt_rand(0, 99)).".".$extension;
     }
     $result = move_uploaded_file($mediaFile['tmp_name'], $destName);
     if ($result === false) {

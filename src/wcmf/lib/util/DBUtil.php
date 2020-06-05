@@ -160,9 +160,9 @@ class DBUtil {
       $conn->beginTransaction();
       try {
         // get table list from source database
-        foreach ($conn->query("SHOW TABLES FROM ".$srcName) as $row) {
+        foreach ($conn->query("SHOW TABLES FROM $srcName") as $row) {
           // create new table
-          $sqlStmt = "CREATE TABLE ".$destName.".".$row[0]." LIKE ".$srcName.".".$row[0];
+          $sqlStmt = "CREATE TABLE $destName.$row[0] LIKE $srcName.$row[0]";
           $logger->debug($sqlStmt);
           $result = $conn->query($sqlStmt);
           if (!$result) {
@@ -170,7 +170,7 @@ class DBUtil {
           }
 
           // insert data
-          $sqlStmt = "INSERT INTO ".$destName.".".$row[0]." SELECT * FROM ".$srcName.".".$row[0];
+          $sqlStmt = "INSERT INTO $destName.$row[0] SELECT * FROM $srcName.$row[0]";
           $logger->debug($sqlStmt);
           $result = $conn->query($sqlStmt);
           if (!$result) {
@@ -203,7 +203,7 @@ class DBUtil {
       	throw new PersistenceException("Couldn't connect to MySql: ".$ex->getMessage());
       }
       // create database
-      $sqlStmt = "CREATE DATABASE IF NOT EXISTS ".$name;
+      $sqlStmt = "CREATE DATABASE IF NOT EXISTS $name";
       $result = $conn->query($sqlStmt);
       if ($result) {
         $created = true;

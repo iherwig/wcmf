@@ -93,7 +93,7 @@ class DefaultFormatter implements Formatter {
       $cacheDate = $response->getCacheDate();
       $lastModified =  $cacheDate !== null ? $cacheDate : new \DateTime();
       $lastModifiedTs = $lastModified->getTimestamp();
-      $etag = md5($lastModifiedTs.$cacheId);
+      $etag = hash('sha256', $lastModifiedTs.$cacheId);
       $maxAge = $response->getCacheLifetime() !== null ? $response->getCacheLifetime() : 31536000;
 
       // send caching headers

@@ -183,14 +183,14 @@ class CSVImportController extends BatchController {
     $this->getResponse()->setValue('stats', $stats);
 
     // oids are line numbers
-    $oids = [];
+    $importOids = [];
     $file = new \SplFileObject($docFile);
     $file->seek(1); // skip header
     $eof = false;
     while (!$eof) {
       $content = $file->current();
       if (strlen(trim($content)) > 0) {
-        $oids[] = $file->key();
+        $importOids[] = $file->key();
       }
       $file->next();
       $eof = $file->eof();
@@ -200,7 +200,7 @@ class CSVImportController extends BatchController {
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     $this->addWorkPackage(
             $message->getText('Importing %0%', [$type]),
-            $nodesPerCall, $oids, 'importNodes');
+            $nodesPerCall, $importOids, 'importNodes');
   }
 
   /**

@@ -722,7 +722,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       return null;
     }
     $path = $this->fileUtil->realpath($this->cachePath).'/';
-    $filename = $path.'wcmf_config_'.md5($this->fileUtil->realpath($this->configPath).'/'.join('_', $parsedFiles));
+    $filename = $path.'wcmf_config_'.hash('sha256', $this->fileUtil->realpath($this->configPath).'/'.join('_', $parsedFiles));
     return $filename;
   }
 

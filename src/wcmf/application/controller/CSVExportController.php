@@ -212,7 +212,7 @@ class CSVExportController extends BatchController {
       $query->setConditionString((strlen($existingQuery) > 0 ? $existingQuery.' AND ' : '').NodeUtil::getRelationQueryCondition($sourceNode, $relation));
     }
 
-    $oids = $query->execute(false, $sortArray);
+    $exportOids = $query->execute(false, $sortArray);
 
     // get csv columns
     $names = [];
@@ -230,7 +230,7 @@ class CSVExportController extends BatchController {
     $nodesPerCall = $this->getRequestValue('nodesPerCall');
     $this->addWorkPackage(
             $message->getText('Exporting %0%', [$type]),
-            $nodesPerCall, $oids, 'exportNodes');
+            $nodesPerCall, $exportOids, 'exportNodes');
   }
 
   /**

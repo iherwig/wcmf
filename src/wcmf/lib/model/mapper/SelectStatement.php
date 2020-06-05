@@ -320,7 +320,7 @@ class SelectStatement extends Select {
    * @return String
    */
   protected static function getCacheId($id) {
-    return md5($id);
+    return hash('sha256', $id);
   }
 
   /**

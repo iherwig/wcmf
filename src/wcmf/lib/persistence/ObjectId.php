@@ -227,7 +227,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
    * @return String
    */
   public static function getDummyId() {
-    return 'wcmf'.md5(uniqid(ip2long(@$_SERVER['REMOTE_ADDR']) ^ (int)@$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space(sys_get_temp_dir()), 1));
+    return 'wcmf'.hash('sha256', uniqid(ip2long(@$_SERVER['REMOTE_ADDR']) ^ (int)@$_SERVER['REMOTE_PORT'] ^ @getmypid() ^ @disk_free_space(sys_get_temp_dir()), 1));
   }
 
   /**

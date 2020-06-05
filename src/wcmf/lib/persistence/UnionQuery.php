@@ -125,7 +125,7 @@ class UnionQuery {
     if ($pagingInfo != null) {
       $result .= ','.$pagingInfo->getOffset().','.$pagingInfo->getPageSize();
     }
-    return md5($result);
+    return hash('sha256', $result);
   }
 }
 ?>
