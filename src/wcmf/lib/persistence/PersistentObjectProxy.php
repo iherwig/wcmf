@@ -176,6 +176,13 @@ class PersistentObjectProxy implements PersistentObject {
   }
 
   /**
+   * @see PersistentObject::reset()
+   */
+  public function reset() {
+    return $this->__call(__FUNCTION__, []);
+  }
+
+  /**
    * @see PersistentObject::afterCreate()
    */
   public function afterCreate() {

@@ -222,6 +222,8 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
     $copy->properties = $this->properties;
     $copy->valueProperties = $this->valueProperties;
     $copy->state = $this->state;
+    $copy->changedAttributes = $this->changedAttributes;
+    $copy->originalData = $this->originalData;
 
     return $copy;
   }
@@ -264,6 +266,14 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
         $curNode->setValue($valueName, null, true);
       }
     }
+  }
+
+  /**
+   * @see PersistentObject::reset()
+   */
+  public function reset() {
+    $this->data = $this->originalData;
+    $this->changedAttributes = [];
   }
 
   /**

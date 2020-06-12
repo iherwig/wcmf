@@ -94,6 +94,11 @@ interface PersistentObject {
   public function clearValues();
 
   /**
+   * Reset all values to their original values
+   */
+  public function reset();
+
+  /**
    * <!--
    * Persistence hook methods.
    * -->
