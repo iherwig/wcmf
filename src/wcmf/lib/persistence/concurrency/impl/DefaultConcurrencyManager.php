@@ -142,9 +142,9 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
         $mapper = $this->persistenceFacade->getMapper($object->getType());
         $it = new NodeValueIterator($originalState, false);
         foreach($it as $valueName => $originalValue) {
-          $attribute = $mapper->getAttribute($valueName);
-          // ignore references
-          if (!($attribute instanceof ReferenceDescription) && !($attribute instanceof TransientAttributeDescription)) {
+          $attribute = $mapper->hasAttribute($valueName) ? $mapper->getAttribute($valueName) : null;
+          // ignore references and transient values
+          if ($attribute && !($attribute instanceof ReferenceDescription) && !($attribute instanceof TransientAttributeDescription)) {
             $currentValue = $currentState->getValue($valueName);
             if (strval($currentValue) != strval($originalValue)) {
               if (self::$logger->isDebugEnabled()) {
