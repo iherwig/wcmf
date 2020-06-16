@@ -153,7 +153,13 @@ class URIUtil {
    * @return Boolean
    */
   public static function isHttps() {
-    return (isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) > 0 && $_SERVER['HTTPS'] != 'off');
+    $isHttps =
+      $_SERVER['HTTP_X_FORWARDED_PROTO'] ??
+      $_SERVER['REQUEST_SCHEME'] ??
+      $_SERVER['HTTPS'] ??
+      null
+    ;
+    return $isHttps && (strcasecmp('on', $isHttps) == 0 || strcasecmp('https', $isHttps) == 0);
   }
 
   /*
