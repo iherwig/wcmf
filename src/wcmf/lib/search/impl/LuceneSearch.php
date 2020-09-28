@@ -211,7 +211,7 @@ class LuceneSearch implements IndexedSearch {
           ];
         }
       }
-      catch (Exception $ex) {
+      catch (\Exception $ex) {
         // do nothing, return empty result
       }
     }
