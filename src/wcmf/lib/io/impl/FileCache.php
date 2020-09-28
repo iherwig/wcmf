@@ -14,7 +14,6 @@ use wcmf\lib\io\Cache;
 use wcmf\lib\io\FileUtil;
 
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * FileCache provides simple caching functionality.
@@ -97,18 +96,23 @@ class FileCache implements Cache {
   public function clear($section) {
     if (preg_match('/\*$/', $section)) {
       // handle wildcards
-      $cachBaseDir = $this->getCacheDir();
-      if (is_dir($cachBaseDir)) {
-        $pattern = '/^'.preg_replace('/\*$/', '', $section).'/';
-        $directories = $this->fileUtil->getDirectories($cachBaseDir, $pattern, true, true);
+      $cacheBaseDir = $this->getCacheDir();
+      if (is_dir($cacheBaseDir)) {
+        $dirStart = $this->sanitizeSection(preg_replace('/\*$/', '', $section));
+        $directories = $this->fileUtil->getDirectories($cacheBaseDir);
         foreach ($directories as $directory) {
-          $this->fileUtil->emptyDir($directory);
+          if (strpos($directory, $dirStart) === 0) {
+            $directory = $cacheBaseDir.$directory;
+            $this->fileUtil->emptyDir($directory);
+            @rmdir($directory);
+          }
         }
       }
     }
     else {
-      $cache = $this->getCache($section);
-      $cache->clear();
+      $directory = $this->getCacheDir().$this->sanitizeSection($section);
+      $this->fileUtil->emptyDir($directory);
+      rmdir($directory);
     }
   }
 
@@ -147,11 +151,11 @@ class FileCache implements Cache {
   }
 
   private function sanitizeSection($section) {
-    return preg_replace('/[^-+_.A-Za-z0-9]/', '_', $section);
+    return preg_replace('/[^-+_.A-Za-z0-9]/', '.', $section);
   }
 
   private function sanitizeKey($key) {
-    return strlen($key) === 0 ? '.' : preg_replace('/[\{\}\(\)\/@\:]/', '_', $key);
+    return strlen($key) === 0 ? '.' : preg_replace('/[\{\}\(\)\/@\:]/', '.', $key);
   }
 }
 ?>

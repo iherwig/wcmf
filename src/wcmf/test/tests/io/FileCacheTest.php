@@ -41,10 +41,10 @@ class FileCacheTest extends BaseTestCase {
 
     $this->assertTrue($cache->exists('test/sectionA', 'testKey'));
     $this->assertEquals('testValue', $cache->get('test/sectionA', 'testKey'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA'));
 
     $cache->clear('test/sectionA');
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA'));
   }
 
   public function testWildcard1() {
@@ -54,17 +54,17 @@ class FileCacheTest extends BaseTestCase {
     $cache->put('test/sectionB.1', 'testKey', 'testValue');
     $cache->put('test/sectionB.2', 'testKey', 'testValue');
 
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.1'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.2'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.1'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.2'));
+    $this->assertFalse(is_dir(WCMF_BASE.self::$CACHE_BASE_PATH.'test'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.2'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.2'));
 
     $cache->clear('test/sectionA*');
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.1'));
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.2'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.1'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.2'));
-    $this->assertTrue(is_dir(WCMF_BASE.self::$CACHE_BASE_PATH.'test'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.2'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.2'));
   }
 
   public function testWildcard2() {
@@ -74,17 +74,17 @@ class FileCacheTest extends BaseTestCase {
     $cache->put('test/sectionB.1', 'testKey', 'testValue');
     $cache->put('test/sectionB.2', 'testKey', 'testValue');
 
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.1'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.2'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.1'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.2'));
+    $this->assertFalse(is_dir(WCMF_BASE.self::$CACHE_BASE_PATH.'test'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.2'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.2'));
 
     $cache->clear('test/section*');
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.1'));
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.2'));
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.1'));
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.2'));
-    $this->assertTrue(is_dir(WCMF_BASE.self::$CACHE_BASE_PATH.'test'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.2'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.2'));
   }
 
   public function testWildcard3() {
@@ -94,17 +94,17 @@ class FileCacheTest extends BaseTestCase {
     $cache->put('test/sectionB.1', 'testKey', 'testValue');
     $cache->put('test/sectionB.2', 'testKey', 'testValue');
 
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.1'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.2'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.1'));
-    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.2'));
+    $this->assertFalse(is_dir(WCMF_BASE.'app/cache/test'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.2'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.1'));
+    $this->assertTrue(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.2'));
 
     $cache->clear('te*');
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.1'));
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionA.2'));
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.1'));
-    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test/sectionB.2'));
-    $this->assertFalse(is_dir(WCMF_BASE.'app/cache/test'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionA.2'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.1'));
+    $this->assertFalse(file_exists(WCMF_BASE.self::$CACHE_BASE_PATH.'test.sectionB.2'));
   }
 }
 ?>
