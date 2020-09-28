@@ -10,9 +10,11 @@
  */
 namespace wcmf\lib\io\impl;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\io\Cache;
 use wcmf\lib\io\FileUtil;
+
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * FileCache provides simple caching functionality.
@@ -27,6 +29,7 @@ class FileCache implements Cache {
   private $cacheDir = null;
   private $cache = null;
   private $fileUtil = null;
+  private $caches = [];
 
   /**
    * Constructor
@@ -50,19 +53,18 @@ class FileCache implements Cache {
    * @see Cache::exists()
    */
   public function exists($section, $key) {
-    $this->initializeCache($section);
-    return isset($this->cache[$section][$key]) &&
-      !$this->isExpired($this->cache[$section][$key][0], $this->cache[$section][$key][1]);
+    $cache = $this->getCache($section);
+    return $cache->hasItem($this->sanitizeKey($key));
   }
 
   /**
    * @see Cache::getDate()
    */
   public function getDate($section, $key) {
-    $this->initializeCache($section);
-    if (isset($this->cache[$section][$key]) &&
-        !$this->isExpired($this->cache[$section][$key][0], $this->cache[$section][$key][1])) {
-      return (new \DateTime())->setTimeStamp($this->cache[$section][$key][0]);
+    $cache = $this->getCache($section);
+    $item = $cache->getItem($this->sanitizeKey($key));
+    if ($item->isHit()) {
+      return (new \DateTime())->setTimeStamp($item->get()[0]);
     }
     return null;
   }
@@ -71,21 +73,22 @@ class FileCache implements Cache {
    * @see Cache::get()
    */
   public function get($section, $key) {
-    $this->initializeCache($section);
-    if (isset($this->cache[$section][$key]) &&
-        !$this->isExpired($this->cache[$section][$key][0], $this->cache[$section][$key][1])) {
-      return $this->cache[$section][$key][2];
-    }
-    return null;
+    $cache = $this->getCache($section);
+    $item = $cache->getItem($this->sanitizeKey($key));
+    return $item->isHit() ? $item->get()[1] : null;
   }
 
   /**
    * @see Cache::put()
    */
   public function put($section, $key, $value, $lifetime=null) {
-    $this->initializeCache($section);
-    $this->cache[$section][$key] = [time(), $lifetime, $value];
-    $this->saveCache($section);
+    $cache = $this->getCache($section);
+    $item = $cache->getItem($this->sanitizeKey($key));
+    $item->set([time(), $value]);
+    if ($lifetime !== null) {
+      $item->expiresAfter($lifetime);
+    }
+    $cache->save($item);
   }
 
   /**
@@ -95,24 +98,17 @@ class FileCache implements Cache {
     if (preg_match('/\*$/', $section)) {
       // handle wildcards
       $cachBaseDir = $this->getCacheDir();
-      $directory = $cachBaseDir.dirname($section);
-      if (is_dir($directory)) {
-        $pattern = '/^'.preg_replace('/\*$/', '', $this->fileUtil->basename($section)).'/';
-        $files = $this->fileUtil->getFiles($directory, $pattern, true, true);
-        foreach ($files as $file) {
-          $this->clear(str_replace($cachBaseDir, '', $file));
-        }
-        $directories = $this->fileUtil->getDirectories($directory, $pattern, true, true);
+      if (is_dir($cachBaseDir)) {
+        $pattern = '/^'.preg_replace('/\*$/', '', $section).'/';
+        $directories = $this->fileUtil->getDirectories($cachBaseDir, $pattern, true, true);
         foreach ($directories as $directory) {
-          $this->clear(str_replace($cachBaseDir, '', $directory).'/*');
-          @rmdir($directory);
+          $this->fileUtil->emptyDir($directory);
         }
       }
     }
     else {
-      $file = $this->getCacheFile($section);
-      @unlink($file);
-      unset($this->cache[$section]);
+      $cache = $this->getCache($section);
+      $cache->clear();
     }
   }
 
@@ -123,58 +119,6 @@ class FileCache implements Cache {
     $cacheDir = $this->getCacheDir();
     if (is_dir($cacheDir)) {
       $this->fileUtil->emptyDir($cacheDir);
-    }
-    $this->cache = null;
-  }
-
-  /**
-   * Initialize the cache
-   * @param $section The caching section
-   */
-  private function initializeCache($section) {
-    if (!isset($this->cache[$section])) {
-      $file = $this->getCacheFile($section);
-      if (file_exists($file)) {
-        $this->cache[$section] = unserialize(file_get_contents($file));
-      }
-      else {
-        $this->cache[$section] = [];
-      }
-    }
-  }
-
-  /**
-   * Check if an entry with the given creation timestamp and lifetime is expired
-   * @param $createTs The creation timestamp
-   * @param $lifetime The lifetime in seconds
-   * @return Boolean
-   */
-  private function isExpired($createTs, $lifetime) {
-    if ($lifetime === null) {
-      return false;
-    }
-    $expireDate = (new \DateTime())->setTimeStamp($createTs);
-    if (intval($lifetime)) {
-      $expireDate = $expireDate->modify('+'.$lifetime.' seconds');
-    }
-    return $expireDate < new \DateTime();
-  }
-
-  /**
-   * Save the cache
-   * @param $section The caching section
-   */
-  private function saveCache($section) {
-    $content = serialize($this->cache[$section]);
-    $file = $this->getCacheFile($section);
-    $this->fileUtil->mkdirRec(dirname($file));
-    $fh = fopen($file, "w");
-    if ($fh !== false) {
-      fwrite($fh, $content);
-      fclose($fh);
-    }
-    else {
-      throw new ConfigurationException("The cache path is not writable: ".$file);
     }
   }
 
@@ -190,12 +134,24 @@ class FileCache implements Cache {
   }
 
   /**
-   * Get the cache file for the specified cache
+   * Get the cache for the specified section
    * @param $section The caching section
-   * @return String
+   * @return FilesystemAdapter
    */
-  private function getCacheFile($section) {
-    return $this->getCacheDir().$section;
+  private function getCache($section) {
+    $section = $this->sanitizeSection($section);
+    if (!isset($this->caches[$section])) {
+      $this->caches[$section] = new FilesystemAdapter($section, 0, $this->cacheDir);
+    }
+    return $this->caches[$section];
+  }
+
+  private function sanitizeSection($section) {
+    return preg_replace('/[^-+_.A-Za-z0-9]/', '_', $section);
+  }
+
+  private function sanitizeKey($key) {
+    return strlen($key) === 0 ? '.' : preg_replace('/[\{\}\(\)\/@\:]/', '_', $key);
   }
 }
 ?>
