@@ -64,7 +64,7 @@ class SelectTest extends DatabaseTestCase {
     ]);
   }
 
-  public function testSimple() {
+  public function testWithCache() {
     $selectId = __CLASS__.__METHOD__;
     $time = time();
 
@@ -76,12 +76,15 @@ class SelectTest extends DatabaseTestCase {
     $select->columns(['id']);
     $select->where('id = :id');
     $select->setParameters([':id' => 203]);
+    $this->assertEquals(1, $select->getRowCount());
+
     $result = $select->query();
     $rows = $result->fetchAll();
 
     $this->assertEquals(1, sizeof($rows));
     $this->assertEquals(203, $rows[0][0]);
     $this->assertEquals(203, $rows[0]['id']);
+    $this->assertEquals(1, $select->getRowCount());
 
     // test cache
     $select->save();
@@ -90,6 +93,49 @@ class SelectTest extends DatabaseTestCase {
     $select2 = SelectStatement::get($mapper, $selectId);
     $this->assertEquals($selectId, $select2->getId());
     $this->assertEquals($time, $select2->getMeta('created'));
+
+    $select2->where('id = :id');
+    $select2->setParameters([':id' => 203]);
+    $this->assertEquals(1, $select2->getRowCount());
+
+    $result2 = $select2->query();
+    $rows2 = $result2->fetchAll();
+
+    $this->assertEquals(1, sizeof($rows2));
+    $this->assertEquals(203, $rows2[0][0]);
+    $this->assertEquals(203, $rows2[0]['id']);
+    $this->assertEquals(1, $select2->getRowCount());
+}
+
+  public function testWithoutCache() {
+    $selectId = __CLASS__.__METHOD__;
+    $time = time();
+
+    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $mapper = $persistenceFacade->getMapper('Chapter');
+    $select = SelectStatement::get($mapper);
+    $select->from('Chapter');
+    $this->assertEquals(3, $select->getRowCount());
+
+    $result = $select->query();
+    $rows = $result->fetchAll();
+
+    $this->assertEquals(3, sizeof($rows));
+    $this->assertEquals(300, $rows[0][0]);
+    $this->assertEquals(300, $rows[0]['id']);
+    $this->assertEquals(302, $rows[1][0]);
+    $this->assertEquals(302, $rows[1]['id']);
+    $this->assertEquals(303, $rows[2][0]);
+    $this->assertEquals(303, $rows[2]['id']);
+    $this->assertEquals(3, $select->getRowCount());
+
+    // test cache
+    $select->save();
+    $this->assertFalse($select->isCached());
+
+    $select2 = SelectStatement::get($mapper);
+    $select2->from('Chapter');
+    $this->assertEquals(3, $select2->getRowCount());
   }
 
   public function testMapper() {

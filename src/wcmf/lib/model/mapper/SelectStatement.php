@@ -157,7 +157,7 @@ class SelectStatement extends Select {
   public function getRowCount() {
     $mapper = ObjectFactory::getInstance('persistenceFacade')->getMapper($this->type);
     if ($this->table) {
-      $table = !is_array($this->table) ? $this-> table : key($this->table);
+      $table = !is_array($this->table) ? $this->table : key($this->table);
       // use pk columns for counting
       $countColumns = array_map(function($valueName) use ($mapper, $table) {
         return $mapper->quoteIdentifier($table).'.'.$mapper->quoteIdentifier($mapper->getAttribute($valueName)->getColumn());
@@ -191,6 +191,8 @@ class SelectStatement extends Select {
     try {
       $result = $countStatement->query();
       $row = $result->fetch();
+      // update cache with count query
+      $this->cachedSql = array_merge($this->cachedSql, $countStatement->cachedSql);
       return $row['nRows'];
     }
     catch (\Exception $ex) {
@@ -272,6 +274,10 @@ class SelectStatement extends Select {
    * @return String
    */
   public function getSql() {
+    if ($this->id == self::NO_CACHE) {
+      return trim((new Sql($this->getAdapter()))->buildSqlString($this));
+    }
+
     $cacheKey = self::getCacheId($this->id);
     if (!isset($this->cachedSql[$cacheKey])) {
       $sql = trim((new Sql($this->getAdapter()))->buildSqlString($this));
@@ -328,7 +334,7 @@ class SelectStatement extends Select {
    */
 
   public function __sleep() {
-    return ['id', 'type', 'meta', 'cachedSql', 'specifications'];
+    return ['id', 'type', 'table', 'meta', 'cachedSql', 'specifications'];
   }
 
   public function __wakeup() {

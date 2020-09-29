@@ -34,22 +34,25 @@ class DefaultSession implements Session {
    * @param $configuration
    */
   public function __construct(Configuration $configuration) {
-    // session configuration
-    ini_set('session.cookie_lifetime', 0);
-    ini_set('session.use_cookies', 1);
-    ini_set('session.use_only_cookies', 1);
-    ini_set('session.use_strict_mode', 1);
-    ini_set('session.cookie_httponly', 1);
-    ini_set('session.cookie_secure', (URIUtil::isHttps() ? 1 : 0));
-    ini_set('session.use_trans_sid', 0);
-    ini_set('session.cache_limiter', 'nocache');
-    ini_set('session.hash_function', 1);
-    if (in_array('sha256', hash_algos())) {
-      ini_set('session.hash_function', 'sha256');
-    }
-    $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
+    // NOTE: prevent "headers already sent" errors in phpunit tests
+    if (!headers_sent()) {
+      // session configuration
+      ini_set('session.cookie_lifetime', 0);
+      ini_set('session.use_cookies', 1);
+      ini_set('session.use_only_cookies', 1);
+      ini_set('session.use_strict_mode', 1);
+      ini_set('session.cookie_httponly', 1);
+      ini_set('session.cookie_secure', (URIUtil::isHttps() ? 1 : 0));
+      ini_set('session.use_trans_sid', 0);
+      ini_set('session.cache_limiter', 'nocache');
+      ini_set('session.hash_function', 1);
+      if (in_array('sha256', hash_algos())) {
+        ini_set('session.hash_function', 'sha256');
+      }
+      $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
 
-    session_name($this->getCookieName());
+      session_name($this->getCookieName());
+    }
   }
 
   public function __destruct() {

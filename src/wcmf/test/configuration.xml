@@ -51,6 +51,7 @@
       <file>tests/persistence/PersistentObjectTest.php</file>
       <file>tests/persistence/RDBMapperTest.php</file>
       <file>tests/persistence/RelationDescriptionTest.php</file>
+      <file>tests/persistence/SelectTest.php</file>
       <file>tests/persistence/SortTest.php</file>
       <file>tests/persistence/StringQueryTest.php</file>
       <file>tests/persistence/TransactionTest.php</file>
