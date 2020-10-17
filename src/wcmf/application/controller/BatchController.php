@@ -16,6 +16,7 @@ use wcmf\lib\presentation\ApplicationException;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\impl\FileDocument;
 
 /**
  * BatchController is used to process complex, longer running actions, that need
@@ -141,7 +142,7 @@ abstract class BatchController extends Controller {
     // check if a download was triggered in the last step
     if ($this->getLocalSessionValue(self::DOWNLOAD_STEP_VAR) == true) {
       $file = $this->getDownloadFile();
-      $response->setFile($file, true);
+      $response->setDocument(new FileDocument($file, true));
       $response->setAction('done');
       $this->cleanup();
     }
