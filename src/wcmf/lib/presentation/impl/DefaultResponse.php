@@ -10,11 +10,10 @@
  */
 namespace wcmf\lib\presentation\impl;
 
-use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\format\Formatter;
-use wcmf\lib\presentation\impl\AbstractControllerMessage;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
+use wcmf\lib\presentation\ResponseDocument;
 
 /**
  * Default Response implementation.
@@ -28,7 +27,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   private $cacheId = null;
   private $cacheLifetime = null;
   private $status = 200;
-  private $file = null;
+  private $document = null;
 
   /**
    * Constructor
@@ -118,24 +117,40 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
    * @see Response::setFile()
    */
   public function setFile($filename, $isDownload, $content='', $type='') {
-    if (strlen($content) == 0 && file_exists($filename)) {
-      $content = file_get_contents($filename);
-      $type = FileUtil::getMimeType($filename);
-    }
-    $this->file = [
-      'isDownload' => $isDownload,
-      'filename' => $filename,
-      'content' => $content,
-      'type' => $type
-    ];
-    $this->setFormat('download');
+    $document = (strlen($content) > 0) ?
+      new MemoryDocument($content, $type, $isDownload, $filename) :
+      new FileDocument($filename, $isDownload);
+    $this->setDocument($document);
   }
 
   /**
    * @see Response::getFile()
    */
   public function getFile() {
-    return $this->file;
+    if ($this->document) {
+      return [
+          'isDownload' => $this->document->isDownload(),
+          'filename' => $this->document->getFilename(),
+          'content' => $this->document->getContent(),
+          'type' => $this->document->getType(),
+      ];
+    }
+    return null;
+  }
+
+  /**
+   * @see Response::setDocument()
+   */
+  public function setDocument(ResponseDocument $document) {
+    $this->document = $document;
+    $this->setFormat('download');
+  }
+
+  /**
+   * @see Response::getDocument()
+   */
+  public function getDocument() {
+    return $this->document;
   }
 }
 ?>

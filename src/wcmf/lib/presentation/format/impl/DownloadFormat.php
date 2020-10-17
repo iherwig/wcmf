@@ -50,20 +50,19 @@ class DownloadFormat extends AbstractFormat {
    * @see Format::getCacheDate()
    */
   public function getCacheDate(Response $response) {
-    $file = $response->getFile();
-    return $file && file_exists($file['filename']) ?
-            \DateTime::createFromFormat('U', filemtime($file['filename'])) : null;
+    $document = $response->getDocument();
+    return $document ? $document->getCacheDate() : null;
   }
 
   /**
    * @see Format::getResponseHeaders()
    */
   public function getResponseHeaders(Response $response) {
-    $file = $response->getFile();
-    if ($file) {
-      $response->setHeader("Content-Type", $file['type']);
-      if ($file['isDownload']) {
-        $response->setHeader("Content-Disposition", 'attachment; filename="'.basename($file['filename']).'"');
+    $document = $response->getDocument();
+    if ($document) {
+      $response->setHeader("Content-Type", $document->getMimeType());
+      if ($document->isDownload()) {
+        $response->setHeader("Content-Disposition", 'attachment; filename="'.basename($document->getFilename()).'"');
       }
     }
     return $response->getHeaders();
@@ -80,9 +79,9 @@ class DownloadFormat extends AbstractFormat {
    * @see AbstractFormat::serializeValues()
    */
   protected function serializeValues(Response $response) {
-    $file = $response->getFile();
-    if ($file) {
-      echo $file['content'];
+    $document = $response->getDocument();
+    if ($document) {
+      $document->output();
     }
     return $response->getValues();
   }

@@ -88,7 +88,8 @@ interface Response extends ControllerMessage {
   public function getStatus();
 
   /**
-   * Set a file as response.
+   * Set a file as response
+   * @deprecated Use setDocument() instead
    * @param $filename The name of the file, must be a real file, if no content is provided
    * @param $isDownload Boolean, indicating whether the file should be return as download or not
    * @param $content File content, if in-memory only (optional)
@@ -98,8 +99,21 @@ interface Response extends ControllerMessage {
 
   /**
    * Get the file download
+   * @deprecated Use getDocument() instead
    * @return Array with keys 'isDownload', 'filename', 'content' and 'type' or null
    */
   public function getFile();
+
+  /**
+   * Set a response document
+   * @param $document The ResponseDocument instance
+   */
+  public function setDocument(ResponseDocument $document);
+
+  /**
+   * Get the response document
+   * @return ResponseDocument
+   */
+  public function getDocument();
 }
 ?>
