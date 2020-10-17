@@ -32,7 +32,7 @@ class FileDocument extends AbstractDocument {
       throw new IOException("The file '$filename' does not exist.");
     }
     $mimeType = FileUtil::getMimeType($filename);
-    $this->content = file_get_content($filename);
+    $this->content = file_get_contents($filename);
     parent::__construct($mimeType, $isDownload, $filename);
   }
 
