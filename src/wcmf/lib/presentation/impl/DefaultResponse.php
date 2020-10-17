@@ -132,7 +132,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
           'isDownload' => $this->document->isDownload(),
           'filename' => $this->document->getFilename(),
           'content' => $this->document->getContent(),
-          'type' => $this->document->getType(),
+          'type' => $this->document->getMimeType(),
       ];
     }
     return null;
