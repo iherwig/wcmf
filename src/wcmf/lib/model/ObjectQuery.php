@@ -542,7 +542,8 @@ class ObjectQuery extends AbstractQuery {
           $orderAttribute = array_pop($orderAttributeParts);
           $orderType = join('.', $orderAttributeParts);
         }
-        if (!in_array($orderAttribute, $columnNames)) {
+        // add the column if it does not exist yet, or if it belongs to an alias
+        if (!in_array($orderAttribute, $columnNames) || $orderType != null) {
           $queryType = $this->getQueryType();
           $joinName = ($orderType != $queryType && $orderType != $persistenceFacade->getSimpleType($queryType)) ? $orderType: null;
           $selectStmt->addColumns([$orderAttribute => $orderAttribute], $joinName);
