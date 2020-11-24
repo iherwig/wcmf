@@ -17,7 +17,7 @@ Features
 - Full featured object [persistence layer](http://wcmf.wemove.com/persistence.html):
     - Flexible [mapper](http://wcmf.wemove.com/persistence.html#pers_mappers) architecture with adapter to RDBMS
     - Optimistic and pessimistic [object locking](http://wcmf.wemove.com/persistence.html#pers_concurrency)
-    - [Searching](http://wcmf.wemove.com/persistence.html#pers_search) using template based object query and criteria api
+    - [Searching](http://wcmf.wemove.com/persistence.html#pers_search) using template based object query and criteria API
     - Query caching and [eager relation loading](http://wcmf.wemove.com/persistence.html#pers_builddepth)
     - [Transaction](http://wcmf.wemove.com/persistence.html#pers_tx) support
 - [Role based permission management](http://wcmf.wemove.com/security.html#sec_authorization) (for actions, types, instances, instance properties)

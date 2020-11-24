@@ -50,7 +50,7 @@ wCMF features a pragmatic Model-Driven Software Development (<em>MDSD</em>) appr
         <ul>
           <li>Flexible <a href="persistence.html#pers_mappers">mapper</a> architecture with adapter to RDBMS</li>
           <li>Optimistic and pessimistic <a href="persistence.html#pers_concurrency">object locking</a></li>
-          <li><a href="persistence.html#pers_search">Searching</a> using template based object query and criteria api</li>
+          <li><a href="persistence.html#pers_search">Searching</a> using template based object query and criteria API</li>
           <li>Query caching and <a href="persistence.html#pers_builddepth">eager relation loading</a></li>
           <li><a href="persistence.html#pers_tx">Transactions</a> with dry run support</li>
         </ul>

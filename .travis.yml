@@ -5,6 +5,7 @@ addons:
     packages:
     - openjdk-8-jdk
     - ant
+    - doxygen
   sonarcloud:
     organization: "iherwig-github"
 
@@ -19,7 +20,10 @@ env:
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
   - VENDOR_DIR=$TRAVIS_BUILD_DIR/vendor
   - PHPUNIT_DIR=$VENDOR_DIR/phpunit/phpunit
+  - DOCS_DIR=$TRAVIS_BUILD_DIR/docs
   - ENABLE_COVERAGE=0
+  - ENABLE_SONAR=0
+  - ENABLE_DOCS=0
   - secure: CzS6tWrXhO+YYC3eN2yeB4+BgmA3G62drxgj+XIzu0LdZTjbaafvDQCkNUQ6SUaMguS/WTDr9XcqA5MZy4J5QqucWkidcvGnaH4iBJLdYLQ5aIxZqK75zzf2K9vfgh/Zy2JQh07OKBz4ViCZumY8RdW6jxv3lq68Az5yQ31iG/M=
 
 matrix:
@@ -30,6 +34,7 @@ matrix:
   - php: 7.2
   - php: 7.3
   - php: 7.4
+    env: ENABLE_SONAR=1 ENABLE_DOCS=1
   allow_failures:
 
 before_script:
@@ -43,7 +48,8 @@ before_script:
 script:
 - if [[ "$ENABLE_COVERAGE" == "1" ]]; then cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml; fi
 - if [[ "$ENABLE_COVERAGE" == "0" ]]; then cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --bootstrap bootstrap.php -c configuration.xml; fi
-- sonar-scanner -X -Dsonar.projectBaseDir=$TRAVIS_BUILD_DIR
+- if [[ "$ENABLE_SONAR" == "1" ]]; sonar-scanner -X -Dsonar.projectBaseDir=$TRAVIS_BUILD_DIR
+- if [[ "$ENABLE_DOCS" == "1" ]]; then cd $DOCS_DIR/api-src && ant
 
 cache:
   directories:
@@ -51,3 +57,11 @@ cache:
 
 after_script:
 - if [[ "$ENABLE_COVERAGE" == "1" ]]; then cd $TRAVIS_BUILD_DIR && php $VENDOR_DIR/bin/codacycoverage clover $TRAVIS_BUILD_DIR/logs/clover.xml; fi
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: $DOCS_DIR/api-gen/html
+  github_token: $GH_REPO_TOKEN
+  on:
+    branch: master
