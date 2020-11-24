@@ -210,6 +210,10 @@ class ImageUtil {
    * @return String
    */
   public static function getCacheLocation($imageFile, $width) {
+    // don't resize animated gifs
+    if (self::isAnimated($imageFile)) {
+      return $imageFile;
+    }
     // get file name and cache directory
     $baseName = FileUtil::basename($imageFile);
     $directory = self::getCacheDir($imageFile);
