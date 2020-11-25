@@ -6,12 +6,10 @@
     <property name="dist.dir" value="${gen.dir}/html"/>
   </target>
 
-  <target name="dist" depends="properties" description="build the documentation" >
+  <target name="dist" depends="properties,clean" description="build the documentation" >
     <mkdir dir="${dist.dir}"/>
     <copy todir="${dist.dir}/theme">
-      <fileset dir="theme/">
-        <include name="**"/>
-      </fileset>
+      <fileset dir="theme/" includes="**"/>
     </copy>
     <exec executable="doxygen">
       <arg value="doxyfile.txt"/>
@@ -22,7 +20,11 @@
     </replace>
   </target>
 
-  <target name="clean" depends="properties" description="clean up" >
-    <delete dir="${dist.dir}"/>
+  <target name="clean" depends="properties" description="clean up">
+    <delete includeEmptyDirs="true" failonerror="false">
+      <fileset dir="${dist.dir}/search" includes="**"/>
+      <fileset dir="${dist.dir}/theme"/>
+      <fileset dir="${dist.dir}" includes="*.html,*.css,*.js,*.png,*.svg,*.md5,*.map"/>
+    </delete>
   </target>
 </project>

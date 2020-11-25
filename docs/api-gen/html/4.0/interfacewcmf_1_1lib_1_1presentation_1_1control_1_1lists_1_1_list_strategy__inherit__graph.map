@@ -1,0 +1,7 @@
+<map id="ListStrategy" name="ListStrategy">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1control_1_1lists_1_1impl_1_1_config_list_strategy.html" title="ConfigListStrategy implements a list of key/value pairs that is retrieved from a configuration sectio..." alt="" coords="5,145,133,237"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1presentation_1_1control_1_1lists_1_1impl_1_1_file_list_strategy.html" title="FileListStrategy implements a list of key value pairs that is retrieved from an configuration section..." alt="" coords="158,145,271,237"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1presentation_1_1control_1_1lists_1_1impl_1_1_fixed_list_strategy.html" title="FixedListStrategy implements a constant list of key/value pairs. " alt="" coords="295,145,419,237"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1presentation_1_1control_1_1lists_1_1impl_1_1_function_list_strategy.html" title="FunctionListStrategy implements a list of key/value pairs that is retrieved by a global function..." alt="" coords="443,145,586,237"/>
+<area shape="rect" id="node6" href="$classwcmf_1_1lib_1_1presentation_1_1control_1_1lists_1_1impl_1_1_node_list_strategy.html" title="NodeListStrategy implements a list of entities that is retrieved from the store, where the keys are t..." alt="" coords="611,145,733,237"/>
+</map>

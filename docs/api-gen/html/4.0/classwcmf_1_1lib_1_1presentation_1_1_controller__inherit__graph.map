@@ -1,0 +1,27 @@
+<map id="Controller" name="Controller">
+<area shape="rect" id="node2" href="$classwcmf_1_1application_1_1controller_1_1_associate_controller.html" title="AssociateController is used to (dis&#45;)associates Node instances, e.g. " alt="" coords="72,461,207,553"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1application_1_1controller_1_1_batch_controller.html" title="BatchController is used to process complex, longer running actions, that need to be divided into seve..." alt="" coords="231,380,469,633"/>
+<area shape="rect" id="node8" href="$classwcmf_1_1application_1_1controller_1_1_concurrency_controller.html" title="ConcurrencyController is used to lock/unlock objects. " alt="" coords="493,453,644,560"/>
+<area shape="rect" id="node9" href="$classwcmf_1_1application_1_1controller_1_1_delete_controller.html" title="DeleteController is used to delete Node instances. " alt="" coords="669,446,789,567"/>
+<area shape="rect" id="node10" href="$classwcmf_1_1application_1_1controller_1_1_display_controller.html" title="DisplayController is used to read a Node instance. " alt="" coords="813,461,933,553"/>
+<area shape="rect" id="node11" href="$classwcmf_1_1application_1_1controller_1_1_failure_controller.html" title="FailureController is used to signal a failure to the user. " alt="" coords="957,468,1073,545"/>
+<area shape="rect" id="node12" href="$classwcmf_1_1application_1_1controller_1_1_list_controller.html" title="ListController is used to load Node lists. " alt="" coords="1098,446,1213,567"/>
+<area shape="rect" id="node14" href="$classwcmf_1_1application_1_1controller_1_1_logging_controller.html" title="LoggingController is used to log a message in the backend log. " alt="" coords="1237,468,1359,545"/>
+<area shape="rect" id="node15" href="$classwcmf_1_1application_1_1controller_1_1_login_controller.html" title="LoginController handles the login process. " alt="" coords="1384,446,1495,567"/>
+<area shape="rect" id="node16" href="$classwcmf_1_1application_1_1controller_1_1_media_controller.html" title="MediaController integrates elFinder (https://github.com/Studio&#45;42/elFinder) into wCMF. " alt="" coords="1519,453,1679,560"/>
+<area shape="rect" id="node17" href="$classwcmf_1_1application_1_1controller_1_1_message_controller.html" title="MessageController is used to get all messages translated to the given language. " alt="" coords="1703,453,1887,560"/>
+<area shape="rect" id="node18" href="$classwcmf_1_1application_1_1controller_1_1_multiple_action_controller.html" title="MultipleActionController executes multiple actions by passing them do the appropriate controllers and..." alt="" coords="1912,461,2071,553"/>
+<area shape="rect" id="node19" href="$classwcmf_1_1application_1_1controller_1_1_permission_controller.html" title="PermissionController checks permissions for a set of operations for the current user. " alt="" coords="2095,453,2237,560"/>
+<area shape="rect" id="node20" href="$classwcmf_1_1application_1_1controller_1_1_r_e_s_t_controller.html" title="RESTController handles REST requests. " alt="" coords="2261,395,2460,619"/>
+<area shape="rect" id="node21" href="$classwcmf_1_1application_1_1controller_1_1_save_controller.html" title="SaveController is a controller that saves Node data. " alt="" coords="2485,380,2637,633"/>
+<area shape="rect" id="node22" href="$classwcmf_1_1application_1_1controller_1_1_s_o_a_p_controller.html" title="SOAPController handles SOAP requests. " alt="" coords="2661,461,2775,553"/>
+<area shape="rect" id="node23" href="$classwcmf_1_1application_1_1controller_1_1_sort_controller.html" title="SortController is used to change the order of nodes. " alt="" coords="2799,409,3002,604"/>
+<area shape="rect" id="node24" href="$classwcmf_1_1application_1_1controller_1_1_tree_controller.html" title="TreeController is used to visualize nodes in a tree view. " alt="" coords="3026,417,3162,597"/>
+<area shape="rect" id="node25" href="$classwcmf_1_1application_1_1controller_1_1_user_controller.html" title="UserController is used to change the current user&#39;s password. " alt="" coords="3186,461,3327,553"/>
+<area shape="rect" id="node26" href="$classwcmf_1_1application_1_1controller_1_1_value_list_controller.html" title="ValueListController is used to resolve lists for input_type definitions. " alt="" coords="3351,461,3482,553"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1application_1_1controller_1_1_batch_display_controller.html" title="BatchDisplayController is used to load a tree of Node instances recursivly and return them in lists o..." alt="" coords="5,711,169,920"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1application_1_1controller_1_1_copy_controller.html" title="CopyController is used to copy or move Node instances. " alt="" coords="194,689,335,942"/>
+<area shape="rect" id="node6" href="$classwcmf_1_1application_1_1controller_1_1_search_index_controller.html" title="SearchIndexController creates a Lucene index from the complete datastore. " alt="" coords="359,747,509,883"/>
+<area shape="rect" id="node7" href="$classwcmf_1_1application_1_1controller_1_1_x_m_l_export_controller.html" title="XMLExportController exports the content tree into an XML file. " alt="" coords="533,681,759,949"/>
+<area shape="rect" id="node13" href="$classwcmf_1_1application_1_1controller_1_1_search_controller.html" title="SearchController executes a search and returns matching objects in a paged list. " alt="" coords="1096,762,1215,869"/>
+</map>

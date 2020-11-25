@@ -1,0 +1,5 @@
+<map id="ValidateType" name="ValidateType">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1validator_1_1impl_1_1_filter.html" title="Filter validates against the given php filter. " alt="" coords="5,131,91,208"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1persistence_1_1validator_1_1impl_1_1_image.html" title="Image validates an image value. " alt="" coords="115,131,200,208"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1persistence_1_1validator_1_1impl_1_1_reg_exp.html" title="RegExp validates against the given regular expression. " alt="" coords="224,131,309,208"/>
+</map>

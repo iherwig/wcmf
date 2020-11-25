@@ -1,0 +1,4 @@
+<map id="Logger" name="Logger">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1core_1_1impl_1_1_log4php_logger.html" title="Log4phpLogger is a wrapper for the log4php library. " alt="" coords="5,277,141,531"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1core_1_1impl_1_1_monolog_file_logger.html" title="MonologFileLogger is a wrapper for the Monolog library that logs to files. " alt="" coords="165,277,363,531"/>
+</map>

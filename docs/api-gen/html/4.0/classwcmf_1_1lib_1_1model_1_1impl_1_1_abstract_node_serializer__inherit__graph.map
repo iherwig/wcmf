@@ -1,0 +1,6 @@
+<map id="AbstractNodeSerializer" name="AbstractNodeSerializer">
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1model_1_1impl_1_1_dionysos_node_serializer.html" title="DionysosNodeSerializer is used to serialize Nodes into the Dionysos format and vice versa..." alt="" coords="5,300,165,421"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1model_1_1impl_1_1_dojo_node_serializer.html" title="DojoNodeSerializer is used to serialize Nodes into the Dojo rest format and vice versa. " alt="" coords="189,300,328,421"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1model_1_1impl_1_1_soap_node_serializer.html" title="SoapNodeSerializer is used to serialize Nodes into the soap format and vice versa. " alt="" coords="352,300,491,421"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html" title="NodeSerializer implementations are used to serialize Nodes into an array representation or deserializ..." alt="" coords="189,5,328,112"/>
+</map>

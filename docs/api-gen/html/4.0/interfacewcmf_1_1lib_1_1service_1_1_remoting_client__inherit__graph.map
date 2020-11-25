@@ -1,0 +1,4 @@
+<map id="RemotingClient" name="RemotingClient">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1service_1_1impl_1_1_h_t_t_p_client.html" title="HTTPClient is used to do calls to other wCMF instances over HTTP. " alt="" coords="5,145,128,281"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1service_1_1impl_1_1_r_p_c_client.html" title="RPCClient is used to do calls to other wCMF instances on the same mashine. " alt="" coords="153,131,354,296"/>
+</map>

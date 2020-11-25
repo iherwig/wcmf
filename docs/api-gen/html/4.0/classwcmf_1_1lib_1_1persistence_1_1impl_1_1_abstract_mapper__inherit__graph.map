@@ -1,0 +1,5 @@
+<map id="AbstractMapper" name="AbstractMapper">
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html" title="RDBMapper maps objects of one type to a relational database schema. " alt="" coords="29,755,228,1140"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html" title="PersistenceMapper defines the interface for all mapper classes. " alt="" coords="35,5,222,229"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1model_1_1mapper_1_1_node_unified_r_d_b_mapper.html" title="NodeUnifiedRDBMapper maps Node objects to a relational database schema where each Node type has its o..." alt="" coords="5,1188,252,1441"/>
+</map>
