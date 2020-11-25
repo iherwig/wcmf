@@ -48,8 +48,8 @@ before_script:
 script:
 - if [[ "$ENABLE_COVERAGE" == "1" ]]; then cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --coverage-clover $TRAVIS_BUILD_DIR/logs/clover.xml --bootstrap bootstrap.php -c configuration.xml; fi
 - if [[ "$ENABLE_COVERAGE" == "0" ]]; then cd $TEST_DIR && $PHPUNIT_DIR/phpunit -v --bootstrap bootstrap.php -c configuration.xml; fi
-- if [[ "$ENABLE_SONAR" == "1" ]]; sonar-scanner -X -Dsonar.projectBaseDir=$TRAVIS_BUILD_DIR
-- if [[ "$ENABLE_DOCS" == "1" ]]; then cd $DOCS_DIR/api-src && ant
+- if [[ "$ENABLE_SONAR" == "1" ]]; sonar-scanner -X -Dsonar.projectBaseDir=$TRAVIS_BUILD_DIR; fi
+- if [[ "$ENABLE_DOCS" == "1" ]]; then cd $DOCS_DIR/api-src && ant; fi
 
 cache:
   directories:
