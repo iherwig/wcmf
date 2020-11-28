@@ -1,4 +1,4 @@
-dist: bionic
+dist: focal
 
 addons:
   apt:
@@ -30,6 +30,7 @@ env:
 matrix:
   include:
   - php: 7.3
+    dist: bionic
   - php: 7.4
     env: ENABLE_COVERAGE=1 ENABLE_SONAR=1 ENABLE_DOCS=1
   - php: 8.0
