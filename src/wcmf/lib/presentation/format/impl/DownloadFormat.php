@@ -16,7 +16,7 @@ use wcmf\lib\presentation\Response;
 
 /**
  * DownloadFormat is used for downloads. It will be automatically chosen, if
- * a file is set using the Response::setFile() method.
+ * a response document is set using the Response::setDocument() method.
  *
  * @author ingo herwig <ingo@wemove.com>
  */

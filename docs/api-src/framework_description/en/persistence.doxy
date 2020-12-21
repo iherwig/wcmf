@@ -142,6 +142,7 @@ The following terms are important to know when working with wCMF's domain classe
   aspects. For example the edit forms in the \ref app "default application" only
   display domain class values that are tagged with `DATATYPE_ATTRIBUTE` and only those
   attributes are editable in the translation form that are tagged with `TRANSLATABLE`.
+  The `SEARCHABLE` tag defines that an entity type should be included in the search index.
   Tags are defined in the model using the _tag_ `app_data_type` (see \ref model_chivalue).
 
 ### Configuration ### {#pers_config}

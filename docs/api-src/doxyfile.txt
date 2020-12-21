@@ -160,12 +160,7 @@ FULL_PATH_NAMES        = YES
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        = E:/Daten/web/wcmf/docs/api-src/framework_description/en/ \
-                         E:/Daten/web/wcmf/src/wcmf/ \
-                         J:/Daten/web/www/wcmf/docs/api-src/framework_description/en/ \
-                         J:/Daten/web/www/wcmf/src/wcmf/ \
-                         E:/www/wcmf/docs/api-src/framework_description/en/ \
-                         E:/www/wcmf/wcmf/src/wcmf/
+STRIP_FROM_PATH        = home/travis/build/iherwig/wcmf/src/
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -174,10 +169,7 @@ STRIP_FROM_PATH        = E:/Daten/web/wcmf/docs/api-src/framework_description/en
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = E:/Daten/web/wcmf/docs/api-src/framework_description/en/ \
-                         E:/Daten/web/wcmf/src/wcmf/ \
-                         J:/Daten/web/www/wcmf/docs/api-src/framework_description/en/ \
-                         J:/Daten/web/www/wcmf/src/wcmf/
+STRIP_FROM_INC_PATH    = home/travis/build/iherwig/wcmf/src/
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
 # less readable) file names. This can be useful is your file systems doesn't
@@ -1360,7 +1352,7 @@ CHM_FILE               = wcmf.chm
 # The file has to be specified with full path.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
-HHC_LOCATION           = "C:\Programme\HTML Help Workshop\hhc.exe"
+HHC_LOCATION           =
 
 # The GENERATE_CHI flag controls if a separate .chi index file is generated
 # (YES) or that it should be included in the master .chm file (NO).
@@ -2427,7 +2419,7 @@ INTERACTIVE_SVG        = NO
 # found. If left blank, it is assumed the dot tool can be found in the path.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_PATH               = "C:/Program Files (x86)/Graphviz2.38/bin"
+DOT_PATH               =
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that
 # contain dot files that are included in the documentation (see the \dotfile

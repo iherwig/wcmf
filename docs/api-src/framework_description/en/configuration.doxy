@@ -300,6 +300,12 @@ uploadDir = app/public/media/
 - `Media`
   - `uploadDir` Directory, to which media files should be uploaded
 
+## PHP configuration ## {#conf_php}
+
+PHP configuration values can be set in the `PhpConfig` section. The `ini_set` 
+function will be called for each key value pair when initializing the 
+\link wcmf::lib::presentation::Application `Application`\endlink instance.
+
 ## Logging configuration ## {#conf_logging}
 
 Since logging is potentially required right from application startup, it is

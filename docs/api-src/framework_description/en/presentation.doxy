@@ -103,9 +103,8 @@ actions are performed:
 7. The response data is transformed into the requested response format (see
    \ref pres_format).
 8. Execution returns to step 3, if a valid action key is contained in the response
-   data and terminates, if no action key is found or the response is finalized
-   by calling the method
-   \link wcmf::lib::presentation::Response::setFinal `Response::setFinal`\endlink.
+   data. It terminates, if either no action key is found or the next action key
+   would be the same as the previous (to prevent recursion).
 
 ### Formats ### {#pres_format}
 
@@ -127,6 +126,12 @@ implementation. wCMF currently provides the following __implementations__:
 - \link wcmf::lib::presentation::format::impl::SoapFormat `SoapFormat`\endlink
   is used together with the [NuSOAP](http://sourceforge.net/projects/nusoap/)
   library to implement a SOAP interface.
+- \link wcmf::lib::presentation::format::impl::GenericFormat `GenericFormat`\endlink
+  is used to output arbitrary responses.
+- \link wcmf::lib::presentation::format::impl::DownloadFormat `DownloadFormat`\endlink
+  is used to create a downloadable reponse document. It is automatically chosen, if
+  the \link wcmf::lib::presentation::Response::setDocument `Response::setDocument`\endlink
+  method is called with a \link wcmf::lib::presentation::ResponseDocument `ResponseDocument`\endlink.
 - \link wcmf::lib::presentation::format::impl::NullFormat `NullFormat`\endlink
   is used internally, if no formatting is required, e.g. if one controller calls
   another controller.
@@ -203,7 +208,7 @@ wcmf\application\controller\SearchIndexController??continue =
   only matches, if the last controller was
   \link wcmf::application::controller::SearchIndexController `SearchIndexController`\endlink.
 
-##### Controller methods #####
+##### Controller methods ##### {#pres_controller_methods}
 
 The previous example maps the action keys to a controller class without specifying
 a method to be called. In these cases, the framework calls the default method
@@ -327,13 +332,13 @@ methods defined in this class, which are called by
 3. \link wcmf::lib::presentation::Controller::execute `Controller::execute`\endlink
   is called finally. This method accepts a parameter, that defines the actual
   method to be called on the subclass. If the parameter is omitted it defaults
-  to `doExecute` which must then be defined in the subclass.
+  to `doExecute` which must then be defined in the subclass (see \pres_controller_methods).
 
 Controllers can _redirect_ to other controllers by using the
 \link wcmf::lib::presentation::Controller::redirect `Controller::redirect`\endlink
 method.
 
-If variables need be shared between several requests to the same controller they can
+If variables need to be shared between several requests to the same controller they can
 be stored in _local session variables_ to avoid side effects (see
 \link wcmf::lib::presentation::Controller::setLocalSessionValue `Controller::setLocalSessionValue`\endlink).
 
@@ -387,6 +392,15 @@ This is done using the
 \link wcmf::lib::presentation::Controller::executeSubAction `Controller::executeSubAction`\endlink
 method. An example is \link wcmf::application::controller::RESTController `RESTController`\endlink
 which serves as a facade to the CRUD controllers.
+
+### Automatic transactions ### {#pres_controllers_transaction}
+
+To run a controller method inside a persistence transaction the convenience method 
+\link wcmf::lib::presentation::Controller::requireTransaction `Controller::requireTransaction`\endlink
+can be called at the beginning of the method. This call will start a transaction or join the already
+opened one. The transaction will be automatically committed after method execution or rolled back in
+case of an exception. Calls to \link wcmf::lib::presentation::Controller::executeSubAction `Controller::executeSubAction`\endlink
+will use the same transaction.
 
 ### Long running requests ### {#pres_longrequest}
 
