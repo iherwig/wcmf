@@ -30,8 +30,11 @@ env:
 matrix:
   include:
   - php: 7.0
+    dist: trusty
   - php: 7.1
+    dist: bionic
   - php: 7.2
+    dist: bionic
   - php: 7.3
     dist: bionic
   - php: 7.4
