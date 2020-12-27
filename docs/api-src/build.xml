@@ -12,6 +12,7 @@
       <fileset dir="theme/" includes="**"/>
     </copy>
     <exec executable="doxygen">
+      <env key="DOXYGEN_HTML_OUTPUT" value="${dist.dir}"/>
       <arg value="doxyfile.txt"/>
     </exec>
     <replace dir="${dist.dir}" value="//var searchBox = new SearchBox">
