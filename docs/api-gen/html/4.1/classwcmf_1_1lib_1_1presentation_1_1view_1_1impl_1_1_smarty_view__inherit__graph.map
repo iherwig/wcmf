@@ -1,0 +1,4 @@
+<map id="SmartyView" name="SmartyView">
+<area shape="rect" id="node1" title="View is used by Controller to handle the view presentation in MVC pattern." alt="" coords="5,248,167,545"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1presentation_1_1view_1_1_view.html" title="View defines the interface for all view implementations." alt="" coords="17,5,155,200"/>
+</map>

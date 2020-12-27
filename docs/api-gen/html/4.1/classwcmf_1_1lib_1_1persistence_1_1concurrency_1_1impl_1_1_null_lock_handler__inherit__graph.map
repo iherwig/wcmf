@@ -1,0 +1,4 @@
+<map id="NullLockHandler" name="NullLockHandler">
+<area shape="rect" id="node1" title="NullLockHandler acts as if no LockHandler was installed." alt="" coords="5,204,155,355"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1persistence_1_1concurrency_1_1_lock_handler.html" title="LockHandler defines the interface for LockHandler implementations." alt="" coords="5,5,155,156"/>
+</map>

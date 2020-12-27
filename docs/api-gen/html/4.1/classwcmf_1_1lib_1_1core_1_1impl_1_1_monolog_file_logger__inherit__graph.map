@@ -1,0 +1,5 @@
+<map id="MonologFileLogger" name="MonologFileLogger">
+<area shape="rect" id="node1" title="MonologFileLogger is a wrapper for the Monolog library that logs to files." alt="" coords="5,417,207,671"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1core_1_1impl_1_1_abstract_logger.html" title="AbstractLogger is the abstract base class for Logger implementations." alt="" coords="89,292,235,369"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1core_1_1_logger.html" title="Interface for logger implementations." alt="" coords="30,5,182,244"/>
+</map>

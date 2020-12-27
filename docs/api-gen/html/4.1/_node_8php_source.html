@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/model/Node.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_f57071bff1402464ed1755fe1c1a7d41.html">model</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">Node.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1model.html">wcmf\lib\model</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_error_handler.html">wcmf\lib\core\ErrorHandler</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">wcmf\lib\core\IllegalArgumentException</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_util.html">wcmf\lib\model\NodeUtil</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html">wcmf\lib\persistence\BuildDepth</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html">wcmf\lib\persistence\impl\DefaultPersistentObject</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">wcmf\lib\persistence\PersistentObject</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistent_object_proxy.html">wcmf\lib\persistence\PersistentObjectProxy</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * Node adds the concept of relations to PersistentObject. It is the basic component for</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * building object trees (although a Node can have more than one parents).</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * Relations are stored as values where the value name is the role name.</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * The Node class implements the _Composite Pattern_.</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * Use the methods addNode(), deleteNode() to build/modify trees.</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html">   34</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html">Node</a> <span class="keyword">extends</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html">DefaultPersistentObject</a> {</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a6729718117a7d6b4bcb7f96fc93e57e0">   36</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a6729718117a7d6b4bcb7f96fc93e57e0">RELATION_STATE_UNINITIALIZED</a> = -1;</div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a4dc8bfbca867999ca51a3923e6a8ffb0">   37</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a4dc8bfbca867999ca51a3923e6a8ffb0">RELATION_STATE_INITIALIZING</a> = -2;</div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#aa2339f175b50aa2cdd1b4cc3950c0587">   38</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aa2339f175b50aa2cdd1b4cc3950c0587">RELATION_STATE_INITIALIZED</a> = -3;</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a6ae60ad651124608a8dc99f144058f27">   39</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a6ae60ad651124608a8dc99f144058f27">RELATION_STATE_LOADED</a> = -4;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">private</span> $relationStates = [];</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">private</span> $addedNodes = [];</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">private</span> $deletedNodes = [];</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keyword">private</span> $orderedNodes = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $parentGetValueMethod = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $logger = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * Constructor</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * @param $oid ObjectId instance (optional)</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * @param $initialData Associative array with initial data to override default data (optional)</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a1b65b6b63f6e69bd23ce69f609d38338">   55</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a1b65b6b63f6e69bd23ce69f609d38338">__construct</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid=<span class="keyword">null</span>, array $initialData=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    parent::__construct($oid, $initialData);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="comment">// get parent::getValue method by reflection</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordflow">if</span> (self::$parentGetValueMethod == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      $reflector = new \ReflectionClass(__CLASS__);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      $parent = $reflector-&gt;getParentClass();</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      self::$parentGetValueMethod = $parent-&gt;getMethod(<span class="stringliteral">&#39;getValue&#39;</span>);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">if</span> (self::$logger == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      self::$logger = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">LogManager::getLogger</a>(__CLASS__);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   * @see PersistentObject::__clone()</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#ad0cb87b388bc74d63dc884accdca8713">   71</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ad0cb87b388bc74d63dc884accdca8713">__clone</a>() {</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    $copy = parent::__clone();</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    $copy-&gt;relationStates = $this-&gt;relationStates;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordflow">return</span> $copy;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  }</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   * @see PersistentObject::getValueNames()</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a91b10951978a3d34b2c3d38437627014">   81</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a91b10951978a3d34b2c3d38437627014">getValueNames</a>($excludeTransient=<span class="keyword">false</span>) {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="comment">// exclude relations</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    $allAttributes = parent::getValueNames($excludeTransient);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    $attributes = [];</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">foreach</span> ($allAttributes as $attribute) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      <span class="keywordflow">if</span> (!$mapper-&gt;hasRelation($attribute)) {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        $attributes[] = $attribute;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordflow">return</span> $attributes;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">   * @see PersistentObject::getValue()</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8c584efa272687554bd9abe5e83fe10c">   97</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8c584efa272687554bd9abe5e83fe10c">getValue</a>($name) {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="comment">// initialize a relation value, if not done before</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    $value = parent::getValue($name);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;relationStates[$name]) &amp;&amp;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            $this-&gt;relationStates[$name] == self::RELATION_STATE_UNINITIALIZED) {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      $this-&gt;relationStates[$name] = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a4dc8bfbca867999ca51a3923e6a8ffb0">self::RELATION_STATE_INITIALIZING</a>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      $allRelatives = $mapper-&gt;loadRelation([$this], $name, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#ad8e66505aa12ab235195acb721268093">BuildDepth::PROXIES_ONLY</a>);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      $oidStr = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>()-&gt;__toString();</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      $relatives = isset($allRelatives[$oidStr]) ? $allRelatives[$oidStr] : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      $relDesc = $mapper-&gt;getRelation($name);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      <span class="keywordflow">if</span> ($relDesc-&gt;isMultiValued()) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        $mergeResult = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8303ce5504430aeffb29c1f14c678eea">self::mergeObjectLists</a>($value, $relatives);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        $value = $mergeResult[<span class="stringliteral">&#39;result&#39;</span>];</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      }</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        $value = $relatives != <span class="keyword">null</span> ? $relatives[0] : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;      }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($name, $value);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      $this-&gt;relationStates[$name] = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aa2339f175b50aa2cdd1b4cc3950c0587">self::RELATION_STATE_INITIALIZED</a>;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keywordflow">return</span> $value;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  }</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * @see PersistentObject::setValue()</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a838057c0748db6d0db1d38fe5d06ef6b">  125</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a838057c0748db6d0db1d38fe5d06ef6b">setValue</a>($name, $value, $forceSet=<span class="keyword">false</span>, $trackChange=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="comment">// if the attribute is a relation, a special handling is required</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">if</span> ($mapper-&gt;hasRelation($name)) {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;      <span class="keywordflow">if</span> (!is_array($value)) {</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        $value = [$value];</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      }</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="comment">// clean the value</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      parent::setValue($name, <span class="keyword">null</span>, <span class="keyword">true</span>, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      <span class="comment">// delegate to addNode</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      $result = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;      <span class="keywordflow">for</span>($i=0, $count=<span class="keyword">sizeof</span>($value); $i&lt;$count; $i++) {</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        $curValue = $value[$i];</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordflow">if</span> ($curValue != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;          $result &amp;= $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab69bd7cf47096d032477c858dd78cf59">addNode</a>($curValue, $name, $forceSet, $trackChange);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        }</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;      }</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;      $this-&gt;relationStates[$name] = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aa2339f175b50aa2cdd1b4cc3950c0587">self::RELATION_STATE_INITIALIZED</a>;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;      <span class="keywordflow">return</span> $result;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    }</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="comment">// default behaviour</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordflow">return</span> parent::setValue($name, $value, $forceSet, $trackChange);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  }</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment">   * @see PersistentObject::removeValue()</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab11a5b90edec335b251652cd73876317">  152</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab11a5b90edec335b251652cd73876317">removeValue</a>($name) {</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    parent::removeValue($name);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="comment">// set relation state to loaded in order to prevent lazy initialization</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordflow">if</span> ($mapper-&gt;hasRelation($name)) {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      $this-&gt;relationStates[$name] = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a6ae60ad651124608a8dc99f144058f27">self::RELATION_STATE_LOADED</a>;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    }</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">   * @see PersistentObject::getIndispensableObjects()</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a756a28909cda55de0256078569533aa2">  164</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a756a28909cda55de0256078569533aa2">getIndispensableObjects</a>() {</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="comment">// return the parent objects</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aea489049ed4789150d56646d4da2d8e3">getParents</a>();</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  }</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">   * Get Nodes that match given conditions from a list.</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">   * @param $nodeList An array of nodes to filter or a single Node.</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">   * @param $oid The object id that the Nodes should match (optional, default: _null_)</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">   * @param $type The type that the Nodes should match (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">   *        (optional, default: _null_)</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">   * @param $values An associative array holding key value pairs that the Node values should match</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">   *        (values are interpreted as regular expression, optional, default: _null_)</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">   * @param $properties An associative array holding key value pairs that the Node properties should match</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">   *        (values are interpreted as regular expression, optional, default: _null_)</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">   * @return An Array holding references to the Nodes that matched.</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5849a1f83d8d9003b7b9ead0a731937b">  182</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5849a1f83d8d9003b7b9ead0a731937b">filter</a>(array $nodeList, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid=<span class="keyword">null</span>, $type=<span class="keyword">null</span>, $values=<span class="keyword">null</span>,</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;          $properties=<span class="keyword">null</span>, $useRegExp=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    $returnArray = [];</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordflow">for</span> ($i=0, $count=<span class="keyword">sizeof</span>($nodeList); $i&lt;$count; $i++) {</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;      $curNode = $nodeList[$i];</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      <span class="keywordflow">if</span> ($curNode instanceof <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a>) {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        $match = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <span class="comment">// check oid</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        <span class="keywordflow">if</span> ($oid != <span class="keyword">null</span> &amp;&amp; $curNode-&gt;getOID() != $oid) {</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;          $match = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="comment">// check type</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="keywordflow">if</span> ($type != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;          $persistenceFacade = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;persistenceFacade&#39;</span>);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;          $fqType = $persistenceFacade-&gt;getFullyQualifiedType($type);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;          <span class="keywordflow">if</span> ($fqType != <span class="keyword">null</span> &amp;&amp; $curNode-&gt;getType() != $fqType) {</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            $match = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;          }</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        }</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        <span class="comment">// check values</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="keywordflow">if</span> ($values != <span class="keyword">null</span> &amp;&amp; is_array($values)) {</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;          <span class="keywordflow">foreach</span>($values as $key =&gt; $value) {</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            $nodeValue = $curNode-&gt;getValue($key);</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            <span class="keywordflow">if</span> ($useRegExp &amp;&amp; !preg_match(<span class="stringliteral">&quot;/&quot;</span>.$value.<span class="stringliteral">&quot;/m&quot;</span>, $nodeValue) ||</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                    !$useRegExp &amp;&amp; $value != $nodeValue) {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;              $match = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;              <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;            }</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;          }</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        <span class="comment">// check properties</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <span class="keywordflow">if</span> ($properties != <span class="keyword">null</span> &amp;&amp; is_array($properties)) {</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;          <span class="keywordflow">foreach</span>($properties as $key =&gt; $value) {</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            $nodeProperty = $curNode-&gt;getProperty($key);</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;            <span class="keywordflow">if</span> ($useRegExp &amp;&amp; !preg_match(<span class="stringliteral">&quot;/&quot;</span>.$value.<span class="stringliteral">&quot;/m&quot;</span>, $nodeProperty) ||</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                    !$useRegExp &amp;&amp; $value != $nodeProperty) {</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;              $match = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;              <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            }</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;          }</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        }</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        <span class="keywordflow">if</span> ($match) {</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;          $returnArray[] = $curNode;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        }</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      }</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        self::$logger-&gt;warn(<a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html#a8fc3f16ba66c35d8586129dd3faecac6">StringUtil::getDump</a>($curNode).<span class="stringliteral">&quot; found, where a PersistentObject was expected.\n&quot;</span>.<a class="code" href="classwcmf_1_1lib_1_1core_1_1_error_handler.html#afac334117f677949dc59de17ccb4ff7e">ErrorHandler::getStackTrace</a>(),</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;          __CLASS__);</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;      }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    }</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordflow">return</span> $returnArray;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  }</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment">   * @see PersistentObject::mergeValues</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#af00f8db169b979a60ecaf4b550836010">  239</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#af00f8db169b979a60ecaf4b550836010">mergeValues</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $object) {</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    parent::mergeValues($object);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="comment">// implement special handling for relation values</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordflow">foreach</span> ($mapper-&gt;getRelations() as $curRelationDesc) {</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;      $valueName = $curRelationDesc-&gt;getOtherRole();</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;      <span class="comment">// use parent getters to avoid loading relations</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;      $existingValue = self::$parentGetValueMethod-&gt;invokeArgs($this, [$valueName]);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;      $newValue = self::$parentGetValueMethod-&gt;invokeArgs($object, [$valueName]);</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      <span class="keywordflow">if</span> ($newValue != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        <span class="keywordflow">if</span> ($curRelationDesc-&gt;isMultiValued()) {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;          $mergeResult = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8303ce5504430aeffb29c1f14c678eea">self::mergeObjectLists</a>($existingValue, $newValue);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;          $newValue = $mergeResult[<span class="stringliteral">&#39;result&#39;</span>];</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($valueName, $newValue);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    }</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  }</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment">   * Merge two object lists using the following rules:</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment">   * - proxies in list1 are replaced by the appropriate objects from list2</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="comment">   * - proxies/objects from list2 that don&#39;t exist in list1 are added to list1</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment">   * @param $list1 Array of PersistentObject(Proxy) instances</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment">   * @param $list2 Array of PersistentObject(Proxy) instances</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment">   * @return Associative array with keys &#39;result&#39; and &#39;added&#39; and arrays of</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment">   *   all and only added objects respectively.</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8303ce5504430aeffb29c1f14c678eea">  267</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8303ce5504430aeffb29c1f14c678eea">mergeObjectLists</a>($list1, $list2) {</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="comment">// ensure arrays</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="keywordflow">if</span> (!is_array($list1)) {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;      $list1 = [];</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keywordflow">if</span> (!is_array($list2)) {</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;      $list2 = [];</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    }</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="comment">// create hashtables for better search performance</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    $list1Map = [];</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    $added = [];</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="keywordflow">foreach</span> ($list1 as $curObject) {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;      $list1Map[$curObject-&gt;getOID()-&gt;__toString()] = $curObject;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="comment">// merge</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="keywordflow">foreach</span> ($list2 as $curObject) {</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;      $curOidStr = $curObject-&gt;getOID()-&gt;__toString();</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;      <span class="keywordflow">if</span> (!isset($list1Map[$curOidStr])) {</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <span class="comment">// add the object, if it doesn&#39;t exist yet</span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        $list1Map[$curOidStr] = $curObject;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        $added[] = $curObject;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;      }</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;      elseif ($list1Map[$curOidStr] instanceof <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistent_object_proxy.html">PersistentObjectProxy</a> &amp;&amp;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;              $curObject instanceof <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a>) {</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        <span class="comment">// overwrite a proxy by a real subject</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        $list1Map[$curOidStr] = $curObject;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;      }</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    <span class="keywordflow">return</span> [<span class="stringliteral">&#39;result&#39;</span> =&gt; array_values($list1Map), <span class="stringliteral">&#39;added&#39;</span> =&gt; $added];</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  }</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="comment">   * Get the names of all relations.</span></div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="comment">   * @return An array of relation names.</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8270f912607f6faeba921accc51d6a12">  302</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8270f912607f6faeba921accc51d6a12">getRelationNames</a>() {</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    $result = [];</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    $relations = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7d43a99f995ce575be785220028ad31b">getRelations</a>();</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keywordflow">foreach</span> ($relations as $curRelation) {</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;      $result[] = $curRelation-&gt;getOtherRole();</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    }</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    <span class="keywordflow">return</span> $result;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;  }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">   * Add a Node to the given relation. Delegates to setValue internally.</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">   * @param $other PersistentObject</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment">   * @param $role The role of the Node in the created relation. If null, the role will be</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="comment">   *        the Node&#39;s simple type (without namespace) (default: _null_)</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="comment">   * @param $forceSet @see PersistentObject::setValue()</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment">   * @param $trackChange @see PersistentObject::setValue()</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment">   * @param $updateOtherSide Boolean whether to update also the other side of the relation (default: _true_)</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="comment">   * @return Boolean whether the operation succeeds or not</span></div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab69bd7cf47096d032477c858dd78cf59">  321</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab69bd7cf47096d032477c858dd78cf59">addNode</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $other, $role=<span class="keyword">null</span>, $forceSet=<span class="keyword">false</span>, $trackChange=<span class="keyword">true</span>, $updateOtherSide=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="comment">// set role if missing</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keywordflow">if</span> ($role == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;      $otherType = $other-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>();</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;      $relations = $mapper-&gt;getRelationsByType($otherType);</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;      $role = (<span class="keyword">sizeof</span>($relations) &gt; 0) ? $relations[0]-&gt;getOtherRole() : $otherType;</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    }</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <span class="comment">// get the relation description</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    $relDesc = $mapper-&gt;getRelation($role);</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    $value = $other;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    $oldValue = parent::getValue($role);</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    $addedNodes = []; <span class="comment">// this array contains the other node or nothing</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="keywordflow">if</span> (!$relDesc || $relDesc-&gt;isMultiValued()) {</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;      <span class="comment">// check multiplicity if multivalued</span></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;      $maxMultiplicity = $relDesc-&gt;getOtherMaxMultiplicity();</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;      <span class="keywordflow">if</span> ($relDesc-&gt;isMultiValued() &amp;&amp; !($maxMultiplicity == <span class="stringliteral">&#39;unbounded&#39;</span>) &amp;&amp;</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;          <span class="keyword">sizeof</span>(oldValue) &gt;= $maxMultiplicity) {</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;            <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">IllegalArgumentException</a>(<span class="stringliteral">&quot;Maximum number of related objects exceeded: &quot;</span>.$role.<span class="stringliteral">&quot; (&quot;</span>.(<span class="keyword">sizeof</span>(oldValue)+1).<span class="stringliteral">&quot; &gt; &quot;</span>.$maxMultiplicity.<span class="stringliteral">&quot;)&quot;</span>);</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;      }</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;      <span class="comment">// make sure that the value is an array if multivalued</span></div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;      $mergeResult = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8303ce5504430aeffb29c1f14c678eea">self::mergeObjectLists</a>($oldValue, [$value]);</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;      $value = $mergeResult[<span class="stringliteral">&#39;result&#39;</span>];</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;      $addedNodes = $mergeResult[<span class="stringliteral">&#39;added&#39;</span>];</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    }</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    elseif ($oldValue == <span class="keyword">null</span> &amp;&amp; $value != <span class="keyword">null</span> ||</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            $oldValue-&gt;getOID()-&gt;__toString() != $value-&gt;getOID()-&gt;__toString()) {</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;      $addedNodes[] = $value;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    }</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    $result1 = <span class="keyword">sizeof</span>($addedNodes) &gt; 0 &amp;&amp; parent::setValue($role, $value, $forceSet, $trackChange);</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160; </div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="comment">// remember the addition</span></div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($addedNodes) &gt; 0) {</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;      <span class="keywordflow">if</span> (!isset($this-&gt;addedNodes[$role])) {</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        $this-&gt;addedNodes[$role] = [];</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;      }</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;      $this-&gt;addedNodes[$role][] = $other;</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    }</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160; </div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    <span class="comment">// propagate add action to the other object</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    $result2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="keywordflow">if</span> ($updateOtherSide) {</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;      $thisRole = $relDesc ? $relDesc-&gt;getThisRole() : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;      $result2 = $other-&gt;addNode($this, $thisRole, $forceSet, $trackChange, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    }</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="keywordflow">return</span> ($result1 &amp; $result2);</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;  }</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment">   * Get the object ids of the nodes that were added since the node was loaded.</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment">   * Persistence mappers use this method when persisting the node relations.</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">   * @return Associative array with the roles as keys and an array of PersistentObject instances</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment">   *  as values</span></div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#ac2f0d1f5875964d5e62282b003c22f15">  378</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ac2f0d1f5875964d5e62282b003c22f15">getAddedNodes</a>() {</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="keywordflow">return</span> $this-&gt;addedNodes;</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;  }</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">   * Delete a Node from the given relation.</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">   * @param $other The Node to delete.</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">   * @param $role The role of the Node. If null, the role is the Node&#39;s type (without namespace) (default: _null_)</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">   * @param $updateOtherSide Boolean whether to update also the other side of the relation (default: _true_)</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7b02e282038aaef880ac63951e57fe24">  388</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7b02e282038aaef880ac63951e57fe24">deleteNode</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $other, $role=<span class="keyword">null</span>, $updateOtherSide=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160; </div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="comment">// set role if missing</span></div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="keywordflow">if</span> ($role == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;      $otherType = $other-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>();</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;      $relations = $mapper-&gt;getRelationsByType($otherType);</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;      $role = (<span class="keyword">sizeof</span>($relations) &gt; 0) ? $relations[0]-&gt;getOtherRole() : $otherType;</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    }</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160; </div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    $nodes = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8c584efa272687554bd9abe5e83fe10c">getValue</a>($role);</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    <span class="keywordflow">if</span> (empty($nodes)) {</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;      <span class="comment">// nothing to delete</span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    }</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    <span class="comment">// get the relation description</span></div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    $relDesc = $mapper-&gt;getRelation($role);</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160; </div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    $oid = $other-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>();</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    <span class="keywordflow">if</span> (is_array($nodes)) {</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;      <span class="comment">// multi valued relation</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;      <span class="keywordflow">for</span>($i=0, $count=<span class="keyword">sizeof</span>($nodes); $i&lt;$count; $i++) {</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        <span class="keywordflow">if</span> ($nodes[$i]-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>() == $oid) {</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;          <span class="comment">// remove child</span></div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;          array_splice($nodes, $i, 1);</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;          <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        }</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;      }</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    }</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;      <span class="comment">// single valued relation</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;      <span class="keywordflow">if</span> ($nodes-&gt;getOID() == $oid) {</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;        <span class="comment">// remove child</span></div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        $nodes = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;      }</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;    }</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    parent::setValue($role, $nodes);</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160; </div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    <span class="comment">// remember the deletion</span></div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    <span class="keywordflow">if</span> (!isset($this-&gt;deletedNodes[$role])) {</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;      $this-&gt;deletedNodes[$role] = [];</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    }</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    $this-&gt;deletedNodes[$role][] = $other-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>();</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">setState</a>(PersistentOBject::STATE_DIRTY);</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160; </div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;    <span class="comment">// propagate add action to the other object</span></div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    <span class="keywordflow">if</span> ($updateOtherSide) {</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;      $thisRole = $relDesc ? $relDesc-&gt;getThisRole() : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;      $other-&gt;deleteNode($this, $thisRole, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;    }</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;  }</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">   * Get the object ids of the nodes that were deleted since the node was loaded.</span></div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="comment">   * Persistence mappers use this method when persisting the node relations.</span></div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="comment">   * @return Associative array with the roles as keys and an array of ObjectId instances</span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="comment">   *  as values</span></div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a0eeb5ae0d01b8eddfcaee6e54137f6d0">  448</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a0eeb5ae0d01b8eddfcaee6e54137f6d0">getDeletedNodes</a>() {</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;    <span class="keywordflow">return</span> $this-&gt;deletedNodes;</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;  }</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;<span class="comment">   * Define the order of related Node instances. The mapper is responsible for</span></div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;<span class="comment">   * persisting the order of the given Node instances in relation to this Node.</span></div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="comment">   * @note Note instances, that are not explicitly sortable by a sortkey</span></div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;<span class="comment">   * (@see PersistenceMapper::getDefaultOrder()) will be ignored. If a given</span></div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;<span class="comment">   * Node instance is not related to this Node yet, an exception will be thrown.</span></div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="comment">   * Any not persisted definition of a previous call will be overwritten</span></div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="comment">   * @param $orderedList Array of ordered Node instances</span></div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="comment">   * @param $movedList Array of repositioned Node instances (optional, improves performance)</span></div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="comment">   * @param $role Role name of the Node instances (optional)</span></div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00463"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#af9481965fd50bbe15b920c34533dd476">  463</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#af9481965fd50bbe15b920c34533dd476">setNodeOrder</a>(array $orderedList, array $movedList=<span class="keyword">null</span>, $role=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;    $this-&gt;orderedNodes = [</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        <span class="stringliteral">&#39;ordered&#39;</span> =&gt; $orderedList,</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;        <span class="stringliteral">&#39;moved&#39;</span> =&gt; $movedList,</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;        <span class="stringliteral">&#39;role&#39;</span> =&gt; $role</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    ];</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">setState</a>(PersistentOBject::STATE_DIRTY);</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;  }</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;<span class="comment">   * Get the order of related Node instances, if it was defined using</span></div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;<span class="comment">   * the Node::setNodeOrder() method.</span></div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="comment">   * @return Associative array of with keys &#39;ordered&#39;, &#39;moved&#39;, &#39;role&#39; or null</span></div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00477"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a34ed73bac24e08d4f57005cb18fa56dd">  477</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a34ed73bac24e08d4f57005cb18fa56dd">getNodeOrder</a>() {</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;    <span class="keywordflow">return</span> $this-&gt;orderedNodes;</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;  }</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;<span class="comment">   * Load the children of a given role and add them. If all children should be</span></div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;<span class="comment">   * loaded, set the role parameter to null.</span></div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;<span class="comment">   * @param $role The role of children to load (maybe null, to load all children) (default: _null_)</span></div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;<span class="comment">   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build</span></div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;<span class="comment">   *        (default: _BuildDepth::SINGLE_)</span></div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00488"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a2cfcc79657b237f9c8ca4fac2508a5a9">  488</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a2cfcc79657b237f9c8ca4fac2508a5a9">loadChildren</a>($role=<span class="keyword">null</span>, $buildDepth=<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>) {</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    <span class="keywordflow">if</span> ($role != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5c55cd30e0414e491c9949c300ffd36a">loadRelations</a>([$role], $buildDepth);</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    }</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5c55cd30e0414e491c9949c300ffd36a">loadRelations</a>(array_keys($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#acaddf23f5d6761b22e98588fcaccb3a0">getPossibleChildren</a>()), $buildDepth);</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    }</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;  }</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment">   * Get the number of children of the Node.</span></div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="comment">   * @param $memOnly Boolean whether to only get the number of loaded children or all children (default: _true_).</span></div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="comment">   * @return The number of children.</span></div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00502"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab738ebd7975e80c82599ae509337659a">  502</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab738ebd7975e80c82599ae509337659a">getNumChildren</a>($memOnly=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a2e5d148229788e5697d132ef2ad2c6a5">getNumRelatives</a>(<span class="stringliteral">&#39;child&#39;</span>, $memOnly);</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;  }</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;<span class="comment">   * Get the first child that matches given conditions.</span></div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="comment">   * @param $role The role that the child should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;<span class="comment">   * @param $type The type that the child should match (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<span class="comment">   *        (optional, default: _null_).</span></div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;<span class="comment">   * @param $values An associative array holding key value pairs that the child values should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;<span class="comment">   * @param $properties An associative array holding key value pairs that the child properties should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;<span class="comment">   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)</span></div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;<span class="comment">   * @return Node instance or null.</span></div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00516"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#afb9ddab32c7880f7ef43bae443680b9f">  516</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#afb9ddab32c7880f7ef43bae443680b9f">getFirstChild</a>($role=<span class="keyword">null</span>, $type=<span class="keyword">null</span>, $values=<span class="keyword">null</span>, $properties=<span class="keyword">null</span>, $useRegExp=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;    $children = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aedb81ded0f3ec4dbbbdb734014fc5de3">getChildrenEx</a>(<span class="keyword">null</span>, $role, $type, $values, $properties, $useRegExp);</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($children) &gt; 0) {</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;      <span class="keywordflow">return</span> $children[0];</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;    }</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    }</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;  }</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;<span class="comment">   * Get the Node&#39;s children.</span></div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;<span class="comment">   * @param $memOnly Boolean whether to only get the loaded children or all children (default: _true_).</span></div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;<span class="comment">   * @return Array PersistentObject instances.</span></div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00531"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#aa1891af01c18077f93d59bcb2b596ce1">  531</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aa1891af01c18077f93d59bcb2b596ce1">getChildren</a>($memOnly=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a81b383a99d7b59a8a7f060c0ef01b1cd">getRelatives</a>(<span class="stringliteral">&#39;child&#39;</span>, $memOnly);</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;  }</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;<span class="comment">   * Get the children that match given conditions.</span></div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;<span class="comment">   * @note This method will only return objects that are already loaded, to get all objects in</span></div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;<span class="comment">   * the given relation (including proxies), use the Node::getValue() method and filter the returned</span></div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;<span class="comment">   * list afterwards.</span></div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;<span class="comment">   * @param $oid The object id that the children should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;<span class="comment">   * @param $role The role that the children should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<span class="comment">   * @param $type The type that the children should match (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;<span class="comment">   *        (optional, default: _null_).</span></div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;<span class="comment">   * @param $values An associative array holding key value pairs that the children values should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="comment">   * @param $properties An associative array holding key value pairs that the children properties should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;<span class="comment">   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)</span></div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;<span class="comment">   * @return Array containing children Nodes that matched (proxies not included).</span></div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00549"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#aedb81ded0f3ec4dbbbdb734014fc5de3">  549</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aedb81ded0f3ec4dbbbdb734014fc5de3">getChildrenEx</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid=<span class="keyword">null</span>, $role=<span class="keyword">null</span>, $type=<span class="keyword">null</span>, $values=<span class="keyword">null</span>,</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;          $properties=<span class="keyword">null</span>, $useRegExp=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;    <span class="keywordflow">if</span> ($role != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;      <span class="comment">// nodes of a given role are requested</span></div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;      <span class="comment">// make sure it is a child role</span></div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;      $childRoles = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#acaddf23f5d6761b22e98588fcaccb3a0">getPossibleChildren</a>();</div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;      <span class="keywordflow">if</span> (!isset($childRoles[$role])) {</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;        <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">IllegalArgumentException</a>(<span class="stringliteral">&quot;No child role defined with name: &quot;</span>.$role);</div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;      }</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;      <span class="comment">// we are only looking for nodes that are in memory already</span></div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;      $nodes = parent::getValue($role);</div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;      <span class="keywordflow">if</span> (!is_array($nodes)) {</div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;        $nodes = [$nodes];</div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;      }</div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;      <span class="comment">// sort out proxies</span></div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;      $children = [];</div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;      <span class="keywordflow">foreach</span>($nodes as $curNode) {</div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;        <span class="keywordflow">if</span> ($curNode instanceof <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a>) {</div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;          $children[] = $curNode;</div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;        }</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;      }</div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5849a1f83d8d9003b7b9ead0a731937b">self::filter</a>($children, $oid, $type, $values, $properties, $useRegExp);</div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;    }</div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5849a1f83d8d9003b7b9ead0a731937b">self::filter</a>($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aa1891af01c18077f93d59bcb2b596ce1">getChildren</a>(), $oid, $type, $values, $properties, $useRegExp);</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;    }</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;  }</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;<span class="comment">   * Get possible children of this node type (independent of existing children).</span></div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;<span class="comment">   * @return An Array with role names as keys and RelationDescription instances as values.</span></div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00581"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#acaddf23f5d6761b22e98588fcaccb3a0">  581</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#acaddf23f5d6761b22e98588fcaccb3a0">getPossibleChildren</a>() {</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;    $result = [];</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;    $relations = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7d43a99f995ce575be785220028ad31b">getRelations</a>(<span class="stringliteral">&#39;child&#39;</span>);</div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;    <span class="keywordflow">foreach</span> ($relations as $curRelation) {</div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;      $result[$curRelation-&gt;getOtherRole()] = $curRelation;</div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;    }</div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;    <span class="keywordflow">return</span> $result;</div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;  }</div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;<span class="comment">   * Load the parents of a given role and add them. If all parents should be</span></div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;<span class="comment">   * loaded, set the role parameter to null.</span></div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;<span class="comment">   * @param $role The role of parents to load (maybe null, to load all parents) (default: _null_)</span></div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;<span class="comment">   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build</span></div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;<span class="comment">   *        (default: _BuildDepth::SINGLE_)</span></div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00597"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab1d09f33ee0a26c760f5da9b1518bb71">  597</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab1d09f33ee0a26c760f5da9b1518bb71">loadParents</a>($role=<span class="keyword">null</span>, $buildDepth=<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>) {</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;    <span class="keywordflow">if</span> ($role != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5c55cd30e0414e491c9949c300ffd36a">loadRelations</a>([$role], $buildDepth);</div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;    }</div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5c55cd30e0414e491c9949c300ffd36a">loadRelations</a>(array_keys($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ac068d34ca78188fe6f311df9f42f8485">getPossibleParents</a>()), $buildDepth);</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;    }</div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;  }</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;<span class="comment">   * Get the number of parents of the Node.</span></div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;<span class="comment">   * @param $memOnly Boolean whether to only get the number of loaded parents or all parents (default: _true_).</span></div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;<span class="comment">   * @return The number of parents.</span></div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00611"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a89e8ff9416c4c61ea0cb3ac2d110f494">  611</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a89e8ff9416c4c61ea0cb3ac2d110f494">getNumParents</a>($memOnly=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a2e5d148229788e5697d132ef2ad2c6a5">getNumRelatives</a>(<span class="stringliteral">&#39;parent&#39;</span>, $memOnly);</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;  }</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;<span class="comment">   * Get the Node&#39;s parent. This method exists for compatibility with previous</span></div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;<span class="comment">   * versions. It returns the first parent.</span></div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;<span class="comment">   * @return Node</span></div>
+<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00620"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a95ecaee3537b1ad29b04ef383a57bbae">  620</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a95ecaee3537b1ad29b04ef383a57bbae">getParent</a>() {</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    $parents = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aea489049ed4789150d56646d4da2d8e3">getParents</a>();</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($parents) &gt; 0) {</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;      <span class="keywordflow">return</span> $parents[0];</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;    }</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;    }</div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;  }</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;<span class="comment">   * Get the first parent that matches given conditions.</span></div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;<span class="comment">   * @param $role The role that the parent should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;<span class="comment">   * @param $type The type that the parent should match (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;<span class="comment">   *        (optional, default: _null_).</span></div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;<span class="comment">   * @param $values An associative array holding key value pairs that the parent values should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;<span class="comment">   * @param $properties An associative array holding key value pairs that the parent properties should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;<span class="comment">   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)</span></div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;<span class="comment">   * @return Node instance or null.</span></div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00640"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#adbe2f1c880366704c9647b6a28a5b4da">  640</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#adbe2f1c880366704c9647b6a28a5b4da">getFirstParent</a>($role=<span class="keyword">null</span>, $type=<span class="keyword">null</span>, $values=<span class="keyword">null</span>, $properties=<span class="keyword">null</span>, $useRegExp=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160; </div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;    $parents = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab1ec03cfb438f9a1b3273cbfeb136a0e">getParentsEx</a>(<span class="keyword">null</span>, $role, $type, $values, $properties, $useRegExp);</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($parents) &gt; 0) {</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;      <span class="keywordflow">return</span> $parents[0];</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;    }</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;    }</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;  }</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;<span class="comment">   * Get the Nodes parents.</span></div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;<span class="comment">   * @param $memOnly Boolean whether to only get the loaded parents or all parents (default: _true_).</span></div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;<span class="comment">   * @return Array PersistentObject instances.</span></div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00656"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#aea489049ed4789150d56646d4da2d8e3">  656</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aea489049ed4789150d56646d4da2d8e3">getParents</a>($memOnly=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a81b383a99d7b59a8a7f060c0ef01b1cd">getRelatives</a>(<span class="stringliteral">&#39;parent&#39;</span>, $memOnly);</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;  }</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;<span class="comment">   * Get the parents that match given conditions.</span></div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;<span class="comment">   * @note This method will only return objects that are already loaded, to get all objects in</span></div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;<span class="comment">   * the given relation (including proxies), use the Node::getValue() method and filter the returned</span></div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;<span class="comment">   * list afterwards.</span></div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;<span class="comment">   * @param $oid The object id that the parent should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;<span class="comment">   * @param $role The role that the parents should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;<span class="comment">   * @param $type The type that the parents should match (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;<span class="comment">   *        (optional, default: _null_).</span></div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;<span class="comment">   * @param $values An associative array holding key value pairs that the parent values should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;<span class="comment">   * @param $properties An associative array holding key value pairs that the parent properties should match (optional, default: _null_).</span></div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;<span class="comment">   * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)</span></div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;<span class="comment">   * @return Array containing parent Nodes that matched (proxies not included).</span></div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00674"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab1ec03cfb438f9a1b3273cbfeb136a0e">  674</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ab1ec03cfb438f9a1b3273cbfeb136a0e">getParentsEx</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid=<span class="keyword">null</span>, $role=<span class="keyword">null</span>, $type=<span class="keyword">null</span>, $values=<span class="keyword">null</span>,</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;          $properties=<span class="keyword">null</span>, $useRegExp=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    <span class="keywordflow">if</span> ($role != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;      <span class="comment">// nodes of a given role are requested</span></div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;      <span class="comment">// make sure it is a parent role</span></div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;      $parentRoles = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ac068d34ca78188fe6f311df9f42f8485">getPossibleParents</a>();</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;      <span class="keywordflow">if</span> (!isset($parentRoles[$role])) {</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;        <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">IllegalArgumentException</a>(<span class="stringliteral">&quot;No parent role defined with name: &quot;</span>.$role);</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;      }</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;      <span class="comment">// we are only looking for nodes that are in memory already</span></div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;      $nodes = parent::getValue($role);</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;      <span class="keywordflow">if</span> (!is_array($nodes)) {</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        $nodes = [$nodes];</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;      }</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;      <span class="comment">// sort out proxies</span></div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;      $parents = [];</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;      <span class="keywordflow">foreach</span>($nodes as $curNode) {</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;        <span class="keywordflow">if</span> ($curNode instanceof <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a>) {</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;          $parents[] = $curNode;</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;        }</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;      }</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5849a1f83d8d9003b7b9ead0a731937b">self::filter</a>($parents, $oid, $type, $values, $properties, $useRegExp);</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;    }</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;      <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5849a1f83d8d9003b7b9ead0a731937b">self::filter</a>($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#aea489049ed4789150d56646d4da2d8e3">getParents</a>(), $oid, $type, $values, $properties, $useRegExp);</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;    }</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;  }</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;<span class="comment">   * Get possible parents of this node type (independent of existing parents).</span></div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;<span class="comment">   * @return An Array with role names as keys and RelationDescription instances as values.</span></div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00706"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#ac068d34ca78188fe6f311df9f42f8485">  706</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#ac068d34ca78188fe6f311df9f42f8485">getPossibleParents</a>() {</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    $result = [];</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;    $relations = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7d43a99f995ce575be785220028ad31b">getRelations</a>(<span class="stringliteral">&#39;parent&#39;</span>);</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;    <span class="keywordflow">foreach</span> ($relations as $curRelation) {</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;      $result[$curRelation-&gt;getOtherRole()] = $curRelation;</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;    }</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;    <span class="keywordflow">return</span> $result;</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;  }</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="comment">   * Get the relation description for a given node.</span></div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="comment">   * @param $object PersistentObject instance to look for</span></div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;<span class="comment">   * @return RelationDescription instance or null, if the Node is not related</span></div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00720"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a9f45b8f4a2ed8e789dc2b4c85c3cfbf2">  720</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a9f45b8f4a2ed8e789dc2b4c85c3cfbf2">getNodeRelation</a>($object) {</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    $relations = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7d43a99f995ce575be785220028ad31b">getRelations</a>();</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    <span class="keywordflow">foreach</span> ($relations as $curRelation) {</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;      $curRelatives = parent::getValue($curRelation-&gt;getOtherRole());</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;      <span class="keywordflow">if</span> ($curRelatives instanceof <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html">Node</a> &amp;&amp; $curRelatives-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>() == $object-&gt;getOID()) {</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;        <span class="keywordflow">return</span> $curRelation;</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;      }</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;      elseif (is_array($curRelatives)) {</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;        <span class="keywordflow">foreach</span> ($curRelatives as $curRelative) {</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;          <span class="keywordflow">if</span> ($curRelative-&gt;getOID() == $object-&gt;getOID()) {</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            <span class="keywordflow">return</span> $curRelation;</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;          }</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;        }</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;      }</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    }</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;  }</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;<span class="comment">   * Load all objects in the given set of relations</span></div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;<span class="comment">   * @param $roles An array of relation (=role) names</span></div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;<span class="comment">   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build</span></div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;<span class="comment">   *        (default: _BuildDepth::SINGLE_)</span></div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00744"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5c55cd30e0414e491c9949c300ffd36a">  744</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5c55cd30e0414e491c9949c300ffd36a">loadRelations</a>(array $roles, $buildDepth=<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>) {</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;    $oldState = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afbf787ced76807989fb3093e1772c5a1">getState</a>();</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;    <span class="keywordflow">foreach</span> ($roles as $curRole) {</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;      <span class="keywordflow">if</span> (isset($this-&gt;relationStates[$curRole]) &amp;&amp;</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;              $this-&gt;relationStates[$curRole] != self::RELATION_STATE_LOADED) {</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        $relatives = [];</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160; </div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;        <span class="comment">// resolve proxies if the relation is already initialized</span></div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;        <span class="keywordflow">if</span> ($this-&gt;relationStates[$curRole] == self::RELATION_STATE_INITIALIZED) {</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;          $proxies = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8c584efa272687554bd9abe5e83fe10c">getValue</a>($curRole);</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;          <span class="keywordflow">if</span> (is_array($proxies)) {</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;            <span class="keywordflow">foreach</span> ($proxies as $curRelative) {</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;              <span class="keywordflow">if</span> ($curRelative instanceof <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistent_object_proxy.html">PersistentObjectProxy</a>) {</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;                <span class="comment">// resolve proxies</span></div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;                $curRelative-&gt;resolve($buildDepth);</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;                $relatives[] = $curRelative-&gt;getRealSubject();</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;              }</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;              <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;                $relatives[] = $curRelative;</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;              }</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;            }</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;          }</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;        }</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;        <span class="comment">// otherwise load the objects directly</span></div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;          $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;          $allRelatives = $mapper-&gt;loadRelation([$this], $curRole, $buildDepth);</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;          $oidStr = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>()-&gt;__toString();</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;          $relatives = isset($allRelatives[$oidStr]) ? $allRelatives[$oidStr] : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;          $relDesc = $mapper-&gt;getRelation($curRole);</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;          <span class="keywordflow">if</span> (!$relDesc-&gt;isMultiValued()) {</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;            $relatives = $relatives != <span class="keyword">null</span> ? $relatives[0] : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;          }</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;        }</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($curRole, $relatives);</div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;        $this-&gt;relationStates[$curRole] = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a6ae60ad651124608a8dc99f144058f27">self::RELATION_STATE_LOADED</a>;</div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;      }</div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;    }</div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">setState</a>($oldState);</div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;  }</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;<span class="comment">   * Get the relation descriptions of a given hierarchyType.</span></div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;<span class="comment">   * @param $hierarchyType @see PersistenceMapper::getRelations (default: &#39;all&#39;)</span></div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;<span class="comment">   * @return An array containing the RelationDescription instances.</span></div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00790"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7d43a99f995ce575be785220028ad31b">  790</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7d43a99f995ce575be785220028ad31b">getRelations</a>($hierarchyType=<span class="stringliteral">&#39;all&#39;</span>) {</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getRelations($hierarchyType);</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;  }</div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;<span class="comment">   * Get the relatives of a given hierarchyType.</span></div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;<span class="comment">   * @param $hierarchyType @see PersistenceMapper::getRelations</span></div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;<span class="comment">   * @param $memOnly Boolean whether to only get the relatives in memory or all relatives (including proxies) (default: _true_).</span></div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;<span class="comment">   * @return An array containing the relatives.</span></div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00800"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a81b383a99d7b59a8a7f060c0ef01b1cd">  800</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a81b383a99d7b59a8a7f060c0ef01b1cd">getRelatives</a>($hierarchyType, $memOnly=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;    $relatives = [];</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;    $relations = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7d43a99f995ce575be785220028ad31b">getRelations</a>($hierarchyType);</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;    <span class="keywordflow">foreach</span> ($relations as $curRelation) {</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;      $curRelatives = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;      <span class="keywordflow">if</span> ($memOnly) {</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;        $curRelatives = parent::getValue($curRelation-&gt;getOtherRole());</div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;      }</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;        $curRelatives = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a8c584efa272687554bd9abe5e83fe10c">getValue</a>($curRelation-&gt;getOtherRole());</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;      }</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;      <span class="keywordflow">if</span> (!$curRelatives) {</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;      }</div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;      <span class="keywordflow">if</span> (!is_array($curRelatives)) {</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;        $curRelatives = [$curRelatives];</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;      }</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;      <span class="keywordflow">foreach</span> ($curRelatives as $curRelative) {</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;        <span class="keywordflow">if</span> ($curRelative instanceof <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistent_object_proxy.html">PersistentObjectProxy</a> &amp;&amp; $memOnly) {</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;          <span class="comment">// ignore proxies</span></div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;          <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;        }</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;          $relatives[] = $curRelative;</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;        }</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;      }</div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;    }</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;    <span class="keywordflow">return</span> $relatives;</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;  }</div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;<span class="comment">   * Get the number of relatives of a given hierarchyType.</span></div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;<span class="comment">   * @param $hierarchyType @see PersistenceMapper::getRelations</span></div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;<span class="comment">   * @param $memOnly Boolean whether to only get the number of the relatives in memory or all relatives (default: _true_).</span></div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;<span class="comment">   * @return The number of relatives.</span></div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00836"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a2e5d148229788e5697d132ef2ad2c6a5">  836</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a2e5d148229788e5697d132ef2ad2c6a5">getNumRelatives</a>($hierarchyType, $memOnly=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">sizeof</span>($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a81b383a99d7b59a8a7f060c0ef01b1cd">getRelatives</a>($hierarchyType, $memOnly));</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;  }</div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;<span class="comment">   * Accept a Visitor. For use with the _Visitor Pattern_.</span></div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;<span class="comment">   * @param $visitor Visitor instance.</span></div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00844"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a4ce8d24adc3fbd548db104f9b98b962d">  844</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a4ce8d24adc3fbd548db104f9b98b962d">acceptVisitor</a>($visitor) {</div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;    $visitor-&gt;visit($this);</div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;  }</div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;<span class="comment">   * Add an uninitialized relation. The relation will be</span></div>
+<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;<span class="comment">   * initialized (proxies for related objects will be added)</span></div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;<span class="comment">   * on first access.</span></div>
+<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;<span class="comment">   * @param $name The relation name (= role)</span></div>
+<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00854"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5e307e5fdfc4d0fd39202738593c0034">  854</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a5e307e5fdfc4d0fd39202738593c0034">addRelation</a>($name) {</div>
+<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;    <span class="keywordflow">if</span> (!$this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a270bd65d789405427f5005ef5b0e0f38">hasValue</a>($name)) {</div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;      $this-&gt;relationStates[$name] = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a6729718117a7d6b4bcb7f96fc93e57e0">self::RELATION_STATE_UNINITIALIZED</a>;</div>
+<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($name, <span class="keyword">null</span>);</div>
+<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;    }</div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;  }</div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;<span class="comment">   * Output</span></div>
+<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;<span class="comment">   * @see PersistentObject::getDisplayValue()</span></div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;<span class="comment">   * Delegates to NodeUtil::getDisplayValue</span></div>
+<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00869"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a10c4f56b4c915a4a77e75a3b4452240b">  869</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a10c4f56b4c915a4a77e75a3b4452240b">getDisplayValue</a>() {</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_util.html#a048d90ae2bd98d78429eae26b804c756">NodeUtil::getDisplayValue</a>($this);</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;  }</div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;<span class="comment">   * Get a string representation of the Node.</span></div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;<span class="comment">   * @return The string representation of the Node.</span></div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00877"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7516ca30af0db3cdbf9a7739b48ce91d">  877</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>() {</div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;    $pStr = parent::__toString();</div>
+<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;    $str = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a10c4f56b4c915a4a77e75a3b4452240b">getDisplayValue</a>();</div>
+<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;    <span class="keywordflow">if</span> ($pStr != $str) {</div>
+<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;      <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a10c4f56b4c915a4a77e75a3b4452240b">getDisplayValue</a>().<span class="stringliteral">&#39; [&#39;</span>.$pStr.<span class="charliteral">&#39;]&#39;</span>;</div>
+<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;    }</div>
+<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;    <span class="keywordflow">return</span> $str;</div>
+<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;  }</div>
+<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;}</div>
+<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a4ce8d24adc3fbd548db104f9b98b962d"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a4ce8d24adc3fbd548db104f9b98b962d">wcmf\lib\model\Node\acceptVisitor</a></div><div class="ttdeci">acceptVisitor($visitor)</div><div class="ttdoc">Accept a Visitor.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00844">Node.php:844</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a5c55cd30e0414e491c9949c300ffd36a"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a5c55cd30e0414e491c9949c300ffd36a">wcmf\lib\model\Node\loadRelations</a></div><div class="ttdeci">loadRelations(array $roles, $buildDepth=BuildDepth::SINGLE)</div><div class="ttdoc">Load all objects in the given set of relations.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00744">Node.php:744</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_ab1d09f33ee0a26c760f5da9b1518bb71"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#ab1d09f33ee0a26c760f5da9b1518bb71">wcmf\lib\model\Node\loadParents</a></div><div class="ttdeci">loadParents($role=null, $buildDepth=BuildDepth::SINGLE)</div><div class="ttdoc">Load the parents of a given role and add them.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00597">Node.php:597</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a16aa52eac17a3f79894854eaf52739bd"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">wcmf\lib\persistence\impl\DefaultPersistentObject\getMapper</a></div><div class="ttdeci">getMapper()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00123">DefaultPersistentObject.php:123</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_adbe2f1c880366704c9647b6a28a5b4da"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#adbe2f1c880366704c9647b6a28a5b4da">wcmf\lib\model\Node\getFirstParent</a></div><div class="ttdeci">getFirstParent($role=null, $type=null, $values=null, $properties=null, $useRegExp=true)</div><div class="ttdoc">Get the first parent that matches given conditions.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00640">Node.php:640</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a830b5c75df72b32396701bc563fbe3c7"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a830b5c75df72b32396701bc563fbe3c7">wcmf\lib\persistence\PersistentObject\getType</a></div><div class="ttdeci">getType()</div><div class="ttdoc">Get the type of the object.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html_a8fc3f16ba66c35d8586129dd3faecac6"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html#a8fc3f16ba66c35d8586129dd3faecac6">wcmf\lib\util\StringUtil\getDump</a></div><div class="ttdeci">static getDump($variable, $strlen=100, $width=25, $depth=10, $i=0, &amp;$objects=[])</div><div class="ttdoc">Get the dump of a variable as string.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00029">StringUtil.php:29</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_ab69bd7cf47096d032477c858dd78cf59"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#ab69bd7cf47096d032477c858dd78cf59">wcmf\lib\model\Node\addNode</a></div><div class="ttdeci">addNode(PersistentObject $other, $role=null, $forceSet=false, $trackChange=true, $updateOtherSide=true)</div><div class="ttdoc">Add a Node to the given relation.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00321">Node.php:321</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_acaddf23f5d6761b22e98588fcaccb3a0"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#acaddf23f5d6761b22e98588fcaccb3a0">wcmf\lib\model\Node\getPossibleChildren</a></div><div class="ttdeci">getPossibleChildren()</div><div class="ttdoc">Get possible children of this node type (independent of existing children).</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00581">Node.php:581</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html">wcmf\lib\persistence\impl\DefaultPersistentObject</a></div><div class="ttdoc">DefaultPersistentObject is the base class of all persistent objects.</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00034">DefaultPersistentObject.php:34</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_ab738ebd7975e80c82599ae509337659a"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#ab738ebd7975e80c82599ae509337659a">wcmf\lib\model\Node\getNumChildren</a></div><div class="ttdeci">getNumChildren($memOnly=true)</div><div class="ttdoc">Get the number of children of the Node.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00502">Node.php:502</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_util_html_a048d90ae2bd98d78429eae26b804c756"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node_util.html#a048d90ae2bd98d78429eae26b804c756">wcmf\lib\model\NodeUtil\getDisplayValue</a></div><div class="ttdeci">static getDisplayValue(Node $node, $language=null)</div><div class="ttdoc">Get the display value for a Node defined by the 'displayValues' property.</div><div class="ttdef"><b>Definition:</b> <a href="_node_util_8php_source.html#l00152">NodeUtil.php:152</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a8270f912607f6faeba921accc51d6a12"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a8270f912607f6faeba921accc51d6a12">wcmf\lib\model\Node\getRelationNames</a></div><div class="ttdeci">getRelationNames()</div><div class="ttdoc">Get the names of all relations.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00302">Node.php:302</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a91b10951978a3d34b2c3d38437627014"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a91b10951978a3d34b2c3d38437627014">wcmf\lib\model\Node\getValueNames</a></div><div class="ttdeci">getValueNames($excludeTransient=false)</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00081">Node.php:81</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_aa2339f175b50aa2cdd1b4cc3950c0587"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#aa2339f175b50aa2cdd1b4cc3950c0587">wcmf\lib\model\Node\RELATION_STATE_INITIALIZED</a></div><div class="ttdeci">const RELATION_STATE_INITIALIZED</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00038">Node.php:38</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a756a28909cda55de0256078569533aa2"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a756a28909cda55de0256078569533aa2">wcmf\lib\model\Node\getIndispensableObjects</a></div><div class="ttdeci">getIndispensableObjects()</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00164">Node.php:164</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a2cfcc79657b237f9c8ca4fac2508a5a9"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a2cfcc79657b237f9c8ca4fac2508a5a9">wcmf\lib\model\Node\loadChildren</a></div><div class="ttdeci">loadChildren($role=null, $buildDepth=BuildDepth::SINGLE)</div><div class="ttdoc">Load the children of a given role and add them.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00488">Node.php:488</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a7516ca30af0db3cdbf9a7739b48ce91d"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a7516ca30af0db3cdbf9a7739b48ce91d">wcmf\lib\model\Node\__toString</a></div><div class="ttdeci">__toString()</div><div class="ttdoc">Get a string representation of the Node.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00877">Node.php:877</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a1b65b6b63f6e69bd23ce69f609d38338"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a1b65b6b63f6e69bd23ce69f609d38338">wcmf\lib\model\Node\__construct</a></div><div class="ttdeci">__construct(ObjectId $oid=null, array $initialData=null)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00055">Node.php:55</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_ac886ae95a746f43906bb3b2515092440"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">wcmf\lib\persistence\PersistentObject\getOID</a></div><div class="ttdeci">getOID()</div><div class="ttdoc">Get the object id of the PersistentObject.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a8c584efa272687554bd9abe5e83fe10c"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a8c584efa272687554bd9abe5e83fe10c">wcmf\lib\model\Node\getValue</a></div><div class="ttdeci">getValue($name)</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00097">Node.php:97</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a9f45b8f4a2ed8e789dc2b4c85c3cfbf2"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a9f45b8f4a2ed8e789dc2b4c85c3cfbf2">wcmf\lib\model\Node\getNodeRelation</a></div><div class="ttdeci">getNodeRelation($object)</div><div class="ttdoc">Get the relation description for a given node.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00720">Node.php:720</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_afb9ddab32c7880f7ef43bae443680b9f"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#afb9ddab32c7880f7ef43bae443680b9f">wcmf\lib\model\Node\getFirstChild</a></div><div class="ttdeci">getFirstChild($role=null, $type=null, $values=null, $properties=null, $useRegExp=true)</div><div class="ttdoc">Get the first child that matches given conditions.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00516">Node.php:516</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_illegal_argument_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">wcmf\lib\core\IllegalArgumentException</a></div><div class="ttdoc">IllegalArgumentException signals an exception in method arguments.</div><div class="ttdef"><b>Definition:</b> <a href="_illegal_argument_exception_8php_source.html#l00018">IllegalArgumentException.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a94042b70768a686decc42594ef36bbd6"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">wcmf\lib\persistence\impl\DefaultPersistentObject\setState</a></div><div class="ttdeci">setState($state)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00176">DefaultPersistentObject.php:176</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a10c4f56b4c915a4a77e75a3b4452240b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a10c4f56b4c915a4a77e75a3b4452240b">wcmf\lib\model\Node\getDisplayValue</a></div><div class="ttdeci">getDisplayValue()</div><div class="ttdoc">Output.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00869">Node.php:869</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a></div><div class="ttdoc">StringUtil provides support for string manipulation.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00018">StringUtil.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_ac068d34ca78188fe6f311df9f42f8485"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#ac068d34ca78188fe6f311df9f42f8485">wcmf\lib\model\Node\getPossibleParents</a></div><div class="ttdeci">getPossibleParents()</div><div class="ttdoc">Get possible parents of this node type (independent of existing parents).</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00706">Node.php:706</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a></div><div class="ttdoc">ObjectId is the unique identifier of an object.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00028">ObjectId.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_afbf787ced76807989fb3093e1772c5a1"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afbf787ced76807989fb3093e1772c5a1">wcmf\lib\persistence\impl\DefaultPersistentObject\getState</a></div><div class="ttdeci">getState()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00169">DefaultPersistentObject.php:169</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_ab11a5b90edec335b251652cd73876317"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#ab11a5b90edec335b251652cd73876317">wcmf\lib\model\Node\removeValue</a></div><div class="ttdeci">removeValue($name)</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00152">Node.php:152</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_build_depth_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html">wcmf\lib\persistence\BuildDepth</a></div><div class="ttdoc">BuildDepth values are used to define the depth when loading object trees.</div><div class="ttdef"><b>Definition:</b> <a href="_build_depth_8php_source.html#l00019">BuildDepth.php:19</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a6729718117a7d6b4bcb7f96fc93e57e0"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a6729718117a7d6b4bcb7f96fc93e57e0">wcmf\lib\model\Node\RELATION_STATE_UNINITIALIZED</a></div><div class="ttdeci">const RELATION_STATE_UNINITIALIZED</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00036">Node.php:36</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_ab1ec03cfb438f9a1b3273cbfeb136a0e"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#ab1ec03cfb438f9a1b3273cbfeb136a0e">wcmf\lib\model\Node\getParentsEx</a></div><div class="ttdeci">getParentsEx(ObjectId $oid=null, $role=null, $type=null, $values=null, $properties=null, $useRegExp=true)</div><div class="ttdoc">Get the parents that match given conditions.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00674">Node.php:674</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a4dc8bfbca867999ca51a3923e6a8ffb0"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a4dc8bfbca867999ca51a3923e6a8ffb0">wcmf\lib\model\Node\RELATION_STATE_INITIALIZING</a></div><div class="ttdeci">const RELATION_STATE_INITIALIZING</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00037">Node.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a0eeb5ae0d01b8eddfcaee6e54137f6d0"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a0eeb5ae0d01b8eddfcaee6e54137f6d0">wcmf\lib\model\Node\getDeletedNodes</a></div><div class="ttdeci">getDeletedNodes()</div><div class="ttdoc">Get the object ids of the nodes that were deleted since the node was loaded.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00448">Node.php:448</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a89e8ff9416c4c61ea0cb3ac2d110f494"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a89e8ff9416c4c61ea0cb3ac2d110f494">wcmf\lib\model\Node\getNumParents</a></div><div class="ttdeci">getNumParents($memOnly=true)</div><div class="ttdoc">Get the number of parents of the Node.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00611">Node.php:611</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_af9481965fd50bbe15b920c34533dd476"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#af9481965fd50bbe15b920c34533dd476">wcmf\lib\model\Node\setNodeOrder</a></div><div class="ttdeci">setNodeOrder(array $orderedList, array $movedList=null, $role=null)</div><div class="ttdoc">Define the order of related Node instances.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00463">Node.php:463</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_aa1891af01c18077f93d59bcb2b596ce1"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#aa1891af01c18077f93d59bcb2b596ce1">wcmf\lib\model\Node\getChildren</a></div><div class="ttdeci">getChildren($memOnly=true)</div><div class="ttdoc">Get the Node's children.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00531">Node.php:531</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_error_handler_html_afac334117f677949dc59de17ccb4ff7e"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_error_handler.html#afac334117f677949dc59de17ccb4ff7e">wcmf\lib\core\ErrorHandler\getStackTrace</a></div><div class="ttdeci">static getStackTrace()</div><div class="ttdoc">Get the stack trace.</div><div class="ttdef"><b>Definition:</b> <a href="_error_handler_8php_source.html#l00045">ErrorHandler.php:45</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a71a273f5aef767615099c573a832f3e5"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">wcmf\lib\persistence\impl\DefaultPersistentObject\setValueInternal</a></div><div class="ttdeci">setValueInternal($name, $value)</div><div class="ttdoc">Internal (fast) version to set a value without any validation, state change, listener notification et...</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00380">DefaultPersistentObject.php:380</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a6ae60ad651124608a8dc99f144058f27"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a6ae60ad651124608a8dc99f144058f27">wcmf\lib\model\Node\RELATION_STATE_LOADED</a></div><div class="ttdeci">const RELATION_STATE_LOADED</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00039">Node.php:39</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_build_depth_html_ad8e66505aa12ab235195acb721268093"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#ad8e66505aa12ab235195acb721268093">wcmf\lib\persistence\BuildDepth\PROXIES_ONLY</a></div><div class="ttdeci">const PROXIES_ONLY</div><div class="ttdef"><b>Definition:</b> <a href="_build_depth_8php_source.html#l00024">BuildDepth.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html_a0c195d83bf1cd47fb46a428e77f82b08"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">wcmf\lib\core\LogManager\getLogger</a></div><div class="ttdeci">static getLogger($name)</div><div class="ttdoc">Get the logger with the given name.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00037">LogManager.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a5849a1f83d8d9003b7b9ead0a731937b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a5849a1f83d8d9003b7b9ead0a731937b">wcmf\lib\model\Node\filter</a></div><div class="ttdeci">static filter(array $nodeList, ObjectId $oid=null, $type=null, $values=null, $properties=null, $useRegExp=true)</div><div class="ttdoc">Get Nodes that match given conditions from a list.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00182">Node.php:182</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html">wcmf\lib\model\Node</a></div><div class="ttdoc">Node adds the concept of relations to PersistentObject.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00034">Node.php:34</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html_ac54511d3948ce6338f8a0a9b007e0edf"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">wcmf\lib\core\ObjectFactory\getInstance</a></div><div class="ttdeci">static getInstance($name, $dynamicConfiguration=[])</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00047">ObjectFactory.php:47</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a81b383a99d7b59a8a7f060c0ef01b1cd"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a81b383a99d7b59a8a7f060c0ef01b1cd">wcmf\lib\model\Node\getRelatives</a></div><div class="ttdeci">getRelatives($hierarchyType, $memOnly=true)</div><div class="ttdoc">Get the relatives of a given hierarchyType.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00800">Node.php:800</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a5e307e5fdfc4d0fd39202738593c0034"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a5e307e5fdfc4d0fd39202738593c0034">wcmf\lib\model\Node\addRelation</a></div><div class="ttdeci">addRelation($name)</div><div class="ttdoc">Add an uninitialized relation.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00854">Node.php:854</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_build_depth_html_af33f2aced1762d825db23934d1b3205b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">wcmf\lib\persistence\BuildDepth\SINGLE</a></div><div class="ttdeci">const SINGLE</div><div class="ttdef"><b>Definition:</b> <a href="_build_depth_8php_source.html#l00022">BuildDepth.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a95ecaee3537b1ad29b04ef383a57bbae"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a95ecaee3537b1ad29b04ef383a57bbae">wcmf\lib\model\Node\getParent</a></div><div class="ttdeci">getParent()</div><div class="ttdoc">Get the Node's parent.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00620">Node.php:620</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_persistent_object_proxy_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_persistent_object_proxy.html">wcmf\lib\persistence\PersistentObjectProxy</a></div><div class="ttdoc">PersistentObjectProxy is proxy for an PersistentObject instance.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_proxy_8php_source.html#l00024">PersistentObjectProxy.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a2e5d148229788e5697d132ef2ad2c6a5"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a2e5d148229788e5697d132ef2ad2c6a5">wcmf\lib\model\Node\getNumRelatives</a></div><div class="ttdeci">getNumRelatives($hierarchyType, $memOnly=true)</div><div class="ttdoc">Get the number of relatives of a given hierarchyType.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00836">Node.php:836</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">wcmf\lib\persistence\PersistentObject</a></div><div class="ttdoc">PersistentObject defines the interface of all persistent objects.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00023">PersistentObject.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_aedb81ded0f3ec4dbbbdb734014fc5de3"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#aedb81ded0f3ec4dbbbdb734014fc5de3">wcmf\lib\model\Node\getChildrenEx</a></div><div class="ttdeci">getChildrenEx(ObjectId $oid=null, $role=null, $type=null, $values=null, $properties=null, $useRegExp=true)</div><div class="ttdoc">Get the children that match given conditions.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00549">Node.php:549</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1model_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1model.html">wcmf\lib\model</a></div><div class="ttdoc">Node related interfaces and classes.</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00026">namespaces.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a838057c0748db6d0db1d38fe5d06ef6b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a838057c0748db6d0db1d38fe5d06ef6b">wcmf\lib\model\Node\setValue</a></div><div class="ttdeci">setValue($name, $value, $forceSet=false, $trackChange=true)</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00125">Node.php:125</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a8303ce5504430aeffb29c1f14c678eea"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a8303ce5504430aeffb29c1f14c678eea">wcmf\lib\model\Node\mergeObjectLists</a></div><div class="ttdeci">static mergeObjectLists($list1, $list2)</div><div class="ttdoc">Merge two object lists using the following rules:</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00267">Node.php:267</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node_util.html">wcmf\lib\model\NodeUtil</a></div><div class="ttdoc">NodeUtil provides services for the Node class.</div><div class="ttdef"><b>Definition:</b> <a href="_node_util_8php_source.html#l00028">NodeUtil.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a270bd65d789405427f5005ef5b0e0f38"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a270bd65d789405427f5005ef5b0e0f38">wcmf\lib\persistence\impl\DefaultPersistentObject\hasValue</a></div><div class="ttdeci">hasValue($name)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00387">DefaultPersistentObject.php:387</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a7d43a99f995ce575be785220028ad31b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a7d43a99f995ce575be785220028ad31b">wcmf\lib\model\Node\getRelations</a></div><div class="ttdeci">getRelations($hierarchyType='all')</div><div class="ttdoc">Get the relation descriptions of a given hierarchyType.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00790">Node.php:790</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_ac886ae95a746f43906bb3b2515092440"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">wcmf\lib\persistence\impl\DefaultPersistentObject\getOID</a></div><div class="ttdeci">getOID()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00133">DefaultPersistentObject.php:133</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_ad0cb87b388bc74d63dc884accdca8713"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#ad0cb87b388bc74d63dc884accdca8713">wcmf\lib\model\Node\__clone</a></div><div class="ttdeci">__clone()</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00071">Node.php:71</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a></div><div class="ttdoc">LogManager is used to retrieve Logger instances.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00020">LogManager.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_ac2f0d1f5875964d5e62282b003c22f15"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#ac2f0d1f5875964d5e62282b003c22f15">wcmf\lib\model\Node\getAddedNodes</a></div><div class="ttdeci">getAddedNodes()</div><div class="ttdoc">Get the object ids of the nodes that were added since the node was loaded.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00378">Node.php:378</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_af00f8db169b979a60ecaf4b550836010"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#af00f8db169b979a60ecaf4b550836010">wcmf\lib\model\Node\mergeValues</a></div><div class="ttdeci">mergeValues(PersistentObject $object)</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00239">Node.php:239</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a></div><div class="ttdoc">ObjectFactory implements the service locator pattern by wrapping a Factory instance and providing sta...</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00024">ObjectFactory.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a34ed73bac24e08d4f57005cb18fa56dd"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a34ed73bac24e08d4f57005cb18fa56dd">wcmf\lib\model\Node\getNodeOrder</a></div><div class="ttdeci">getNodeOrder()</div><div class="ttdoc">Get the order of related Node instances, if it was defined using the Node::setNodeOrder() method.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00477">Node.php:477</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_error_handler_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_error_handler.html">wcmf\lib\core\ErrorHandler</a></div><div class="ttdoc">ErrorHandler catches all php errors and transforms fatal errors into ErrorExceptions and non-fatal in...</div><div class="ttdef"><b>Definition:</b> <a href="_error_handler_8php_source.html#l00019">ErrorHandler.php:19</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a7b02e282038aaef880ac63951e57fe24"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a7b02e282038aaef880ac63951e57fe24">wcmf\lib\model\Node\deleteNode</a></div><div class="ttdeci">deleteNode(PersistentObject $other, $role=null, $updateOtherSide=true)</div><div class="ttdoc">Delete a Node from the given relation.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00388">Node.php:388</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_aea489049ed4789150d56646d4da2d8e3"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#aea489049ed4789150d56646d4da2d8e3">wcmf\lib\model\Node\getParents</a></div><div class="ttdeci">getParents($memOnly=true)</div><div class="ttdoc">Get the Nodes parents.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00656">Node.php:656</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

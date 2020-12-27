@@ -1,0 +1,5 @@
+<map id="RemoteCapablePersistenceFacade" name="RemoteCapablePersistenceFacade">
+<area shape="rect" id="node1" title="RemoteCapablePersistenceFacade delegates local persistence operations to the default PersistenceFacad..." alt="" coords="5,608,236,993"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistence_facade.html" title="Default PersistenceFacade implementation." alt="" coords="25,321,216,560"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html" title="PersistenceFacade defines the interface for PersistenceFacade implementations." alt="" coords="27,5,214,273"/>
+</map>

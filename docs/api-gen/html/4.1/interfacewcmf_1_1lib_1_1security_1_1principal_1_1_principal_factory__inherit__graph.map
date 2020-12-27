@@ -1,0 +1,4 @@
+<map id="PrincipalFactory" name="PrincipalFactory">
+<area shape="rect" id="node1" title="PrincipalFactory implementations are used to retrieve User and Role instances." alt="" coords="25,5,159,112"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_default_principal_factory.html" title="Default implementation of PrincipalFactory." alt="" coords="5,160,179,281"/>
+</map>

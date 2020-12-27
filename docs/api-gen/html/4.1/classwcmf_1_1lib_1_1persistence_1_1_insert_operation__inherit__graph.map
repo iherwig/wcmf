@@ -1,0 +1,4 @@
+<map id="InsertOperation" name="InsertOperation">
+<area shape="rect" id="node1" title="InsertOperation holds data necessary to accomplish an insert operation on the persistent store." alt="" coords="25,219,147,296"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1_persistence_operation.html" title="A PersistenceOperation instance holds data necessary to accomplish an operation on the persistent sto..." alt="" coords="5,5,167,171"/>
+</map>

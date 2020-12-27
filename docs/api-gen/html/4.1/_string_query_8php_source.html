@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/model/StringQuery.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_f57071bff1402464ed1755fe1c1a7d41.html">model</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">StringQuery.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1model.html">wcmf\lib\model</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">wcmf\lib\core\IllegalArgumentException</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1_abstract_query.html">wcmf\lib\model\AbstractQuery</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html">wcmf\lib\model\mapper\SelectStatement</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_util.html">wcmf\lib\model\NodeUtil</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1_object_query.html">wcmf\lib\model\ObjectQuery</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">wcmf\lib\persistence\PagingInfo</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">wcmf\lib\persistence\PersistenceException</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * StringQuery executes queries from a string representation. Queries are</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * constructed in two possible ways:</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * 1. Like WHERE clauses in SQL</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * 2. As RQL queries (https://github.com/persvr/rql)</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * Note the following rules:</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * - Foreign key relations between different types do not need to be included in</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> * the query string.</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * - Attributes have to be prepended with the type name (or in case of ambiguity</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * the role name), e.g. Author.name instead of name.</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> * @note: The query does not search in objects, that are created inside the current transaction.</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"> * The following example shows the usage:</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> * @code</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"> * $queryStr = &quot;Author.name LIKE &#39;%ingo%&#39; AND (Recipe.name LIKE &#39;%Salat%&#39; OR Recipe.portions = 4)&quot;;</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"> * $query = new StringQuery(&#39;Author&#39;);</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment"> * $query-&gt;setConditionString($queryStr);</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"> * $authorOIDs = $query-&gt;execute(false);</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment"> * $queryStr = &quot;(Profile.keyword1=in=8,1|Profile.keyword2=in=8,2|Profile.keywords3=in=8,3)&amp;Profile.salary=gte=1000&quot;;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment"> * $query = new StringQuery(&#39;Profile&#39;);</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment"> * $query-&gt;setConditionString($queryStr);</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment"> * $authorOIDs = $query-&gt;execute(false);</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"> * @endcode</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_string_query.html">   53</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html">StringQuery</a> <span class="keyword">extends</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_object_query.html">ObjectQuery</a> {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keyword">private</span> $condition = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   * Get the query condition string</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a0b0fad3db55bed9c652bb00e4a232192">   61</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a0b0fad3db55bed9c652bb00e4a232192">getConditionString</a>() {</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordflow">return</span> $this-&gt;condition;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * Set the query condition string</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * @param $condition The query definition string</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a1623d3bdc904d7ea3f0334967d036094">   69</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a1623d3bdc904d7ea3f0334967d036094">setConditionString</a>($condition) {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    $this-&gt;condition = $condition;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   * Set the query condition string as RQL</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * @param $condition The query definition string</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a287276e468752b7a84f131041346e73a">   77</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a287276e468752b7a84f131041346e73a">setRQLConditionString</a>($condition) {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    $this-&gt;condition = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a68fce64e3f425eeced4cd3ca3dc083eb">parseRQL</a>($condition);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   * @see AbstractQuery::buildQuery()</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a2288399ea53ba830fbcc61791398f44a">   84</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a2288399ea53ba830fbcc61791398f44a">buildQuery</a>($buildDepth, $orderby=<span class="keyword">null</span>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">PagingInfo</a> $pagingInfo=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    $queryType = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_object_query.html#aacffdaf45c72a42c511bc6e6f9717e32">getQueryType</a>();</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    $mapper = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_abstract_query.html#a84e07566b4819e8bda6970ae3d42bae2">self::getMapper</a>($queryType);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="comment">// create the attribute string (use the default select from the mapper,</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="comment">// since we are only interested in the attributes)</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    $attributes = $buildDepth === <span class="keyword">false</span> ? $mapper-&gt;getPkNames() : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    $selectStmt = $mapper-&gt;getSelectSQL(<span class="keyword">null</span>, <span class="keyword">null</span>, $attributes, <span class="keyword">null</span>, $pagingInfo, $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_object_query.html#a12251d0c022e9e21c137a105ff683f13">getId</a>());</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">if</span> (!$selectStmt-&gt;isCached()) {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      <span class="comment">// initialize the statement</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      $selectStmt-&gt;quantifier(SelectStatement::QUANTIFIER_DISTINCT);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      $persistenceFacade = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;persistenceFacade&#39;</span>);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      $quoteIdentifierSymbol = $mapper-&gt;getQuoteIdentifierSymbol();</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="comment">// get all referenced types/roles from the condition and translate</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <span class="comment">// attributes to column names</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      $conditionString = $this-&gt;condition;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      $otherRoles = [];</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      $tokens = <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html#a75e68f62752a5f8312b852c920fd652d">StringUtil::splitQuoted</a>($conditionString, <span class="stringliteral">&quot;/[\s=&lt;&gt;()!]+/&quot;</span>, <span class="stringliteral">&quot;&#39;&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      $operators = [<span class="stringliteral">&#39;and&#39;</span>, <span class="stringliteral">&#39;or&#39;</span>, <span class="stringliteral">&#39;not&#39;</span>, <span class="stringliteral">&#39;like&#39;</span>, <span class="stringliteral">&#39;regexp&#39;</span>, <span class="stringliteral">&#39;is&#39;</span>, <span class="stringliteral">&#39;null&#39;</span>, <span class="stringliteral">&#39;in&#39;</span>];</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <span class="keywordflow">foreach</span> ($tokens as $token) {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keywordflow">if</span> (strlen($token) &gt; 0) {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;          <span class="keywordflow">if</span> (!in_array(strtolower($token), $operators)) {</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <span class="comment">// three possibilities left: token is</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="comment">// 1. type or attribute (not allowed)</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            <span class="comment">// 2. type.attribute</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            <span class="comment">// 3. searchterm</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            <span class="keywordflow">if</span> (!preg_match(<span class="stringliteral">&#39;/^\&#39;|^[0-9]/&#39;</span>, $token)) {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;              <span class="comment">// token is no searchterm (does not start with a quote or a number)</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;              $token = str_replace($quoteIdentifierSymbol, <span class="stringliteral">&#39;&#39;</span>, $token);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;              $pos = strpos($token, <span class="charliteral">&#39;.&#39;</span>);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;              <span class="keywordflow">if</span> ($pos &gt; 0) {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                <span class="comment">// token is type/role.attribute</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                list($typeOrRole, $attribute) = explode(<span class="charliteral">&#39;.&#39;</span>, $token, 2);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                <span class="comment">// check if the token is a type</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                $fqType = $persistenceFacade-&gt;isKnownType($typeOrRole) ?</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                        $persistenceFacade-&gt;getFullyQualifiedType($typeOrRole) : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                <span class="keywordflow">if</span> ($fqType == <span class="keyword">null</span> || $fqType != $queryType) {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                  <span class="comment">// find connection if the token does not match the queryType</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                  <span class="keywordflow">if</span> (!isset($otherRoles[$typeOrRole])) {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                    <span class="comment">// find the path from the queryType to the other type/role</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                    <span class="comment">// (role is preferred)</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                    $paths = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_util.html#ad2255e3c40638b3eac82255d22cae0f2">NodeUtil::getConnections</a>($queryType, $typeOrRole, <span class="keyword">null</span>);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                    <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($paths) == 0) {</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                      <span class="comment">// fallback: search for type</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                      $paths = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_util.html#ad2255e3c40638b3eac82255d22cae0f2">NodeUtil::getConnections</a>($queryType, <span class="keyword">null</span>, $typeOrRole);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                    }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                    <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($paths) == 0) {</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                      <span class="comment">// no connection found</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;                      <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">IllegalArgumentException</a>(<span class="stringliteral">&quot;There is no connection between &#39;&quot;</span>.$queryType.<span class="stringliteral">&quot;&#39; and &#39;&quot;</span>.$typeOrRole.<span class="stringliteral">&quot;&#39;.&quot;</span>);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;                    }</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                    elseif (<span class="keyword">sizeof</span>($paths) &gt; 1) {</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                      <span class="comment">// more than one connection found</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                      <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">IllegalArgumentException</a>(<span class="stringliteral">&quot;There is more than one connection between &#39;&quot;</span>.$queryType.<span class="stringliteral">&quot;&#39; and &#39;&quot;</span>.$typeOrRole.<span class="stringliteral">&quot;&#39;. &quot;</span>.</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                              <span class="stringliteral">&quot;Try to use a role name for the target end.&quot;</span>);</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                    }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                    <span class="comment">// exactly one connection (store it for later reference)</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                    $otherRoles[$typeOrRole] = $paths[0];</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                  }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                  <span class="comment">// find the type of the referenced node</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                  $path = $otherRoles[$typeOrRole];</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                  $type = $path-&gt;getEndType();</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                  $type = $queryType;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                }</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                <span class="comment">// map the attributes to columns</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                list($table, $column) = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a242c0cad363aee26f0a6516bfcda2bee">self::mapToDatabase</a>($type, $attribute);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                $conditionString = str_replace($quoteIdentifierSymbol.$attribute.$quoteIdentifierSymbol,</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                        $quoteIdentifierSymbol.$column.$quoteIdentifierSymbol, $conditionString);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;              }</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;              <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">IllegalArgumentException</a>(<span class="stringliteral">&quot;Please specify the type/role to that the attribute &#39;&quot;</span>.$token.<span class="stringliteral">&quot;&#39; belongs: e.g. Author.name.&quot;</span>);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;              }</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;          }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        }</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;      <span class="keywordflow">if</span> (strlen($conditionString)) {</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        $selectStmt-&gt;where($conditionString);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      }</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      <span class="comment">// get relation conditions</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      <span class="comment">// NOTE: temporarily created objects must be detached from the transaction</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;      $tx = $persistenceFacade-&gt;getTransaction();</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      $rootNode = $persistenceFacade-&gt;create($queryType);</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;      $tx-&gt;detach($rootNode-&gt;getOID());</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;      <span class="keywordflow">foreach</span> ($otherRoles as $typeOrRole =&gt; $pathDescription) {</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        $relationDescriptions = $pathDescription-&gt;getPath();</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        $parent = $rootNode;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <span class="keywordflow">foreach</span> ($relationDescriptions as $relationDescription) {</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;          $node = $persistenceFacade-&gt;create($relationDescription-&gt;getOtherType());</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;          $tx-&gt;detach($node-&gt;getOID());</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;          $parent-&gt;addNode($node, $relationDescription-&gt;getOtherRole());</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;          $parent = $node;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        }</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="comment">// set the table name of the target node to the name that is</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        <span class="comment">// referenced in the query condition</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        $node-&gt;setProperty(self::PROPERTY_TABLE_NAME, $typeOrRole);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;      }</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_object_query.html#a3b416d1770ad4d135d742b4623f59d13">processObjectTemplate</a>($rootNode, $selectStmt);</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    }</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="comment">// set orderby after all involved tables are known in order to</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="comment">// prefix the correct table name</span></div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_object_query.html#ac3f3734613b36e8f5f9520b9c4f5f737">processOrderBy</a>($orderby, $selectStmt);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="comment">// reset internal variables</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_object_query.html#abead7814fde773824324e583aa7325b2">resetInternals</a>();</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordflow">return</span> $selectStmt;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  }</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="comment">   * Parse the given query encoded in RQL (https://github.com/persvr/rql), e.g.</span></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="comment">   * (Profile.keyword1=in=8,1|Profile.keyword2=in=8,2|Profile.keywords3=in=8,3)&amp;Profile.yearlySalary=gte=1000</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;<span class="comment">   * @param $query RQL query string</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a68fce64e3f425eeced4cd3ca3dc083eb">  204</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a68fce64e3f425eeced4cd3ca3dc083eb">parseRQL</a>($query) {</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keywordflow">if</span> (strlen($query) &gt; 0) {</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;      <span class="comment">// replace rql operators</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;      $operatorMap = [<span class="stringliteral">&#39;eq&#39;</span> =&gt; <span class="charliteral">&#39;=&#39;</span>, <span class="stringliteral">&#39;ne&#39;</span> =&gt; <span class="stringliteral">&#39;!=&#39;</span>, <span class="stringliteral">&#39;lt&#39;</span> =&gt; <span class="charliteral">&#39;&lt;&#39;</span>, <span class="stringliteral">&#39;lte&#39;</span> =&gt; <span class="stringliteral">&#39;&lt;=&#39;</span>,</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;          <span class="stringliteral">&#39;gt&#39;</span> =&gt; <span class="charliteral">&#39;&gt;&#39;</span>, <span class="stringliteral">&#39;gte&#39;</span> =&gt; <span class="stringliteral">&#39;&gt;=&#39;</span>, <span class="stringliteral">&#39;in&#39;</span> =&gt; <span class="stringliteral">&#39;in&#39;</span>, <span class="stringliteral">&#39;match&#39;</span> =&gt; <span class="stringliteral">&#39;regexp&#39;</span>, <span class="charliteral">&#39;=&#39;</span> =&gt; <span class="charliteral">&#39;=&#39;</span>];</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      $combineMap = [<span class="charliteral">&#39;|&#39;</span> =&gt; <span class="stringliteral">&#39;OR&#39;</span>, <span class="charliteral">&#39;&amp;&#39;</span> =&gt; <span class="stringliteral">&#39;AND&#39;</span>];</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      $queryType = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_object_query.html#aacffdaf45c72a42c511bc6e6f9717e32">getQueryType</a>();</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;      $mapper = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_abstract_query.html#a84e07566b4819e8bda6970ae3d42bae2">self::getMapper</a>($queryType);</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;      $persistenceFacade = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;persistenceFacade&#39;</span>);</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;      <span class="keywordflow">foreach</span> ($operatorMap as $rqlOp =&gt; $sqlOp) {</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <span class="comment">// add &#39;=&#39; separator for letter-only operators</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        $operator = preg_match(<span class="stringliteral">&#39;/^[a-zA-Z]+$/&#39;</span>, $rqlOp) ? <span class="charliteral">&#39;=&#39;</span>.$rqlOp.<span class="charliteral">&#39;=&#39;</span> : $rqlOp;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        $query = preg_replace_callback(<span class="stringliteral">&#39;/([^ &lt;&gt;!=|&amp;\(\)]+) ?&#39;</span>.$operator.<span class="stringliteral">&#39; ?([^ &lt;&gt;!=|&amp;\(\)]+)/&#39;</span>, function ($match)</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                use($rqlOp, $sqlOp, $mapper, $persistenceFacade) {</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;          $typeAttr = $match[1];</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;          $value = preg_replace(<span class="stringliteral">&#39;/^[\&#39;&quot;]|[\&#39;&quot;]$/&#39;</span>, <span class="stringliteral">&#39;&#39;</span>, $match[2]);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;          <span class="comment">// try to determine value type</span></div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;          list($typeOrRole, $attribute) = explode(<span class="charliteral">&#39;.&#39;</span>, preg_replace(<span class="stringliteral">&#39;/[`&quot;\&#39;\(\)]/&#39;</span>, <span class="stringliteral">&#39;&#39;</span>, $typeAttr), 2);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;          $attributeDef = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;          <span class="keywordflow">if</span> ($persistenceFacade-&gt;isKnownType($typeOrRole) &amp;&amp;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                  $persistenceFacade-&gt;getFullyQualifiedType($typeOrRole) == $mapper-&gt;getType() &amp;&amp; $mapper-&gt;hasAttribute($attribute)) {</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            $attributeDef = $mapper-&gt;getAttribute($attribute);</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;          }</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;          elseif ($mapper-&gt;hasRelation($typeOrRole)) {</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;            $otherMapper = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_abstract_query.html#a84e07566b4819e8bda6970ae3d42bae2">self::getMapper</a>($mapper-&gt;getRelation($typeOrRole)-&gt;getOtherType());</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            $attributeDef = $otherMapper-&gt;hasAttribute($attribute) ? $otherMapper-&gt;getAttribute($attribute) : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;          }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;          $attributeType = $attributeDef != <span class="keyword">null</span> ? strtolower($attributeDef-&gt;getType()) : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;          $isNumber = $attributeType == <span class="stringliteral">&#39;integer&#39;</span> || $attributeType == <span class="stringliteral">&#39;float&#39;</span>;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;          <span class="comment">// strip slashes from regexp</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;          <span class="keywordflow">if</span> ($sqlOp === <span class="stringliteral">&#39;regexp&#39;</span>) {</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            $value = preg_replace(<span class="stringliteral">&#39;/^\/|\/[a-zA-Z]*$/&#39;</span>, <span class="stringliteral">&#39;&#39;</span>, $value);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            $isNumber = <span class="keyword">false</span>; <span class="comment">// quote value</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;          }</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;          <span class="comment">// handle null values</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;          <span class="keywordflow">if</span> ($value === <span class="stringliteral">&#39;null&#39;</span>) {</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            $sqlOp = $sqlOp == <span class="charliteral">&#39;=&#39;</span> ? <span class="stringliteral">&#39;is&#39;</span> : <span class="stringliteral">&#39;is not&#39;</span>;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            $replace = $typeAttr.<span class="charliteral">&#39; &#39;</span>.$sqlOp.<span class="stringliteral">&#39; null&#39;</span>;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;          }</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;          <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            <span class="comment">// quote value according to type</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            $replace = $typeAttr.<span class="charliteral">&#39; &#39;</span>.$sqlOp.<span class="charliteral">&#39; &#39;</span>;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            <span class="keywordflow">if</span> ($rqlOp == <span class="stringliteral">&#39;in&#39;</span>) {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;              $replace .= <span class="charliteral">&#39;(&#39;</span>.($isNumber ? $value : join(<span class="charliteral">&#39;,&#39;</span>, array_map([$mapper, <span class="stringliteral">&#39;quoteValue&#39;</span>], explode(<span class="charliteral">&#39;,&#39;</span>, $value)))).<span class="charliteral">&#39;)&#39;</span>;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;              $replace .= $isNumber ? $value : $mapper-&gt;quoteValue($value);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;          }</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;          <span class="keywordflow">return</span> $replace;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        }, $query);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;      }</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;      <span class="keywordflow">foreach</span> ($combineMap as $rqlOp =&gt; $sqlOp) {</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        $query = str_replace($rqlOp, <span class="charliteral">&#39; &#39;</span>.$sqlOp.<span class="charliteral">&#39; &#39;</span>, $query);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;      }</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    }</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keywordflow">return</span> $query;</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;  }</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">   * Map a application type and value name to the appropriate database names</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment">   * @param $type The type to map</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment">   * @param $valueName The name of the value to map</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">   * @return An array with the table and column name or null if no mapper is found</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a242c0cad363aee26f0a6516bfcda2bee">  273</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a242c0cad363aee26f0a6516bfcda2bee">mapToDatabase</a>($type, $valueName) {</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    $mapper = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_abstract_query.html#a84e07566b4819e8bda6970ae3d42bae2">self::getMapper</a>($type);</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="keywordflow">if</span> ($mapper-&gt;hasAttribute($valueName)) {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;      $attributeDescription = $mapper-&gt;getAttribute($valueName);</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    }</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;      <span class="comment">// if the attribute does not exist, it might be the column name already</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;      <span class="keywordflow">foreach</span> ($mapper-&gt;getAttributes() as $curAttributeDesc) {</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="keywordflow">if</span> ($curAttributeDesc-&gt;getColumn() == $valueName) {</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;          $attributeDescription = $curAttributeDesc;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;          <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;      }</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    }</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keywordflow">if</span> (!$attributeDescription) {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;      <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">PersistenceException</a>(<span class="stringliteral">&quot;No attribute &#39;&quot;</span>.$valueName.<span class="stringliteral">&quot;&#39; exists in &#39;&quot;</span>.$type.<span class="stringliteral">&quot;&#39;&quot;</span>);</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    }</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160; </div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    $table = $mapper-&gt;getRealTableName();</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    $column = $attributeDescription-&gt;getColumn();</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordflow">return</span> [$table, $column];</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;}</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_object_query_html_a12251d0c022e9e21c137a105ff683f13"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_object_query.html#a12251d0c022e9e21c137a105ff683f13">wcmf\lib\model\ObjectQuery\getId</a></div><div class="ttdeci">getId()</div><div class="ttdoc">Get the query id.</div><div class="ttdef"><b>Definition:</b> <a href="_object_query_8php_source.html#l00157">ObjectQuery.php:157</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_string_query_html_a68fce64e3f425eeced4cd3ca3dc083eb"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a68fce64e3f425eeced4cd3ca3dc083eb">wcmf\lib\model\StringQuery\parseRQL</a></div><div class="ttdeci">parseRQL($query)</div><div class="ttdoc">Parse the given query encoded in RQL (https://github.com/persvr/rql), e.g.</div><div class="ttdef"><b>Definition:</b> <a href="_string_query_8php_source.html#l00204">StringQuery.php:204</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_util_html_ad2255e3c40638b3eac82255d22cae0f2"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node_util.html#ad2255e3c40638b3eac82255d22cae0f2">wcmf\lib\model\NodeUtil\getConnections</a></div><div class="ttdeci">static getConnections($type, $otherRole, $otherType, $hierarchyType='all')</div><div class="ttdoc">Get the shortest paths that connect a type to another type.</div><div class="ttdef"><b>Definition:</b> <a href="_node_util_8php_source.html#l00039">NodeUtil.php:39</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html_a75e68f62752a5f8312b852c920fd652d"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html#a75e68f62752a5f8312b852c920fd652d">wcmf\lib\util\StringUtil\splitQuoted</a></div><div class="ttdeci">static splitQuoted($string, $delim='//', $quoteChr='&quot;', $preserve=false)</div><div class="ttdoc">Split string preserving quoted strings code based on: http://www.php.net/manual/en/function....</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00341">StringUtil.php:341</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html">wcmf\lib\model\mapper\SelectStatement</a></div><div class="ttdoc">Select statement.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00025">SelectStatement.php:25</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_persistence_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">wcmf\lib\persistence\PersistenceException</a></div><div class="ttdoc">PersistenceException signals an exception in the persistence service.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_exception_8php_source.html#l00018">PersistenceException.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_illegal_argument_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">wcmf\lib\core\IllegalArgumentException</a></div><div class="ttdoc">IllegalArgumentException signals an exception in method arguments.</div><div class="ttdef"><b>Definition:</b> <a href="_illegal_argument_exception_8php_source.html#l00018">IllegalArgumentException.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_string_query_html_a1623d3bdc904d7ea3f0334967d036094"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a1623d3bdc904d7ea3f0334967d036094">wcmf\lib\model\StringQuery\setConditionString</a></div><div class="ttdeci">setConditionString($condition)</div><div class="ttdoc">Set the query condition string.</div><div class="ttdef"><b>Definition:</b> <a href="_string_query_8php_source.html#l00069">StringQuery.php:69</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a></div><div class="ttdoc">StringUtil provides support for string manipulation.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00018">StringUtil.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_string_query_html_a287276e468752b7a84f131041346e73a"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a287276e468752b7a84f131041346e73a">wcmf\lib\model\StringQuery\setRQLConditionString</a></div><div class="ttdeci">setRQLConditionString($condition)</div><div class="ttdoc">Set the query condition string as RQL.</div><div class="ttdef"><b>Definition:</b> <a href="_string_query_8php_source.html#l00077">StringQuery.php:77</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_string_query_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_string_query.html">wcmf\lib\model\StringQuery</a></div><div class="ttdoc">StringQuery executes queries from a string representation.</div><div class="ttdef"><b>Definition:</b> <a href="_string_query_8php_source.html#l00053">StringQuery.php:53</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_abstract_query_html_a84e07566b4819e8bda6970ae3d42bae2"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_abstract_query.html#a84e07566b4819e8bda6970ae3d42bae2">wcmf\lib\model\AbstractQuery\getMapper</a></div><div class="ttdeci">static getMapper($type)</div><div class="ttdoc">Get the mapper for a Node and check if it is a supported one.</div><div class="ttdef"><b>Definition:</b> <a href="_abstract_query_8php_source.html#l00174">AbstractQuery.php:174</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_abstract_query_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_abstract_query.html">wcmf\lib\model\AbstractQuery</a></div><div class="ttdoc">AbstractQuery is the base class for all query classes.</div><div class="ttdef"><b>Definition:</b> <a href="_abstract_query_8php_source.html#l00026">AbstractQuery.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_object_query_html_ac3f3734613b36e8f5f9520b9c4f5f737"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_object_query.html#ac3f3734613b36e8f5f9520b9c4f5f737">wcmf\lib\model\ObjectQuery\processOrderBy</a></div><div class="ttdeci">processOrderBy($orderby, SelectStatement $selectStmt)</div><div class="ttdoc">Process an object template.</div><div class="ttdef"><b>Definition:</b> <a href="_object_query_8php_source.html#l00479">ObjectQuery.php:479</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_string_query_html_a242c0cad363aee26f0a6516bfcda2bee"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a242c0cad363aee26f0a6516bfcda2bee">wcmf\lib\model\StringQuery\mapToDatabase</a></div><div class="ttdeci">static mapToDatabase($type, $valueName)</div><div class="ttdoc">Map a application type and value name to the appropriate database names.</div><div class="ttdef"><b>Definition:</b> <a href="_string_query_8php_source.html#l00273">StringQuery.php:273</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_object_query_html_a3b416d1770ad4d135d742b4623f59d13"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_object_query.html#a3b416d1770ad4d135d742b4623f59d13">wcmf\lib\model\ObjectQuery\processObjectTemplate</a></div><div class="ttdeci">processObjectTemplate(PersistentObject $tpl, SelectStatement $selectStmt)</div><div class="ttdoc">Process an object template.</div><div class="ttdef"><b>Definition:</b> <a href="_object_query_8php_source.html#l00350">ObjectQuery.php:350</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_object_query_html_aacffdaf45c72a42c511bc6e6f9717e32"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_object_query.html#aacffdaf45c72a42c511bc6e6f9717e32">wcmf\lib\model\ObjectQuery\getQueryType</a></div><div class="ttdeci">getQueryType()</div><div class="ttdef"><b>Definition:</b> <a href="_object_query_8php_source.html#l00280">ObjectQuery.php:280</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html_ac54511d3948ce6338f8a0a9b007e0edf"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">wcmf\lib\core\ObjectFactory\getInstance</a></div><div class="ttdeci">static getInstance($name, $dynamicConfiguration=[])</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00047">ObjectFactory.php:47</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_paging_info_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">wcmf\lib\persistence\PagingInfo</a></div><div class="ttdoc">PagingInfo contains information about a paged list.</div><div class="ttdef"><b>Definition:</b> <a href="_paging_info_8php_source.html#l00018">PagingInfo.php:18</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1model_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1model.html">wcmf\lib\model</a></div><div class="ttdoc">Node related interfaces and classes.</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00026">namespaces.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_object_query_html_abead7814fde773824324e583aa7325b2"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_object_query.html#abead7814fde773824324e583aa7325b2">wcmf\lib\model\ObjectQuery\resetInternals</a></div><div class="ttdeci">resetInternals()</div><div class="ttdoc">Reset internal variables.</div><div class="ttdef"><b>Definition:</b> <a href="_object_query_8php_source.html#l00617">ObjectQuery.php:617</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node_util.html">wcmf\lib\model\NodeUtil</a></div><div class="ttdoc">NodeUtil provides services for the Node class.</div><div class="ttdef"><b>Definition:</b> <a href="_node_util_8php_source.html#l00028">NodeUtil.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a></div><div class="ttdoc">ObjectFactory implements the service locator pattern by wrapping a Factory instance and providing sta...</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00024">ObjectFactory.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_string_query_html_a2288399ea53ba830fbcc61791398f44a"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a2288399ea53ba830fbcc61791398f44a">wcmf\lib\model\StringQuery\buildQuery</a></div><div class="ttdeci">buildQuery($buildDepth, $orderby=null, PagingInfo $pagingInfo=null)</div><div class="ttdef"><b>Definition:</b> <a href="_string_query_8php_source.html#l00084">StringQuery.php:84</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_string_query_html_a0b0fad3db55bed9c652bb00e4a232192"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_string_query.html#a0b0fad3db55bed9c652bb00e4a232192">wcmf\lib\model\StringQuery\getConditionString</a></div><div class="ttdeci">getConditionString()</div><div class="ttdoc">Get the query condition string.</div><div class="ttdef"><b>Definition:</b> <a href="_string_query_8php_source.html#l00061">StringQuery.php:61</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_object_query_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_object_query.html">wcmf\lib\model\ObjectQuery</a></div><div class="ttdoc">ObjectQuery implements a template based object query.</div><div class="ttdef"><b>Definition:</b> <a href="_object_query_8php_source.html#l00106">ObjectQuery.php:106</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

@@ -1,0 +1,4 @@
+<map id="Localization" name="Localization">
+<area shape="rect" id="node1" title="Localization defines the interface for storing localized entity instances and retrieving them back." alt="" coords="5,5,209,171"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1i18n_1_1impl_1_1_default_localization.html" title="DefaultLocalization is a Localization implementation that saves translations in the store." alt="" coords="5,219,209,457"/>
+</map>

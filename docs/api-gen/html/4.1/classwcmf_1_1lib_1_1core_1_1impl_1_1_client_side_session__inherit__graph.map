@@ -1,0 +1,5 @@
+<map id="ClientSideSession" name="ClientSideSession">
+<area shape="rect" id="node1" title="ClientSideSession has no server state as it stores the data in cookies." alt="" coords="5,403,168,788"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1core_1_1_token_based_session.html" title="A session that requires clients to send a token for authentication." alt="" coords="9,263,164,355"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1core_1_1_session.html" title="Session is the interface for session implementations and defines access to session variables." alt="" coords="23,5,151,215"/>
+</map>

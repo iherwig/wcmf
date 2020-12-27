@@ -1,0 +1,4 @@
+<map id="RDBOneToManyRelationDescription" name="RDBOneToManyRelationDescription">
+<area shape="rect" id="node1" title="Instances of RDBOneToManyRelationDescription describe a one to many relation from &#39;this&#39; end (one) to..." alt="" coords="5,453,260,575"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1_relation_description.html" title="Instances of RelationDescription describe relations between different types of PersistentObjects." alt="" coords="35,5,231,405"/>
+</map>

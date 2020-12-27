@@ -1,0 +1,5 @@
+<map id="SeleniumTestCase" name="SeleniumTestCase">
+<area shape="rect" id="node1" title="SeleniumTestCase is the base class for test cases that run with Selenium." alt="" coords="9,329,157,524"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1test_1_1lib_1_1_database_test_case.html" title="DatabaseTestCase is the base class for test cases that need database support." alt="" coords="12,145,155,281"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,5,161,97"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="ListController" name="ListController">
+<area shape="rect" id="node1" title="ListController is used to load Node lists." alt="" coords="85,351,217,472"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1application_1_1controller_1_1_history_controller.html" title="HistoryController returns a list of last changed entity instances." alt="" coords="5,520,139,641"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1application_1_1controller_1_1_search_controller.html" title="SearchController executes a search and returns matching objects in a paged list." alt="" coords="163,520,295,641"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1_controller.html" title="Controller is the base class of all controllers." alt="" coords="52,5,249,303"/>
+</map>

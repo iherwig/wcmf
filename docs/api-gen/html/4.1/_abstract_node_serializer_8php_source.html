@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/model/impl/AbstractNodeSerializer.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_f57071bff1402464ed1755fe1c1a7d41.html">model</a></li><li class="navelem"><a class="el" href="dir_da9ed42bc61f10596bf346c0ad92946e.html">impl</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">AbstractNodeSerializer.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1model_1_1impl.html">wcmf\lib\model\impl</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html">wcmf\lib\model\Node</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html">wcmf\lib\model\NodeSerializer</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html">wcmf\lib\persistence\BuildDepth</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * NodeSerializerBase is a base class for NodeSerialize implementations.</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html">   23</a></span>&#160;<span class="keyword">abstract</span> <span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html">AbstractNodeSerializer</a> <span class="keyword">implements</span> <a class="code" href="interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html">NodeSerializer</a> {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">private</span> $persistenceFacade = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">   * Constructor</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">   * @param $persistenceFacade</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a48a61ea9fccb342885361ebe2a07842c">   31</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a48a61ea9fccb342885361ebe2a07842c">__construct</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">PersistenceFacade</a> $persistenceFacade) {</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    $this-&gt;persistenceFacade = $persistenceFacade;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  }</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   * Get a Node instance based on the original values to merge the deserialized values into</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">   * @param $oid The object id of the Node</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">   * @return Node</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a44ccc4f7217a2ae8a09bb8e6f9e52ff1">   40</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a44ccc4f7217a2ae8a09bb8e6f9e52ff1">getNodeTemplate</a>($oid) {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="comment">// load object if existing to get the original data</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    $originalNode = $this-&gt;persistenceFacade-&gt;load($oid, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// create the request node and copy the orignal data</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    $class = get_class($this-&gt;persistenceFacade-&gt;create($oid-&gt;getType(), <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>));</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    $node = <span class="keyword">new</span> $class;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordflow">if</span> ($originalNode) {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      $originalNode-&gt;copyValues($node);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">return</span> $node;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * Deserialize a node value</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   * @param $node Node instance</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   * @param $key The value name or type if value is an array</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">   * @param $value The value or child data, if value is an array</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a54a6415cae263948dbc2ab3bf994170d">   59</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a54a6415cae263948dbc2ab3bf994170d">deserializeValue</a>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html">Node</a> $node, $key, $value) {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordflow">if</span> (!is_array($value)) {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="comment">// force set value to avoid exceptions in this stage</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      $node-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html#a838057c0748db6d0db1d38fe5d06ef6b">setValue</a>($key, $value, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      $role = $key;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      <span class="keywordflow">if</span> ($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a6dc7377b232ae4c85b4f3969e67b8571">isMultiValued</a>($node, $role)) {</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="comment">// deserialize children</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">foreach</span>($value as $childData) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;          $this-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html#ab5031126dd3ce0a317afc4a282d43949">deserializeNode</a>($childData, $node, $role);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        $this-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html#ab5031126dd3ce0a317afc4a282d43949">deserializeNode</a>($value, $node, $role);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  }</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   * Check if a relation is multi valued</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * @param $node The Node that has the relation</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   * @param $role The role of the relation</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a6dc7377b232ae4c85b4f3969e67b8571">   83</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a6dc7377b232ae4c85b4f3969e67b8571">isMultiValued</a>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1_node.html">Node</a> $node, $role) {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    $isMultiValued = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    $mapper = $node-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">if</span> ($mapper-&gt;hasRelation($role)) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      $relation = $mapper-&gt;getRelation($role);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      $isMultiValued = $relation-&gt;isMultiValued();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">return</span> $isMultiValued;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;}</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a16aa52eac17a3f79894854eaf52739bd"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">wcmf\lib\persistence\impl\DefaultPersistentObject\getMapper</a></div><div class="ttdeci">getMapper()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00123">DefaultPersistentObject.php:123</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1model_1_1_node_serializer_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html">wcmf\lib\model\NodeSerializer</a></div><div class="ttdoc">NodeSerializer implementations are used to serialize Nodes into an array representation or deserializ...</div><div class="ttdef"><b>Definition:</b> <a href="_node_serializer_8php_source.html#l00021">NodeSerializer.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer_html_a54a6415cae263948dbc2ab3bf994170d"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a54a6415cae263948dbc2ab3bf994170d">wcmf\lib\model\impl\AbstractNodeSerializer\deserializeValue</a></div><div class="ttdeci">deserializeValue(Node $node, $key, $value)</div><div class="ttdoc">Deserialize a node value.</div><div class="ttdef"><b>Definition:</b> <a href="_abstract_node_serializer_8php_source.html#l00059">AbstractNodeSerializer.php:59</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer_html_a6dc7377b232ae4c85b4f3969e67b8571"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a6dc7377b232ae4c85b4f3969e67b8571">wcmf\lib\model\impl\AbstractNodeSerializer\isMultiValued</a></div><div class="ttdeci">isMultiValued(Node $node, $role)</div><div class="ttdoc">Check if a relation is multi valued.</div><div class="ttdef"><b>Definition:</b> <a href="_abstract_node_serializer_8php_source.html#l00083">AbstractNodeSerializer.php:83</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_build_depth_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html">wcmf\lib\persistence\BuildDepth</a></div><div class="ttdoc">BuildDepth values are used to define the depth when loading object trees.</div><div class="ttdef"><b>Definition:</b> <a href="_build_depth_8php_source.html#l00019">BuildDepth.php:19</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a></div><div class="ttdoc">PersistenceFacade defines the interface for PersistenceFacade implementations.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_facade_8php_source.html#l00023">PersistenceFacade.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer_html_a44ccc4f7217a2ae8a09bb8e6f9e52ff1"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a44ccc4f7217a2ae8a09bb8e6f9e52ff1">wcmf\lib\model\impl\AbstractNodeSerializer\getNodeTemplate</a></div><div class="ttdeci">getNodeTemplate($oid)</div><div class="ttdoc">Get a Node instance based on the original values to merge the deserialized values into.</div><div class="ttdef"><b>Definition:</b> <a href="_abstract_node_serializer_8php_source.html#l00040">AbstractNodeSerializer.php:40</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1model_1_1impl_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1model_1_1impl.html">wcmf\lib\model\impl</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00028">namespaces.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html">wcmf\lib\model\impl\AbstractNodeSerializer</a></div><div class="ttdoc">NodeSerializerBase is a base class for NodeSerialize implementations.</div><div class="ttdef"><b>Definition:</b> <a href="_abstract_node_serializer_8php_source.html#l00023">AbstractNodeSerializer.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html">wcmf\lib\model\Node</a></div><div class="ttdoc">Node adds the concept of relations to PersistentObject.</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00034">Node.php:34</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_build_depth_html_af33f2aced1762d825db23934d1b3205b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">wcmf\lib\persistence\BuildDepth\SINGLE</a></div><div class="ttdeci">const SINGLE</div><div class="ttdef"><b>Definition:</b> <a href="_build_depth_8php_source.html#l00022">BuildDepth.php:22</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1model_1_1_node_serializer_html_ab5031126dd3ce0a317afc4a282d43949"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html#ab5031126dd3ce0a317afc4a282d43949">wcmf\lib\model\NodeSerializer\deserializeNode</a></div><div class="ttdeci">deserializeNode($data, Node $parent=null, $role=null)</div><div class="ttdoc">Deserialize a Node from serialized data.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_html_a838057c0748db6d0db1d38fe5d06ef6b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node.html#a838057c0748db6d0db1d38fe5d06ef6b">wcmf\lib\model\Node\setValue</a></div><div class="ttdeci">setValue($name, $value, $forceSet=false, $trackChange=true)</div><div class="ttdef"><b>Definition:</b> <a href="_node_8php_source.html#l00125">Node.php:125</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer_html_a48a61ea9fccb342885361ebe2a07842c"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html#a48a61ea9fccb342885361ebe2a07842c">wcmf\lib\model\impl\AbstractNodeSerializer\__construct</a></div><div class="ttdeci">__construct(PersistenceFacade $persistenceFacade)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_abstract_node_serializer_8php_source.html#l00031">AbstractNodeSerializer.php:31</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:26 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

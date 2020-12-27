@@ -1,14 +1,209 @@
-<!DOCTYPE HTML>
-<html lang="en-US">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <title>wCMF 4.1: Model Driven Development with PHP</title>
-  <meta name="description" content="A PHP framework for building reliable maintainable and extendable web applications">
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
   <meta name="keywords" content="PHP, web application framework, model driven development">
   <meta name="author" content="wemove digital solutions">
-  <meta http-equiv="refresh" content="0;url=../index.html">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
 </head>
-<body>
-  If you are not redirected automatically, follow the <a href='../index.html'>link to documentation</a>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+</div><!-- top -->
+<div class="PageDoc"><div class="header">
+  <div class="headertitle">
+<div class="title">Model Driven Development with PHP </div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p> 
+<div class="jumbotron">
+  <h1>wCMF</h1>
+  <h2>A MDSD framework for building<br><kbd>reliable</kbd> <kbd>maintainable</kbd> and <kbd>extendable</kbd><br>web applications with PHP</h2>
+  <a href="gettingstarted.html" class="btn btn-success btn-lg">Getting started</a>
+  <a href="https://github.com/iherwig/wcmf/releases" class="btn btn-info btn-lg"><i class="fas fa-download"></i> Download</a>
+</div>
+
+<h2>Model-Driven Software Development</h2>
+wCMF features a pragmatic Model-Driven Software Development (<em>MDSD</em>) approach with the following advantages:<br><br>
+<ul>
+  <li><strong>Single Source of Truth</strong> All important aspects of the application are defined in one place - the <em>model</em>.</li>
+  <li><strong>Consistency</strong> The code generator takes care that model changes are applied consistently in all relevant places, e.g. if an entity attribute
+    is changed, added or deleted, all persistence and domain classes are changed appropriately. This results in less errors and better code quality.</li>
+  <li><strong>Increased productivity</strong> By spending less time on repetitive tasks, developers can focus more on the application domain.</li>
+</ul>
+
+<br>Creating a wCMF-based application basically involves three steps:<br><br>
+
+<div class="row">
+  <div class="col-md-4"><h3><i class="fas fa-sitemap float-left mt-2 mr-2"></i> Model</h3>
+    Start by modeling your application in wCMF's UML based Domain Specific Language (<em>DSL</em>).
+    It not only supports defining the domain model, controllers and views, but also configuration and application flow.
+    Graphical editors are available from the <a href="http://www.eclipse.org/papyrus/" target="_blank">Eclipse</a> and
+    <a href="http://sourceforge.net/projects/olympos/" target="_blank">Olympos</a> projects.
+    <a href="model.html">Read more</a>
+  </div>
+  <div class="col-md-4"><h3><i class="fas fa-cogs float-left mt-2 mr-2"></i> Build</h3>
+    Run the code generator to create persistence mappers, controllers, views and configuration files from the model.
+    After that a web application based on the <a href="http://dojotoolkit.org/" target="_blank">Dojo Toolkit</a> is ready to be used.
+    It allows to manage entity instances and includes a full text search, localization support and user/role management.
+    <a href="model.html#model_generator">Read more</a>
+  </div>
+  <div class="col-md-4"><h3><i class="fas fa-expand-arrows-alt float-left mt-2 mr-2"></i> Extend</h3>
+    wCMF's clear object oriented design is based on well known design patterns, that allow to extend the application in every aspect.
+    Custom code is protected from subsequent generator runs, which ensures that future requirements can be implemented
+    while model and code stay in synch.
+    <a href="architecture.html">Read more</a>
+  </div>
+</div>
+
+<h2>Features</h2>
+<div class="row">
+  <div class="col-md-6">
+    <ul>
+      <li>Full featured object <a href="persistence.html">persistence layer</a>:
+        <ul>
+          <li>Flexible <a href="persistence.html#pers_mappers">mapper</a> architecture with adapter to RDBMS</li>
+          <li>Optimistic and pessimistic <a href="persistence.html#pers_concurrency">object locking</a></li>
+          <li><a href="persistence.html#pers_search">Searching</a> using template based object query and criteria API</li>
+          <li>Query caching and <a href="persistence.html#pers_builddepth">eager relation loading</a></li>
+          <li><a href="persistence.html#pers_tx">Transactions</a> with dry run support</li>
+        </ul>
+      </li>
+      <li><a href="security.html#sec_authorization">Role based permission management</a> (for actions, types, instances, instance properties)</li>
+      <li><a href="presentation.html#pres_events">Event system</a></li>
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <ul>
+      <li><a href="configuration.html#conf_di">Dependency injection</a> support</li>
+      <li>Declarative <a href="presentation.html#pres_routing">routing</a></li>
+      <li><a href="http://www.smarty.net/" target="_blank">Smarty Template Engine</a> integration</li>
+      <li><a href="http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html" target="_blank">Lucene Search Engine</a> integration</li>
+      <li><a href="i18n_l10n.html">I18n/L10n</a> support</li>
+      <li>Flexible logging (<a href="https://github.com/Seldaek/monolog" target="_blank">Monolog</a>, <a href="https://logging.apache.org/log4php/" target="_blank">log4php</a>)</li>
+      <li><a href="presentation.html#pres_apis">SOAP and REST interfaces</a> supporting CRUD operations on all objects</li>
+      <li><a href="http://wiki.eclipse.org/MDT-UML2">Eclipse MDT/UML2</a> compatible <a href="model.html#model_generator">code generator</a></li>
+      <li>Modern <a href="https://dojotoolkit.org/">Dojo</a> based <a href="https://github.com/iherwig/wcmf-default-app">default application</a> for content management</li>
+    </ul>
+  </div>
+</div>
+
+<h3>License</h3>
+<p>wCMF is available under an open source license (<a href="https://github.com/iherwig/wcmf/blob/master/LICENSE">MIT License</a>).</p>
+<p><!-- fix generated source -->
+ </p>
+</div></div><!-- PageDoc -->
+</div><!-- contents -->
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:29 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
 </body>
 </html>

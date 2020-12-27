@@ -3,7 +3,7 @@
 
   <target name="properties" description="define properties">
     <property name="gen.dir" value="../api-gen"/>
-    <property name="dist.dir" value="${gen.dir}/html"/>
+    <property name="dist.dir" value="${gen.dir}/html/5.0"/>
   </target>
 
   <target name="dist" depends="properties,clean" description="build the documentation" >

@@ -1,0 +1,4 @@
+<map id="LoggingController" name="LoggingController">
+<area shape="rect" id="node1" title="LoggingController is used to log a message in the backend log." alt="" coords="35,351,173,428"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1_controller.html" title="Controller is the base class of all controllers." alt="" coords="5,5,203,303"/>
+</map>

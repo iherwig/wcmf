@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/pdf/PDF.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_0a9c9f3c61d622dbf5b8581661c7da42.html">pdf</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">PDF.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1pdf.html">wcmf\lib\pdf</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use FPDI;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keywordflow">if</span> (!class_exists(<span class="stringliteral">&#39;FPDI&#39;</span>)) {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordflow">throw</span> new \wcmf\lib\config\ConfigurationException(</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            <span class="stringliteral">&#39;wcmf\lib\pdf\PDF requires &#39;</span>.</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <span class="stringliteral">&#39;FPDI. If you are using composer, add setasign/fpdi &#39;</span>.</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            <span class="stringliteral">&#39;as dependency to your project&#39;</span>);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;}</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * PDF extends FPDF/FPDI.</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * @note This class requires FPDI</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html">   29</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html">PDF</a> <span class="keyword">extends</span> FPDI {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">private</span> $pageStarted = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">private</span> $pageEnded = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   * Overridden to set the template on the page</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#af476ba4a046025587e6ca04f98918434">   37</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#af476ba4a046025587e6ca04f98918434">Header</a>() {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    parent::Header();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    $this-&gt;useTemplate($this-&gt;tpl);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   * Call this method when rendering a new page</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a52df2d94e2db84ed6bd9ad74b2069645">   45</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a52df2d94e2db84ed6bd9ad74b2069645">startPage</a>() {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    $this-&gt;pageStarted = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    $this-&gt;pageEnded = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * Call this method when rendering a page finished</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a7e7c9e2e7d88f78fa6f8bf8776c443e5">   53</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a7e7c9e2e7d88f78fa6f8bf8776c443e5">endPage</a>() {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    $this-&gt;pageEnded = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    $this-&gt;pageStarted = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * Determine if a new page started</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * @return Boolean</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a455d0499c56254c3d5bcff7be045fcac">   62</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a455d0499c56254c3d5bcff7be045fcac">isPageStarted</a>() {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">return</span> $this-&gt;pageStarted;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * Determine if a page finished</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * @return Boolean</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#acb662873841f4e868311a90918347ca9">   70</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#acb662873841f4e868311a90918347ca9">isPageEnded</a>() {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">return</span> $this-&gt;pageEnded;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * Move the render position down by given units</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   * @param $units The number of units to move</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#ae66768de9195ddbf9fd5caa3bf7fa1de">   78</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#ae66768de9195ddbf9fd5caa3bf7fa1de">moveDown</a>($units) {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    $this-&gt;SetY($units+$this-&gt;GetY());</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">   * Move the render position right by given units</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">   * @param $units The number of units to move</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a4643d54bca55bb51711c7fe43fba3b06">   86</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a4643d54bca55bb51711c7fe43fba3b06">moveRight</a>($units) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    $this-&gt;SetX($units+$this-&gt;GetX());</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">   * Computes the number of lines a MultiCell of width w will take</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">   * instead of NbLines it correctly handles linebreaks</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">   * @param $width The width</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">   * @param $text The text</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a80c9738f6fce78df6d9e3d3afb81c9c8">   96</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a80c9738f6fce78df6d9e3d3afb81c9c8">numberOfLines</a>($width, $text) {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    $nbLines = 0;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    $lines = preg_split(<span class="stringliteral">&#39;/\n/&#39;</span>, $text);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordflow">foreach</span> ($lines as $line) {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      $nbLines += $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a90dd79d30b8457473567f5174030f110">NbLines</a>($width, $line);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">return</span> $nbLines;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * The following code is taken from FPDF Add-On &#39;Table with MultiCells&#39;</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   * @see http://www.fpdf.de/downloads/addons/3/</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   * If the height h would cause an overflow, add a new page immediately</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   * @param $h The height</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   * @return Boolean whether a new page was inserted or not</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#add27ca4f479ec0f25c0cbd1d14baee94">  115</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#add27ca4f479ec0f25c0cbd1d14baee94">CheckPageBreak</a>($h) {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">if</span>($this-&gt;GetY()+$h&gt;$this-&gt;PageBreakTrigger) {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      $this-&gt;AddPage($this-&gt;CurOrientation);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * Computes the number of lines a MultiCell of width w will take</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   * @param $w The width</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   * @param $txt The text</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a90dd79d30b8457473567f5174030f110">  128</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a90dd79d30b8457473567f5174030f110">NbLines</a>($w, $txt) {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    $cw=&amp;$this-&gt;CurrentFont[<span class="stringliteral">&#39;cw&#39;</span>];</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordflow">if</span>($w==0) {</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      $w=$this-&gt;w-$this-&gt;rMargin-$this-&gt;x;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    }</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    $wmax=($w-2*$this-&gt;cMargin)*1000/$this-&gt;FontSize;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    $s=str_replace(<span class="stringliteral">&quot;\r&quot;</span>, <span class="stringliteral">&#39;&#39;</span>, $txt);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    $nb=strlen($s);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">if</span>($nb&gt;0 &amp;&amp; $s[$nb-1]==<span class="stringliteral">&quot;\n&quot;</span>) {</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;      $nb--;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    }</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    $sep=-1;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    $i=0;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    $j=0;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    $l=0;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    $nl=1;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordflow">while</span>($i&lt;$nb) {</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;      $c=$s[$i];</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <span class="keywordflow">if</span>($c==<span class="stringliteral">&quot;\n&quot;</span>) {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        $i++;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        $sep=-1;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        $j=$i;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        $l=0;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        $nl++;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      }</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      <span class="keywordflow">if</span>($c==<span class="charliteral">&#39; &#39;</span>) {</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        $sep=$i;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      }</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      $l+=$cw[$c];</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;      <span class="keywordflow">if</span>($l&gt;$wmax) {</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <span class="keywordflow">if</span>($sep==-1) {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;          <span class="keywordflow">if</span>($i==$j) {</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            $i++;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;          }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;          $i=$sep+1;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        }</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        $sep=-1;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        $j=$i;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        $l=0;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        $nl++;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;      }</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        $i++;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      }</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    }</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordflow">return</span> $nl;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  }</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;}</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_a455d0499c56254c3d5bcff7be045fcac"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a455d0499c56254c3d5bcff7be045fcac">wcmf\lib\pdf\PDF\isPageStarted</a></div><div class="ttdeci">isPageStarted()</div><div class="ttdoc">Determine if a new page started.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00062">PDF.php:62</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_a80c9738f6fce78df6d9e3d3afb81c9c8"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a80c9738f6fce78df6d9e3d3afb81c9c8">wcmf\lib\pdf\PDF\numberOfLines</a></div><div class="ttdeci">numberOfLines($width, $text)</div><div class="ttdoc">Computes the number of lines a MultiCell of width w will take instead of NbLines it correctly handles...</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00096">PDF.php:96</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_a4643d54bca55bb51711c7fe43fba3b06"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a4643d54bca55bb51711c7fe43fba3b06">wcmf\lib\pdf\PDF\moveRight</a></div><div class="ttdeci">moveRight($units)</div><div class="ttdoc">Move the render position right by given units.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00086">PDF.php:86</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_a90dd79d30b8457473567f5174030f110"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a90dd79d30b8457473567f5174030f110">wcmf\lib\pdf\PDF\NbLines</a></div><div class="ttdeci">NbLines($w, $txt)</div><div class="ttdoc">Computes the number of lines a MultiCell of width w will take.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00128">PDF.php:128</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html">wcmf\lib\pdf\PDF</a></div><div class="ttdoc">PDF extends FPDF/FPDI.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00029">PDF.php:29</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_add27ca4f479ec0f25c0cbd1d14baee94"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#add27ca4f479ec0f25c0cbd1d14baee94">wcmf\lib\pdf\PDF\CheckPageBreak</a></div><div class="ttdeci">CheckPageBreak($h)</div><div class="ttdoc">The following code is taken from FPDF Add-On 'Table with MultiCells'.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00115">PDF.php:115</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1pdf_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1pdf.html">wcmf\lib\pdf</a></div><div class="ttdoc">PDF related interfaces and classes.</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00037">namespaces.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_af476ba4a046025587e6ca04f98918434"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#af476ba4a046025587e6ca04f98918434">wcmf\lib\pdf\PDF\Header</a></div><div class="ttdeci">Header()</div><div class="ttdoc">Overridden to set the template on the page.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00037">PDF.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_a7e7c9e2e7d88f78fa6f8bf8776c443e5"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a7e7c9e2e7d88f78fa6f8bf8776c443e5">wcmf\lib\pdf\PDF\endPage</a></div><div class="ttdeci">endPage()</div><div class="ttdoc">Call this method when rendering a page finished.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00053">PDF.php:53</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_ae66768de9195ddbf9fd5caa3bf7fa1de"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#ae66768de9195ddbf9fd5caa3bf7fa1de">wcmf\lib\pdf\PDF\moveDown</a></div><div class="ttdeci">moveDown($units)</div><div class="ttdoc">Move the render position down by given units.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00078">PDF.php:78</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_acb662873841f4e868311a90918347ca9"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#acb662873841f4e868311a90918347ca9">wcmf\lib\pdf\PDF\isPageEnded</a></div><div class="ttdeci">isPageEnded()</div><div class="ttdoc">Determine if a page finished.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00070">PDF.php:70</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1pdf_1_1_p_d_f_html_a52df2d94e2db84ed6bd9ad74b2069645"><div class="ttname"><a href="classwcmf_1_1lib_1_1pdf_1_1_p_d_f.html#a52df2d94e2db84ed6bd9ad74b2069645">wcmf\lib\pdf\PDF\startPage</a></div><div class="ttdeci">startPage()</div><div class="ttdoc">Call this method when rendering a new page.</div><div class="ttdef"><b>Definition:</b> <a href="_p_d_f_8php_source.html#l00045">PDF.php:45</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

@@ -1,0 +1,98 @@
+nav[data-toggle="toc"] {
+  top: 90px;
+  z-index: 990;
+}
+
+.headertitle .title {
+  display: none;
+}
+
+.jumbotron kbd {
+  padding: 0 .4rem;
+}
+
+.header-link {
+  position: relative;
+  font-size: 0.7em;
+  left: 0;
+  bottom: -1.6em;
+  margin-left: -1.6em;
+  opacity: 0;
+  transition: opacity 0.1s ease-in-out 0.1s;
+}
+
+h2:hover .header-link,
+h3:hover .header-link,
+h4:hover .header-link,
+h5:hover .header-link,
+h6:hover .header-link {
+  opacity: 1;
+}
+
+a.anchor{
+  display: block;
+  position: relative;
+  top: -55px;
+  visibility: hidden;
+}
+
+img {
+  max-width: 100% !important;
+  height: auto;
+}
+
+.image-table table th, .image-table table td {
+  border: none !important;
+}
+
+.controller-action table {
+  border: none;
+}
+
+.controller-action table th {
+  background-color: #FFF;
+}
+
+tr[class^='separator:'] {
+  display: none;
+}
+
+td.entry {
+  white-space: nowrap;
+}
+
+.icona span.label-info {
+  padding-left: 9px;
+  padding-right: 8px;
+}
+
+.image {
+  padding-top: 20px;
+}
+
+.caption {
+  padding: 10px 0 20px 0;
+  font-style: italic;
+}
+
+.textblock h2, .textblock h3, .textblock h4, .textblock h5 {
+  margin-top: 20px;
+}
+
+/* Code */
+
+div.line {
+	font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size: 0.8rem;
+	white-space: pre-wrap;
+}
+
+div.hljs {
+  margin-bottom: 0.5em;
+}
+
+/* Hide doxygen search */
+
+#MSearchSelectWindow, #MSearchResultsWindow {
+  display: none;
+}

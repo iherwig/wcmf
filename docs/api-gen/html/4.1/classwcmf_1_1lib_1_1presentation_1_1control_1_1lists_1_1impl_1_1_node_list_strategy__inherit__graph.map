@@ -1,0 +1,4 @@
+<map id="NodeListStrategy" name="NodeListStrategy">
+<area shape="rect" id="node1" title="NodeListStrategy implements a list of entities that is retrieved from the store, where the keys are t..." alt="" coords="5,145,152,267"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1presentation_1_1control_1_1lists_1_1_list_strategy.html" title="ListStrategy defines the interface for classes that retrieve value lists." alt="" coords="29,5,129,97"/>
+</map>

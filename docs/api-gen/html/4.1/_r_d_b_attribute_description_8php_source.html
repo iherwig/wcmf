@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/model/mapper/RDBAttributeDescription.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_f57071bff1402464ed1755fe1c1a7d41.html">model</a></li><li class="navelem"><a class="el" href="dir_e8ffd556aec7cdaa64e3b6380f2376c1.html">mapper</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">RDBAttributeDescription.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1model_1_1mapper.html">wcmf\lib\model\mapper</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html">wcmf\lib\persistence\AttributeDescription</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * Instances of RDBAttributeDescription describe attributes of PersistentObjects</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * in a relational database.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html">   21</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html">RDBAttributeDescription</a> <span class="keyword">extends</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html">AttributeDescription</a> {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ae8876a14058f368335baccf35af4a22b">   23</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ae8876a14058f368335baccf35af4a22b">$table</a> = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a60e9ae05178c483ab3d9ff5c2399a463">   24</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a60e9ae05178c483ab3d9ff5c2399a463">$column</a> = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">   * Constructor.</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">   * @param $name The attribute name</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">   * @param $type The attribute type</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">   * @param $tags An array of application specific tags that this attribute is tagged with</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">   * @param $defaultValue The default value (will be set when creating a blank object, see PersistenceMapper::create())</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">   * @param $validateType A validation type for the value</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">   * @param $validateDescription A description for the validation type</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   * @param $isEditable Boolean whether the attribute should be editable, see Control::render()</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   * @param $inputType The input type for the value, see Control::render()</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   * @param $displayType The display type for the value</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">   * @param $table The table name</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">   * @param $column The column name</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ab91c3de4d816433e80c948e9a51901ee">   40</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ab91c3de4d816433e80c948e9a51901ee">__construct</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#ab2fc40d43824ea3e1ce5d86dee0d763b">$name</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9a4a6fba2208984cabb3afacadf33919">$type</a>, array <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a475a6a63b85186663d34151bcbd21590">$tags</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9e79048552cf2b8a076d5db16810166b">$defaultValue</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9c3721a4ef5ed8f0636e28c430121559">$validateType</a>,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a6a07a69b907ccb1962e7b7c506fc0cfc">$validateDescription</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#aaef3452a5714a9656fef4eb982e93b3c">$isEditable</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#af4a2d81e80d98f8be1a018917dea2bcf">$inputType</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a130f2d572ce83cf80a75648114b850f8">$displayType</a>, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ae8876a14058f368335baccf35af4a22b">$table</a>, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a60e9ae05178c483ab3d9ff5c2399a463">$column</a>) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    parent::__construct(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#ab2fc40d43824ea3e1ce5d86dee0d763b">$name</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9a4a6fba2208984cabb3afacadf33919">$type</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a475a6a63b85186663d34151bcbd21590">$tags</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9e79048552cf2b8a076d5db16810166b">$defaultValue</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9c3721a4ef5ed8f0636e28c430121559">$validateType</a>,</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a6a07a69b907ccb1962e7b7c506fc0cfc">$validateDescription</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#aaef3452a5714a9656fef4eb982e93b3c">$isEditable</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#af4a2d81e80d98f8be1a018917dea2bcf">$inputType</a>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a130f2d572ce83cf80a75648114b850f8">$displayType</a>);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    $this-&gt;table = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ae8876a14058f368335baccf35af4a22b">$table</a>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    $this-&gt;column = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a60e9ae05178c483ab3d9ff5c2399a463">$column</a>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * Get the table name</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#aa0dd4bf57d57bc2a3697e40c9f6bddce">   54</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#aa0dd4bf57d57bc2a3697e40c9f6bddce">getTable</a>() {</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ae8876a14058f368335baccf35af4a22b">$this-&gt;table</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * Get the column name</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a6368934d4a94b76943cd6b5bebfcdaf3">   62</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a6368934d4a94b76943cd6b5bebfcdaf3">getColumn</a>() {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a60e9ae05178c483ab3d9ff5c2399a463">$this-&gt;column</a>;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_a130f2d572ce83cf80a75648114b850f8"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a130f2d572ce83cf80a75648114b850f8">wcmf\lib\persistence\AttributeDescription\$displayType</a></div><div class="ttdeci">$displayType</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00028">AttributeDescription.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_ab2fc40d43824ea3e1ce5d86dee0d763b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#ab2fc40d43824ea3e1ce5d86dee0d763b">wcmf\lib\persistence\AttributeDescription\$name</a></div><div class="ttdeci">$name</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00020">AttributeDescription.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_a475a6a63b85186663d34151bcbd21590"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a475a6a63b85186663d34151bcbd21590">wcmf\lib\persistence\AttributeDescription\$tags</a></div><div class="ttdeci">$tags</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00022">AttributeDescription.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html">wcmf\lib\model\mapper\RDBAttributeDescription</a></div><div class="ttdoc">Instances of RDBAttributeDescription describe attributes of PersistentObjects in a relational databas...</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_attribute_description_8php_source.html#l00021">RDBAttributeDescription.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_a6a07a69b907ccb1962e7b7c506fc0cfc"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a6a07a69b907ccb1962e7b7c506fc0cfc">wcmf\lib\persistence\AttributeDescription\$validateDescription</a></div><div class="ttdeci">$validateDescription</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00025">AttributeDescription.php:25</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description_html_ae8876a14058f368335baccf35af4a22b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ae8876a14058f368335baccf35af4a22b">wcmf\lib\model\mapper\RDBAttributeDescription\$table</a></div><div class="ttdeci">$table</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_attribute_description_8php_source.html#l00023">RDBAttributeDescription.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html">wcmf\lib\persistence\AttributeDescription</a></div><div class="ttdoc">Instances of AttributeDescription describe attributes of PersistentObjects.</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00018">AttributeDescription.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description_html_a6368934d4a94b76943cd6b5bebfcdaf3"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a6368934d4a94b76943cd6b5bebfcdaf3">wcmf\lib\model\mapper\RDBAttributeDescription\getColumn</a></div><div class="ttdeci">getColumn()</div><div class="ttdoc">Get the column name.</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_attribute_description_8php_source.html#l00062">RDBAttributeDescription.php:62</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_aaef3452a5714a9656fef4eb982e93b3c"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#aaef3452a5714a9656fef4eb982e93b3c">wcmf\lib\persistence\AttributeDescription\$isEditable</a></div><div class="ttdeci">$isEditable</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00026">AttributeDescription.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_a9e79048552cf2b8a076d5db16810166b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9e79048552cf2b8a076d5db16810166b">wcmf\lib\persistence\AttributeDescription\$defaultValue</a></div><div class="ttdeci">$defaultValue</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00023">AttributeDescription.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description_html_aa0dd4bf57d57bc2a3697e40c9f6bddce"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#aa0dd4bf57d57bc2a3697e40c9f6bddce">wcmf\lib\model\mapper\RDBAttributeDescription\getTable</a></div><div class="ttdeci">getTable()</div><div class="ttdoc">Get the table name.</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_attribute_description_8php_source.html#l00054">RDBAttributeDescription.php:54</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_af4a2d81e80d98f8be1a018917dea2bcf"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#af4a2d81e80d98f8be1a018917dea2bcf">wcmf\lib\persistence\AttributeDescription\$inputType</a></div><div class="ttdeci">$inputType</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00027">AttributeDescription.php:27</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_a9c3721a4ef5ed8f0636e28c430121559"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9c3721a4ef5ed8f0636e28c430121559">wcmf\lib\persistence\AttributeDescription\$validateType</a></div><div class="ttdeci">$validateType</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00024">AttributeDescription.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description_html_ab91c3de4d816433e80c948e9a51901ee"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#ab91c3de4d816433e80c948e9a51901ee">wcmf\lib\model\mapper\RDBAttributeDescription\__construct</a></div><div class="ttdeci">__construct($name, $type, array $tags, $defaultValue, $validateType, $validateDescription, $isEditable, $inputType, $displayType, $table, $column)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_attribute_description_8php_source.html#l00040">RDBAttributeDescription.php:40</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description_html_a60e9ae05178c483ab3d9ff5c2399a463"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html#a60e9ae05178c483ab3d9ff5c2399a463">wcmf\lib\model\mapper\RDBAttributeDescription\$column</a></div><div class="ttdeci">$column</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_attribute_description_8php_source.html#l00024">RDBAttributeDescription.php:24</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1model_1_1mapper_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1model_1_1mapper.html">wcmf\lib\model\mapper</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00030">namespaces.php:30</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_attribute_description_html_a9a4a6fba2208984cabb3afacadf33919"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_attribute_description.html#a9a4a6fba2208984cabb3afacadf33919">wcmf\lib\persistence\AttributeDescription\$type</a></div><div class="ttdeci">$type</div><div class="ttdef"><b>Definition:</b> <a href="_attribute_description_8php_source.html#l00021">AttributeDescription.php:21</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:26 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

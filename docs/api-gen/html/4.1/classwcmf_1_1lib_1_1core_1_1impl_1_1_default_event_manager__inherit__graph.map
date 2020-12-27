@@ -1,0 +1,4 @@
+<map id="DefaultEventManager" name="DefaultEventManager">
+<area shape="rect" id="node1" title="DefaultEventManager is a simple EventManager implementation." alt="" coords="5,160,169,267"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1core_1_1_event_manager.html" title="EventManager is responsible for dispatching events to registered listeners." alt="" coords="13,5,162,112"/>
+</map>

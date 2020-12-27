@@ -1,0 +1,5 @@
+<map id="SearchController" name="SearchController">
+<area shape="rect" id="node1" title="SearchController executes a search and returns matching objects in a paged list." alt="" coords="38,520,170,641"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1application_1_1controller_1_1_list_controller.html" title="ListController is used to load Node lists." alt="" coords="38,351,170,472"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1presentation_1_1_controller.html" title="Controller is the base class of all controllers." alt="" coords="5,5,203,303"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="AuthTokenSession" name="AuthTokenSession">
+<area shape="rect" id="node1" title="AuthTokenSession is a DefaultSession, but additionally requires clients to send a token in the X&#45;Auth..." alt="" coords="100,564,255,715"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html" title="DefaultSession uses the default PHP session implementation:" alt="" coords="5,263,168,516"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1core_1_1_session.html" title="Session is the interface for session implementations and defines access to session variables." alt="" coords="113,5,241,215"/>
+<area shape="rect" id="node4" href="$interfacewcmf_1_1lib_1_1core_1_1_token_based_session.html" title="A session that requires clients to send a token for authentication." alt="" coords="192,343,347,435"/>
+</map>
