@@ -822,8 +822,7 @@ WARN_LOGFILE           = log.txt
 INPUT                  = framework_description/en \
                          framework_description/images/ \
                          ../../src/wcmf/application/ \
-                         ../../src/wcmf/lib/ \
-                         ../../src/wcmf/test/lib/
+                         ../../src/wcmf/lib/
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1652,7 +1651,7 @@ SEARCHENGINE_URL       =
 # The default file is: searchdata.xml.
 # This tag requires that the tag SEARCHENGINE is set to YES.
 
-SEARCHDATA_FILE        = html/search/searchdata.xml
+SEARCHDATA_FILE        = $(DOXYGEN_HTML_OUTPUT)/search/searchdata.xml
 
 # When SERVER_BASED_SEARCH and EXTERNAL_SEARCH are both enabled the
 # EXTERNAL_SEARCH_ID tag can be used as an identifier for the project. This is
