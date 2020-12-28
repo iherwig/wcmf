@@ -2,8 +2,10 @@
   <description>wCMF documentation build file</description>
 
   <target name="properties" description="define properties">
+    <property name="version" value="5.0"/>
     <property name="gen.dir" value="../api-gen"/>
-    <property name="dist.dir" value="${gen.dir}/html/5.0"/>
+    <!-- NOTE Add version to path, if not release yet -->
+    <property name="dist.dir" value="${gen.dir}/html/${version}"/>
   </target>
 
   <target name="dist" depends="properties,clean" description="build the documentation" >
@@ -12,6 +14,7 @@
       <fileset dir="theme/" includes="**"/>
     </copy>
     <exec executable="doxygen">
+      <env key="DOXYGEN_VERSION" value="${version}"/>
       <env key="DOXYGEN_HTML_OUTPUT" value="${dist.dir}"/>
       <arg value="doxyfile.txt"/>
     </exec>
