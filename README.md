@@ -5,7 +5,7 @@ Model Driven Development approach to application
 development based on the MVC pattern. It allows to create any kind of
 PHP web application, e.g. CRM, CMS from an UML model.
 
-[![Build Status](https://img.shields.io/travis/iherwig/wcmf/master.svg?style=flat-square)](https://travis-ci.org/iherwig/wcmf)
+[![Build Status](https://img.shields.io/travis/iherwig/wcmf/master.svg?style=flat-square)](https://travis-ci.com/iherwig/wcmf)
 [![Packagist License](https://img.shields.io/packagist/l/wcmf/wcmf.svg?style=flat-square)](https://github.com/iherwig/wcmf/blob/master/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/wcmf/wcmf.svg?style=flat-square)](https://packagist.org/packages/wcmf/wcmf)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/wcmf/wcmf.svg?style=flat-square)](https://packagist.org/packages/wcmf/wcmf)
