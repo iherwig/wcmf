@@ -2,10 +2,20 @@
   <description>wCMF documentation build file</description>
 
   <target name="properties" description="define properties">
+    <!-- the current version of the source files -->
     <property name="version" value="5.0"/>
+    <!-- 
+      indicates, if the version is released 
+      - true:  the documentation will be put in the main directory
+      - false: the documentation will be put in the version-specific directory and the 
+               index.html in the main directory must redirect to the latest release
+    -->
+    <property name="released" value="false"/>
+    
     <property name="gen.dir" value="../api-gen"/>
-    <!-- NOTE Add version to path, if not release yet -->
-    <property name="dist.dir" value="${gen.dir}/html/${version}"/>
+    <condition property="dist.dir" value="${gen.dir}/html" else="${gen.dir}/html/${version}">
+      <istrue value="${released}"/>
+    </condition>
   </target>
 
   <target name="dist" depends="properties,clean" description="build the documentation" >

@@ -14,22 +14,22 @@ PHP web application, e.g. CRM, CMS from an UML model.
 
 Features
 --------
-- Full featured object [persistence layer](http://wcmf.wemove.com/persistence.html):
-    - Flexible [mapper](http://wcmf.wemove.com/persistence.html#pers_mappers) architecture with adapter to RDBMS
-    - Optimistic and pessimistic [object locking](http://wcmf.wemove.com/persistence.html#pers_concurrency)
-    - [Searching](http://wcmf.wemove.com/persistence.html#pers_search) using template based object query and criteria API
-    - Query caching and [eager relation loading](http://wcmf.wemove.com/persistence.html#pers_builddepth)
-    - [Transaction](http://wcmf.wemove.com/persistence.html#pers_tx) support
-- [Role based permission management](http://wcmf.wemove.com/security.html#sec_authorization) (for actions, types, instances, instance properties)
-- [Event system](http://wcmf.wemove.com/presentation.html#pres_events)
-- [Dependency injection](http://wcmf.wemove.com/configuration.html#conf_di) support
-- Configuration based [routing](http://wcmf.wemove.com/presentation.html#pres_routing)
+- Full featured object [persistence layer](http://wcmf.wemove.com/latest/persistence.html):
+    - Flexible [mapper](http://wcmf.wemove.com/latest/persistence.html#pers_mappers) architecture with adapter to RDBMS
+    - Optimistic and pessimistic [object locking](http://wcmf.wemove.com/latest/persistence.html#pers_concurrency)
+    - [Searching](http://wcmf.wemove.com/latest/persistence.html#pers_search) using template based object query and criteria API
+    - Query caching and [eager relation loading](http://wcmf.wemove.com/latest/persistence.html#pers_builddepth)
+    - [Transaction](http://wcmf.wemove.com/latest/persistence.html#pers_tx) support
+- [Role based permission management](http://wcmf.wemove.com/latest/security.html#sec_authorization) (for actions, types, instances, instance properties)
+- [Event system](http://wcmf.wemove.com/latest/presentation.html#pres_events)
+- [Dependency injection](http://wcmf.wemove.com/latest/configuration.html#conf_di) support
+- Configuration based [routing](http://wcmf.wemove.com/latest/presentation.html#pres_routing)
 - [Smarty Template Engine](http://www.smarty.net/) integration
 - [Lucene Search Engine](http://framework.zend.com/manual/1.12/en/zend.search.lucene.overview.html) integration
-- [I18n/L10n](http://wcmf.wemove.com/i18n_l10n.html) support
+- [I18n/L10n](http://wcmf.wemove.com/latest/i18n_l10n.html) support
 - Flexible logging ([Monolog](https://github.com/Seldaek/monolog), [log4php](https://logging.apache.org/log4php/))
-- [SOAP and REST interfaces](http://wcmf.wemove.com/presentation.html#pres_apis) supporting CRUD operations on all objects
-- [Eclipse MDT/UML2](http://wiki.eclipse.org/MDT-UML2) compatible [code generator](http://wcmf.wemove.com/model.html#Generator)
+- [SOAP and REST interfaces](http://wcmf.wemove.com/latest/presentation.html#pres_apis) supporting CRUD operations on all objects
+- [Eclipse MDT/UML2](http://wiki.eclipse.org/MDT-UML2) compatible [code generator](http://wcmf.wemove.com/latest/model.html#Generator)
 - Modern [Dojo](https://dojotoolkit.org/) based [default application](https://github.com/iherwig/wcmf-default-app) for content management
 
 License
