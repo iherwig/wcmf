@@ -1,0 +1,5 @@
+<map id="UnionQueryProvider" name="UnionQueryProvider">
+<area shape="rect" id="node1" title="UnionQueryProvider is used to provide queries to a union query." alt="" coords="167,5,321,97"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1_object_query_union_query_provider.html" title="ObjectQueryUnionQueryProvider provides queries as ObjectQuery instances." alt="" coords="5,145,240,267"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_union_query_provider.html" title="DefaultUnionQueryProvider provides queries for multiple types using the PersistentFacade::loadObjects..." alt="" coords="265,153,466,259"/>
+</map>

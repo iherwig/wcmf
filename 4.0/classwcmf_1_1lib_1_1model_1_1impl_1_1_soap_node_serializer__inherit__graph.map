@@ -1,0 +1,4 @@
+<map id="SoapNodeSerializer" name="SoapNodeSerializer">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html" title="NodeSerializerBase is a base class for NodeSerialize implementations. " alt="" coords="5,160,160,252"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html" title="NodeSerializer implementations are used to serialize Nodes into an array representation or deserializ..." alt="" coords="13,5,152,112"/>
+</map>

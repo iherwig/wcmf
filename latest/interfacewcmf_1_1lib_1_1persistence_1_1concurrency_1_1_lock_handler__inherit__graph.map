@@ -1,0 +1,5 @@
+<map id="LockHandler" name="LockHandler">
+<area shape="rect" id="node1" title="LockHandler defines the interface for LockHandler implementations." alt="" coords="115,5,265,156"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1concurrency_1_1impl_1_1_default_lock_handler.html" title="DefaultLockHandler implements the LockHandler interface for relational databases." alt="" coords="5,204,185,457"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1persistence_1_1concurrency_1_1impl_1_1_null_lock_handler.html" title="NullLockHandler acts as if no LockHandler was installed." alt="" coords="210,255,359,406"/>
+</map>

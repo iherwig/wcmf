@@ -1,0 +1,5 @@
+<map id="View" name="View">
+<area shape="rect" id="node1" title="View defines the interface for all view implementations." alt="" coords="92,5,231,200"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1view_1_1impl_1_1_null_view.html" title="NullView is a stub class that implements all view methods." alt="" coords="5,299,144,494"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1presentation_1_1view_1_1impl_1_1_smarty_view.html" title="View is used by Controller to handle the view presentation in MVC pattern." alt="" coords="169,248,330,545"/>
+</map>

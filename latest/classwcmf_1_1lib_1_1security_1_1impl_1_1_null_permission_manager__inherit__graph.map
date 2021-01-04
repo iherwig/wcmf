@@ -1,0 +1,4 @@
+<map id="NullPermissionManager" name="NullPermissionManager">
+<area shape="rect" id="node1" title="NullPermissionManager acts like an absent PermissionManager." alt="" coords="20,277,224,472"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1security_1_1_permission_manager.html" title="PermissionManager implementations are used to handle all authorization requests." alt="" coords="5,5,239,229"/>
+</map>

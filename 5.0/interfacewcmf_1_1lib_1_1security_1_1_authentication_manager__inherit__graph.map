@@ -1,0 +1,4 @@
+<map id="AuthenticationManager" name="AuthenticationManager">
+<area shape="rect" id="node1" title="AuthenticationManager implementations are used to handle all authentication requests." alt="" coords="29,5,204,83"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_default_authentication_manager.html" title="DefaultAuthenticationManager uses PrincipalFactory to get a User instance that matches the given logi..." alt="" coords="5,131,228,223"/>
+</map>

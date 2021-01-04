@@ -1,0 +1,4 @@
+<map id="IndexStrategy" name="IndexStrategy">
+<area shape="rect" id="node1" title="IndexStrategy defines the interface for indexing implementations." alt="" coords="23,5,157,97"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1search_1_1impl_1_1_default_index_strategy.html" title="DefaultIndexStrategy implements indexing of PersistentObject values and might be customized by overri..." alt="" coords="5,145,175,267"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="BatchController" name="BatchController">
+<area shape="rect" id="node3" href="$classwcmf_1_1application_1_1controller_1_1_batch_display_controller.html" title="BatchDisplayController is used to load a tree of Node instances recursivly and return them in lists o..." alt="" coords="5,711,169,920"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1application_1_1controller_1_1_copy_controller.html" title="CopyController is used to copy or move Node instances. " alt="" coords="194,689,335,942"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1application_1_1controller_1_1_search_index_controller.html" title="SearchIndexController creates a Lucene index from the complete datastore. " alt="" coords="359,747,509,883"/>
+<area shape="rect" id="node6" href="$classwcmf_1_1application_1_1controller_1_1_x_m_l_export_controller.html" title="XMLExportController exports the content tree into an XML file. " alt="" coords="533,681,759,949"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1_controller.html" title="Controller is the base class of all controllers. " alt="" coords="253,5,445,332"/>
+</map>

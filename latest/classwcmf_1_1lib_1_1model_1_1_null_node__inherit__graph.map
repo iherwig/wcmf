@@ -1,0 +1,7 @@
+<map id="NullNode" name="NullNode">
+<area shape="rect" id="node1" title="NullNode is an implementation of the NullObject pattern, It inherits all functionality from Node (act..." alt="" coords="103,1012,195,1089"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1_node.html" title="Node adds the concept of relations to PersistentObject." alt="" coords="23,637,275,964"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html" title="DefaultPersistentObject is the base class of all persistent objects." alt="" coords="15,321,283,589"/>
+<area shape="rect" id="node4" href="$interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html" title="PersistentObject defines the interface of all persistent objects." alt="" coords="5,5,148,273"/>
+<area shape="rect" id="node5" title=" " alt="" coords="173,101,271,178"/>
+</map>

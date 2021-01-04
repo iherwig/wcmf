@@ -1,0 +1,4 @@
+<map id="ActionKeyProvider" name="ActionKeyProvider">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1config_1_1impl_1_1_config_action_key_provider.html" title="ConfigActionKeyProvider searches for action keys in the application configuration. " alt="" coords="5,204,169,325"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1config_1_1impl_1_1_persistence_action_key_provider.html" title="PersistenceActionKeyProvider searches for action keys in the application storage. ..." alt="" coords="194,160,391,369"/>
+</map>

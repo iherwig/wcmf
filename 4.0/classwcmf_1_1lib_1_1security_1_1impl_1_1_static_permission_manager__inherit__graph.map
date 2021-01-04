@@ -1,0 +1,4 @@
+<map id="StaticPermissionManager" name="StaticPermissionManager">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_abstract_permission_manager.html" title="AbstractPermissionManager is the base class for concrete PermissionManager implementations. " alt="" coords="5,5,245,361"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1security_1_1_permission_manager.html" title="PermissionManager implementations are used to handle all authorization requests. " alt="" coords="269,71,496,295"/>
+</map>

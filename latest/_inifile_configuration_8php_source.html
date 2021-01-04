@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/config/impl/InifileConfiguration.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_a15e760820a45db1a84099e0b2c8a9f0.html">config</a></li><li class="navelem"><a class="el" href="dir_4b2dec9d1c5e02c77c0af2aa5f9422ca.html">impl</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">InifileConfiguration.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1config_1_1impl.html">wcmf\lib\config\impl</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1config_1_1_config_change_event.html">wcmf\lib\config\ConfigChangeEvent</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">wcmf\lib\config\Configuration</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1config_1_1_configuration_exception.html">wcmf\lib\config\ConfigurationException</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_writable_configuration.html">wcmf\lib\config\WritableConfiguration</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">wcmf\lib\core\IllegalArgumentException</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1io_1_1_file_util.html">wcmf\lib\io\FileUtil</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1io_1_1_i_o_exception.html">wcmf\lib\io\IOException</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * InifileConfiguration reads the application configuration from ini files.</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * @note This class only supports ini files with sections.</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html">InifileConfiguration</a> <span class="keyword">implements</span> <a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">Configuration</a>, <a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_writable_configuration.html">WritableConfiguration</a> {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">private</span> $configArray = []; <span class="comment">// an assoziate array that holds sections with keys with values</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">private</span> $comments = []; <span class="comment">// an assoziate array that holds the comments/blank lines in the file</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                          <span class="comment">// (each comment is attached to the following section/key)</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                          <span class="comment">// the key &#39;;&#39; holds the comments at the end of the file</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">private</span> $lookupTable = []; <span class="comment">// an assoziate array that has lowercased section or section:key</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                             <span class="comment">// keys and [section, key] values for fast lookup</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">private</span> $isModified = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">private</span> $addedFiles = []; <span class="comment">// files added to the configuration</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">private</span> $containedFiles = []; <span class="comment">// all included files (also by config include)</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">private</span> $configPath = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">private</span> $configExtension = <span class="stringliteral">&#39;ini&#39;</span>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keyword">private</span> $cachePath = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keyword">private</span> $fileUtil = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $logger = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * Constructor.</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * @param $configPath The path, either absolute or relative to the executed script</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * @param $cachePath The cache path, either absolute or relative to the executed script (optional)</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6ba90f73881f76ff37d3d641ca18de53">   56</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6ba90f73881f76ff37d3d641ca18de53">__construct</a>($configPath, $cachePath=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    $this-&gt;configPath = $configPath;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    $this-&gt;cachePath = $cachePath;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    $this-&gt;fileUtil = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1io_1_1_file_util.html">FileUtil</a>();</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordflow">if</span> (self::$logger == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      self::$logger = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">LogManager::getLogger</a>(__CLASS__);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7516ca30af0db3cdbf9a7739b48ce91d">   65</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>() {</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    $configArray = $this-&gt;configArray;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    ksort($configArray);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    $result = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">foreach</span>($configArray as $section =&gt; $config) {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      $result .= PHP_EOL.<span class="charliteral">&#39;[&#39;</span>.$section.<span class="charliteral">&#39;]&#39;</span>.PHP_EOL;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      ksort($config);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordflow">foreach</span> ($config as $key =&gt; $value) {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        $result .= $key.<span class="stringliteral">&#39; = &#39;</span>.json_encode($value).PHP_EOL;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordflow">return</span> $result;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  }</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * Get the file system path to the configuration files.</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   * @return The path, either absolute or relative to the executed script</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ae21d2d711f414697477df2a4726e8daf">   83</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ae21d2d711f414697477df2a4726e8daf">getConfigPath</a>() {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordflow">return</span> $this-&gt;configPath;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   * Configuration interface</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">   * @see Configuration::getConfigurations()</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a55ad87c7b53d1748156bb15250d26e02">   94</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a55ad87c7b53d1748156bb15250d26e02">getConfigurations</a>() {</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">return</span> $this-&gt;fileUtil-&gt;getFiles($this-&gt;configPath, <span class="stringliteral">&#39;/\.&#39;</span>.$this-&gt;configExtension.<span class="stringliteral">&#39;$/&#39;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  }</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   * @see Configuration::addConfiguration()</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">   * Name is the ini file to be parsed (relative to configPath)</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">   * @note ini files referenced in section &#39;config&#39; key &#39;include&#39; are parsed afterwards</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#adbc60917b6870516162d2a30d5e1521f">  103</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#adbc60917b6870516162d2a30d5e1521f">addConfiguration</a>($name, $processValues=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Add configuration: &quot;</span>.$name);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    $filename = $this-&gt;configPath.$name;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="comment">// do nothing, if the requested file was the last parsed file</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="comment">// we don&#39;t only check if it&#39;s parsed, because order matters</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    $numParsedFiles = <span class="keyword">sizeof</span>($this-&gt;addedFiles);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    $lastFile = $numParsedFiles &gt; 0 ? $this-&gt;addedFiles[$numParsedFiles-1] : <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Parsed files: &quot;</span>.$numParsedFiles.<span class="stringliteral">&quot;, last file: &quot;</span>.$lastFile);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;      <span class="keywordflow">foreach</span>($this-&gt;addedFiles as $addedFile) {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;File date &quot;</span>.$addedFile.<span class="stringliteral">&quot;: &quot;</span>.@filemtime($addedFile));</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      }</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      $cachedFile = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1cf982ad66d5ee92af215f55c6e0a384">getSerializeFilename</a>($this-&gt;addedFiles);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Cache file date &quot;</span>.$cachedFile.<span class="stringliteral">&quot;: &quot;</span>.@filemtime($cachedFile));</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    }</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordflow">if</span> ($numParsedFiles &gt; 0 &amp;&amp; $lastFile == $filename &amp;&amp;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            !$this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a83d5ec6d2309c0384066ad60d386bd99">checkFileDate</a>($this-&gt;addedFiles, $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1cf982ad66d5ee92af215f55c6e0a384">getSerializeFilename</a>($this-&gt;addedFiles))) {</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Skipping&quot;</span>);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    }</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">if</span> (!file_exists($filename)) {</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1_configuration_exception.html">ConfigurationException</a>(<span class="stringliteral">&#39;Configuration file &#39;</span>.$filename.<span class="stringliteral">&#39; not found!&#39;</span>);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    }</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Adding...&quot;</span>);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    }</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="comment">// try to unserialize an already parsed ini file sequence</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    $this-&gt;addedFiles[] = $filename;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordflow">if</span> (!$this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a738ebd2c4dc9abc9e0cd4deb58fadd55">unserialize</a>($this-&gt;addedFiles)) {</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Parse first time&quot;</span>);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;      }</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;      $result = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7eedc8bbae5b3b8c8bd5dc3715bb8a10">processFile</a>($filename, $this-&gt;configArray, $this-&gt;containedFiles);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;      $this-&gt;configArray = $result[<span class="stringliteral">&#39;config&#39;</span>];</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;      $this-&gt;containedFiles = array_unique($result[<span class="stringliteral">&#39;files&#39;</span>]);</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      <span class="keywordflow">if</span> ($processValues) {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6e991b4f24da244d171da3fd4449c7cf">processValues</a>();</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;      }</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      <span class="comment">// re-build lookup table</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a8fa89bbaaeb8fe1791b952701b19544b">buildLookupTable</a>();</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      <span class="comment">// serialize the parsed ini file sequence</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a4d9813fea8525b19a1d370eeb8fe41d6">serialize</a>();</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      <span class="comment">// notify configuration change listeners</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ac86a3798ad18d384985f92e9531097cf">configChanged</a>();</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    }</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Reuse from cache&quot;</span>);</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  }</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">   * Process the given file recursively</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">   * @param $filename The filename</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment">   * @param $configArray Configuration array</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">   * @param $parsedFiles Parsed files</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">   * @return Associative array with keys &#39;config&#39; (configuration array) and &#39;files&#39;</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">   * (array of parsed files)</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7eedc8bbae5b3b8c8bd5dc3715bb8a10">  174</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7eedc8bbae5b3b8c8bd5dc3715bb8a10">processFile</a>($filename, $configArray=[], $parsedFiles=[]) {</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="comment">// avoid circular includes</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordflow">if</span> (!in_array($filename, $parsedFiles)) {</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;      $parsedFiles[] = $filename;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;      $content = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a521bd6e0a41f31b174634d7e16338379">parseIniFile</a>($filename);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;      <span class="comment">// process includes</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;      $includes = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#acadfd6ef95ee088504e7dd8a4254126a">getConfigIncludes</a>($content);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;      <span class="keywordflow">if</span> ($includes) {</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7c2ee23b5efc4c39757ac0742c499e45">processValue</a>($includes);</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <span class="keywordflow">foreach</span> ($includes as $include) {</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;          $result = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7eedc8bbae5b3b8c8bd5dc3715bb8a10">processFile</a>($this-&gt;configPath.$include, $configArray, $parsedFiles);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;          $configArray = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1d31706e7fe845e7592eecfd6be63bc5">configMerge</a>($configArray, $result[<span class="stringliteral">&#39;config&#39;</span>], <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;          $parsedFiles = $result[<span class="stringliteral">&#39;files&#39;</span>];</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        }</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;      }</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      <span class="comment">// process self</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      $configArray = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1d31706e7fe845e7592eecfd6be63bc5">configMerge</a>($configArray, $content, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    }</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordflow">return</span> [<span class="stringliteral">&#39;config&#39;</span> =&gt; $configArray, <span class="stringliteral">&#39;files&#39;</span> =&gt; $parsedFiles];</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  }</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="comment">   * @see Configuration::getSections()</span></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ac1f543e7e36a77057d0049cee985a5f8">  201</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ac1f543e7e36a77057d0049cee985a5f8">getSections</a>() {</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordflow">return</span> array_keys($this-&gt;configArray);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  }</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="comment">   * @see Configuration::hasSection()</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a137c634253bdf2fce742cfcf3f86cc6b">  208</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a137c634253bdf2fce742cfcf3f86cc6b">hasSection</a>($section) {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keywordflow">return</span> ($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6a0d862231f5886c84bfcf362911404a">lookup</a>($section) != <span class="keyword">null</span>);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;  }</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="comment">   * @see Configuration::getSection()</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a58a68c84b362b3cff5fd9b1c41080f78">  215</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a58a68c84b362b3cff5fd9b1c41080f78">getSection</a>($section, $includeMeta=<span class="keyword">false</span>) {</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    $lookupEntry = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6a0d862231f5886c84bfcf362911404a">lookup</a>($section);</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordflow">if</span> ($lookupEntry == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;      <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1_configuration_exception.html">ConfigurationException</a>(<span class="stringliteral">&#39;Section \&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span> not found!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="stringliteral">    else {</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="stringliteral">      if ($includeMeta) {</span></div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="stringliteral">        return $this-&gt;configArray[$lookupEntry[0]];</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="stringliteral">      else {</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="stringliteral">        return array_filter($this-&gt;configArray[$lookupEntry[0]], function($k) {</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="stringliteral">          return !preg_match(&#39;</span>/^__/<span class="stringliteral">&#39;, $k);</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="stringliteral">        }, \ARRAY_FILTER_USE_KEY);</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="comment">   * @see Configuration::hasValue()</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a71b2cd5459406a4e51de66135416d16c">  235</a></span>&#160;  public function hasValue($key, $section) {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    return ($this-&gt;lookup($section, $key) != null);</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  }</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">   * @see Configuration::getValue()</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ade8987dcf8041a3c7724604177be53bd">  242</a></span>&#160;  public function getValue($key, $section) {</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    $lookupEntry = $this-&gt;lookup($section, $key);</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    if ($lookupEntry == null || sizeof($lookupEntry) == 1) {</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;      throw new ConfigurationException(&#39;Key \<span class="stringliteral">&#39;&#39;</span>.$key.<span class="charliteral">&#39;\&#39;</span> not found in section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span>!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="stringliteral">    else {</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="stringliteral">      return $this-&gt;configArray[$lookupEntry[0]][$lookupEntry[1]];</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment">   * @see Configuration::getBooleanValue()</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#afc7bdbf49e8c614de9ddf9176a87af7c">  255</a></span>&#160;  public function getBooleanValue($key, $section) {</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    $value = $this-&gt;getValue($key, $section);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    return StringUtil::getBoolean($value);</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  }</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="comment">   * @see Configuration::getDirectoryValue()</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a735dc312f405fb15076d16e459af8b8c">  263</a></span>&#160;  public function getDirectoryValue($key, $section) {</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    $value = $this-&gt;getValue($key, $section);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    $isArray = is_array($value);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    $values = !$isArray ? [$value] : $value;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    $result = [];</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    foreach ($values as $path) {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;      $absPath = WCMF_BASE.$path;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;      $result[] = $this-&gt;fileUtil-&gt;realpath($absPath).&#39;/<span class="stringliteral">&#39;;</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="stringliteral">    return $isArray ? $result : (sizeof($result) &gt; 0 ? $result[0] : null);</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;<span class="comment">   * @see Configuration::getFileValue()</span></div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#aaaf925fc2efaab606cbbddfddf93c277">  280</a></span>&#160;  public function getFileValue($key, $section) {</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    $value = $this-&gt;getValue($key, $section);</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    $isArray = is_array($value);</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    $values = !$isArray ? [$value] : $value;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    $result = [];</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    foreach ($values as $path) {</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;      $absPath = WCMF_BASE.$path;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;      $result[] = $this-&gt;fileUtil-&gt;realpath(dirname($absPath)).&#39;/<span class="stringliteral">&#39;.$this-&gt;fileUtil-&gt;basename($absPath);</span></div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;<span class="stringliteral">    return $isArray ? $result : (sizeof($result) &gt; 0 ? $result[0] : null);</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="comment">   * @see Configuration::getKey()</span></div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a92fb64ddc3e58d0dc5fb0361657797af">  297</a></span>&#160;  public function getKey($value, $section) {</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    $map = array_flip($this-&gt;getSection($section));</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    if (!isset($map[$value])) {</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;      throw new ConfigurationException(&#39;Value \<span class="stringliteral">&#39;&#39;</span>.$value.<span class="charliteral">&#39;\&#39;</span> not found in section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span>!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;<span class="stringliteral">    return $map[$value];</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="comment">   * WritableConfiguration interface</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">   * @see WritableConfiguration::isEditable()</span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a0c5b48d8c7498d3a69aa9d63124f2e4f">  312</a></span>&#160;  public function isEditable($section) {</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    if ($this-&gt;hasValue(&#39;readonlySections<span class="stringliteral">&#39;, &#39;</span>config<span class="stringliteral">&#39;)) {</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="stringliteral">      $readonlySections = $this-&gt;getValue(&#39;</span>readonlySections<span class="stringliteral">&#39;, &#39;</span>config<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="stringliteral">      $sectionLower = strtolower($section);</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="stringliteral">      if (is_array($readonlySections)) {</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="stringliteral">        foreach($readonlySections as $readonlySection) {</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="stringliteral">          if ($sectionLower == strtolower($readonlySection)) {</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="stringliteral">            return false;</span></div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;<span class="stringliteral">          }</span></div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="stringliteral">        }</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="stringliteral">    return true;</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment">   * @see WritableConfiguration::isModified()</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a57e6b54b217644429863a4c4f7c6dcd2">  330</a></span>&#160;  public function isModified() {</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    return $this-&gt;isModified;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;  }</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="comment">   * @see WritableConfiguration::createSection()</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a4607ca457e0330d8c746700bbc4fbe05">  337</a></span>&#160;  public function createSection($section) {</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    $section = trim($section);</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    if (strlen($section) == 0) {</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;      throw new IllegalArgumentException(&#39;Empty section names are not allowed!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;<span class="stringliteral">    if ($this-&gt;hasSection($section)) {</span></div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span> already exists!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;<span class="stringliteral">    $this-&gt;configArray[$section] = &#39;</span><span class="stringliteral">&#39;;</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="stringliteral">    $this-&gt;buildLookupTable();</span></div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;<span class="stringliteral">    $this-&gt;isModified = true;</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;<span class="stringliteral">    return true;</span></div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="comment">   * @see WritableConfiguration::removeSection()</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00354"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a70324a0f46ed24ffe64f25aa5ca5e221">  354</a></span>&#160;  public function removeSection($section) {</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    if (!$this-&gt;isEditable($section)) {</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;      throw new IllegalArgumentException(&#39;Section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span> is not editable!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="stringliteral">    $lookupEntry = $this-&gt;lookup($section);</span></div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="stringliteral">    if ($lookupEntry != null) {</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="stringliteral">      unset($this-&gt;configArray[$lookupEntry[0]]);</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="stringliteral">      $this-&gt;buildLookupTable();</span></div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<span class="stringliteral">      $this-&gt;isModified = true;</span></div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="comment">   * @see WritableConfiguration::renameSection()</span></div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00369"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7cd317350dc665e97e672a2712f9fbd7">  369</a></span>&#160;  public function renameSection($oldname, $newname) {</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    $newname = trim($newname);</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    if (strlen($newname) == 0) {</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;      throw new IllegalArgumentException(&#39;Empty section names are not allowed!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="stringliteral">    $lookupEntryOld = $this-&gt;lookup($oldname);</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="stringliteral">    if ($lookupEntryOld == null) {</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Section \<span class="stringliteral">&#39;&#39;</span>.$oldname.<span class="charliteral">&#39;\&#39;</span> does not exist!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="stringliteral">    if (!$this-&gt;isEditable($oldname)) {</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Section \<span class="stringliteral">&#39;&#39;</span>.$oldname.<span class="charliteral">&#39;\&#39;</span> is not editable!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="stringliteral">    $lookupEntryNew = $this-&gt;lookup($newname);</span></div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="stringliteral">    if ($lookupEntryNew != null) {</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Section \<span class="stringliteral">&#39;&#39;</span>.$newname.<span class="charliteral">&#39;\&#39;</span> already exists!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="stringliteral">    // do rename</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="stringliteral">    $value = $this-&gt;configArray[$lookupEntryOld[0]];</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="stringliteral">    $this-&gt;configArray[$newname] = $value;</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="stringliteral">    unset($this-&gt;configArray[$lookupEntryOld[0]]);</span></div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="stringliteral">    $this-&gt;buildLookupTable();</span></div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="stringliteral">    $this-&gt;isModified = true;</span></div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment">   * @see WritableConfiguration::setValue()</span></div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00396"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#af94edcfe83c279b7bcbb18e83f8123d1">  396</a></span>&#160;  public function setValue($key, $value, $section, $createSection=true) {</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    $key = trim($key);</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    if (strlen($key) == 0) {</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;      throw new IllegalArgumentException(&#39;Empty key names are not allowed!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="stringliteral">    $lookupEntrySection = $this-&gt;lookup($section);</span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="stringliteral">    if ($lookupEntrySection == null &amp;&amp; !$createSection) {</span></div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span> does not exist!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="stringliteral">    if ($lookupEntrySection != null &amp;&amp; !$this-&gt;isEditable($section)) {</span></div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span> is not editable!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="stringliteral">    // create section if requested and determine section name</span></div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="stringliteral">    if ($lookupEntrySection == null &amp;&amp; $createSection) {</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="stringliteral">      $section = trim($section);</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="stringliteral">      $this-&gt;configArray[$section] = [];</span></div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="stringliteral">      $finalSectionName = $section;</span></div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;<span class="stringliteral">    else {</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;<span class="stringliteral">      $finalSectionName = $lookupEntrySection[0];</span></div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="stringliteral">    // determine key name</span></div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="stringliteral">    if ($lookupEntrySection != null) {</span></div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;<span class="stringliteral">      $lookupEntryKey = $this-&gt;lookup($section, $key);</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="stringliteral">      if ($lookupEntryKey == null) {</span></div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;<span class="stringliteral">        // key does not exist yet</span></div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;<span class="stringliteral">        $finalKeyName = $key;</span></div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;<span class="stringliteral">      else {</span></div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;<span class="stringliteral">        $finalKeyName = $lookupEntryKey[1];</span></div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="stringliteral">    else {</span></div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="stringliteral">      $finalKeyName = $key;</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="stringliteral">    $this-&gt;configArray[$finalSectionName][$finalKeyName] = $value;</span></div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="stringliteral">    $this-&gt;buildLookupTable();</span></div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="stringliteral">    $this-&gt;isModified = true;</span></div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="comment">   * @see WritableConfiguration::removeKey()</span></div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00440"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a198742a4f23c940bde0cf341ec3d556a">  440</a></span>&#160;  public function removeKey($key, $section) {</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    if (!$this-&gt;isEditable($section)) {</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;      throw new IllegalArgumentException(&#39;Section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span> is not editable!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="stringliteral">    $lookupEntry = $this-&gt;lookup($section, $key);</span></div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="stringliteral">    if ($lookupEntry != null) {</span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="stringliteral">      unset($this-&gt;configArray[$lookupEntry[0]][$lookupEntry[1]]);</span></div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="stringliteral">      $this-&gt;buildLookupTable();</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="stringliteral">      $this-&gt;isModified = true;</span></div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;<span class="comment">   * @see WritableConfiguration::renameKey()</span></div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00455"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a66553a9ac1f2448a0350d74c5a8c26f5">  455</a></span>&#160;  public function renameKey($oldname, $newname, $section) {</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    $newname = trim($newname);</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    if (strlen($newname) == 0) {</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;      throw new IllegalArgumentException(&#39;Empty key names are not allowed!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="stringliteral">    if (!$this-&gt;hasSection($section)) {</span></div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span> does not exist!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;<span class="stringliteral">    if (!$this-&gt;isEditable($section)) {</span></div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span> is not editable!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;<span class="stringliteral">    $lookupEntryOld = $this-&gt;lookup($section, $oldname);</span></div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;<span class="stringliteral">    if ($lookupEntryOld == null) {</span></div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Key \<span class="stringliteral">&#39;&#39;</span>.$oldname.<span class="charliteral">&#39;\&#39;</span> does not exist in section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span>!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;<span class="stringliteral">    $lookupEntryNew = $this-&gt;lookup($section, $newname);</span></div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;<span class="stringliteral">    if ($lookupEntryNew != null) {</span></div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="stringliteral">      throw new IllegalArgumentException(&#39;</span>Key \<span class="stringliteral">&#39;&#39;</span>.$newname.<span class="charliteral">&#39;\&#39;</span> already exists in section \<span class="stringliteral">&#39;&#39;</span>.$section.<span class="charliteral">&#39;\&#39;</span>!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;<span class="stringliteral">    // do rename</span></div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="stringliteral">    $value = $this-&gt;configArray[$lookupEntryOld[0]][$lookupEntryOld[1]];</span></div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;<span class="stringliteral">    $this-&gt;configArray[$lookupEntryOld[0]][$newname] = $value;</span></div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;<span class="stringliteral">    unset($this-&gt;configArray[$lookupEntryOld[0]][$lookupEntryOld[1]]);</span></div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;<span class="stringliteral">    $this-&gt;buildLookupTable();</span></div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;<span class="stringliteral">    $this-&gt;isModified = true;</span></div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;<span class="comment">   * @see WritableConfiguration::writeConfiguration()</span></div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00485"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#af3642581fa1d0f1ad05ae4f8c6aa188e">  485</a></span>&#160;  public function writeConfiguration($name) {</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    $filename = $name;</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    $content = &quot;&quot;;</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    foreach($this-&gt;configArray as $section =&gt; $values) {</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;      $sectionString = &quot;[&quot;.$section.&quot;]&quot;;</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;      $content .= $this-&gt;comments[$sectionString];</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;      $content .= $sectionString.&quot;\n&quot;;</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;      if (is_array($values)) {</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;        foreach($values as $key =&gt; $value) {</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;          if (is_array($value)) {</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;            $value = &quot;{&quot;.join(&quot;, &quot;, $value).&quot;}&quot;;</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;          }</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;          // unescape double quotes</div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;          $value = str_replace(&quot;\\\&quot;&quot;, &quot;\&quot;&quot;, $value);</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;          $content .= $this-&gt;comments[$section][$key];</div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;          $content .= $key.&quot; = &quot;.$value.&quot;\n&quot;;</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;        }</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;      }</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;    }</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    $content .= $this-&gt;comments[&#39;;<span class="stringliteral">&#39;];</span></div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;<span class="stringliteral">    if (!$fh = fopen($filename, &#39;</span>w<span class="stringliteral">&#39;)) {</span></div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;<span class="stringliteral">      throw new IOException(&#39;</span>Can\<span class="stringliteral">&#39;t open ini file \&#39;&#39;</span>.$filename.<span class="charliteral">&#39;\&#39;</span>!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<span class="stringliteral">    if (!fwrite($fh, $content)) {</span></div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;<span class="stringliteral">      throw new IOException(&#39;</span>Can\<span class="stringliteral">&#39;t write ini file \&#39;&#39;</span>.$filename.<span class="charliteral">&#39;\&#39;</span>!<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;<span class="stringliteral">    fclose($fh);</span></div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;<span class="stringliteral">    // notify configuration change listeners</span></div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;<span class="stringliteral">    $this-&gt;configChanged();</span></div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;<span class="stringliteral">    $this-&gt;isModified = false;</span></div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;<span class="comment">   * Private interface</span></div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;<span class="comment">   * Load in the ini file specified in filename, and return</span></div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;<span class="comment">   * the settings in a multidimensional array, with the section names and</span></div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;<span class="comment">   * settings included. All section names and keys are lowercased.</span></div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;<span class="comment">   * @param $filename The filename of the ini file to parse</span></div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;<span class="comment">   * @return An associative array containing the data</span></div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;<span class="comment">   *</span></div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;<span class="comment">   * @author: Sebastien Cevey &lt;seb@cine7.net&gt;</span></div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;<span class="comment">   *          Original Code base: &lt;info@megaman.nl&gt;</span></div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;<span class="comment">   *          Added comment handling/Removed process sections flag: Ingo Herwig</span></div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00535"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a521bd6e0a41f31b174634d7e16338379">  535</a></span>&#160;  protected function parseIniFile($filename) {</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    if (!file_exists($filename)) {</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;      throw new ConfigurationException(&#39;The config file <span class="stringliteral">&#39;.$filename.&#39;</span> does not exist.<span class="stringliteral">&#39;);</span></div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;<span class="stringliteral">    $configArray = [];</span></div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;<span class="stringliteral">    $sectionName = &#39;</span><span class="stringliteral">&#39;;</span></div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;<span class="stringliteral">    $lines = file($filename);</span></div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<span class="stringliteral">    $commentsPending = &#39;</span><span class="stringliteral">&#39;;</span></div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;<span class="stringliteral">    foreach($lines as $line) {</span></div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;<span class="stringliteral">      $line = trim($line);</span></div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="stringliteral">      // comments/blank lines</span></div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;<span class="stringliteral">      if($line == &#39;</span><span class="stringliteral">&#39; || $line[0] == &#39;</span>;<span class="stringliteral">&#39;) {</span></div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;<span class="stringliteral">        $commentsPending .= $line.&quot;\n&quot;;</span></div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;<span class="stringliteral">        continue;</span></div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;<span class="stringliteral">      if($line[0] == &#39;</span>[<span class="stringliteral">&#39; &amp;&amp; $line[strlen($line)-1] == &#39;</span>]<span class="stringliteral">&#39;) {</span></div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;<span class="stringliteral">        $sectionName = substr($line, 1, strlen($line)-2);</span></div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;<span class="stringliteral">        $configArray[$sectionName] = [];</span></div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;<span class="stringliteral">        // store comments/blank lines for section</span></div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;<span class="stringliteral">        $this-&gt;comments[$line] = $commentsPending;</span></div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;<span class="stringliteral">        $commentsPending = &#39;</span><span class="stringliteral">&#39;;</span></div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;<span class="stringliteral">      else {</span></div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;<span class="stringliteral">        $parts = explode(&#39;</span>=<span class="stringliteral">&#39;, $line, 2);</span></div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;<span class="stringliteral">        $key = trim($parts[0]);</span></div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;<span class="stringliteral">        $value = trim($parts[1]);</span></div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;<span class="stringliteral">        $configArray[$sectionName][$key] = $value;</span></div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;<span class="stringliteral">        // store comments/blank lines for key</span></div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;<span class="stringliteral">        $this-&gt;comments[$sectionName][$key] = $commentsPending;</span></div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;<span class="stringliteral">        $commentsPending = &quot;&quot;;</span></div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;<span class="stringliteral">    // store comments/blank lines from the end of the file</span></div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;<span class="stringliteral">    $this-&gt;comments[&#39;</span>;<span class="stringliteral">&#39;] = substr($commentsPending, 0, -1);</span></div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;<span class="stringliteral">    return $configArray;</span></div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;<span class="comment">   * Process the values in the ini array.</span></div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;<span class="comment">   * This method turns string values that hold array definitions</span></div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;<span class="comment">   * (comma separated values enclosed by curly brackets) into array values.</span></div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00581"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6e991b4f24da244d171da3fd4449c7cf">  581</a></span>&#160;  protected function processValues() {</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;    array_walk_recursive($this-&gt;configArray, [$this, &#39;<a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7c2ee23b5efc4c39757ac0742c499e45">processValue</a><span class="stringliteral">&#39;]);</span></div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;<span class="comment">   * Process the values in the ini array.</span></div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;<span class="comment">   * This method turns string values that hold array definitions</span></div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;<span class="comment">   * (comma separated values enclosed by curly brackets) into array values.</span></div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;<span class="comment">   * @param $value A reference to the value</span></div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00591"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7c2ee23b5efc4c39757ac0742c499e45">  591</a></span>&#160;  protected function processValue(&amp;$value) {</div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;    if (!is_array($value)) {</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;      // decode encoded (%##) values</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;      if (preg_match (&quot;/%/&quot;, $value)) {</div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        $value = urldecode($value);</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;      }</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;      // make arrays</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;      if(preg_match(&quot;/^{.*}$/&quot;, $value)) {</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;        $arrayValues = StringUtil::quotesplit(substr($value, 1, -1));</div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;        $value = [];</div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;        foreach ($arrayValues as $arrayValue) {</div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;          $value[] = trim($arrayValue);</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;        }</div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;      }</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;    }</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;  }</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;<span class="comment">   * Merge the second array into the first, preserving entries of the first array</span></div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;<span class="comment">   * unless the second array contains the special key &#39;__inherit&#39; set to false</span></div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;<span class="comment">   * or they are re-defined in the second array.</span></div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;<span class="comment">   * @param $array1 First array.</span></div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;<span class="comment">   * @param $array2 Second array.</span></div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;<span class="comment">   * @param $override Boolean whether values defined in array1 should be overridden by values defined in array2.</span></div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;<span class="comment">   * @return The merged array.</span></div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00617"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1d31706e7fe845e7592eecfd6be63bc5">  617</a></span>&#160;  protected function configMerge($array1, $array2, $override) {</div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;    $result = $array1;</div>
+<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;    foreach(array_keys($array2) as $key) {</div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;      if (!array_key_exists($key, $result)) {</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;        // copy complete section, if new</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;        $result[$key] = $array2[$key];</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;      }</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;      else {</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;        // process existing section</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;        // remove old keys, if inheritence is disabled</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;        $inherit = !isset($array2[$key][&#39;__inherit<span class="stringliteral">&#39;]) || $array2[$key][&#39;</span>__inherit<span class="stringliteral">&#39;] == false;</span></div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;<span class="stringliteral">        if (!$inherit) {</span></div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;<span class="stringliteral">          foreach(array_keys($result[$key]) as $subkey) {</span></div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;<span class="stringliteral">            unset($result[$key][$subkey]);</span></div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;<span class="stringliteral">          }</span></div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;<span class="stringliteral">        }</span></div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;<span class="stringliteral">        // merge in new keys</span></div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;<span class="stringliteral">        foreach(array_keys($array2[$key]) as $subkey) {</span></div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;<span class="stringliteral">          if ((array_key_exists($subkey, $result[$key]) &amp;&amp; $override) || !isset($result[$key][$subkey])) {</span></div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;<span class="stringliteral">            $result[$key][$subkey] = $array2[$key][$subkey];</span></div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;<span class="stringliteral">          }</span></div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;<span class="stringliteral">        }</span></div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;<span class="stringliteral">    return $result;</span></div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;<span class="comment">   * Search the given value for a &#39;include&#39; key in a section named &#39;config&#39; (case-insensivite)</span></div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;<span class="comment">   * @param $array The array to search in</span></div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;<span class="comment">   * @return Mixed</span></div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00649"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#acadfd6ef95ee088504e7dd8a4254126a">  649</a></span>&#160;  protected function getConfigIncludes($array) {</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;    $sectionMatches = null;</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;    if (preg_match(&#39;/(?:^|,)(config)(?:,|$)/i<span class="stringliteral">&#39;, join(&#39;</span>,<span class="stringliteral">&#39;, array_keys($array)), $sectionMatches)) {</span></div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;<span class="stringliteral">      $sectionKey = sizeof($sectionMatches) &gt; 0 ? $sectionMatches[1] : null;</span></div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;<span class="stringliteral">      if ($sectionKey) {</span></div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;<span class="stringliteral">      $keyMatches = null;</span></div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;<span class="stringliteral">        if (preg_match(&#39;</span>/(?:^|,)(include)(?:,|$)/i<span class="stringliteral">&#39;, join(&#39;</span>,<span class="stringliteral">&#39;, array_keys($array[$sectionKey])), $keyMatches)) {</span></div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;<span class="stringliteral">          return sizeof($keyMatches) &gt; 0 ? $array[$sectionKey][$keyMatches[1]] : null;</span></div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;<span class="stringliteral">        }</span></div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;<span class="stringliteral">    }</span></div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;<span class="stringliteral">    return null;</span></div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;<span class="stringliteral">  }</span></div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;<span class="stringliteral"></span><span class="comment"></span> </div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;<span class="comment">   * Store the instance in the file system. If the instance is modified, this call is ignored.</span></div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00666"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a4d9813fea8525b19a1d370eeb8fe41d6">  666</a></span>&#160;  protected function serialize() {</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;    if (!$this-&gt;isModified() &amp;&amp; ($cacheFile = $this-&gt;getSerializeFilename($this-&gt;addedFiles))) {</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;      if (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;        self::$logger-&gt;debug(&quot;Serialize configuration: &quot;.join(&#39;,<span class="stringliteral">&#39;, $this-&gt;addedFiles).&quot; to file: &quot;.$cacheFile);</span></div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;<span class="stringliteral">      }</span></div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;<span class="stringliteral">      $this-&gt;fileUtil-&gt;mkdirRec(dirname($cacheFile));</span></div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;<span class="stringliteral">      if ($fh = @fopen($cacheFile, &quot;w&quot;)) {</span></div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;<span class="stringliteral">        if (@fwrite($fh, serialize(array_filter(get_object_vars($this), function($value, $name) {</span></div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;<span class="stringliteral">          return $name != &#39;</span>comments<span class="stringliteral">&#39;; // don&#39;</span>t store comments</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;        }, ARRAY_FILTER_USE_BOTH)))) {</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;          @fclose($fh);</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;        }</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;      }</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;    }</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;  }</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;<span class="comment">   * Retrieve parsed ini data from the file system and update the current instance.</span></div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;<span class="comment">   * If the current instance is modified or any file given in parsedFiles</span></div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;<span class="comment">   * is newer than the serialized data, this call is ignored.</span></div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;<span class="comment">   * If InifileConfiguration class changed, the call will be ignored as well.</span></div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;<span class="comment">   * @param $parsedFiles An array of ini filenames that must be contained in the data.</span></div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;<span class="comment">   * @return Boolean whether the data could be retrieved or not</span></div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00690"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a738ebd2c4dc9abc9e0cd4deb58fadd55">  690</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a738ebd2c4dc9abc9e0cd4deb58fadd55">unserialize</a>($parsedFiles) {</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    <span class="keywordflow">if</span> (!$this-&gt;isModified() &amp;&amp; ($cacheFile = $this-&gt;getSerializeFilename($parsedFiles)) &amp;&amp; file_exists($cacheFile)) {</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;      $parsedFiles[] = __FILE__;</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;      <span class="keywordflow">if</span> (!$this-&gt;checkFileDate($parsedFiles, $cacheFile)) {</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;        $vars = unserialize(file_get_contents($cacheFile));</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160; </div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;        <span class="comment">// check if included ini files were updated since last cache time</span></div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;        $includes = $vars[<span class="stringliteral">&#39;containedFiles&#39;</span>];</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;        <span class="keywordflow">if</span> (is_array($includes)) {</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;          <span class="keywordflow">if</span> ($this-&gt;checkFileDate($includes, $cacheFile)) {</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;          }</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;        }</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160; </div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;        <span class="comment">// everything is up-to-date</span></div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;        <span class="keywordflow">foreach</span>($vars as $key =&gt; $val) {</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;          $this-&gt;$key = $val;</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;        }</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;      }</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;    }</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;  }</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;<span class="comment">   * Get the filename for the serialized data that correspond to the the given ini file sequence.</span></div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="comment">   * NOTE: The method returns null, if no cache path is configured</span></div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="comment">   * @param $parsedFiles An array of parsed filenames</span></div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00720"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1cf982ad66d5ee92af215f55c6e0a384">  720</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1cf982ad66d5ee92af215f55c6e0a384">getSerializeFilename</a>($parsedFiles) {</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    <span class="keywordflow">if</span> (!$this-&gt;cachePath) {</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    }</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;    $path = $this-&gt;fileUtil-&gt;realpath($this-&gt;cachePath).<span class="charliteral">&#39;/&#39;</span>;</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;    $filename = $path.<span class="stringliteral">&#39;wcmf_config_&#39;</span>.hash(<span class="stringliteral">&#39;sha256&#39;</span>, $this-&gt;fileUtil-&gt;realpath($this-&gt;configPath).<span class="charliteral">&#39;/&#39;</span>.join(<span class="charliteral">&#39;_&#39;</span>, $parsedFiles));</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;    <span class="keywordflow">return</span> $filename;</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;  }</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;<span class="comment">   * Check if one file in fileList is newer than the referenceFile.</span></div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;<span class="comment">   * @param $fileList An array of files</span></div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;<span class="comment">   * @param $referenceFile The file to check against</span></div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;<span class="comment">   * @return True, if one of the files is newer, false else</span></div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00735"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a83d5ec6d2309c0384066ad60d386bd99">  735</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a83d5ec6d2309c0384066ad60d386bd99">checkFileDate</a>($fileList, $referenceFile) {</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;    <span class="keywordflow">foreach</span> ($fileList as $file) {</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;      <span class="keywordflow">if</span> (@filemtime($file) &gt; @filemtime($referenceFile)) {</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;      }</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;    }</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;  }</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;<span class="comment">   * Notify configuration change listeners</span></div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00747"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ac86a3798ad18d384985f92e9531097cf">  747</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ac86a3798ad18d384985f92e9531097cf">configChanged</a>() {</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;    <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Configuration is changed&quot;</span>);</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;    }</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;    <span class="keywordflow">if</span> (ObjectFactory::isConfigured()) {</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;      <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Emitting change event&quot;</span>);</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;      }</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;      ObjectFactory::getInstance(<span class="stringliteral">&#39;eventManager&#39;</span>)-&gt;dispatch(ConfigChangeEvent::NAME,</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;              <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1_config_change_event.html">ConfigChangeEvent</a>());</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;    }</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;  }</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;<span class="comment">   * Build the internal lookup table</span></div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00763"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a8fa89bbaaeb8fe1791b952701b19544b">  763</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a8fa89bbaaeb8fe1791b952701b19544b">buildLookupTable</a>() {</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;    $this-&gt;lookupTable = [];</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;configArray as $section =&gt; $entry) {</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;      <span class="comment">// create section entry</span></div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;      $lookupSectionKey = strtolower($section.<span class="charliteral">&#39;:&#39;</span>);</div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;      $this-&gt;lookupTable[$lookupSectionKey] = [$section];</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;      <span class="comment">// create key entries</span></div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;      <span class="keywordflow">foreach</span> ($entry as $key =&gt; $value) {</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;        $lookupKey = strtolower($lookupSectionKey.$key);</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;        $this-&gt;lookupTable[$lookupKey] = [$section, $key];</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;      }</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;    }</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;  }</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;<span class="comment">   * Lookup section and key.</span></div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;<span class="comment">   * @param $section The section to lookup</span></div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;<span class="comment">   * @param $key The key to lookup (optional)</span></div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;<span class="comment">   * @return Array with section as first entry and key as second or null if not found</span></div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00783"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6a0d862231f5886c84bfcf362911404a">  783</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6a0d862231f5886c84bfcf362911404a">lookup</a>($section, $key=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;    $lookupKey = strtolower($section).<span class="charliteral">&#39;:&#39;</span>.strtolower($key);</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;lookupTable[$lookupKey])) {</div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;      <span class="keywordflow">return</span> $this-&gt;lookupTable[$lookupKey];</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;    }</div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;  }</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;}</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1config_1_1_writable_configuration_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1config_1_1_writable_configuration.html">wcmf\lib\config\WritableConfiguration</a></div><div class="ttdoc">Implementations of WritableConfiguration allow to change the whole or parts of the configuration and ...</div><div class="ttdef"><b>Definition:</b> <a href="_writable_configuration_8php_source.html#l00019">WritableConfiguration.php:19</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a137c634253bdf2fce742cfcf3f86cc6b"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a137c634253bdf2fce742cfcf3f86cc6b">wcmf\lib\config\impl\InifileConfiguration\hasSection</a></div><div class="ttdeci">hasSection($section)</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00208">InifileConfiguration.php:208</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a6ba90f73881f76ff37d3d641ca18de53"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6ba90f73881f76ff37d3d641ca18de53">wcmf\lib\config\impl\InifileConfiguration\__construct</a></div><div class="ttdeci">__construct($configPath, $cachePath=null)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00056">InifileConfiguration.php:56</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_acadfd6ef95ee088504e7dd8a4254126a"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#acadfd6ef95ee088504e7dd8a4254126a">wcmf\lib\config\impl\InifileConfiguration\getConfigIncludes</a></div><div class="ttdeci">getConfigIncludes($array)</div><div class="ttdoc">Search the given value for a 'include' key in a section named 'config' (case-insensivite)</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00649">InifileConfiguration.php:649</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a8fa89bbaaeb8fe1791b952701b19544b"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a8fa89bbaaeb8fe1791b952701b19544b">wcmf\lib\config\impl\InifileConfiguration\buildLookupTable</a></div><div class="ttdeci">buildLookupTable()</div><div class="ttdoc">Build the internal lookup table.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00763">InifileConfiguration.php:763</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a7eedc8bbae5b3b8c8bd5dc3715bb8a10"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7eedc8bbae5b3b8c8bd5dc3715bb8a10">wcmf\lib\config\impl\InifileConfiguration\processFile</a></div><div class="ttdeci">processFile($filename, $configArray=[], $parsedFiles=[])</div><div class="ttdoc">Process the given file recursively.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00174">InifileConfiguration.php:174</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_ae21d2d711f414697477df2a4726e8daf"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ae21d2d711f414697477df2a4726e8daf">wcmf\lib\config\impl\InifileConfiguration\getConfigPath</a></div><div class="ttdeci">getConfigPath()</div><div class="ttdoc">Get the file system path to the configuration files.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00083">InifileConfiguration.php:83</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a1cf982ad66d5ee92af215f55c6e0a384"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1cf982ad66d5ee92af215f55c6e0a384">wcmf\lib\config\impl\InifileConfiguration\getSerializeFilename</a></div><div class="ttdeci">getSerializeFilename($parsedFiles)</div><div class="ttdoc">Get the filename for the serialized data that correspond to the the given ini file sequence.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00720">InifileConfiguration.php:720</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_adbc60917b6870516162d2a30d5e1521f"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#adbc60917b6870516162d2a30d5e1521f">wcmf\lib\config\impl\InifileConfiguration\addConfiguration</a></div><div class="ttdeci">addConfiguration($name, $processValues=true)</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00103">InifileConfiguration.php:103</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a6e991b4f24da244d171da3fd4449c7cf"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6e991b4f24da244d171da3fd4449c7cf">wcmf\lib\config\impl\InifileConfiguration\processValues</a></div><div class="ttdeci">processValues()</div><div class="ttdoc">Process the values in the ini array.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00581">InifileConfiguration.php:581</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_ac1f543e7e36a77057d0049cee985a5f8"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ac1f543e7e36a77057d0049cee985a5f8">wcmf\lib\config\impl\InifileConfiguration\getSections</a></div><div class="ttdeci">getSections()</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00201">InifileConfiguration.php:201</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a521bd6e0a41f31b174634d7e16338379"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a521bd6e0a41f31b174634d7e16338379">wcmf\lib\config\impl\InifileConfiguration\parseIniFile</a></div><div class="ttdeci">parseIniFile($filename)</div><div class="ttdoc">Private interface.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00535">InifileConfiguration.php:535</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_illegal_argument_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_illegal_argument_exception.html">wcmf\lib\core\IllegalArgumentException</a></div><div class="ttdoc">IllegalArgumentException signals an exception in method arguments.</div><div class="ttdef"><b>Definition:</b> <a href="_illegal_argument_exception_8php_source.html#l00018">IllegalArgumentException.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a6a0d862231f5886c84bfcf362911404a"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a6a0d862231f5886c84bfcf362911404a">wcmf\lib\config\impl\InifileConfiguration\lookup</a></div><div class="ttdeci">lookup($section, $key=null)</div><div class="ttdoc">Lookup section and key.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00783">InifileConfiguration.php:783</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html">wcmf\lib\config\impl\InifileConfiguration</a></div><div class="ttdoc">InifileConfiguration reads the application configuration from ini files.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00030">InifileConfiguration.php:30</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a1d31706e7fe845e7592eecfd6be63bc5"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a1d31706e7fe845e7592eecfd6be63bc5">wcmf\lib\config\impl\InifileConfiguration\configMerge</a></div><div class="ttdeci">configMerge($array1, $array2, $override)</div><div class="ttdoc">Merge the second array into the first, preserving entries of the first array unless the second array ...</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00617">InifileConfiguration.php:617</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a></div><div class="ttdoc">StringUtil provides support for string manipulation.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00018">StringUtil.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a55ad87c7b53d1748156bb15250d26e02"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a55ad87c7b53d1748156bb15250d26e02">wcmf\lib\config\impl\InifileConfiguration\getConfigurations</a></div><div class="ttdeci">getConfigurations()</div><div class="ttdoc">Configuration interface.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00094">InifileConfiguration.php:94</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1config_1_1_configuration_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">wcmf\lib\config\Configuration</a></div><div class="ttdoc">Implementations of Configuration give access to the application configuration.</div><div class="ttdef"><b>Definition:</b> <a href="_configuration_8php_source.html#l00032">Configuration.php:32</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1_configuration_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1_configuration_exception.html">wcmf\lib\config\ConfigurationException</a></div><div class="ttdoc">ConfigurationException signals an exception in the configuration.</div><div class="ttdef"><b>Definition:</b> <a href="_configuration_exception_8php_source.html#l00018">ConfigurationException.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a7c2ee23b5efc4c39757ac0742c499e45"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7c2ee23b5efc4c39757ac0742c499e45">wcmf\lib\config\impl\InifileConfiguration\processValue</a></div><div class="ttdeci">processValue(&amp;$value)</div><div class="ttdoc">Process the values in the ini array.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00591">InifileConfiguration.php:591</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a7516ca30af0db3cdbf9a7739b48ce91d"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a7516ca30af0db3cdbf9a7739b48ce91d">wcmf\lib\config\impl\InifileConfiguration\__toString</a></div><div class="ttdeci">__toString()</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00065">InifileConfiguration.php:65</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a83d5ec6d2309c0384066ad60d386bd99"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a83d5ec6d2309c0384066ad60d386bd99">wcmf\lib\config\impl\InifileConfiguration\checkFileDate</a></div><div class="ttdeci">checkFileDate($fileList, $referenceFile)</div><div class="ttdoc">Check if one file in fileList is newer than the referenceFile.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00735">InifileConfiguration.php:735</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a738ebd2c4dc9abc9e0cd4deb58fadd55"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a738ebd2c4dc9abc9e0cd4deb58fadd55">wcmf\lib\config\impl\InifileConfiguration\unserialize</a></div><div class="ttdeci">unserialize($parsedFiles)</div><div class="ttdoc">Retrieve parsed ini data from the file system and update the current instance.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00690">InifileConfiguration.php:690</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1io_1_1_file_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1io_1_1_file_util.html">wcmf\lib\io\FileUtil</a></div><div class="ttdoc">FileUtil provides basic support for file functionality like HTTP file upload.</div><div class="ttdef"><b>Definition:</b> <a href="_file_util_8php_source.html#l00022">FileUtil.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html_a0c195d83bf1cd47fb46a428e77f82b08"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">wcmf\lib\core\LogManager\getLogger</a></div><div class="ttdeci">static getLogger($name)</div><div class="ttdoc">Get the logger with the given name.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00037">LogManager.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1io_1_1_i_o_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1io_1_1_i_o_exception.html">wcmf\lib\io\IOException</a></div><div class="ttdoc">IOException signals an exception in i/o operations.</div><div class="ttdef"><b>Definition:</b> <a href="_i_o_exception_8php_source.html#l00018">IOException.php:18</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1config_1_1impl_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1config_1_1impl.html">wcmf\lib\config\impl</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00008">namespaces.php:8</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a4d9813fea8525b19a1d370eeb8fe41d6"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a4d9813fea8525b19a1d370eeb8fe41d6">wcmf\lib\config\impl\InifileConfiguration\serialize</a></div><div class="ttdeci">serialize()</div><div class="ttdoc">Store the instance in the file system.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00666">InifileConfiguration.php:666</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_a58a68c84b362b3cff5fd9b1c41080f78"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#a58a68c84b362b3cff5fd9b1c41080f78">wcmf\lib\config\impl\InifileConfiguration\getSection</a></div><div class="ttdeci">getSection($section, $includeMeta=false)</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00215">InifileConfiguration.php:215</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a></div><div class="ttdoc">LogManager is used to retrieve Logger instances.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00020">LogManager.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1_config_change_event_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1_config_change_event.html">wcmf\lib\config\ConfigChangeEvent</a></div><div class="ttdoc">ConfigChangeEvent signals a change of the application configuration.</div><div class="ttdef"><b>Definition:</b> <a href="_config_change_event_8php_source.html#l00020">ConfigChangeEvent.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a></div><div class="ttdoc">ObjectFactory implements the service locator pattern by wrapping a Factory instance and providing sta...</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00024">ObjectFactory.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration_html_ac86a3798ad18d384985f92e9531097cf"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html#ac86a3798ad18d384985f92e9531097cf">wcmf\lib\config\impl\InifileConfiguration\configChanged</a></div><div class="ttdeci">configChanged()</div><div class="ttdoc">Notify configuration change listeners.</div><div class="ttdef"><b>Definition:</b> <a href="_inifile_configuration_8php_source.html#l00747">InifileConfiguration.php:747</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:26 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

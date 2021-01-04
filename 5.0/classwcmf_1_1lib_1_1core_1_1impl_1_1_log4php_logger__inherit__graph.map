@@ -1,0 +1,5 @@
+<map id="Log4phpLogger" name="Log4phpLogger">
+<area shape="rect" id="node1" title="Log4phpLogger is a wrapper for the log4php library." alt="" coords="5,417,157,671"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1core_1_1impl_1_1_abstract_logger.html" title="AbstractLogger is the abstract base class for Logger implementations." alt="" coords="65,292,210,369"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1core_1_1_logger.html" title="Interface for logger implementations." alt="" coords="5,5,157,244"/>
+</map>

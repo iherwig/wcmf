@@ -1,0 +1,6 @@
+<map id="AbstractLogger" name="AbstractLogger">
+<area shape="rect" id="node1" title="AbstractLogger is the abstract base class for Logger implementations." alt="" coords="109,292,254,369"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1core_1_1impl_1_1_log4php_logger.html" title="Log4phpLogger is a wrapper for the log4php library." alt="" coords="5,417,157,671"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1core_1_1impl_1_1_monolog_file_logger.html" title="MonologFileLogger is a wrapper for the Monolog library that logs to files." alt="" coords="182,417,383,671"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1core_1_1_logger.html" title="Interface for logger implementations." alt="" coords="105,5,257,244"/>
+</map>

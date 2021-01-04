@@ -1,0 +1,5 @@
+<map id="Cache" name="Cache">
+<area shape="rect" id="node1" title="Cache defines the interface for cache implementations." alt="" coords="87,5,186,156"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1io_1_1impl_1_1_file_cache.html" title="FileCache provides simple caching functionality." alt="" coords="5,204,132,384"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1io_1_1impl_1_1_null_cache.html" title="NullCache acts as no cache." alt="" coords="157,226,253,362"/>
+</map>

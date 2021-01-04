@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/persistence/impl/DefaultTransaction.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_81dd432b91dc6ec596e6cc7ff91623b9.html">persistence</a></li><li class="navelem"><a class="el" href="dir_1d7194014bba9136dfb9cbd14508ff8d.html">impl</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">DefaultTransaction.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1persistence_1_1impl.html">wcmf\lib\persistence\impl</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use Exception;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">wcmf\lib\core\EventManager</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">wcmf\lib\persistence\PersistenceException</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">wcmf\lib\persistence\PersistentObject</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html">wcmf\lib\persistence\StateChangeEvent</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_transaction.html">wcmf\lib\persistence\Transaction</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html">wcmf\lib\persistence\TransactionEvent</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * Default implementation of Transaction.</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html">   29</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html">DefaultTransaction</a> <span class="keyword">implements</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_transaction.html">Transaction</a> {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $isInfoEnabled = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $isDebugEnabled = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $logger = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">private</span> $persistenceFacade = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">private</span> $eventManager = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">private</span> $id = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">private</span> $isActive = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">private</span> $isInCommit = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">private</span> $observedObjects = [];</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a812d04b35c3c9807ca2903bf13d1b466">   43</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a812d04b35c3c9807ca2903bf13d1b466">$newObjects</a> = [];</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a035e1edfb45934269c676ac3bdf1b2a9">   44</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a035e1edfb45934269c676ac3bdf1b2a9">$dirtyObjects</a> = [];</div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adec2d8095d3312a6203448774b576dc6">   45</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adec2d8095d3312a6203448774b576dc6">$deletedObjects</a> = [];</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a4b0ad42fa9e439b09488c80a65da8492">   46</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a4b0ad42fa9e439b09488c80a65da8492">$detachedObjects</a> = [];</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * Contains all loaded objects no matter which state they have</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a6e049913e5d78279cc2a6cd57044dac7">   51</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a6e049913e5d78279cc2a6cd57044dac7">$loadedObjects</a> = [];</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * Constructor</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   * @param $persistenceFacade</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   * @param $eventManager</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#af0e4e7699831c4d6c44741bc552c24d4">   58</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#af0e4e7699831c4d6c44741bc552c24d4">__construct</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">PersistenceFacade</a> $persistenceFacade,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;          <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">EventManager</a> $eventManager) {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordflow">if</span> (self::$logger == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      self::$logger = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">LogManager::getLogger</a>(__CLASS__);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    $this-&gt;persistenceFacade = $persistenceFacade;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    $this-&gt;eventManager = $eventManager;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    $this-&gt;<span class="keywordtype">id</span> = __CLASS__.<span class="charliteral">&#39;_&#39;</span>.<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#afbf74bfd4da80d80885396286ecf585d">ObjectId::getDummyId</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    $this-&gt;eventManager-&gt;addListener(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a244352f035b82b20b0efa506167fd862">StateChangeEvent::NAME</a>, [$this, <span class="stringliteral">&#39;stateChanged&#39;</span>]);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    self::$isInfoEnabled = self::$logger-&gt;isInfoEnabled();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    self::$isDebugEnabled = self::$logger-&gt;isDebugEnabled();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   * Destructor.</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a421831a265621325e1fdd19aace0c758">   75</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a421831a265621325e1fdd19aace0c758">__destruct</a>() {</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    $this-&gt;eventManager-&gt;removeListener(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a244352f035b82b20b0efa506167fd862">StateChangeEvent::NAME</a>, [$this, <span class="stringliteral">&#39;stateChanged&#39;</span>]);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  }</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * @see Transaction::begin()</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a3a9793666e688407121d76d3a7e4db5d">   82</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a3a9793666e688407121d76d3a7e4db5d">begin</a>() {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">if</span> (self::$isInfoEnabled) {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      self::$logger-&gt;info(<span class="stringliteral">&quot;Starting transaction&quot;</span>);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">isActive</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   * @see Transaction::commit()</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#af5674c27d4a92f6228565010eacbb9cb">   92</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#af5674c27d4a92f6228565010eacbb9cb">commit</a>() {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adc78c591fd58b509c411b230b3ec8f3f">commitImpl</a>(<span class="keyword">false</span>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   * @see Transaction::commitCollect()</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aca2400ca914e964a60a69434b0168477">   99</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aca2400ca914e964a60a69434b0168477">commitCollect</a>() {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adc78c591fd58b509c411b230b3ec8f3f">commitImpl</a>(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   * @see Transaction::rollback()</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afa549adf79e3f8c09fe8f903dd5fbfa7">  106</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afa549adf79e3f8c09fe8f903dd5fbfa7">rollback</a>() {</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">if</span> (self::$isInfoEnabled) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      self::$logger-&gt;info(<span class="stringliteral">&quot;Rollback transaction&quot;</span>);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="comment">// forget changes</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa821bec12eaa7e0f649397c9675ff505">clear</a>();</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">isActive</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    $this-&gt;isInCommit = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    $this-&gt;eventManager-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#a244352f035b82b20b0efa506167fd862">TransactionEvent::NAME</a>, <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html">TransactionEvent</a>(</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#aebc1c599a4f01e93f06b3ae4199d519c">TransactionEvent::AFTER_ROLLBACK</a>));</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  }</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * @see Transaction::isActive()</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">  121</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">isActive</a>() {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordflow">return</span> $this-&gt;isActive;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   * @see Transaction::attach()</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a24a0881da50c6149b528b034d729a15b">  128</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a24a0881da50c6149b528b034d729a15b">attach</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $object) {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    unset($this-&gt;detachedObjects[$object-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>()-&gt;__toString()]);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    $state = $object-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#afbf787ced76807989fb3093e1772c5a1">getState</a>();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordflow">if</span> (!$this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">isActive</a>() &amp;&amp; $state != <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a1b944c776949e9c0660f4d7b08cf6a55">PersistentObject::STATE_CLEAN</a>) {</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      <span class="keywordflow">return</span> $object;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    }</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordflow">switch</span> ($state) {</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a1b944c776949e9c0660f4d7b08cf6a55">PersistentObject::STATE_CLEAN</a>:</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a12fd9a70f621456c73bcc92098348806">registerLoaded</a>($object);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#af47c6a5b8aefd132e8709b8aa2a4edfc">PersistentObject::STATE_NEW</a>:</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afe0f145e544cde35169aea2b22f9ea69">registerNew</a>($object);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a53f40b6aa8360fb891d6516dea517b57">PersistentObject::STATE_DIRTY</a>:</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aaf1303bc778beb879c4daf93daf59f03">registerDirty</a>($object);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a2f444140d375d5c63def72413cadcb47">PersistentObject::STATE_DELETED</a>:</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a05d0d89f09f068d8ae386663ce353fec">registerDeleted</a>($object);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    }</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  }</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">   * @see Transaction::detach()</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a8602b5996ccc25be7603f59f5b019ef5">  154</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a8602b5996ccc25be7603f59f5b019ef5">detach</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid) {</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    $key = $oid-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>();</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    $object = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;newObjects[$key])) {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;      $object = $this-&gt;newObjects[$key];</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      unset($this-&gt;newObjects[$key]);</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;dirtyObjects[$key])) {</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      $object = $this-&gt;dirtyObjects[$key];</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;      unset($this-&gt;dirtyObjects[$key]);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    }</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;deletedObjects[$key])) {</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;      $object = $this-&gt;deletedObjects[$key];</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      unset($this-&gt;deletedObjects[$key]);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;loadedObjects[$key])) {</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      $object = $this-&gt;loadedObjects[$key];</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;      unset($this-&gt;loadedObjects[$key]);</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    }</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    unset($this-&gt;observedObjects[$key]);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    $this-&gt;detachedObjects[$key] = $object;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  }</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">   * @see Transaction::getLoaded()</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afdec445fe4ebbe9e754ef08965a431c7">  180</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afdec445fe4ebbe9e754ef08965a431c7">getLoaded</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid) {</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    $registeredObject = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    $key = $oid-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>();</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;loadedObjects[$key])) {</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;      $registeredObject = $this-&gt;loadedObjects[$key];</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;newObjects[$key])) {</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;      $registeredObject = $this-&gt;newObjects[$key];</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    }</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordflow">return</span> $registeredObject;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  }</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment">   * @see Transaction::getObjects()</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5a362cc3afebeadb3f8b97453a0251e3">  195</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5a362cc3afebeadb3f8b97453a0251e3">getObjects</a>() {</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordflow">return</span> $this-&gt;observedObjects;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  }</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="comment">   * Register a loaded object. The returned object is the registered instance.</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;<span class="comment">   * @param $object PersistentObject instance</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;<span class="comment">   * @return PersistentObject instance</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a12fd9a70f621456c73bcc92098348806">  204</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a12fd9a70f621456c73bcc92098348806">registerLoaded</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $object) {</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    $oid = $object-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>();</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    $key = $oid-&gt;__toString();</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;New Data:\n&quot;</span>.$object-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">dump</a>());</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Registry before:\n&quot;</span>.$this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">dump</a>());</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    }</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="comment">// register the object if it is newly loaded or</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="comment">// merge the attributes, if it is already loaded</span></div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    $registeredObject = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;loadedObjects[$key])) {</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;      $registeredObject = $this-&gt;loadedObjects[$key];</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;      <span class="comment">// merge existing attributes with new attributes</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;      <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Merging data of &quot;</span>.$key);</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;      }</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;      $registeredObject-&gt;mergeValues($object);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    }</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;      <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Register loaded object: &quot;</span>.$key);</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;      }</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      $this-&gt;loadedObjects[$key] = $object;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      <span class="comment">// start to listen to changes if the transaction is active</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;      <span class="keywordflow">if</span> ($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">isActive</a>) {</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;          self::$logger-&gt;debug(<span class="stringliteral">&quot;Start listening to: &quot;</span>.$key);</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        $this-&gt;observedObjects[$key] = $object;</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;      }</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;      $registeredObject = $object;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    }</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Registry after:\n&quot;</span>.$this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">dump</a>());</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    }</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordflow">return</span> $registeredObject;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  }</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">   * Register a newly created object. The returned object is the registered instance.</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">   * @param $object PersistentObject instance</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afe0f145e544cde35169aea2b22f9ea69">  246</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afe0f145e544cde35169aea2b22f9ea69">registerNew</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $object) {</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    $key = $object-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>()-&gt;__toString();</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Register new object: &quot;</span>.$key);</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    }</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    $this-&gt;newObjects[$key] = $object;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    $this-&gt;observedObjects[$key] = $object;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordflow">return</span> $object;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">   * Register a dirty object. The returned object is the registered instance.</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment">   * @param $object PersistentObject instance</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aaf1303bc778beb879c4daf93daf59f03">  260</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aaf1303bc778beb879c4daf93daf59f03">registerDirty</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $object) {</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    $key = $object-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>()-&gt;__toString();</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="comment">// if it was a new or deleted object, we return immediatly</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;newObjects[$key]) || isset($this-&gt;deletedObjects[$key])) {</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;      <span class="keywordflow">return</span> $object;</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    }</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Register dirty object: &quot;</span>.$key);</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    $this-&gt;dirtyObjects[$key] = $object;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">return</span> $object;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="comment">   * Register a deleted object. The returned object is the registered instance.</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;<span class="comment">   * @param $object PersistentObject instance</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a05d0d89f09f068d8ae386663ce353fec">  277</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a05d0d89f09f068d8ae386663ce353fec">registerDeleted</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $object) {</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    $key = $object-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>()-&gt;__toString();</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="comment">// if it was a new object, we remove it from the registry and</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="comment">// return immediatly</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;newObjects[$key])) {</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;      unset($this-&gt;newObjects[$key]);</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;      <span class="keywordflow">return</span> $object;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    <span class="comment">// if it was a dirty object, we remove it from the registry</span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;dirtyObjects[$key])) {</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;      unset($this-&gt;dirtyObjects[$key]);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    }</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Register deleted object: &quot;</span>.$key);</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    $this-&gt;deletedObjects[$key] = $object;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordflow">return</span> $object;</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment">   * Commit the transaction</span></div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment">   * @param $collect</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="comment">   * @return Array of statements</span></div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adc78c591fd58b509c411b230b3ec8f3f">  301</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adc78c591fd58b509c411b230b3ec8f3f">commitImpl</a>($collect) {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;isInCommit) {</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    }</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keywordflow">if</span> (self::$isInfoEnabled) {</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;      self::$logger-&gt;info(<span class="stringliteral">&quot;Commit transaction [collect=&quot;</span>.($collect ? <span class="stringliteral">&quot;true&quot;</span> : <span class="stringliteral">&quot;false&quot;</span>).<span class="stringliteral">&quot;]&quot;</span>);</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    }</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    $this-&gt;isInCommit = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    $this-&gt;eventManager-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#a244352f035b82b20b0efa506167fd862">TransactionEvent::NAME</a>, <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html">TransactionEvent</a>(</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#a7b3bb6e021a318994b80e61e71b3b1cd">TransactionEvent::BEFORE_COMMIT</a>));</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    $insertedOids = [];</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    $updatedOids = [];</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    $deletedOids = [];</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    $statements = [];</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">isActive</a>) {</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;      $knowTypes = $this-&gt;persistenceFacade-&gt;getKnownTypes();</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;      <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        <span class="comment">// start transaction for each mapper</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <span class="keywordflow">foreach</span> ($knowTypes as $type) {</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;          $mapper = $this-&gt;persistenceFacade-&gt;getMapper($type);</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;          $mapper-&gt;beginTransaction();</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        }</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        <span class="comment">// process the recorded object changes, since new</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="comment">// object changes may occure during the commit, we</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="comment">// loop until all queues are empty</span></div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        $commitDone = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        $emptyState = <span class="stringliteral">&#39;0:0:0&#39;</span>;</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        <span class="keywordflow">while</span> (!$commitDone) {</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;          <span class="comment">// check queues before processing</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;          $oldState = <span class="keyword">sizeof</span>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a812d04b35c3c9807ca2903bf13d1b466">$this-&gt;newObjects</a>).<span class="charliteral">&#39;:&#39;</span>.</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;              <span class="keyword">sizeof</span>($this-&gt;dirtyObjects).<span class="charliteral">&#39;:&#39;</span>.</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;              <span class="keyword">sizeof</span>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adec2d8095d3312a6203448774b576dc6">$this-&gt;deletedObjects</a>);</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;              $insertedOids = array_merge($insertedOids, $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a488bb4ebc3d3458b54fed896640f25db">processInserts</a>());</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;              $updatedOids = array_merge($updatedOids, $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a76b8cee8203c95d12668b7f010ed2b90">processUpdates</a>());</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;              $deletedOids = array_merge($deletedOids, $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#addcfa75e9354e43a93293d1f96f5bc9d">processDeletes</a>());</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;              <span class="comment">// check queues after processing</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;              $newState = <span class="keyword">sizeof</span>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a812d04b35c3c9807ca2903bf13d1b466">$this-&gt;newObjects</a>).<span class="charliteral">&#39;:&#39;</span>.</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                  <span class="keyword">sizeof</span>($this-&gt;dirtyObjects).<span class="charliteral">&#39;:&#39;</span>.</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                  <span class="keyword">sizeof</span>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adec2d8095d3312a6203448774b576dc6">$this-&gt;deletedObjects</a>);</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                  <span class="comment">// prevent recursion (queue sizes didn&#39;t change)</span></div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                  <span class="keywordflow">if</span> ($oldState != $emptyState &amp;&amp; $oldState == $newState) {</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">PersistenceException</a>(<span class="stringliteral">&quot;Recursion in transaction commit&quot;</span>);</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                  }</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                  <span class="comment">// check if all queues are empty</span></div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                  $commitDone = $newState == $emptyState;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;        }</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        <span class="comment">// commit transaction for each mapper</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;        <span class="keywordflow">if</span> (self::$isInfoEnabled) {</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;          self::$logger-&gt;info(<span class="stringliteral">&quot;Committing transaction&quot;</span>);</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;        }</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <span class="keywordflow">foreach</span> ($knowTypes as $type) {</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;          $mapper = $this-&gt;persistenceFacade-&gt;getMapper($type);</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;          $statements = array_merge($statements, $mapper-&gt;getStatements());</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;          <span class="keywordflow">if</span> ($collect) {</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;            $mapper-&gt;rollbackTransaction();</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;          }</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;          <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;            $mapper-&gt;commitTransaction();</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;          }</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        }</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;      }</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;      <span class="keywordflow">catch</span> (Exception $ex) {</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        <span class="comment">// rollback transaction for each mapper</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        self::$logger-&gt;error(<span class="stringliteral">&quot;Rolling back transaction. Exception: &quot;</span>.$ex-&gt;__toString());</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <span class="keywordflow">foreach</span> ($knowTypes as $type) {</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;          $mapper = $this-&gt;persistenceFacade-&gt;getMapper($type);</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;          $mapper-&gt;rollbackTransaction();</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        }</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afa549adf79e3f8c09fe8f903dd5fbfa7">rollback</a>();</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        <span class="keywordflow">throw</span> $ex;</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;      }</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    }</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="comment">// forget changes</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa821bec12eaa7e0f649397c9675ff505">clear</a>();</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">isActive</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    $this-&gt;isInCommit = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    $this-&gt;eventManager-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#a244352f035b82b20b0efa506167fd862">TransactionEvent::NAME</a>, <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html">TransactionEvent</a>(</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;        <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#ad814516e9bf2fd348cb9e6be8eadd1be">TransactionEvent::AFTER_COMMIT</a>, $insertedOids, $updatedOids, $deletedOids));</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="keywordflow">return</span> $statements;</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;  }</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">   * Clear all internal</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa821bec12eaa7e0f649397c9675ff505">  385</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa821bec12eaa7e0f649397c9675ff505">clear</a>() {</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;newObjects as $object) {</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;      unset($this-&gt;observedObjects[$object-&gt;getOID()-&gt;__toString()]);</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    }</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    $this-&gt;newObjects = [];</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160; </div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;dirtyObjects as $object) {</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;      unset($this-&gt;observedObjects[$object-&gt;getOID()-&gt;__toString()]);</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    }</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    $this-&gt;dirtyObjects = [];</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160; </div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;deletedObjects as $object) {</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;      unset($this-&gt;observedObjects[$object-&gt;getOID()-&gt;__toString()]);</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    }</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    $this-&gt;deletedObjects = [];</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160; </div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;loadedObjects as $object) {</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;      unset($this-&gt;observedObjects[$object-&gt;getOID()-&gt;__toString()]);</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    }</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    $this-&gt;loadedObjects = [];</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    $this-&gt;detachedObjects = [];</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;  }</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;<span class="comment">   * Process the new objects queue</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="comment">   * @return Map of oids of inserted objects (key: oid string before commit, value: oid string after commit)</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00413"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a488bb4ebc3d3458b54fed896640f25db">  413</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a488bb4ebc3d3458b54fed896640f25db">processInserts</a>() {</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    $insertedOids = [];</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    $pendingInserts = [];</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    $insertOids = array_keys($this-&gt;newObjects);</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    <span class="keywordflow">while</span> (<span class="keyword">sizeof</span>($insertOids) &gt; 0) {</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;      $key = array_shift($insertOids);</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;      <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Process insert on object: &quot;</span>.$key);</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;      }</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;      $object = $this-&gt;newObjects[$key];</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;      <span class="comment">// postpone insert, if the object has required objects that are</span></div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;      <span class="comment">// not persisted yet</span></div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;      $canInsert = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;      $requiredObjects = $object-&gt;getIndispensableObjects();</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;      <span class="keywordflow">foreach</span> ($requiredObjects as $requiredObject) {</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;        <span class="keywordflow">if</span> ($requiredObject-&gt;getState() == <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#af47c6a5b8aefd132e8709b8aa2a4edfc">PersistentObject::STATE_NEW</a>) {</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;          <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;            self::$logger-&gt;debug(<span class="stringliteral">&quot;Postpone insert of object: &quot;</span>.$key.<span class="stringliteral">&quot;. Required objects are not saved yet.&quot;</span>);</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;          }</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;          $pendingInserts[] = $object;</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;          $canInsert = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;          <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;        }</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;      }</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;      <span class="keywordflow">if</span> ($canInsert) {</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;        $oldOid = $object-&gt;getOID();</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        $object-&gt;getMapper()-&gt;save($object);</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;        $insertedOids[$oldOid-&gt;__toString()] = $object-&gt;getOID()-&gt;__toString();</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;      }</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;      unset($this-&gt;newObjects[$key]);</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;      $insertOids = array_keys($this-&gt;newObjects);</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;      unset($this-&gt;observedObjects[$key]);</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;      $this-&gt;observedObjects[$object-&gt;getOID()-&gt;__toString()] = $object;</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    }</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    <span class="comment">// re-add pending inserts</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    <span class="keywordflow">foreach</span> ($pendingInserts as $object) {</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;      $key = $object-&gt;getOID()-&gt;__toString();</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;      $this-&gt;newObjects[$key] = $object;</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    }</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    <span class="keywordflow">return</span> $insertedOids;</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;  }</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;<span class="comment">   * Process the dirty objects queue</span></div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;<span class="comment">   * @return Array of oid strings of updated objects</span></div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00459"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a76b8cee8203c95d12668b7f010ed2b90">  459</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a76b8cee8203c95d12668b7f010ed2b90">processUpdates</a>() {</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    $updatedOids = [];</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;    $updateOids = array_keys($this-&gt;dirtyObjects);</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    <span class="keywordflow">while</span> (<span class="keyword">sizeof</span>($updateOids) &gt; 0) {</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;      $key = array_shift($updateOids);</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;      <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Process update on object: &quot;</span>.$key);</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;      }</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;      $object = $this-&gt;dirtyObjects[$key];</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;      $object-&gt;getMapper()-&gt;save($object);</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;      unset($this-&gt;dirtyObjects[$key]);</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;      $updatedOids[] = $key;</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;      $updateOids = array_keys($this-&gt;dirtyObjects);</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    }</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    <span class="keywordflow">return</span> $updatedOids;</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;  }</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;<span class="comment">   * Process the deleted objects queue</span></div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;<span class="comment">   * @return Array of oid strings of deleted objects</span></div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00480"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#addcfa75e9354e43a93293d1f96f5bc9d">  480</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#addcfa75e9354e43a93293d1f96f5bc9d">processDeletes</a>() {</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;    $deletedOids = [];</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;    $deleteOids = array_keys($this-&gt;deletedObjects);</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;    <span class="keywordflow">while</span> (<span class="keyword">sizeof</span>($deleteOids) &gt; 0) {</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;      $key = array_shift($deleteOids);</div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;      <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Process delete on object: &quot;</span>.$key);</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;      }</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;      $object = $this-&gt;deletedObjects[$key];</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;      $object-&gt;getMapper()-&gt;delete($object);</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;      unset($this-&gt;deletedObjects[$key]);</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;      $deletedOids[] = $key;</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;      $deleteOids = array_keys($this-&gt;deletedObjects);</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;    }</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    <span class="keywordflow">return</span> $deletedOids;</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;  }</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment">   * Listen to StateChangeEvents</span></div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="comment">   * @param $event StateChangeEvent instance</span></div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00501"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5fea27fce969c22b8b5f75312b39621c">  501</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5fea27fce969c22b8b5f75312b39621c">stateChanged</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html">StateChangeEvent</a> $event) {</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;    $object = $event-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a8ecaa7401cc1e1144cb98698a9658ebc">getObject</a>();</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160; </div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    <span class="comment">// make sure the event contains an object and don&#39;t listen to detached object changes</span></div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    <span class="keywordflow">if</span> (!$object || in_array($object-&gt;getOID()-&gt;__toString(), array_map(<span class="keyword">function</span>($obj) {</div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;      <span class="keywordflow">return</span> $obj ? $obj-&gt;getOID()-&gt;__toString() : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    }, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a4b0ad42fa9e439b09488c80a65da8492">$this-&gt;detachedObjects</a>))) {</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    }</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160; </div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;    $oldState = $event-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a5dbe3c6fcb632051f74dd073d165c5dc">getOldValue</a>();</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    $newState = $event-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a72b60645d8a8254dffee46120b9d0900">getNewValue</a>();</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keywordflow">if</span> (self::$isDebugEnabled) {</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;State changed: &quot;</span>.$object-&gt;getOID().<span class="stringliteral">&quot; old:&quot;</span>.$oldState.<span class="stringliteral">&quot; new:&quot;</span>.$newState);</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;    }</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;    <span class="keywordflow">switch</span> ($newState) {</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#af47c6a5b8aefd132e8709b8aa2a4edfc">PersistentObject::STATE_NEW</a>:</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afe0f145e544cde35169aea2b22f9ea69">registerNew</a>($object);</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a53f40b6aa8360fb891d6516dea517b57">PersistentObject::STATE_DIRTY</a>:</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aaf1303bc778beb879c4daf93daf59f03">registerDirty</a>($object);</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160; </div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a2f444140d375d5c63def72413cadcb47">PersistentObject::STATE_DELETED</a>:</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a05d0d89f09f068d8ae386663ce353fec">registerDeleted</a>($object);</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;    }</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;  }</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;<span class="comment">   * Dump the registry content into a string</span></div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00535"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">  535</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">dump</a>() {</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    $str = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    <span class="keywordflow">foreach</span> (array_values($this-&gt;loadedObjects) as $curObject) {</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;      $str .= $curObject-&gt;dump();</div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;    }</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    <span class="keywordflow">return</span> $str;</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;  }</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;}</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a812d04b35c3c9807ca2903bf13d1b466"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a812d04b35c3c9807ca2903bf13d1b466">wcmf\lib\persistence\impl\DefaultTransaction\$newObjects</a></div><div class="ttdeci">$newObjects</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00043">DefaultTransaction.php:43</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a421831a265621325e1fdd19aace0c758"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a421831a265621325e1fdd19aace0c758">wcmf\lib\persistence\impl\DefaultTransaction\__destruct</a></div><div class="ttdeci">__destruct()</div><div class="ttdoc">Destructor.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00075">DefaultTransaction.php:75</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_adc78c591fd58b509c411b230b3ec8f3f"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adc78c591fd58b509c411b230b3ec8f3f">wcmf\lib\persistence\impl\DefaultTransaction\commitImpl</a></div><div class="ttdeci">commitImpl($collect)</div><div class="ttdoc">Commit the transaction.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00301">DefaultTransaction.php:301</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_adec2d8095d3312a6203448774b576dc6"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#adec2d8095d3312a6203448774b576dc6">wcmf\lib\persistence\impl\DefaultTransaction\$deletedObjects</a></div><div class="ttdeci">$deletedObjects</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00045">DefaultTransaction.php:45</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_afbf74bfd4da80d80885396286ecf585d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#afbf74bfd4da80d80885396286ecf585d">wcmf\lib\persistence\ObjectId\getDummyId</a></div><div class="ttdeci">static getDummyId()</div><div class="ttdoc">Get a dummy id (&quot;wcmf&quot; + unique 32 character string).</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00230">ObjectId.php:230</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1core_1_1_event_manager_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">wcmf\lib\core\EventManager</a></div><div class="ttdoc">EventManager is responsible for dispatching events to registered listeners.</div><div class="ttdef"><b>Definition:</b> <a href="_event_manager_8php_source.html#l00021">EventManager.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_state_change_event_html_a8ecaa7401cc1e1144cb98698a9658ebc"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a8ecaa7401cc1e1144cb98698a9658ebc">wcmf\lib\persistence\StateChangeEvent\getObject</a></div><div class="ttdeci">getObject()</div><div class="ttdoc">Get the object whose state has changed.</div><div class="ttdef"><b>Definition:</b> <a href="_state_change_event_8php_source.html#l00046">StateChangeEvent.php:46</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_persistence_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">wcmf\lib\persistence\PersistenceException</a></div><div class="ttdoc">PersistenceException signals an exception in the persistence service.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_exception_8php_source.html#l00018">PersistenceException.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a488bb4ebc3d3458b54fed896640f25db"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a488bb4ebc3d3458b54fed896640f25db">wcmf\lib\persistence\impl\DefaultTransaction\processInserts</a></div><div class="ttdeci">processInserts()</div><div class="ttdoc">Process the new objects queue.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00413">DefaultTransaction.php:413</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_ac886ae95a746f43906bb3b2515092440"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#ac886ae95a746f43906bb3b2515092440">wcmf\lib\persistence\PersistentObject\getOID</a></div><div class="ttdeci">getOID()</div><div class="ttdoc">Get the object id of the PersistentObject.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_afa549adf79e3f8c09fe8f903dd5fbfa7"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afa549adf79e3f8c09fe8f903dd5fbfa7">wcmf\lib\persistence\impl\DefaultTransaction\rollback</a></div><div class="ttdeci">rollback()</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00106">DefaultTransaction.php:106</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a7516ca30af0db3cdbf9a7739b48ce91d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">wcmf\lib\persistence\ObjectId\__toString</a></div><div class="ttdeci">__toString()</div><div class="ttdoc">Get a string representation of the object id.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00215">ObjectId.php:215</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_aa821bec12eaa7e0f649397c9675ff505"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa821bec12eaa7e0f649397c9675ff505">wcmf\lib\persistence\impl\DefaultTransaction\clear</a></div><div class="ttdeci">clear()</div><div class="ttdoc">Clear all internal.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00385">DefaultTransaction.php:385</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a2f444140d375d5c63def72413cadcb47"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a2f444140d375d5c63def72413cadcb47">wcmf\lib\persistence\PersistentObject\STATE_DELETED</a></div><div class="ttdeci">const STATE_DELETED</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00028">PersistentObject.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_transaction_event_html_a7b3bb6e021a318994b80e61e71b3b1cd"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#a7b3bb6e021a318994b80e61e71b3b1cd">wcmf\lib\persistence\TransactionEvent\BEFORE_COMMIT</a></div><div class="ttdeci">const BEFORE_COMMIT</div><div class="ttdoc">A BEFORE_COMMIT event occurs before the transaction is committed.</div><div class="ttdef"><b>Definition:</b> <a href="_transaction_event_8php_source.html#l00030">TransactionEvent.php:30</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_state_change_event_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html">wcmf\lib\persistence\StateChangeEvent</a></div><div class="ttdoc">StateChangeEvent signals a change of the state of a PersistentObject instance.</div><div class="ttdef"><b>Definition:</b> <a href="_state_change_event_8php_source.html#l00022">StateChangeEvent.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_afe0f145e544cde35169aea2b22f9ea69"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afe0f145e544cde35169aea2b22f9ea69">wcmf\lib\persistence\impl\DefaultTransaction\registerNew</a></div><div class="ttdeci">registerNew(PersistentObject $object)</div><div class="ttdoc">Register a newly created object.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00246">DefaultTransaction.php:246</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a76b8cee8203c95d12668b7f010ed2b90"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a76b8cee8203c95d12668b7f010ed2b90">wcmf\lib\persistence\impl\DefaultTransaction\processUpdates</a></div><div class="ttdeci">processUpdates()</div><div class="ttdoc">Process the dirty objects queue.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00459">DefaultTransaction.php:459</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_transaction_event_html_a244352f035b82b20b0efa506167fd862"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#a244352f035b82b20b0efa506167fd862">wcmf\lib\persistence\TransactionEvent\NAME</a></div><div class="ttdeci">const NAME</div><div class="ttdef"><b>Definition:</b> <a href="_transaction_event_8php_source.html#l00025">TransactionEvent.php:25</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_transaction_event_html_ad814516e9bf2fd348cb9e6be8eadd1be"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#ad814516e9bf2fd348cb9e6be8eadd1be">wcmf\lib\persistence\TransactionEvent\AFTER_COMMIT</a></div><div class="ttdeci">const AFTER_COMMIT</div><div class="ttdoc">An AFTER_COMMIT event occurs after the transaction is committed.</div><div class="ttdef"><b>Definition:</b> <a href="_transaction_event_8php_source.html#l00035">TransactionEvent.php:35</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_af47c6a5b8aefd132e8709b8aa2a4edfc"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#af47c6a5b8aefd132e8709b8aa2a4edfc">wcmf\lib\persistence\PersistentObject\STATE_NEW</a></div><div class="ttdeci">const STATE_NEW</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00027">PersistentObject.php:27</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_transaction_event_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html">wcmf\lib\persistence\TransactionEvent</a></div><div class="ttdoc">TransactionEvent instances are fired at different phases of a transaction.</div><div class="ttdef"><b>Definition:</b> <a href="_transaction_event_8php_source.html#l00023">TransactionEvent.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a></div><div class="ttdoc">ObjectId is the unique identifier of an object.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00028">ObjectId.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a05d0d89f09f068d8ae386663ce353fec"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a05d0d89f09f068d8ae386663ce353fec">wcmf\lib\persistence\impl\DefaultTransaction\registerDeleted</a></div><div class="ttdeci">registerDeleted(PersistentObject $object)</div><div class="ttdoc">Register a deleted object.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00277">DefaultTransaction.php:277</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_aca2400ca914e964a60a69434b0168477"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aca2400ca914e964a60a69434b0168477">wcmf\lib\persistence\impl\DefaultTransaction\commitCollect</a></div><div class="ttdeci">commitCollect()</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00099">DefaultTransaction.php:99</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a12fd9a70f621456c73bcc92098348806"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a12fd9a70f621456c73bcc92098348806">wcmf\lib\persistence\impl\DefaultTransaction\registerLoaded</a></div><div class="ttdeci">registerLoaded(PersistentObject $object)</div><div class="ttdoc">Register a loaded object.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00204">DefaultTransaction.php:204</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_aa56a17bc66c1081fad1cca3a488224c3"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aa56a17bc66c1081fad1cca3a488224c3">wcmf\lib\persistence\impl\DefaultTransaction\isActive</a></div><div class="ttdeci">isActive()</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00121">DefaultTransaction.php:121</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a5a362cc3afebeadb3f8b97453a0251e3"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5a362cc3afebeadb3f8b97453a0251e3">wcmf\lib\persistence\impl\DefaultTransaction\getObjects</a></div><div class="ttdeci">getObjects()</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00195">DefaultTransaction.php:195</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a3a9793666e688407121d76d3a7e4db5d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a3a9793666e688407121d76d3a7e4db5d">wcmf\lib\persistence\impl\DefaultTransaction\begin</a></div><div class="ttdeci">begin()</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00082">DefaultTransaction.php:82</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a></div><div class="ttdoc">PersistenceFacade defines the interface for PersistenceFacade implementations.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_facade_8php_source.html#l00023">PersistenceFacade.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_aaf1303bc778beb879c4daf93daf59f03"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#aaf1303bc778beb879c4daf93daf59f03">wcmf\lib\persistence\impl\DefaultTransaction\registerDirty</a></div><div class="ttdeci">registerDirty(PersistentObject $object)</div><div class="ttdoc">Register a dirty object.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00260">DefaultTransaction.php:260</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a035e1edfb45934269c676ac3bdf1b2a9"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a035e1edfb45934269c676ac3bdf1b2a9">wcmf\lib\persistence\impl\DefaultTransaction\$dirtyObjects</a></div><div class="ttdeci">$dirtyObjects</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00044">DefaultTransaction.php:44</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a4b0ad42fa9e439b09488c80a65da8492"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a4b0ad42fa9e439b09488c80a65da8492">wcmf\lib\persistence\impl\DefaultTransaction\$detachedObjects</a></div><div class="ttdeci">$detachedObjects</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00046">DefaultTransaction.php:46</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_addcfa75e9354e43a93293d1f96f5bc9d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#addcfa75e9354e43a93293d1f96f5bc9d">wcmf\lib\persistence\impl\DefaultTransaction\processDeletes</a></div><div class="ttdeci">processDeletes()</div><div class="ttdoc">Process the deleted objects queue.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00480">DefaultTransaction.php:480</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html">wcmf\lib\persistence\impl\DefaultTransaction</a></div><div class="ttdoc">Default implementation of Transaction.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00029">DefaultTransaction.php:29</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html_a0c195d83bf1cd47fb46a428e77f82b08"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">wcmf\lib\core\LogManager\getLogger</a></div><div class="ttdeci">static getLogger($name)</div><div class="ttdoc">Get the logger with the given name.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00037">LogManager.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_af0e4e7699831c4d6c44741bc552c24d4"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#af0e4e7699831c4d6c44741bc552c24d4">wcmf\lib\persistence\impl\DefaultTransaction\__construct</a></div><div class="ttdeci">__construct(PersistenceFacade $persistenceFacade, EventManager $eventManager)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00058">DefaultTransaction.php:58</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a6e049913e5d78279cc2a6cd57044dac7"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a6e049913e5d78279cc2a6cd57044dac7">wcmf\lib\persistence\impl\DefaultTransaction\$loadedObjects</a></div><div class="ttdeci">$loadedObjects</div><div class="ttdoc">Contains all loaded objects no matter which state they have.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00051">DefaultTransaction.php:51</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a1b944c776949e9c0660f4d7b08cf6a55"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a1b944c776949e9c0660f4d7b08cf6a55">wcmf\lib\persistence\PersistentObject\STATE_CLEAN</a></div><div class="ttdeci">const STATE_CLEAN</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00025">PersistentObject.php:25</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a5bf63e4ac70cfd9d97e3f2eab936ec8b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">wcmf\lib\persistence\impl\DefaultTransaction\dump</a></div><div class="ttdeci">dump()</div><div class="ttdoc">Dump the registry content into a string.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00535">DefaultTransaction.php:535</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">wcmf\lib\persistence\PersistentObject</a></div><div class="ttdoc">PersistentObject defines the interface of all persistent objects.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00023">PersistentObject.php:23</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_transaction_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_transaction.html">wcmf\lib\persistence\Transaction</a></div><div class="ttdoc">Transaction implements the Unit of Work pattern as it defines the interface for maintaining a list of...</div><div class="ttdef"><b>Definition:</b> <a href="_transaction_8php_source.html#l00021">Transaction.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a24a0881da50c6149b528b034d729a15b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a24a0881da50c6149b528b034d729a15b">wcmf\lib\persistence\impl\DefaultTransaction\attach</a></div><div class="ttdeci">attach(PersistentObject $object)</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00128">DefaultTransaction.php:128</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_state_change_event_html_a5dbe3c6fcb632051f74dd073d165c5dc"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a5dbe3c6fcb632051f74dd073d165c5dc">wcmf\lib\persistence\StateChangeEvent\getOldValue</a></div><div class="ttdeci">getOldValue()</div><div class="ttdoc">Get the old value.</div><div class="ttdef"><b>Definition:</b> <a href="_state_change_event_8php_source.html#l00054">StateChangeEvent.php:54</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_transaction_event_html_aebc1c599a4f01e93f06b3ae4199d519c"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html#aebc1c599a4f01e93f06b3ae4199d519c">wcmf\lib\persistence\TransactionEvent\AFTER_ROLLBACK</a></div><div class="ttdeci">const AFTER_ROLLBACK</div><div class="ttdoc">An AFTER_ROLLBACK event occurs after the transaction is rolled back.</div><div class="ttdef"><b>Definition:</b> <a href="_transaction_event_8php_source.html#l00040">TransactionEvent.php:40</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_afbf787ced76807989fb3093e1772c5a1"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#afbf787ced76807989fb3093e1772c5a1">wcmf\lib\persistence\PersistentObject\getState</a></div><div class="ttdeci">getState()</div><div class="ttdoc">Get the object's state:</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_af5674c27d4a92f6228565010eacbb9cb"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#af5674c27d4a92f6228565010eacbb9cb">wcmf\lib\persistence\impl\DefaultTransaction\commit</a></div><div class="ttdeci">commit()</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00092">DefaultTransaction.php:92</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a></div><div class="ttdoc">LogManager is used to retrieve Logger instances.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00020">LogManager.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_state_change_event_html_a72b60645d8a8254dffee46120b9d0900"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a72b60645d8a8254dffee46120b9d0900">wcmf\lib\persistence\StateChangeEvent\getNewValue</a></div><div class="ttdeci">getNewValue()</div><div class="ttdoc">Get the new value.</div><div class="ttdef"><b>Definition:</b> <a href="_state_change_event_8php_source.html#l00062">StateChangeEvent.php:62</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a5bf63e4ac70cfd9d97e3f2eab936ec8b"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">wcmf\lib\persistence\PersistentObject\dump</a></div><div class="ttdeci">dump()</div><div class="ttdoc">Get a string representation of the values of the PersistentObject.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a8602b5996ccc25be7603f59f5b019ef5"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a8602b5996ccc25be7603f59f5b019ef5">wcmf\lib\persistence\impl\DefaultTransaction\detach</a></div><div class="ttdeci">detach(ObjectId $oid)</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00154">DefaultTransaction.php:154</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_state_change_event_html_a244352f035b82b20b0efa506167fd862"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a244352f035b82b20b0efa506167fd862">wcmf\lib\persistence\StateChangeEvent\NAME</a></div><div class="ttdeci">const NAME</div><div class="ttdef"><b>Definition:</b> <a href="_state_change_event_8php_source.html#l00024">StateChangeEvent.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_afdec445fe4ebbe9e754ef08965a431c7"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#afdec445fe4ebbe9e754ef08965a431c7">wcmf\lib\persistence\impl\DefaultTransaction\getLoaded</a></div><div class="ttdeci">getLoaded(ObjectId $oid)</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00180">DefaultTransaction.php:180</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a53f40b6aa8360fb891d6516dea517b57"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a53f40b6aa8360fb891d6516dea517b57">wcmf\lib\persistence\PersistentObject\STATE_DIRTY</a></div><div class="ttdeci">const STATE_DIRTY</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00026">PersistentObject.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction_html_a5fea27fce969c22b8b5f75312b39621c"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html#a5fea27fce969c22b8b5f75312b39621c">wcmf\lib\persistence\impl\DefaultTransaction\stateChanged</a></div><div class="ttdeci">stateChanged(StateChangeEvent $event)</div><div class="ttdoc">Listen to StateChangeEvents.</div><div class="ttdef"><b>Definition:</b> <a href="_default_transaction_8php_source.html#l00501">DefaultTransaction.php:501</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1persistence_1_1impl_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1persistence_1_1impl.html">wcmf\lib\persistence\impl</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00044">namespaces.php:44</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

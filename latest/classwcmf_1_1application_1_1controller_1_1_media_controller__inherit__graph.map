@@ -1,0 +1,4 @@
+<map id="MediaController" name="MediaController">
+<area shape="rect" id="node1" title="MediaController integrates elFinder (https://github.com/Studio&#45;42/elFinder) into wCMF." alt="" coords="15,351,193,472"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1_controller.html" title="Controller is the base class of all controllers." alt="" coords="5,5,203,303"/>
+</map>

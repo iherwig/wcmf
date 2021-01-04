@@ -1,0 +1,5 @@
+<map id="AbstractControllerMessage" name="AbstractControllerMessage">
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request.html" title="Default Request implementation. " alt="" coords="5,586,164,737"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_response.html" title="Default Response implementation. " alt="" coords="189,564,309,759"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html" title="Messages are sent between Controllers and are used to transfer data between them. ..." alt="" coords="101,5,231,229"/>
+</map>

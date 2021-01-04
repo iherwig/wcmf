@@ -1,0 +1,4 @@
+<map id="Factory" name="Factory">
+<area shape="rect" id="node1" title="Interface for Factory implementations." alt="" coords="11,5,163,156"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1core_1_1impl_1_1_default_factory.html" title="DefaultFactory is used to create service instances." alt="" coords="5,204,169,472"/>
+</map>

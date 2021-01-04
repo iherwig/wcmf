@@ -1,0 +1,4 @@
+<map id="StateChangeEvent" name="StateChangeEvent">
+<area shape="rect" id="node1" title="StateChangeEvent signals a change of the state of a PersistentObject instance." alt="" coords="11,145,153,267"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1core_1_1_event.html" title="Event is the base class for all events." alt="" coords="5,5,159,97"/>
+</map>

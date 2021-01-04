@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/model/mapper/RDBManyToManyRelationDescription.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_f57071bff1402464ed1755fe1c1a7d41.html">model</a></li><li class="navelem"><a class="el" href="dir_e8ffd556aec7cdaa64e3b6380f2376c1.html">mapper</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">RDBManyToManyRelationDescription.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1model_1_1mapper.html">wcmf\lib\model\mapper</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_one_relation_description.html">wcmf\lib\model\mapper\RDBManyToOneRelationDescription</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_one_to_many_relation_description.html">wcmf\lib\model\mapper\RDBOneToManyRelationDescription</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_relation_description.html">wcmf\lib\persistence\RelationDescription</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> * Instances of RDBManyToManyRelationDescription describe a many to many relation</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * from &#39;this&#39; end to &#39;other&#39; end  in a relational database.</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * This relation is always realized by a connecting database table and can be resolved</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * into a many-to-one relation from &#39;this&#39; end to the relation type and a one-to-many relation</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * from the relation type to the &#39;other&#39; end.</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html">   26</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html">RDBManyToManyRelationDescription</a> <span class="keyword">extends</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_relation_description.html">RelationDescription</a> {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a984485695d63a56cb7e4759676c97dab">   28</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a984485695d63a56cb7e4759676c97dab">$thisEndRelation</a> = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a64213f41d48d0bac331cdc240e4efe22">   29</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a64213f41d48d0bac331cdc240e4efe22">$otherEndRelation</a> = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">   * Constructor.</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">   * @see RelationDescription::__construct</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   * @param $thisEndRelation The RDBOneToManyRelationDescription describing the relation between &#39;this&#39; end and the connecting type</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   * @param $otherEndRelation The RDBManyToOneRelationDescription describing the relation between the connecting type and the &#39;other&#39; end</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a5bbf879151803acac10d13ce4d5f02e7">   37</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a5bbf879151803acac10d13ce4d5f02e7">__construct</a>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_one_to_many_relation_description.html">RDBOneToManyRelationDescription</a> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a984485695d63a56cb7e4759676c97dab">$thisEndRelation</a>, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_one_relation_description.html">RDBManyToOneRelationDescription</a> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a64213f41d48d0bac331cdc240e4efe22">$otherEndRelation</a>) {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    $this-&gt;thisEndRelation = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a984485695d63a56cb7e4759676c97dab">$thisEndRelation</a>;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    $this-&gt;otherEndRelation = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a64213f41d48d0bac331cdc240e4efe22">$otherEndRelation</a>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   * Get the RDBOneToManyRelationDescription describing the relation between</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">   * &#39;this&#39; end and the connecting type</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">   * @return RelationDescription</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a078efd95faa8dd42395f4db060a07d15">   47</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a078efd95faa8dd42395f4db060a07d15">getThisEndRelation</a>() {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a984485695d63a56cb7e4759676c97dab">$this-&gt;thisEndRelation</a>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * Get the RDBManyToOneRelationDescription describing the relation between</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * the connecting type and the &#39;other&#39; end</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * @return RelationDescription</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a7f8a9f0cc61564c7e83275b374227bec">   56</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a7f8a9f0cc61564c7e83275b374227bec">getOtherEndRelation</a>() {</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a64213f41d48d0bac331cdc240e4efe22">$this-&gt;otherEndRelation</a>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   * @see RelationDescription::isMultiValued</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#aa9e574f91c7a724624e22ff299f349f0">   63</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#aa9e574f91c7a724624e22ff299f349f0">isMultiValued</a>() {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * @see RelationDescription::getThisType</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a70e2f14712b1571549cc80598654e1ae">   70</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a70e2f14712b1571549cc80598654e1ae">getThisType</a>() {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">return</span> $this-&gt;thisEndRelation-&gt;thisType;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * @see RelationDescription::getThisRole</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a57704261558e7370e5a162e1bf75c7ea">   77</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a57704261558e7370e5a162e1bf75c7ea">getThisRole</a>() {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">return</span> $this-&gt;thisEndRelation-&gt;thisRole;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   * @see RelationDescription::getOtherType</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#acb9466ec5d817b3ae6d34632f6359652">   84</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#acb9466ec5d817b3ae6d34632f6359652">getOtherType</a>() {</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">return</span> $this-&gt;otherEndRelation-&gt;otherType;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   * @see RelationDescription::getOtherRole</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a9da3a38e16fd39f235ea00d0fcc787bc">   91</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a9da3a38e16fd39f235ea00d0fcc787bc">getOtherRole</a>() {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span> $this-&gt;otherEndRelation-&gt;otherRole;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  }</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   * @see RelationDescription::getThisMinMultiplicity</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a215c96b5de565c0e7c98b636dceb6740">   98</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a215c96b5de565c0e7c98b636dceb6740">getThisMinMultiplicity</a>() {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordflow">return</span> $this-&gt;thisEndRelation-&gt;thisMinMultiplicity;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  }</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   * @see RelationDescription::getThisMaxMultiplicity</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a76bc6337d516e8a491d22838ff84e665">  105</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a76bc6337d516e8a491d22838ff84e665">getThisMaxMultiplicity</a>() {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">return</span> $this-&gt;thisEndRelation-&gt;thisMaxMultiplicity;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  }</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   * @see RelationDescription::getOtherMinMultiplicity</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a2cd41012ec2cda32304a24d4799b4479">  112</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a2cd41012ec2cda32304a24d4799b4479">getOtherMinMultiplicity</a>() {</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">return</span> $this-&gt;thisEndRelation-&gt;otherMinMultiplicity;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   * @see RelationDescription::getOtherMaxMultiplicity</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a03e156d5440fc81904bb3863c7d3efe9">  119</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a03e156d5440fc81904bb3863c7d3efe9">getOtherMaxMultiplicity</a>() {</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordflow">return</span> $this-&gt;thisEndRelation-&gt;otherMaxMultiplicity;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * @see RelationDescription::getThisAggregationKind</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#afd6d5530996ab649979c67b88e8d79cf">  126</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#afd6d5530996ab649979c67b88e8d79cf">getThisAggregationKind</a>() {</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordflow">return</span> $this-&gt;thisEndRelation-&gt;thisAggregationKind;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * @see RelationDescription::getOtherAggregationKind</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#aed5ebf8a3a5a6d735d3c54202b543c0f">  133</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#aed5ebf8a3a5a6d735d3c54202b543c0f">getOtherAggregationKind</a>() {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">return</span> $this-&gt;otherEndRelation-&gt;otherAggregationKind;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  }</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">   * @see RelationDescription::getThisNavigability</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a53b863f739e59866f3fd80cbb213ff3b">  140</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a53b863f739e59866f3fd80cbb213ff3b">getThisNavigability</a>() {</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordflow">return</span> $this-&gt;thisEndRelation-&gt;thisNavigability;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   * @see RelationDescription::getOtherNavigability</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#af60d59bf99862c5652ea7d9cdf0af5df">  147</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#af60d59bf99862c5652ea7d9cdf0af5df">getOtherNavigability</a>() {</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordflow">return</span> $this-&gt;otherEndRelation-&gt;otherNavigability;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  }</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">   * @see RelationDescription::getHierarchyType</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#acad3f1b3199a71f7bef11752ec4493a1">  154</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#acad3f1b3199a71f7bef11752ec4493a1">getHierarchyType</a>() {</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordflow">return</span> <span class="stringliteral">&#39;child&#39;</span>;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  }</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;}</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a53b863f739e59866f3fd80cbb213ff3b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a53b863f739e59866f3fd80cbb213ff3b">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getThisNavigability</a></div><div class="ttdeci">getThisNavigability()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00140">RDBManyToManyRelationDescription.php:140</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html">wcmf\lib\model\mapper\RDBManyToManyRelationDescription</a></div><div class="ttdoc">Instances of RDBManyToManyRelationDescription describe a many to many relation from 'this' end to 'ot...</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00026">RDBManyToManyRelationDescription.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_afd6d5530996ab649979c67b88e8d79cf"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#afd6d5530996ab649979c67b88e8d79cf">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getThisAggregationKind</a></div><div class="ttdeci">getThisAggregationKind()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00126">RDBManyToManyRelationDescription.php:126</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_acad3f1b3199a71f7bef11752ec4493a1"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#acad3f1b3199a71f7bef11752ec4493a1">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getHierarchyType</a></div><div class="ttdeci">getHierarchyType()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00154">RDBManyToManyRelationDescription.php:154</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a2cd41012ec2cda32304a24d4799b4479"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a2cd41012ec2cda32304a24d4799b4479">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getOtherMinMultiplicity</a></div><div class="ttdeci">getOtherMinMultiplicity()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00112">RDBManyToManyRelationDescription.php:112</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a078efd95faa8dd42395f4db060a07d15"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a078efd95faa8dd42395f4db060a07d15">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getThisEndRelation</a></div><div class="ttdeci">getThisEndRelation()</div><div class="ttdoc">Get the RDBOneToManyRelationDescription describing the relation between 'this' end and the connecting...</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00047">RDBManyToManyRelationDescription.php:47</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_one_relation_description_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_one_relation_description.html">wcmf\lib\model\mapper\RDBManyToOneRelationDescription</a></div><div class="ttdoc">Instances of RDBManyToOneRelationDescription describe a many to one relation from 'this' end (many) t...</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_one_relation_description_8php_source.html#l00021">RDBManyToOneRelationDescription.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a7f8a9f0cc61564c7e83275b374227bec"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a7f8a9f0cc61564c7e83275b374227bec">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getOtherEndRelation</a></div><div class="ttdeci">getOtherEndRelation()</div><div class="ttdoc">Get the RDBManyToOneRelationDescription describing the relation between the connecting type and the '...</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00056">RDBManyToManyRelationDescription.php:56</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a57704261558e7370e5a162e1bf75c7ea"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a57704261558e7370e5a162e1bf75c7ea">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getThisRole</a></div><div class="ttdeci">getThisRole()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00077">RDBManyToManyRelationDescription.php:77</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_relation_description_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_relation_description.html">wcmf\lib\persistence\RelationDescription</a></div><div class="ttdoc">Instances of RelationDescription describe relations between different types of PersistentObjects.</div><div class="ttdef"><b>Definition:</b> <a href="_relation_description_8php_source.html#l00021">RelationDescription.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a03e156d5440fc81904bb3863c7d3efe9"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a03e156d5440fc81904bb3863c7d3efe9">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getOtherMaxMultiplicity</a></div><div class="ttdeci">getOtherMaxMultiplicity()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00119">RDBManyToManyRelationDescription.php:119</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a5bbf879151803acac10d13ce4d5f02e7"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a5bbf879151803acac10d13ce4d5f02e7">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\__construct</a></div><div class="ttdeci">__construct(RDBOneToManyRelationDescription $thisEndRelation, RDBManyToOneRelationDescription $otherEndRelation)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00037">RDBManyToManyRelationDescription.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a984485695d63a56cb7e4759676c97dab"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a984485695d63a56cb7e4759676c97dab">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\$thisEndRelation</a></div><div class="ttdeci">$thisEndRelation</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00028">RDBManyToManyRelationDescription.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_aa9e574f91c7a724624e22ff299f349f0"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#aa9e574f91c7a724624e22ff299f349f0">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\isMultiValued</a></div><div class="ttdeci">isMultiValued()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00063">RDBManyToManyRelationDescription.php:63</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a215c96b5de565c0e7c98b636dceb6740"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a215c96b5de565c0e7c98b636dceb6740">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getThisMinMultiplicity</a></div><div class="ttdeci">getThisMinMultiplicity()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00098">RDBManyToManyRelationDescription.php:98</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a64213f41d48d0bac331cdc240e4efe22"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a64213f41d48d0bac331cdc240e4efe22">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\$otherEndRelation</a></div><div class="ttdeci">$otherEndRelation</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00029">RDBManyToManyRelationDescription.php:29</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_aed5ebf8a3a5a6d735d3c54202b543c0f"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#aed5ebf8a3a5a6d735d3c54202b543c0f">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getOtherAggregationKind</a></div><div class="ttdeci">getOtherAggregationKind()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00133">RDBManyToManyRelationDescription.php:133</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_one_to_many_relation_description_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_one_to_many_relation_description.html">wcmf\lib\model\mapper\RDBOneToManyRelationDescription</a></div><div class="ttdoc">Instances of RDBOneToManyRelationDescription describe a one to many relation from 'this' end (one) to...</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_one_to_many_relation_description_8php_source.html#l00021">RDBOneToManyRelationDescription.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a76bc6337d516e8a491d22838ff84e665"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a76bc6337d516e8a491d22838ff84e665">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getThisMaxMultiplicity</a></div><div class="ttdeci">getThisMaxMultiplicity()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00105">RDBManyToManyRelationDescription.php:105</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a70e2f14712b1571549cc80598654e1ae"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a70e2f14712b1571549cc80598654e1ae">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getThisType</a></div><div class="ttdeci">getThisType()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00070">RDBManyToManyRelationDescription.php:70</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_af60d59bf99862c5652ea7d9cdf0af5df"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#af60d59bf99862c5652ea7d9cdf0af5df">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getOtherNavigability</a></div><div class="ttdeci">getOtherNavigability()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00147">RDBManyToManyRelationDescription.php:147</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1model_1_1mapper_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1model_1_1mapper.html">wcmf\lib\model\mapper</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00030">namespaces.php:30</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_acb9466ec5d817b3ae6d34632f6359652"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#acb9466ec5d817b3ae6d34632f6359652">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getOtherType</a></div><div class="ttdeci">getOtherType()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00084">RDBManyToManyRelationDescription.php:84</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description_html_a9da3a38e16fd39f235ea00d0fcc787bc"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html#a9da3a38e16fd39f235ea00d0fcc787bc">wcmf\lib\model\mapper\RDBManyToManyRelationDescription\getOtherRole</a></div><div class="ttdeci">getOtherRole()</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_many_to_many_relation_description_8php_source.html#l00091">RDBManyToManyRelationDescription.php:91</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:26 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

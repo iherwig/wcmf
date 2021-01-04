@@ -1,0 +1,5 @@
+<map id="ChainedPermissionManager" name="ChainedPermissionManager">
+<area shape="rect" id="node1" title="ChainedPermissionManager retrieves authorization rules included managers." alt="" coords="20,755,224,891"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_abstract_permission_manager.html" title="AbstractPermissionManager is the base class for concrete PermissionManager implementations." alt="" coords="81,277,320,707"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1security_1_1_permission_manager.html" title="PermissionManager implementations are used to handle all authorization requests." alt="" coords="5,5,239,229"/>
+</map>

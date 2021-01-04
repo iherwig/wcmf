@@ -1,0 +1,4 @@
+<map id="DefaultActionMapper" name="DefaultActionMapper">
+<area shape="rect" id="node1" title="Default ActionMapper implementation." alt="" coords="5,131,165,223"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1presentation_1_1_action_mapper.html" title="ActionMapper implementations are responsible for instantiating and executing Controllers based on the..." alt="" coords="16,5,155,83"/>
+</map>

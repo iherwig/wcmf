@@ -1,0 +1,4 @@
+<map id="ConcurrencyManager" name="ConcurrencyManager">
+<area shape="rect" id="node1" title="ConcurrencyManager is used to handle concurrency for objects." alt="" coords="29,5,189,171"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1concurrency_1_1impl_1_1_default_concurrency_manager.html" title="Default ConcurrencyManager implementation." alt="" coords="5,219,213,399"/>
+</map>

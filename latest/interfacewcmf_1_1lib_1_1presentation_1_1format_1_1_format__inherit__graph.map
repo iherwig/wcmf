@@ -1,0 +1,11 @@
+<map id="Format" name="Format">
+<area shape="rect" id="node1" title="Format defines the interface for all format classes." alt="" coords="421,5,607,156"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_abstract_format.html" title="AbstractFormat is used as base class for specialized formats." alt="" coords="421,204,607,428"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_download_format.html" title="DownloadFormat is used for downloads." alt="" coords="5,491,191,641"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_generic_format.html" title="GenericFormat is used to output arbitrary responses." alt="" coords="215,476,403,656"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_hierarchical_format.html" title="HierarchicalFormat is used as base class for formats that are able to represent hierarchical data lik..." alt="" coords="427,491,601,641"/>
+<area shape="rect" id="node8" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_html_format.html" title="HtmlFormat implements the HTML request/response format." alt="" coords="625,483,904,649"/>
+<area shape="rect" id="node9" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_null_format.html" title="NullFormat transfers the original request and response objects without modifying or transforming them..." alt="" coords="928,498,1089,634"/>
+<area shape="rect" id="node6" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_json_format.html" title="JsonFormat implements the JSON request/response format." alt="" coords="321,704,509,913"/>
+<area shape="rect" id="node7" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_soap_format.html" title="SoapFormat implements the SOAP request/response format." alt="" coords="533,719,689,899"/>
+</map>

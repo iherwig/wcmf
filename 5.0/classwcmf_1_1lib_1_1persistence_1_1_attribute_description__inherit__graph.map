@@ -1,0 +1,6 @@
+<map id="AttributeDescription" name="AttributeDescription">
+<area shape="rect" id="node1" title="Instances of AttributeDescription describe attributes of PersistentObjects." alt="" coords="211,5,405,376"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_attribute_description.html" title="Instances of RDBAttributeDescription describe attributes of PersistentObjects in a relational databas..." alt="" coords="5,490,187,611"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1persistence_1_1_reference_description.html" title="Instances of ReferenceDescription describe reference attributes of PersistentObjects." alt="" coords="211,424,405,677"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1persistence_1_1_transient_attribute_description.html" title="Instances of TransientAttributeDescription describe transient attributes of PersistentObjects." alt="" coords="430,490,642,611"/>
+</map>

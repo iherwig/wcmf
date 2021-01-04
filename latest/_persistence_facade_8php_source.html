@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/persistence/PersistenceFacade.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_81dd432b91dc6ec596e6cc7ff91623b9.html">persistence</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">PersistenceFacade.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1persistence.html">wcmf\lib\persistence</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html">wcmf\lib\persistence\PersistenceMapper</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">wcmf\lib\persistence\PagingInfo</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> * PersistenceFacade defines the interface for PersistenceFacade</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * implementations.</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">   23</a></span>&#160;<span class="keyword">interface </span><a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">PersistenceFacade</a> {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">   * Get a list of types defined in the application.</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">   * @return The list of fully qualified type names</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a6ea92a225486827bbc9419006f6d93d2">getKnownTypes</a>();</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">   * Check if a type is defined in the application.</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">   * @param $type The type to check (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   * @return Boolean whether the type is defined or not</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a26d946d1db99714406d648eaae0ca0c9">isKnownType</a>($type);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   * Get the fully qualified type name for a given simple type name.</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">   * @param $type Type name without namespace</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">   * @return Fully qualified type name (with namespace)</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a919e414dae3905c398887918fa1888ba">getFullyQualifiedType</a>($type);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">   * Get the simple type name for a given fully qualified type name.</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   * @param $type Type name with namespace</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   * @return Simple type name (without namespace)</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#ae10366c75d96dad4e9a60694a916c669">getSimpleType</a>($type);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * Load an object from the storage. The object will be attached to the transaction,</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * if the transaction is active.</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   * @note The parameter buildDepth is used to improve fetching from the storage, but objects</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   * returned by this method are not guaranteed to only contain the parameter values.</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">   * This is especially true, if the same object was loaded before with a wider fetch definition</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   * (e.g. greater buildDeph value)</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * @param $oid The object id of the object to construct</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">   * @return PersistentObject, null if oid does not exist or a given condition prevents loading.</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a90b99cef8752ebb13eb49a1005a251ec">load</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid, $buildDepth=<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   * Construct the template of an object of a given type. The object will be</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">   * attached to the transaction, if the transaction is active.</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">   * @note If an object required to be transient, the IPersistentMapper::create() method or the class</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * constructor must be used.</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   * @param $type The type of object to build (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">   *        (except BuildDepth::INFINITE, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">   * @return PersistentObject</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a2088197336092f89458036911a002bef">create</a>($type, $buildDepth=<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   * Get the object id of the last created object of a given type.</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   * @param $type The type of the object (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">   * @return ObjectId or null</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#ad72fda47ef0cc06b11fc5300674beee8">getLastCreatedOID</a>($type);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">   * Get the object ids of objects matching a given criteria. If a PagingInfo instance is passed it will be used and updated.</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">   * @param $type The type of the object (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   * @param $criteria An array of Criteria instances that define conditions on the type&#39;s attributes (optional, default: _null_)</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   * @param $orderby An array holding names of attributes to order by, maybe appended with &#39;ASC&#39;, &#39;DESC&#39; (optional, default: _null_)</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   * @param $pagingInfo A reference PagingInfo instance. (default: _null_)</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">   * @return Array containing the ObjectId instances</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a79418dff314070840928914ab1a142d8">getOIDs</a>($type, $criteria=<span class="keyword">null</span>, $orderby=<span class="keyword">null</span>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">PagingInfo</a> $pagingInfo=<span class="keyword">null</span>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   * Get the first object id of objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   * @param $type The type of the object (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   * @param $criteria An array of Criteria instances that define conditions on the type&#39;s attributes (optional, default: _null_)</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   * @param $orderby An array holding names of attributes to order by, maybe appended with &#39;ASC&#39;, &#39;DESC&#39; (optional, default: _null_)</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">   * @param $pagingInfo A reference PagingInfo instance. (default: _null_)</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">   * @return ObjectId or null</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a44f87fb7d7b5efb8020ef290db70370a">getFirstOID</a>($type, $criteria=<span class="keyword">null</span>, $orderby=<span class="keyword">null</span>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">PagingInfo</a> $pagingInfo=<span class="keyword">null</span>);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   * Load the objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">   * @param $typeOrTypes The type or types array of objects (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   * @param $criteria An array of Criteria instances that define conditions on the object&#39;s attributes (optional, default: _null_)</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   * @param $orderby An array holding names of attributes to order by, maybe appended with &#39;ASC&#39;, &#39;DESC&#39; (optional, default: _null_)</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   * @param $pagingInfo A reference PagingInfo instance (optional, default: _null_)</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   * @return Array containing the PersistentObject instances</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#afc20fc0561ad9718e0da1a8cd3adb846">loadObjects</a>($typeOrTypes, $buildDepth=<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>, $criteria=<span class="keyword">null</span>, $orderby=<span class="keyword">null</span>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">PagingInfo</a> $pagingInfo=<span class="keyword">null</span>);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   * Load the first object matching a given condition. If a PagingInfo instance is passed it will be used and updated.</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * @param $typeOrTypes The type or types array of objects (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * @param $criteria An array of Criteria instances that define conditions on the type&#39;s attributes (optional, default: _null_)</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * @param $orderby An array holding names of attributes to order by, maybe appended with &#39;ASC&#39;, &#39;DESC&#39; (optional, default: _null_)</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * @param $pagingInfo A reference PagingInfo instance (default: _null_)</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   * @return PersistentObject or null</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a4a20b36194cba3b1f0472bf05342f359">loadFirstObject</a>($typeOrTypes, $buildDepth=<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>, $criteria=<span class="keyword">null</span>, $orderby=<span class="keyword">null</span>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">PagingInfo</a> $pagingInfo=<span class="keyword">null</span>);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">   * Get the current business transaction.</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * @note There is only one transaction instance at the same time.</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   * @return Transaction</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#ac67a68804da2dfc9131f341f3659e578">getTransaction</a>();</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">   * Get the PersistenceMapper for a given type. If no mapper for this type is defined the mapper for type &#39;*&#39; will be returned</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">   * @param $type The type of the object to get the PersistenceMapper for (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   * @return PersistenceMapper or null on error</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#af819f6d3ad97a825e17dc07541e736bd">getMapper</a>($type);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">   * Explicitly set a PersistentMapper for a type</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   * @param $type The type to set the mapper for (fully qualified)</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">   * @param $mapper PersistenceMapper instance</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#ae71328415650b92633b165046152a0b7">setMapper</a>($type, <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html">PersistenceMapper</a> $mapper);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;}</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_a26d946d1db99714406d648eaae0ca0c9"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a26d946d1db99714406d648eaae0ca0c9">wcmf\lib\persistence\PersistenceFacade\isKnownType</a></div><div class="ttdeci">isKnownType($type)</div><div class="ttdoc">Check if a type is defined in the application.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_a6ea92a225486827bbc9419006f6d93d2"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a6ea92a225486827bbc9419006f6d93d2">wcmf\lib\persistence\PersistenceFacade\getKnownTypes</a></div><div class="ttdeci">getKnownTypes()</div><div class="ttdoc">Get a list of types defined in the application.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_a919e414dae3905c398887918fa1888ba"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a919e414dae3905c398887918fa1888ba">wcmf\lib\persistence\PersistenceFacade\getFullyQualifiedType</a></div><div class="ttdeci">getFullyQualifiedType($type)</div><div class="ttdoc">Get the fully qualified type name for a given simple type name.</div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1persistence_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1persistence.html">wcmf\lib\persistence</a></div><div class="ttdoc">Persistence layer related interfaces and classes.</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00042">namespaces.php:42</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html">wcmf\lib\persistence\PersistenceMapper</a></div><div class="ttdoc">PersistenceMapper defines the interface for all mapper classes.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_mapper_8php_source.html#l00026">PersistenceMapper.php:26</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_a2088197336092f89458036911a002bef"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a2088197336092f89458036911a002bef">wcmf\lib\persistence\PersistenceFacade\create</a></div><div class="ttdeci">create($type, $buildDepth=BuildDepth::SINGLE)</div><div class="ttdoc">Construct the template of an object of a given type.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a></div><div class="ttdoc">ObjectId is the unique identifier of an object.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00028">ObjectId.php:28</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_afc20fc0561ad9718e0da1a8cd3adb846"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#afc20fc0561ad9718e0da1a8cd3adb846">wcmf\lib\persistence\PersistenceFacade\loadObjects</a></div><div class="ttdeci">loadObjects($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)</div><div class="ttdoc">Load the objects matching a given condition.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_ac67a68804da2dfc9131f341f3659e578"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#ac67a68804da2dfc9131f341f3659e578">wcmf\lib\persistence\PersistenceFacade\getTransaction</a></div><div class="ttdeci">getTransaction()</div><div class="ttdoc">Get the current business transaction.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a></div><div class="ttdoc">PersistenceFacade defines the interface for PersistenceFacade implementations.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_facade_8php_source.html#l00023">PersistenceFacade.php:23</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_ae71328415650b92633b165046152a0b7"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#ae71328415650b92633b165046152a0b7">wcmf\lib\persistence\PersistenceFacade\setMapper</a></div><div class="ttdeci">setMapper($type, PersistenceMapper $mapper)</div><div class="ttdoc">Explicitly set a PersistentMapper for a type.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_a90b99cef8752ebb13eb49a1005a251ec"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a90b99cef8752ebb13eb49a1005a251ec">wcmf\lib\persistence\PersistenceFacade\load</a></div><div class="ttdeci">load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE)</div><div class="ttdoc">Load an object from the storage.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_af819f6d3ad97a825e17dc07541e736bd"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#af819f6d3ad97a825e17dc07541e736bd">wcmf\lib\persistence\PersistenceFacade\getMapper</a></div><div class="ttdeci">getMapper($type)</div><div class="ttdoc">Get the PersistenceMapper for a given type.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_build_depth_html_af33f2aced1762d825db23934d1b3205b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">wcmf\lib\persistence\BuildDepth\SINGLE</a></div><div class="ttdeci">const SINGLE</div><div class="ttdef"><b>Definition:</b> <a href="_build_depth_8php_source.html#l00022">BuildDepth.php:22</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_a44f87fb7d7b5efb8020ef290db70370a"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a44f87fb7d7b5efb8020ef290db70370a">wcmf\lib\persistence\PersistenceFacade\getFirstOID</a></div><div class="ttdeci">getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)</div><div class="ttdoc">Get the first object id of objects matching a given condition.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_a79418dff314070840928914ab1a142d8"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a79418dff314070840928914ab1a142d8">wcmf\lib\persistence\PersistenceFacade\getOIDs</a></div><div class="ttdeci">getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)</div><div class="ttdoc">Get the object ids of objects matching a given criteria.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_paging_info_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_paging_info.html">wcmf\lib\persistence\PagingInfo</a></div><div class="ttdoc">PagingInfo contains information about a paged list.</div><div class="ttdef"><b>Definition:</b> <a href="_paging_info_8php_source.html#l00018">PagingInfo.php:18</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_ad72fda47ef0cc06b11fc5300674beee8"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#ad72fda47ef0cc06b11fc5300674beee8">wcmf\lib\persistence\PersistenceFacade\getLastCreatedOID</a></div><div class="ttdeci">getLastCreatedOID($type)</div><div class="ttdoc">Get the object id of the last created object of a given type.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_a4a20b36194cba3b1f0472bf05342f359"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#a4a20b36194cba3b1f0472bf05342f359">wcmf\lib\persistence\PersistenceFacade\loadFirstObject</a></div><div class="ttdeci">loadFirstObject($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null)</div><div class="ttdoc">Load the first object matching a given condition.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html_ae10366c75d96dad4e9a60694a916c669"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html#ae10366c75d96dad4e9a60694a916c669">wcmf\lib\persistence\PersistenceFacade\getSimpleType</a></div><div class="ttdeci">getSimpleType($type)</div><div class="ttdoc">Get the simple type name for a given fully qualified type name.</div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

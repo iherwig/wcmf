@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/model/PersistentIterator.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_f57071bff1402464ed1755fe1c1a7d41.html">model</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">PersistentIterator.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1model.html">wcmf\lib\model</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_session.html">wcmf\lib\core\Session</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> * PersistentIterator is used to iterate over a tree/list built of persistent objects</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * using a Depth-First-Algorithm. To persist its state use the PersistentIterator::save() method,</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * to restore its state use the static PersistentIterator::load() method, which returns the loaded instance.</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html">PersistentIterator</a> <span class="keyword">implements</span> \Iterator {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keyword">private</span> $id = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keyword">private</span> $persistenceFacade = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">private</span> $session = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#ac2040b96cd66d4d79b1d9fe0027d2f9b">   30</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#ac2040b96cd66d4d79b1d9fe0027d2f9b">$end</a>;              <span class="comment">// indicates if the iteration is ended</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a2787c3b695e35da629234a48dbafda3f">   31</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a2787c3b695e35da629234a48dbafda3f">$oidList</a>;          <span class="comment">// the list of oids to process</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a3f78ed7c9e8c92a2cde08c35d0dfb3ab">   32</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a3f78ed7c9e8c92a2cde08c35d0dfb3ab">$processedOidList</a>; <span class="comment">// the list of all seen object ids</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#aa1189a9226e682ab49b555010f1c370a">   33</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#aa1189a9226e682ab49b555010f1c370a">$currentOid</a>;       <span class="comment">// the oid the iterator points to</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a9cd2587136bfdbbb99732507065c718b">   34</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a9cd2587136bfdbbb99732507065c718b">$startOid</a>;         <span class="comment">// the oid the iterator started with</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a1371c289ce5ebd7bce473a3a1a07fbf7">   35</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a1371c289ce5ebd7bce473a3a1a07fbf7">$currentDepth</a>;     <span class="comment">// the depth in the tree of the oid the iterator points to</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a839a57710e249617209bbb4741207a4b">   36</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a839a57710e249617209bbb4741207a4b">$aggregationKinds</a>; <span class="comment">// array of aggregation kind values to follow (empty: all)</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   * Constructor.</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">   * @param $id The unique iterator id used to store iterator&#39;s the state in the session</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">   * @param $persistenceFacade</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">   * @param $session</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   * @param $oid The object id to start from.</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">   * @param $aggregationKinds Array of aggregation kind values of relations to follow</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">   *   possible values: &#39;none&#39;, &#39;shared&#39;, &#39;composite&#39;. Empty array means all (default: empty)</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#aa566d57b7b97d8dfc74dab59fd30ba9f">   47</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#aa566d57b7b97d8dfc74dab59fd30ba9f">__construct</a>($id, <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">PersistenceFacade</a> $persistenceFacade,</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;          <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_session.html">Session</a> $session,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;          <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;          <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a839a57710e249617209bbb4741207a4b">$aggregationKinds</a>=[]) {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    $this-&gt;<span class="keywordtype">id</span> = $id;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    $this-&gt;persistenceFacade = $persistenceFacade;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    $this-&gt;session = $session;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    $this-&gt;end = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    $this-&gt;oidList = [];</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    $this-&gt;processedOidList = [];</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    $this-&gt;currentOid = $oid;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    $this-&gt;startOid = $oid;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    $this-&gt;currentDepth = 0;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    $this-&gt;aggregationKinds = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a839a57710e249617209bbb4741207a4b">$aggregationKinds</a>;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    $this-&gt;session-&gt;remove($this-&gt;<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   * Save the iterator state to the session</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#afc8a3c62679cf00ade9f15fb2a6d6132">   68</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#afc8a3c62679cf00ade9f15fb2a6d6132">save</a>() {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    $state = [<span class="stringliteral">&#39;end&#39;</span> =&gt; <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#ac2040b96cd66d4d79b1d9fe0027d2f9b">$this-&gt;end</a>, <span class="stringliteral">&#39;oidList&#39;</span> =&gt; <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a2787c3b695e35da629234a48dbafda3f">$this-&gt;oidList</a>, <span class="stringliteral">&#39;processedOidList&#39;</span> =&gt; <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a3f78ed7c9e8c92a2cde08c35d0dfb3ab">$this-&gt;processedOidList</a>,</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="stringliteral">&#39;currentOID&#39;</span> =&gt; <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#aa1189a9226e682ab49b555010f1c370a">$this-&gt;currentOid</a>, <span class="stringliteral">&#39;currentDepth&#39;</span> =&gt; <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a1371c289ce5ebd7bce473a3a1a07fbf7">$this-&gt;currentDepth</a>, <span class="stringliteral">&#39;aggregationKinds&#39;</span> =&gt; <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a839a57710e249617209bbb4741207a4b">$this-&gt;aggregationKinds</a>];</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    $this-&gt;session-&gt;set($this-&gt;<span class="keywordtype">id</span>, $state);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * Reset the iterator with the given id</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   * @param $id The iterator id</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   * @param $session</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#afc315ba5444ebf3881b3de0e1ca60bb1">   79</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#afc315ba5444ebf3881b3de0e1ca60bb1">reset</a>($id, <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_session.html">Session</a> $session) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    $session-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_session.html#a95483af4e2c07dc9893fe058b026bd5d">remove</a>($id);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">   * Load an iterator state from the session</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">   * @param $id  The unique iterator id used to store iterator&#39;s the state in the session</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">   * @param $persistenceFacade</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">   * @param $session</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   * @return PersistentIterator instance holding the saved state or null if unique id is not found</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a8087ca03f81fabd8b78a2d07dfd13282">   90</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a8087ca03f81fabd8b78a2d07dfd13282">load</a>($id, $persistenceFacade, $session) {</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// get state from session</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    $state = $session-&gt;get($id);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">if</span> ($state == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="comment">// create instance</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    $instance = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html">PersistentIterator</a>($id, $persistenceFacade, $session,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            $state[<span class="stringliteral">&#39;currentOID&#39;</span>]);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    $instance-&gt;end = $state[<span class="stringliteral">&#39;end&#39;</span>];</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    $instance-&gt;oidList = $state[<span class="stringliteral">&#39;oidList&#39;</span>];</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    $instance-&gt;processedOidList = $state[<span class="stringliteral">&#39;processedOidList&#39;</span>];</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    $instance-&gt;currentDepth = $state[<span class="stringliteral">&#39;currentDepth&#39;</span>];</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    $instance-&gt;aggregationKinds = $state[<span class="stringliteral">&#39;aggregationKinds&#39;</span>];</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span> $instance;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">   * Return the current element</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">   * @return ObjectId, the current object id</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#af343507d1926e6ecf964625d41db528c">  111</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#af343507d1926e6ecf964625d41db528c">current</a>() {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#aa1189a9226e682ab49b555010f1c370a">$this-&gt;currentOid</a>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">   * Return the key of the current element</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">   * @return Number, the current depth</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a729e946b4ef600e71740113c6d4332c0">  119</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a729e946b4ef600e71740113c6d4332c0">key</a>() {</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a1371c289ce5ebd7bce473a3a1a07fbf7">$this-&gt;currentDepth</a>;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   * Move forward to next element</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#acea62048bfee7b3cd80ed446c86fb78a">  126</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#acea62048bfee7b3cd80ed446c86fb78a">next</a>() {</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="comment">// the current oid was processed</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    $this-&gt;processedOidList[] = $this-&gt;currentOid-&gt;__toString();</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    $node = $this-&gt;persistenceFacade-&gt;load($this-&gt;currentOid);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="comment">// collect navigable children for the given aggregation kinds</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    $childOIDs = [];</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    $mapper = $node-&gt;getMapper();</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    $relations = $mapper-&gt;getRelations(<span class="stringliteral">&#39;child&#39;</span>);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    $followAll = <span class="keyword">sizeof</span>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a839a57710e249617209bbb4741207a4b">$this-&gt;aggregationKinds</a>) == 0;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordflow">foreach</span> ($relations as $relation) {</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      $aggregationKind = $relation-&gt;getOtherAggregationKind();</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      <span class="keywordflow">if</span> ($relation-&gt;getOtherNavigability() &amp;&amp; ($followAll || in_array($aggregationKind, $this-&gt;aggregationKinds))) {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        $childValue = $node-&gt;getValue($relation-&gt;getOtherRole());</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="keywordflow">if</span> ($childValue != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;          $children = $relation-&gt;isMultiValued() ? $childValue : [$childValue];</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;          <span class="keywordflow">foreach</span> ($children as $child) {</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            $childOIDs[] = $child-&gt;getOID();</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;          }</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;      }</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    }</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a51f86dbad16573fa8572b95a333b808c">addToQueue</a>($childOIDs, ++$this-&gt;currentDepth);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="comment">// set current node</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($this-&gt;oidList) != 0) {</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      list($oid, $depth) = array_pop($this-&gt;oidList);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      $oidStr = $oid-&gt;__toString();</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;      <span class="comment">// not the last node -&gt; search for unprocessed nodes</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      <span class="keywordflow">while</span> (<span class="keyword">sizeof</span>($this-&gt;oidList) &gt; 0 &amp;&amp; in_array($oidStr, $this-&gt;processedOidList)) {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        list($oid, $depth) = array_pop($this-&gt;oidList);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        $oidStr = $oid-&gt;__toString();</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      <span class="comment">// last node found, but it was processed already</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;      <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($this-&gt;oidList) == 0 &amp;&amp; in_array($oidStr, $this-&gt;processedOidList)) {</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        $this-&gt;end = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;      }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;      $this-&gt;currentOid = $oid;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      $this-&gt;currentDepth = $depth;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    }</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      $this-&gt;end = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    }</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordflow">return</span> $this;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  }</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">   * Rewind the Iterator to the first element</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#ae619dcf2218c21549cb65d875bbc6c9c">  176</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#ae619dcf2218c21549cb65d875bbc6c9c">rewind</a>() {</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    $this-&gt;end = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    $this-&gt;oidList= [];</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    $this-&gt;processedOidList = [];</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    $this-&gt;currentOid = <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a9cd2587136bfdbbb99732507065c718b">$this-&gt;startOid</a>;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    $this-&gt;currentDepth = 0;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;  }</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="comment">   * Checks if current position is valid</span></div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#abb9f0d6adf1eb9b3b55712056861a247">  187</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#abb9f0d6adf1eb9b3b55712056861a247">valid</a>() {</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">return</span> !<a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#ac2040b96cd66d4d79b1d9fe0027d2f9b">$this-&gt;end</a>;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  }</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="comment">   * Add object ids to the processing queue.</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment">   * @param $oidList An array of object ids.</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="comment">   * @param $depth The depth of the object ids in the tree.</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a51f86dbad16573fa8572b95a333b808c">  196</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a51f86dbad16573fa8572b95a333b808c">addToQueue</a>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a2787c3b695e35da629234a48dbafda3f">$oidList</a>, $depth) {</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keywordflow">for</span> ($i=sizeOf(<a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a2787c3b695e35da629234a48dbafda3f">$oidList</a>)-1; $i&gt;=0; $i--) {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;      $this-&gt;oidList[] = [<a class="code" href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a2787c3b695e35da629234a48dbafda3f">$oidList</a>[$i], $depth];</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    }</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;  }</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;}</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1core_1_1_session_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1core_1_1_session.html">wcmf\lib\core\Session</a></div><div class="ttdoc">Session is the interface for session implementations and defines access to session variables.</div><div class="ttdef"><b>Definition:</b> <a href="_session_8php_source.html#l00019">Session.php:19</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_ae619dcf2218c21549cb65d875bbc6c9c"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#ae619dcf2218c21549cb65d875bbc6c9c">wcmf\lib\model\PersistentIterator\rewind</a></div><div class="ttdeci">rewind()</div><div class="ttdoc">Rewind the Iterator to the first element.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00176">PersistentIterator.php:176</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_aa566d57b7b97d8dfc74dab59fd30ba9f"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#aa566d57b7b97d8dfc74dab59fd30ba9f">wcmf\lib\model\PersistentIterator\__construct</a></div><div class="ttdeci">__construct($id, PersistenceFacade $persistenceFacade, Session $session, ObjectId $oid, $aggregationKinds=[])</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00047">PersistentIterator.php:47</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_a729e946b4ef600e71740113c6d4332c0"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a729e946b4ef600e71740113c6d4332c0">wcmf\lib\model\PersistentIterator\key</a></div><div class="ttdeci">key()</div><div class="ttdoc">Return the key of the current element.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00119">PersistentIterator.php:119</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html">wcmf\lib\model\PersistentIterator</a></div><div class="ttdoc">PersistentIterator is used to iterate over a tree/list built of persistent objects using a Depth-Firs...</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00024">PersistentIterator.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_afc315ba5444ebf3881b3de0e1ca60bb1"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#afc315ba5444ebf3881b3de0e1ca60bb1">wcmf\lib\model\PersistentIterator\reset</a></div><div class="ttdeci">static reset($id, Session $session)</div><div class="ttdoc">Reset the iterator with the given id.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00079">PersistentIterator.php:79</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a></div><div class="ttdoc">ObjectId is the unique identifier of an object.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00028">ObjectId.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_afc8a3c62679cf00ade9f15fb2a6d6132"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#afc8a3c62679cf00ade9f15fb2a6d6132">wcmf\lib\model\PersistentIterator\save</a></div><div class="ttdeci">save()</div><div class="ttdoc">Save the iterator state to the session.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00068">PersistentIterator.php:68</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_a3f78ed7c9e8c92a2cde08c35d0dfb3ab"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a3f78ed7c9e8c92a2cde08c35d0dfb3ab">wcmf\lib\model\PersistentIterator\$processedOidList</a></div><div class="ttdeci">$processedOidList</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00032">PersistentIterator.php:32</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_a839a57710e249617209bbb4741207a4b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a839a57710e249617209bbb4741207a4b">wcmf\lib\model\PersistentIterator\$aggregationKinds</a></div><div class="ttdeci">$aggregationKinds</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00036">PersistentIterator.php:36</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_ac2040b96cd66d4d79b1d9fe0027d2f9b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#ac2040b96cd66d4d79b1d9fe0027d2f9b">wcmf\lib\model\PersistentIterator\$end</a></div><div class="ttdeci">$end</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00030">PersistentIterator.php:30</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a></div><div class="ttdoc">PersistenceFacade defines the interface for PersistenceFacade implementations.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_facade_8php_source.html#l00023">PersistenceFacade.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_a51f86dbad16573fa8572b95a333b808c"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a51f86dbad16573fa8572b95a333b808c">wcmf\lib\model\PersistentIterator\addToQueue</a></div><div class="ttdeci">addToQueue($oidList, $depth)</div><div class="ttdoc">Add object ids to the processing queue.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00196">PersistentIterator.php:196</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1core_1_1_session_html_a95483af4e2c07dc9893fe058b026bd5d"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1core_1_1_session.html#a95483af4e2c07dc9893fe058b026bd5d">wcmf\lib\core\Session\remove</a></div><div class="ttdeci">remove($key)</div><div class="ttdoc">Remove a session variable.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_abb9f0d6adf1eb9b3b55712056861a247"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#abb9f0d6adf1eb9b3b55712056861a247">wcmf\lib\model\PersistentIterator\valid</a></div><div class="ttdeci">valid()</div><div class="ttdoc">Checks if current position is valid.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00187">PersistentIterator.php:187</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_a1371c289ce5ebd7bce473a3a1a07fbf7"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a1371c289ce5ebd7bce473a3a1a07fbf7">wcmf\lib\model\PersistentIterator\$currentDepth</a></div><div class="ttdeci">$currentDepth</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00035">PersistentIterator.php:35</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_aa1189a9226e682ab49b555010f1c370a"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#aa1189a9226e682ab49b555010f1c370a">wcmf\lib\model\PersistentIterator\$currentOid</a></div><div class="ttdeci">$currentOid</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00033">PersistentIterator.php:33</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_a8087ca03f81fabd8b78a2d07dfd13282"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a8087ca03f81fabd8b78a2d07dfd13282">wcmf\lib\model\PersistentIterator\load</a></div><div class="ttdeci">static load($id, $persistenceFacade, $session)</div><div class="ttdoc">Load an iterator state from the session.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00090">PersistentIterator.php:90</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1model_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1model.html">wcmf\lib\model</a></div><div class="ttdoc">Node related interfaces and classes.</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00026">namespaces.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_af343507d1926e6ecf964625d41db528c"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#af343507d1926e6ecf964625d41db528c">wcmf\lib\model\PersistentIterator\current</a></div><div class="ttdeci">current()</div><div class="ttdoc">Return the current element.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00111">PersistentIterator.php:111</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_a9cd2587136bfdbbb99732507065c718b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a9cd2587136bfdbbb99732507065c718b">wcmf\lib\model\PersistentIterator\$startOid</a></div><div class="ttdeci">$startOid</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00034">PersistentIterator.php:34</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_acea62048bfee7b3cd80ed446c86fb78a"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#acea62048bfee7b3cd80ed446c86fb78a">wcmf\lib\model\PersistentIterator\next</a></div><div class="ttdeci">next()</div><div class="ttdoc">Move forward to next element.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00126">PersistentIterator.php:126</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_persistent_iterator_html_a2787c3b695e35da629234a48dbafda3f"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_persistent_iterator.html#a2787c3b695e35da629234a48dbafda3f">wcmf\lib\model\PersistentIterator\$oidList</a></div><div class="ttdeci">$oidList</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_iterator_8php_source.html#l00031">PersistentIterator.php:31</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

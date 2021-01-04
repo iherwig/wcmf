@@ -1,0 +1,10 @@
+<map id="Event" name="Event">
+<area shape="rect" id="node1" title="Event is the base class for all events." alt="" coords="521,5,674,97"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1config_1_1_config_change_event.html" title="ConfigChangeEvent signals a change of the application configuration." alt="" coords="5,204,155,281"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1persistence_1_1_persistence_event.html" title="PersistentEvent signals create/update/delete operations on a persistent entity." alt="" coords="179,182,314,303"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1persistence_1_1_property_change_event.html" title="PropertyChangeEvent signals a change of a property of a PersistentObject instance." alt="" coords="339,175,501,311"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html" title="StateChangeEvent signals a change of the state of a PersistentObject instance." alt="" coords="526,182,669,303"/>
+<area shape="rect" id="node6" href="$classwcmf_1_1lib_1_1persistence_1_1_transaction_event.html" title="TransactionEvent instances are fired at different phases of a transaction." alt="" coords="693,153,848,333"/>
+<area shape="rect" id="node7" href="$classwcmf_1_1lib_1_1persistence_1_1_value_change_event.html" title="ValueChangeEvent signals a change of a value of a PersistentObject instance." alt="" coords="872,175,1016,311"/>
+<area shape="rect" id="node8" href="$classwcmf_1_1lib_1_1presentation_1_1_application_event.html" title="ApplicationEvent instances are fired at different stages of the program flow." alt="" coords="1041,145,1298,340"/>
+</map>

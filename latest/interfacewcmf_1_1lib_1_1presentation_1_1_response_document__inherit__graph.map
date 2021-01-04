@@ -1,0 +1,7 @@
+<map id="ResponseDocument" name="ResponseDocument">
+<area shape="rect" id="node1" title="ResponseDocument is the interface for media returned in a response when using the DownloadFormat." alt="" coords="164,5,316,156"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1impl_1_1_abstract_document.html" title="AbstractFormat is used as base class for specialized documents." alt="" coords="169,204,311,340"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1presentation_1_1impl_1_1_file_document.html" title="FileDocument represents a local file." alt="" coords="5,388,144,509"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1presentation_1_1impl_1_1_memory_document.html" title="MemoryDocument represents content that resides in memory." alt="" coords="169,395,311,502"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1presentation_1_1impl_1_1_remote_document.html" title="RemoteDocument represents a remote file retrieved via cURL." alt="" coords="335,395,475,502"/>
+</map>

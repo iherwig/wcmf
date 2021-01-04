@@ -1,0 +1,4 @@
+<map id="Configuration" name="Configuration">
+<area shape="rect" id="node1" title="Implementations of Configuration give access to the application configuration." alt="" coords="15,5,179,229"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1config_1_1impl_1_1_inifile_configuration.html" title="InifileConfiguration reads the application configuration from ini files." alt="" coords="5,277,189,692"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="ImageOutputStrategy" name="ImageOutputStrategy">
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1model_1_1output_1_1_element_image_output_strategy.html" title="ElementImageOutputStrategy outputs a tree of objects into an image file. " alt="" coords="5,608,199,715"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1persistence_1_1output_1_1_output_strategy.html" title="OutputStrategy defines the interface for classes that write an object&#39;s content to a destination (cal..." alt="" coords="47,5,157,112"/>
+</map>

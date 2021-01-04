@@ -1,0 +1,8 @@
+<map id="OutputStrategy" name="OutputStrategy">
+<area shape="rect" id="node1" title="OutputStrategy defines the interface for classes that write an object&#39;s content to a destination (cal..." alt="" coords="341,5,468,112"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1output_1_1_dot_output_strategy.html" title="DotOutputStrategy outputs an object&#39;s content in a dot file." alt="" coords="5,292,191,428"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1model_1_1output_1_1_image_output_strategy.html" title="ImageOutputStrategy outputs a tree of objects into an image file." alt="" coords="215,160,394,560"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1persistence_1_1output_1_1impl_1_1_auditing_output_strategy.html" title="AuditingOutputStrategy outputs object changes to the logger category AuditingOutputStrategy,..." alt="" coords="419,299,593,421"/>
+<area shape="rect" id="node6" href="$classwcmf_1_1lib_1_1persistence_1_1output_1_1impl_1_1_default_output_strategy.html" title="DefaultOutputStrategy outputs an object&#39;s content to the Log category DefaultOutputStrategy." alt="" coords="617,299,787,421"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1model_1_1output_1_1_element_image_output_strategy.html" title="ElementImageOutputStrategy outputs a tree of objects into an image file." alt="" coords="197,608,413,715"/>
+</map>

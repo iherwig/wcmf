@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/persistence/ObjectId.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_81dd432b91dc6ec596e6cc7ff91623b9.html">persistence</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">ObjectId.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1persistence.html">wcmf\lib\persistence</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * ObjectId is the unique identifier of an object.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * @note The ObjectId must provide enough information to select the appropriate mapper for the object.</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> *       This may be achived by different strategies, e.g. coding the object type into the ObjectId or</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> *       having a global registry which maps ObjectIds to objects. wCMF uses the first method.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> *       Serialized ObjectIds have the following notation: prefix:type:id1:id2:... where type is the object type</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> *       and id1, id2, .. are the values of the primary key columns (in case of simple keys only one).</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> *       Serialization is done using the __toString method (using the ObjectId instance in a string context).</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">   28</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> <span class="keyword">implements</span> \Serializable, \JsonSerializable {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ad71988bbc6816f80670ab4d8e6228ec7">   30</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ad71988bbc6816f80670ab4d8e6228ec7">DELIMITER</a> = <span class="charliteral">&#39;:&#39;</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">private</span> $prefix;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">private</span> $fqType;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keyword">private</span> $id;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">private</span> $strVal = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $dummyIdPattern = <span class="stringliteral">&#39;wcmf[A-Za-z0-9]{32}&#39;</span>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $idPattern = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $delimiterPattern = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $numPkKeys = [];</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $nullOID = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">   * Constructor.</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">   * @param $type The type name of the object (either fully qualified or simple, if not ambiguous)</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   * @param $id Either a single value or an array of values (for compound primary keys) identifying</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   * the object between others of the same type. If not given, a dummy id will be</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * assigned (optional, default: empty array)</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   * @param $prefix A prefix for identifying a set of objects belonging to one storage in a</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * distributed environment (optional, default: _null_)</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * @note If id is an array, the order of the values must match the order of the primary key names given</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * by PersistenceMapper::getPkNames().</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a3c285d2efc4791a9f41a7883c7b967be">   55</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a3c285d2efc4791a9f41a7883c7b967be">__construct</a>($type, $id=[], $prefix=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    $this-&gt;prefix = $prefix;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    $persistenceFacade = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;persistenceFacade&#39;</span>);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    $this-&gt;fqType = $type != <span class="stringliteral">&#39;NULL&#39;</span> ? $persistenceFacade-&gt;getFullyQualifiedType($type) : <span class="stringliteral">&#39;NULL&#39;</span>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">// get given primary keys</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    $this-&gt;<span class="keywordtype">id</span> = !is_array($id) ? [$id] : $id;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="comment">// add dummy ids for missing primary key values</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    $numPKs = self::getNumberOfPKs($type);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordflow">while</span> (<span class="keyword">sizeof</span>($this-&gt;<span class="keywordtype">id</span>) &lt; $numPKs) {</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      $this-&gt;<span class="keywordtype">id</span>[] = <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#afbf74bfd4da80d80885396286ecf585d">self::getDummyId</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="comment">// set strVal immediatly otherwise object comparison will fail in</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="comment">// cases where __toString was only called on one instance</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    $this-&gt;strVal = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>();</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">   * Get the NULL instance</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a194c2ee5508a35b5463eb63fc680c8b6">   78</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a194c2ee5508a35b5463eb63fc680c8b6">NULL_OID</a>() {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">if</span> (self::$nullOID == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      self::$nullOID = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a>(<span class="stringliteral">&#39;NULL&#39;</span>);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> self::$nullOID;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">   * Get the prefix</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7a333affb97cf092d50f3e59edaa9066">   89</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7a333affb97cf092d50f3e59edaa9066">getPrefix</a>() {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">return</span> $this-&gt;prefix;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">   * Get the type (including namespace)</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a830b5c75df72b32396701bc563fbe3c7">   97</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>() {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span> $this-&gt;fqType;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   * Get the id</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   * @return Array</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a12251d0c022e9e21c137a105ff683f13">  105</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a12251d0c022e9e21c137a105ff683f13">getId</a>() {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">return</span> $this-&gt;id;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  }</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">   * Get the first id. This is especially useful, when you know that this id only consists of one id.</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#af31638807853ab229091ce26c46445f5">  113</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#af31638807853ab229091ce26c46445f5">getFirstId</a>() {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<span class="keywordtype">id</span>[0];</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">   * Check if a serialized ObjectId has a valid syntax, the type is known and</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">   * if the number of primary keys match the type.</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">   * @param $oid The serialized ObjectId.</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   * @return Boolean</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ae5321966f3ade3b4c4ec05477a1e508e">  123</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ae5321966f3ade3b4c4ec05477a1e508e">isValid</a>($oid) {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">if</span> (self::parse($oid) == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * Parse a serialized object id string into an ObjectId instance.</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   * @param $oid The string</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   * @return ObjectId or null, if the id cannot be parsed</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a2441c8f369adef96455b48af3467b42f">  135</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a2441c8f369adef96455b48af3467b42f">parse</a>($oid) {</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="comment">// fast checks first</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordflow">if</span> ($oid instanceof <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a>) {</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      <span class="keywordflow">return</span> $oid;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    $oidParts = self::parseOidString($oid);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keywordflow">if</span> (!$oidParts) {</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    }</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    $type = $oidParts[<span class="stringliteral">&#39;type&#39;</span>];</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    $ids = $oidParts[<span class="stringliteral">&#39;id&#39;</span>];</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    $prefix = $oidParts[<span class="stringliteral">&#39;prefix&#39;</span>];</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="comment">// check the type</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;persistenceFacade&#39;</span>)-&gt;isKnownType($type)) {</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    }</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="comment">// check if number of ids match the type</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    $numPks = self::getNumberOfPKs($type);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordflow">if</span> ($numPks == <span class="keyword">null</span> || $numPks != <span class="keyword">sizeof</span>($ids)) {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">new</span> ObjectID($type, $ids, $prefix);</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment">   * Parse the given object id string into it&#39;s parts</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">   * @param $oid The string</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">   * @return Associative array with keys &#39;type&#39;, &#39;id&#39;, &#39;prefix&#39;</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">function</span> parseOidString($oid) {</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordflow">if</span> (strlen($oid) == 0) {</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    }</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    $oidParts = preg_split(self::getDelimiterPattern(), $oid);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($oidParts) &lt; 2) {</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    }</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keywordflow">if</span> (self::$idPattern == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;      self::$idPattern = <span class="stringliteral">&#39;/^[0-9]*$|^&#39;</span>.self::$dummyIdPattern.<span class="stringliteral">&#39;$/&#39;</span>;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    }</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="comment">// get the ids from the oid</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    $ids = [];</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    $nextPart = array_pop($oidParts);</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordflow">while</span>($nextPart !== <span class="keyword">null</span> &amp;&amp; preg_match(self::$idPattern, $nextPart) == 1) {</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;      $intNextPart = (int)$nextPart;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      <span class="keywordflow">if</span> ($nextPart == (<span class="keywordtype">string</span>)$intNextPart) {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        $ids[] = $intNextPart;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;      }</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        $ids[] = $nextPart;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;      $nextPart = array_pop($oidParts);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    }</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    $ids = array_reverse($ids);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="comment">// get the type</span></div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    $type = $nextPart;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="comment">// get the prefix</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    $prefix = join(self::DELIMITER, $oidParts);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keywordflow">return</span> [</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;      <span class="stringliteral">&#39;type&#39;</span> =&gt; $type,</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;      <span class="stringliteral">&#39;id&#39;</span> =&gt; $ids,</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;      <span class="stringliteral">&#39;prefix&#39;</span> =&gt; $prefix</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    ];</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;  }</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="comment">   * Get a string representation of the object id.</span></div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">  215</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>() {</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;strVal == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;      $oidStr = $this-&gt;fqType.self::DELIMITER.join(self::DELIMITER, $this-&gt;<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;      <span class="keywordflow">if</span> (strlen(trim($this-&gt;prefix)) &gt; 0) {</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        $oidStr = $this-&gt;prefix.self::DELIMITER.$oidStr;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;      }</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;      $this-&gt;strVal = $oidStr;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    }</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keywordflow">return</span> $this-&gt;strVal;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  }</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="comment">   * Get a dummy id (&quot;wcmf&quot; + unique 32 character string).</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#afbf74bfd4da80d80885396286ecf585d">  230</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#afbf74bfd4da80d80885396286ecf585d">getDummyId</a>() {</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordflow">return</span> <span class="stringliteral">&#39;wcmf&#39;</span>.str_replace(<span class="charliteral">&#39;-&#39;</span>, <span class="stringliteral">&#39;&#39;</span>, <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html#a13ee98a6f21ffb6d275a1f3fc85b489a">StringUtil::guidv4</a>());</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  }</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment">   * Check if a given id is a dummy id.</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">   * @param $id The id to check</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment">   * @return Boolean</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a3940d74e5c70a9b0d58d94b107b3e237">  239</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a3940d74e5c70a9b0d58d94b107b3e237">isDummyId</a>($id) {</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordflow">return</span> (strlen($id) == 36 &amp;&amp; strpos($id, <span class="stringliteral">&#39;wcmf&#39;</span>) === 0);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  }</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">   * Check if this object id contains a dummy id.</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">   * @return Boolean</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#acbc970800ff773cb9e2e4f40dda7332d">  247</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#acbc970800ff773cb9e2e4f40dda7332d">containsDummyIds</a>() {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a12251d0c022e9e21c137a105ff683f13">getId</a>() as $id) {</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      <span class="keywordflow">if</span> (self::isDummyId($id)) {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;      }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">   * Get the number of primary keys a type has.</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment">   * @param $type The type</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment">   * @return Integer (1 if the type is unknown)</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">function</span> getNumberOfPKs($type) {</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordflow">if</span> (!isset(self::$numPkKeys[$type])) {</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;      $numPKs = 1;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;      $persistenceFacade = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;persistenceFacade&#39;</span>);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;      <span class="keywordflow">if</span> ($persistenceFacade-&gt;isKnownType($type)) {</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        $mapper = $persistenceFacade-&gt;getMapper($type);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        $numPKs = <span class="keyword">sizeof</span>($mapper-&gt;getPKNames());</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;      }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;      self::$numPkKeys[$type] = $numPKs;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordflow">return</span> self::$numPkKeys[$type];</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;  }</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">function</span> getDelimiterPattern() {</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="keywordflow">if</span> (self::$delimiterPattern == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;      self::$delimiterPattern = <span class="charliteral">&#39;/&#39;</span>.self::DELIMITER.<span class="charliteral">&#39;/&#39;</span>;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    }</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="keywordflow">return</span> self::$delimiterPattern;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  }</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160; </div>
+<div class="line"><a name="l00281"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a4d9813fea8525b19a1d370eeb8fe41d6">  281</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a4d9813fea8525b19a1d370eeb8fe41d6">serialize</a>() {</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>();</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  }</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
+<div class="line"><a name="l00285"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a91b3cb8a65e42152cacf1cf222bd26f6">  285</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a91b3cb8a65e42152cacf1cf222bd26f6">unserialize</a>($data) {</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    $oidParts = self::parseOidString($data);</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    $this-&gt;prefix = $oidParts[<span class="stringliteral">&#39;prefix&#39;</span>];</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    $this-&gt;fqType = $oidParts[<span class="stringliteral">&#39;type&#39;</span>];</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    $this-&gt;<span class="keywordtype">id</span> = $oidParts[<span class="stringliteral">&#39;id&#39;</span>];</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    $this-&gt;strVal = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>();</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
+<div class="line"><a name="l00293"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ad402d8679325bc514874370f02b5c2ac">  293</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ad402d8679325bc514874370f02b5c2ac">jsonSerialize</a>() {</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>();</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  }</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;}</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a194c2ee5508a35b5463eb63fc680c8b6"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a194c2ee5508a35b5463eb63fc680c8b6">wcmf\lib\persistence\ObjectId\NULL_OID</a></div><div class="ttdeci">static NULL_OID()</div><div class="ttdoc">Get the NULL instance.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00078">ObjectId.php:78</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a91b3cb8a65e42152cacf1cf222bd26f6"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a91b3cb8a65e42152cacf1cf222bd26f6">wcmf\lib\persistence\ObjectId\unserialize</a></div><div class="ttdeci">unserialize($data)</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00285">ObjectId.php:285</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_acbc970800ff773cb9e2e4f40dda7332d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#acbc970800ff773cb9e2e4f40dda7332d">wcmf\lib\persistence\ObjectId\containsDummyIds</a></div><div class="ttdeci">containsDummyIds()</div><div class="ttdoc">Check if this object id contains a dummy id.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00247">ObjectId.php:247</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_afbf74bfd4da80d80885396286ecf585d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#afbf74bfd4da80d80885396286ecf585d">wcmf\lib\persistence\ObjectId\getDummyId</a></div><div class="ttdeci">static getDummyId()</div><div class="ttdoc">Get a dummy id (&quot;wcmf&quot; + unique 32 character string).</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00230">ObjectId.php:230</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a3940d74e5c70a9b0d58d94b107b3e237"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a3940d74e5c70a9b0d58d94b107b3e237">wcmf\lib\persistence\ObjectId\isDummyId</a></div><div class="ttdeci">static isDummyId($id)</div><div class="ttdoc">Check if a given id is a dummy id.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00239">ObjectId.php:239</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a12251d0c022e9e21c137a105ff683f13"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a12251d0c022e9e21c137a105ff683f13">wcmf\lib\persistence\ObjectId\getId</a></div><div class="ttdeci">getId()</div><div class="ttdoc">Get the id.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00105">ObjectId.php:105</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1persistence_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1persistence.html">wcmf\lib\persistence</a></div><div class="ttdoc">Persistence layer related interfaces and classes.</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00042">namespaces.php:42</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a7516ca30af0db3cdbf9a7739b48ce91d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7516ca30af0db3cdbf9a7739b48ce91d">wcmf\lib\persistence\ObjectId\__toString</a></div><div class="ttdeci">__toString()</div><div class="ttdoc">Get a string representation of the object id.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00215">ObjectId.php:215</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_ad402d8679325bc514874370f02b5c2ac"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ad402d8679325bc514874370f02b5c2ac">wcmf\lib\persistence\ObjectId\jsonSerialize</a></div><div class="ttdeci">jsonSerialize()</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00293">ObjectId.php:293</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a></div><div class="ttdoc">StringUtil provides support for string manipulation.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00018">StringUtil.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a></div><div class="ttdoc">ObjectId is the unique identifier of an object.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00028">ObjectId.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a7a333affb97cf092d50f3e59edaa9066"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a7a333affb97cf092d50f3e59edaa9066">wcmf\lib\persistence\ObjectId\getPrefix</a></div><div class="ttdeci">getPrefix()</div><div class="ttdoc">Get the prefix.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00089">ObjectId.php:89</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_af31638807853ab229091ce26c46445f5"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#af31638807853ab229091ce26c46445f5">wcmf\lib\persistence\ObjectId\getFirstId</a></div><div class="ttdeci">getFirstId()</div><div class="ttdoc">Get the first id.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00113">ObjectId.php:113</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a2441c8f369adef96455b48af3467b42f"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a2441c8f369adef96455b48af3467b42f">wcmf\lib\persistence\ObjectId\parse</a></div><div class="ttdeci">static parse($oid)</div><div class="ttdoc">Parse a serialized object id string into an ObjectId instance.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00135">ObjectId.php:135</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a4d9813fea8525b19a1d370eeb8fe41d6"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a4d9813fea8525b19a1d370eeb8fe41d6">wcmf\lib\persistence\ObjectId\serialize</a></div><div class="ttdeci">serialize()</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00281">ObjectId.php:281</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a830b5c75df72b32396701bc563fbe3c7"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a830b5c75df72b32396701bc563fbe3c7">wcmf\lib\persistence\ObjectId\getType</a></div><div class="ttdeci">getType()</div><div class="ttdoc">Get the type (including namespace)</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00097">ObjectId.php:97</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html_ac54511d3948ce6338f8a0a9b007e0edf"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">wcmf\lib\core\ObjectFactory\getInstance</a></div><div class="ttdeci">static getInstance($name, $dynamicConfiguration=[])</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00047">ObjectFactory.php:47</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html_a13ee98a6f21ffb6d275a1f3fc85b489a"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html#a13ee98a6f21ffb6d275a1f3fc85b489a">wcmf\lib\util\StringUtil\guidv4</a></div><div class="ttdeci">static guidv4()</div><div class="ttdoc">Generate a v4 UUID Code from https://stackoverflow.com/questions/2040240/php-function-to-generate-v4-...</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00433">StringUtil.php:433</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_ae5321966f3ade3b4c4ec05477a1e508e"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ae5321966f3ade3b4c4ec05477a1e508e">wcmf\lib\persistence\ObjectId\isValid</a></div><div class="ttdeci">static isValid($oid)</div><div class="ttdoc">Check if a serialized ObjectId has a valid syntax, the type is known and if the number of primary key...</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00123">ObjectId.php:123</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a3c285d2efc4791a9f41a7883c7b967be"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a3c285d2efc4791a9f41a7883c7b967be">wcmf\lib\persistence\ObjectId\__construct</a></div><div class="ttdeci">__construct($type, $id=[], $prefix=null)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00055">ObjectId.php:55</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_ad71988bbc6816f80670ab4d8e6228ec7"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ad71988bbc6816f80670ab4d8e6228ec7">wcmf\lib\persistence\ObjectId\DELIMITER</a></div><div class="ttdeci">const DELIMITER</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00030">ObjectId.php:30</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a></div><div class="ttdoc">ObjectFactory implements the service locator pattern by wrapping a Factory instance and providing sta...</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00024">ObjectFactory.php:24</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

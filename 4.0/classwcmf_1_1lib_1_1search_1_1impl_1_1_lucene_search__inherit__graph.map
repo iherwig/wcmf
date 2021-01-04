@@ -1,0 +1,4 @@
+<map id="LuceneSearch" name="LuceneSearch">
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1search_1_1_indexed_search.html" title="IndexedSearch implementations are used to search entity objects in a search index. " alt="" coords="5,160,144,296"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1search_1_1_search.html" title="Search implementations are used to search entity objects. " alt="" coords="16,5,133,112"/>
+</map>

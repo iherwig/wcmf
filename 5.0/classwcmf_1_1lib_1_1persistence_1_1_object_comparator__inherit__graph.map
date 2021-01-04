@@ -1,0 +1,4 @@
+<map id="ObjectComparator" name="ObjectComparator">
+<area shape="rect" id="node1" title="ObjectComparator is used to compare persistent objects by given criterias." alt="" coords="5,5,151,141"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1_node_comparator.html" title="NodeComparator exists for compatibility reasons only." alt="" coords="5,189,151,311"/>
+</map>

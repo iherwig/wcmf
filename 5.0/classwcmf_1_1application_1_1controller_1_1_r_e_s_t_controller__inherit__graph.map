@@ -1,0 +1,4 @@
+<map id="RESTController" name="RESTController">
+<area shape="rect" id="node1" title="RESTController handles requests sent from a dstore/Rest client." alt="" coords="5,351,229,677"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1_controller.html" title="Controller is the base class of all controllers." alt="" coords="19,5,216,303"/>
+</map>

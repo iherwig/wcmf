@@ -1,0 +1,4 @@
+<map id="FixedListStrategy" name="FixedListStrategy">
+<area shape="rect" id="node1" title="FixedListStrategy implements a constant list of key/value pairs." alt="" coords="5,145,140,237"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1presentation_1_1control_1_1lists_1_1_list_strategy.html" title="ListStrategy defines the interface for classes that retrieve value lists." alt="" coords="23,5,123,97"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="Role" name="Role">
+<area shape="rect" id="node1" title="Role is the interface for user roles." alt="" coords="20,5,127,97"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_abstract_role.html" title="Default implementation of a role." alt="" coords="5,145,141,252"/>
+</map>

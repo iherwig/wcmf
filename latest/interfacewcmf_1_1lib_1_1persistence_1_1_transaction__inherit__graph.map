@@ -1,0 +1,4 @@
+<map id="Transaction" name="Transaction">
+<area shape="rect" id="node1" title="Transaction implements the Unit of Work pattern as it defines the interface for maintaining a list of..." alt="" coords="11,5,154,200"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_transaction.html" title="Default implementation of Transaction." alt="" coords="5,248,160,692"/>
+</map>

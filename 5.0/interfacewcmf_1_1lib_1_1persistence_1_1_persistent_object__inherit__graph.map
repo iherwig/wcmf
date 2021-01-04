@@ -1,0 +1,9 @@
+<map id="PersistentObject" name="PersistentObject">
+<area shape="rect" id="node1" title="PersistentObject defines the interface of all persistent objects." alt="" coords="239,5,381,273"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html" title="DefaultPersistentObject is the base class of all persistent objects." alt="" coords="56,321,324,589"/>
+<area shape="rect" id="node7" href="$classwcmf_1_1lib_1_1persistence_1_1_persistent_object_proxy.html" title="PersistentObjectProxy is proxy for an PersistentObject instance." alt="" coords="348,329,515,582"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1model_1_1_node.html" title="Node adds the concept of relations to PersistentObject." alt="" coords="64,637,316,964"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1model_1_1_null_node.html" title="NullNode is an implementation of the NullObject pattern, It inherits all functionality from Node (act..." alt="" coords="5,1115,97,1192"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_abstract_role.html" title="Default implementation of a role." alt="" coords="122,1100,258,1207"/>
+<area shape="rect" id="node6" href="$classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_abstract_user.html" title="Default implementation of a user that is persistent." alt="" coords="283,1012,484,1295"/>
+</map>

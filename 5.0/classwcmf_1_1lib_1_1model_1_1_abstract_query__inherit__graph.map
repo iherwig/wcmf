@@ -1,0 +1,5 @@
+<map id="AbstractQuery" name="AbstractQuery">
+<area shape="rect" id="node1" title="AbstractQuery is the base class for all query classes." alt="" coords="45,5,217,200"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1_object_query.html" title="ObjectQuery implements a template based object query." alt="" coords="5,248,256,589"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1model_1_1_string_query.html" title="StringQuery executes queries from a string representation." alt="" coords="34,637,227,788"/>
+</map>

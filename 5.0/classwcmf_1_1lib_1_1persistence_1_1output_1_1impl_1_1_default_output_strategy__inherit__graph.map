@@ -1,0 +1,4 @@
+<map id="DefaultOutputStrategy" name="DefaultOutputStrategy">
+<area shape="rect" id="node1" title="DefaultOutputStrategy outputs an object&#39;s content to the Log category DefaultOutputStrategy." alt="" coords="5,160,175,281"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1persistence_1_1output_1_1_output_strategy.html" title="OutputStrategy defines the interface for classes that write an object&#39;s content to a destination (cal..." alt="" coords="27,5,153,112"/>
+</map>

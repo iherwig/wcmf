@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/presentation/impl/DefaultRequestListener.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_e6dcc5836e39dbc26e999c193dd9f2a6.html">presentation</a></li><li class="navelem"><a class="el" href="dir_2cefd509579ed852aa634fbc02f64ad0.html">impl</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">DefaultRequestListener.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1presentation_1_1impl.html">wcmf\lib\presentation\impl</a>;</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">wcmf\lib\core\EventManager</a>;</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a>;</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a>;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">wcmf\lib\presentation\ApplicationEvent</a>;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * DefaultRequestListener normalizes various search, sort and paging parameters</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * into those understood by wcmf controllers.</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html">   15</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html">DefaultRequestListener</a> {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keyword">private</span> $eventManager = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">private</span> $persistenceFacade = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">   * Constructor</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#af9158c07cfe6522a4a1e2873ef5b7a76">   23</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#af9158c07cfe6522a4a1e2873ef5b7a76">__construct</a>(<a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">EventManager</a> $eventManager, <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">PersistenceFacade</a> $persistenceFacade) {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    $this-&gt;eventManager = $eventManager;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    $this-&gt;eventManager-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html#aecafed86aa9693c261f0ecfad25d64b3">addListener</a>(<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a244352f035b82b20b0efa506167fd862">ApplicationEvent::NAME</a>, [$this, <span class="stringliteral">&#39;listen&#39;</span>]);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    $this-&gt;persistenceFacade = $persistenceFacade;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  }</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">   * Destructor</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#a421831a265621325e1fdd19aace0c758">   32</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#a421831a265621325e1fdd19aace0c758">__destruct</a>() {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    $this-&gt;eventManager-&gt;removeListener(<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a244352f035b82b20b0efa506167fd862">ApplicationEvent::NAME</a>, [$this, <span class="stringliteral">&#39;listen&#39;</span>]);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">   * Listen to ApplicationEvent</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">   * @param $event ApplicationEvent instance</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#a47965a7ea0d4f46f161b3780551560c2">   40</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#a47965a7ea0d4f46f161b3780551560c2">listen</a>(<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">ApplicationEvent</a> $event) {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">if</span> ($event-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a0e3e57f37b6c0cbd6e44db5cac28f3af">getStage</a>() == <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#afa12f250c9fb0df6ea824d32492aaf0b">ApplicationEvent::BEFORE_ROUTE_ACTION</a>) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      $request = $event-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#adf1a35ad20e475c59cc0967d5764aa22">getRequest</a>();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="keywordflow">if</span> ($request != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#aa9e708daf523f8fcd645e09b1e82fef4">transformRequest</a>($request);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span> ($event-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a0e3e57f37b6c0cbd6e44db5cac28f3af">getStage</a>() == <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#aedbe99b2e21256aadd22160ee49df417">ApplicationEvent::AFTER_EXECUTE_CONTROLLER</a>) {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      $request = $event-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#adf1a35ad20e475c59cc0967d5764aa22">getRequest</a>();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      $response = $event-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a6c907e8af775e517a77037dd0164222f">getResponse</a>();</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="keywordflow">if</span> ($request != <span class="keyword">null</span> &amp;&amp; $response != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#aeb4ab456057e0e99f2fd96c00a1f4fbc">transformResponse</a>($request, $response);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#aa9e708daf523f8fcd645e09b1e82fef4">   56</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#aa9e708daf523f8fcd645e09b1e82fef4">transformRequest</a>($request) {</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="comment">// transform range header into paging parameters</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordflow">if</span> ($request-&gt;hasHeader(<span class="stringliteral">&#39;Range&#39;</span>)) {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <span class="keywordflow">if</span> (preg_match(<span class="stringliteral">&#39;/^items=([\-]?[0-9]+)-([\-]?[0-9]+)$/&#39;</span>, $request-&gt;getHeader(<span class="stringliteral">&#39;Range&#39;</span>), $matches)) {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        $offset = intval($matches[1]);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        $limit = intval($matches[2])-$offset+1;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        $request-&gt;setValue(<span class="stringliteral">&#39;offset&#39;</span>, $offset);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        $request-&gt;setValue(<span class="stringliteral">&#39;limit&#39;</span>, $limit);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">// transform position header into reference oid parameter for sorting</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">if</span> ($request-&gt;hasHeader(<span class="stringliteral">&#39;Position&#39;</span>)) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      $position = $request-&gt;getHeader(<span class="stringliteral">&#39;Position&#39;</span>);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="keywordflow">if</span> ($position == <span class="stringliteral">&#39;last&#39;</span>) {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        $referenceOid = <span class="stringliteral">&#39;ORDER_BOTTOM&#39;</span>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        list($ignore, $orderReferenceIdStr) = preg_split(<span class="stringliteral">&#39;/ /&#39;</span>, $position);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">if</span> ($request-&gt;hasValue(<span class="stringliteral">&#39;relation&#39;</span>) &amp;&amp; $request-&gt;hasValue(<span class="stringliteral">&#39;sourceOid&#39;</span>)) {</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          <span class="comment">// sort in relation</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          $sourceOid = <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a2441c8f369adef96455b48af3467b42f">ObjectId::parse</a>($request-&gt;getValue(<span class="stringliteral">&#39;sourceOid&#39;</span>));</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;          $relatedType = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#afa427283163a0f5c65efb4ade015b52e">getRelatedType</a>($sourceOid, $request-&gt;getValue(<span class="stringliteral">&#39;relation&#39;</span>));</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          $referenceOid = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a>($relatedType, $orderReferenceIdStr);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          <span class="comment">// sort in root</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          $referenceOid = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a>($request-&gt;getValue(<span class="stringliteral">&#39;className&#39;</span>), $orderReferenceIdStr);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      $request-&gt;setValue(<span class="stringliteral">&#39;referenceOid&#39;</span>, $referenceOid);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="comment">// parse get parameters</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">foreach</span> ($request-&gt;getValues() as $key =&gt; $value) {</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      <span class="comment">// sort definition</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;      <span class="keywordflow">if</span> (preg_match(<span class="stringliteral">&#39;/^sort\(([^\)]+)\)$|sortBy=([.]+)$/&#39;</span>, $key, $matches)) {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        $sortDefs = preg_split(<span class="stringliteral">&#39;/,/&#39;</span>, $matches[1]);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="comment">// ListController allows only one sortfield</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        $sortDef = $sortDefs[0];</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        $sortFieldName = substr($sortDef, 1);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        $sortDirection = preg_match(<span class="stringliteral">&#39;/^-/&#39;</span>, $sortDef) ? <span class="stringliteral">&#39;desc&#39;</span> : <span class="stringliteral">&#39;asc&#39;</span>;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        $request-&gt;setValue(<span class="stringliteral">&#39;sortFieldName&#39;</span>, $sortFieldName);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        $request-&gt;setValue(<span class="stringliteral">&#39;sortDirection&#39;</span>, $sortDirection);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      }</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      <span class="comment">// limit</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      <span class="keywordflow">if</span> (preg_match(<span class="stringliteral">&#39;/^limit\(([^\)]+)\)$/&#39;</span>, $key, $matches)) {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        $rangeDefs = preg_split(<span class="stringliteral">&#39;/,/&#39;</span>, $matches[1]);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        $limit = intval($rangeDefs[0]);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        $offset = <span class="keyword">sizeof</span>($rangeDefs) &gt; 1 ? intval($rangeDefs[1]) : 0;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        $request-&gt;setValue(<span class="stringliteral">&#39;offset&#39;</span>, $offset);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        $request-&gt;setValue(<span class="stringliteral">&#39;limit&#39;</span>, $limit);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      }</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  }</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#aeb4ab456057e0e99f2fd96c00a1f4fbc">  112</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#aeb4ab456057e0e99f2fd96c00a1f4fbc">transformResponse</a>($request, $response) {</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="comment">// set content-range header</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">if</span> ($response-&gt;hasValue(<span class="stringliteral">&#39;list&#39;</span>)) {</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;      $objects = $response-&gt;getValue(<span class="stringliteral">&#39;list&#39;</span>);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      $size = <span class="keyword">sizeof</span>($objects);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      <span class="comment">// set response range header</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      $offset = $request-&gt;getValue(<span class="stringliteral">&#39;offset&#39;</span>);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      $limit = $size == 0 ? $offset : $offset+$size-1;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      $total = $response-&gt;getValue(<span class="stringliteral">&#39;totalCount&#39;</span>);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      $response-&gt;setHeader(<span class="stringliteral">&#39;Content-Range&#39;</span>, <span class="stringliteral">&#39;items &#39;</span>.$offset.<span class="charliteral">&#39;-&#39;</span>.$limit.<span class="charliteral">&#39;/&#39;</span>.$total);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  }</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">   * Get the type that is used in the given role related to the</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">   * given source object.</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">   * @param $sourceOid ObjectId of the source object</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">   * @param $role The role name</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#afa427283163a0f5c65efb4ade015b52e">  133</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#afa427283163a0f5c65efb4ade015b52e">getRelatedType</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $sourceOid, $role) {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    $sourceMapper = $this-&gt;persistenceFacade-&gt;getMapper($sourceOid-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>());</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    $relation = $sourceMapper-&gt;getRelation($role);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">return</span> $relation-&gt;getOtherType();</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_a6c907e8af775e517a77037dd0164222f"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a6c907e8af775e517a77037dd0164222f">wcmf\lib\presentation\ApplicationEvent\getResponse</a></div><div class="ttdeci">getResponse()</div><div class="ttdoc">Get the response.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00097">ApplicationEvent.php:97</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_aedbe99b2e21256aadd22160ee49df417"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#aedbe99b2e21256aadd22160ee49df417">wcmf\lib\presentation\ApplicationEvent\AFTER_EXECUTE_CONTROLLER</a></div><div class="ttdeci">const AFTER_EXECUTE_CONTROLLER</div><div class="ttdoc">A AFTER_EXECUTE_CONTROLLER event occurs after the current controller is executed.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00056">ApplicationEvent.php:56</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1core_1_1_event_manager_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">wcmf\lib\core\EventManager</a></div><div class="ttdoc">EventManager is responsible for dispatching events to registered listeners.</div><div class="ttdef"><b>Definition:</b> <a href="_event_manager_8php_source.html#l00021">EventManager.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener_html_aa9e708daf523f8fcd645e09b1e82fef4"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#aa9e708daf523f8fcd645e09b1e82fef4">wcmf\lib\presentation\impl\DefaultRequestListener\transformRequest</a></div><div class="ttdeci">transformRequest($request)</div><div class="ttdef"><b>Definition:</b> <a href="_default_request_listener_8php_source.html#l00056">DefaultRequestListener.php:56</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_a0e3e57f37b6c0cbd6e44db5cac28f3af"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a0e3e57f37b6c0cbd6e44db5cac28f3af">wcmf\lib\presentation\ApplicationEvent\getStage</a></div><div class="ttdeci">getStage()</div><div class="ttdoc">Get the stage at which the event occurred.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00081">ApplicationEvent.php:81</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_adf1a35ad20e475c59cc0967d5764aa22"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#adf1a35ad20e475c59cc0967d5764aa22">wcmf\lib\presentation\ApplicationEvent\getRequest</a></div><div class="ttdeci">getRequest()</div><div class="ttdoc">Get the request.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00089">ApplicationEvent.php:89</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_afa12f250c9fb0df6ea824d32492aaf0b"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#afa12f250c9fb0df6ea824d32492aaf0b">wcmf\lib\presentation\ApplicationEvent\BEFORE_ROUTE_ACTION</a></div><div class="ttdeci">const BEFORE_ROUTE_ACTION</div><div class="ttdoc">A BEFORE_ROUTE_ACTION event occurs before the request is mapped to an action key.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00038">ApplicationEvent.php:38</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_a244352f035b82b20b0efa506167fd862"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a244352f035b82b20b0efa506167fd862">wcmf\lib\presentation\ApplicationEvent\NAME</a></div><div class="ttdeci">const NAME</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00031">ApplicationEvent.php:31</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener_html_af9158c07cfe6522a4a1e2873ef5b7a76"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#af9158c07cfe6522a4a1e2873ef5b7a76">wcmf\lib\presentation\impl\DefaultRequestListener\__construct</a></div><div class="ttdeci">__construct(EventManager $eventManager, PersistenceFacade $persistenceFacade)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_default_request_listener_8php_source.html#l00023">DefaultRequestListener.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a></div><div class="ttdoc">ObjectId is the unique identifier of an object.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00028">ObjectId.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener_html_a47965a7ea0d4f46f161b3780551560c2"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#a47965a7ea0d4f46f161b3780551560c2">wcmf\lib\presentation\impl\DefaultRequestListener\listen</a></div><div class="ttdeci">listen(ApplicationEvent $event)</div><div class="ttdoc">Listen to ApplicationEvent.</div><div class="ttdef"><b>Definition:</b> <a href="_default_request_listener_8php_source.html#l00040">DefaultRequestListener.php:40</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a2441c8f369adef96455b48af3467b42f"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a2441c8f369adef96455b48af3467b42f">wcmf\lib\persistence\ObjectId\parse</a></div><div class="ttdeci">static parse($oid)</div><div class="ttdoc">Parse a serialized object id string into an ObjectId instance.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00135">ObjectId.php:135</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_facade.html">wcmf\lib\persistence\PersistenceFacade</a></div><div class="ttdoc">PersistenceFacade defines the interface for PersistenceFacade implementations.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_facade_8php_source.html#l00023">PersistenceFacade.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener_html_aeb4ab456057e0e99f2fd96c00a1f4fbc"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#aeb4ab456057e0e99f2fd96c00a1f4fbc">wcmf\lib\presentation\impl\DefaultRequestListener\transformResponse</a></div><div class="ttdeci">transformResponse($request, $response)</div><div class="ttdef"><b>Definition:</b> <a href="_default_request_listener_8php_source.html#l00112">DefaultRequestListener.php:112</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a830b5c75df72b32396701bc563fbe3c7"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a830b5c75df72b32396701bc563fbe3c7">wcmf\lib\persistence\ObjectId\getType</a></div><div class="ttdeci">getType()</div><div class="ttdoc">Get the type (including namespace)</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00097">ObjectId.php:97</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">wcmf\lib\presentation\ApplicationEvent</a></div><div class="ttdoc">ApplicationEvent instances are fired at different stages of the program flow.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00029">ApplicationEvent.php:29</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1presentation_1_1impl_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1presentation_1_1impl.html">wcmf\lib\presentation\impl</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00061">namespaces.php:61</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener_html_a421831a265621325e1fdd19aace0c758"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#a421831a265621325e1fdd19aace0c758">wcmf\lib\presentation\impl\DefaultRequestListener\__destruct</a></div><div class="ttdeci">__destruct()</div><div class="ttdoc">Destructor.</div><div class="ttdef"><b>Definition:</b> <a href="_default_request_listener_8php_source.html#l00032">DefaultRequestListener.php:32</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1core_1_1_event_manager_html_aecafed86aa9693c261f0ecfad25d64b3"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html#aecafed86aa9693c261f0ecfad25d64b3">wcmf\lib\core\EventManager\addListener</a></div><div class="ttdeci">addListener($eventName, $callback)</div><div class="ttdoc">Register a listener for a given event.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener_html_afa427283163a0f5c65efb4ade015b52e"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html#afa427283163a0f5c65efb4ade015b52e">wcmf\lib\presentation\impl\DefaultRequestListener\getRelatedType</a></div><div class="ttdeci">getRelatedType(ObjectId $sourceOid, $role)</div><div class="ttdoc">Get the type that is used in the given role related to the given source object.</div><div class="ttdef"><b>Definition:</b> <a href="_default_request_listener_8php_source.html#l00133">DefaultRequestListener.php:133</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_request_listener.html">wcmf\lib\presentation\impl\DefaultRequestListener</a></div><div class="ttdoc">DefaultRequestListener normalizes various search, sort and paging parameters into those understood by...</div><div class="ttdef"><b>Definition:</b> <a href="_default_request_listener_8php_source.html#l00015">DefaultRequestListener.php:15</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

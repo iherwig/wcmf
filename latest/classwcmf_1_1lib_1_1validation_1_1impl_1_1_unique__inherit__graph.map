@@ -1,0 +1,4 @@
+<map id="Unique" name="Unique">
+<area shape="rect" id="node1" title="Unique checks if the value is unique regarding the given entity attribute." alt="" coords="8,131,108,208"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1validation_1_1_validate_type.html" title="ValidateType defines the interface for all validator classes." alt="" coords="5,5,111,83"/>
+</map>

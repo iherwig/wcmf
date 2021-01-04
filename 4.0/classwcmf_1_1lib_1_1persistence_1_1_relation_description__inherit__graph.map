@@ -1,0 +1,5 @@
+<map id="RelationDescription" name="RelationDescription">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_many_relation_description.html" title="Instances of RDBManyToManyRelationDescription describe a many to many relation from &#39;this&#39; end to &#39;ot..." alt="" coords="5,453,244,692"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_many_to_one_relation_description.html" title="Instances of RDBManyToOneRelationDescription describe a many to one relation from &#39;this&#39; end (many) t..." alt="" coords="268,512,499,633"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_one_to_many_relation_description.html" title="Instances of RDBOneToManyRelationDescription describe a one to many relation from &#39;this&#39; end (one) to..." alt="" coords="523,512,753,633"/>
+</map>

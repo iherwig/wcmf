@@ -1,0 +1,5 @@
+<map id="NullFormat" name="NullFormat">
+<area shape="rect" id="node1" title="NullFormat transfers the original request and response objects without modifying or transforming them..." alt="" coords="17,476,179,612"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_abstract_format.html" title="AbstractFormat is used as base class for specialized formats." alt="" coords="5,204,191,428"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1presentation_1_1format_1_1_format.html" title="Format defines the interface for all format classes." alt="" coords="5,5,191,156"/>
+</map>
