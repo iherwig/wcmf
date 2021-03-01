@@ -94,6 +94,7 @@ class ListController extends Controller {
   protected function doExecute($method=null) {
     $request = $this->getRequest();
     $permissionManager = $this->getPermissionManager();
+    $persistenceFacade = $this->getPersistenceFacade();
 
     // get the query
     $query = $request->hasValue('query') ? urldecode($request->getValue('query')) : null;
@@ -110,7 +111,8 @@ class ListController extends Controller {
     $sortArray = null;
     $orderBy = $request->getValue('sortFieldName');
     if (strlen($orderBy) > 0) {
-      $sortArray = [(strpos($orderBy, '.') === false ? $className."." : "").$orderBy." ".$request->getValue('sortDirection')];
+      $mapper = $persistenceFacade->getMapper($className);
+      $sortArray = [(strpos($orderBy, '.') === false && $mapper->hasAttribute($orderBy) ? $className."." : "").$orderBy." ".$request->getValue('sortDirection')];
     }
     // get the objects
     $objects = $this->getObjects($className, $query, $sortArray, $pagingInfo);
