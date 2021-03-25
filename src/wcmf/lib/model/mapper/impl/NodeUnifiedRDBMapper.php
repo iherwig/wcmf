@@ -205,7 +205,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
           if ($movedList == null || isset($movedLookup[$orderedNode->getOID()->__toString()])) {
             // determine the sortkey and value according to the container object
             [$sortNode, $sortkey] = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
-                    PersistentObjectProxy::fromObject($orderedNode), $relationDesc);
+                    PersistentObjectProxy::fromObject($orderedNode), $defaultRelationDesc);
             $sortNode->setValue($sortkey, $uniqueSortkeyValues[$i]);
           }
         }
