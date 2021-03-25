@@ -164,45 +164,83 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
         $containerMapper = $object->getMapper();
         $orderedList = $nodeOrder['ordered'];
         $movedList = $nodeOrder['moved'];
-        $movedLookup = $movedList != null ? array_reduce($movedList, function($result, $item) {
-          $result[$item->getOID()->__toString()] = true;
-          return $result;
-        }, []) : [];
         $role = $nodeOrder['role'];
         $defaultRelationDesc = $role != null ? $containerMapper->getRelation($role) : null;
 
-        // collect sortkey values
-        $sortkeyValues = [];
-        for ($i=0, $count=sizeof($orderedList); $i<$count; $i++) {
-          $orderedNode = $orderedList[$i];
-          // check if node is repositioned
-          if ($movedList == null || isset($movedLookup[$orderedNode->getOID()->__toString()])) {
+        if ($movedList) {
+          // only handle affected nodes, if movedList is defined
+          $movedLookup = array_reduce($movedList, function($result, $item) {
+            $result[$item->getOID()->__toString()] = true;
+            return $result;
+          }, []);
+          for ($i=0, $count=sizeof($orderedList); $i<$count; $i++) {
+            $orderedNode = $orderedList[$i];
+            // check if node is repositioned
+            if ($movedList == null || isset($movedLookup[$orderedNode->getOID()->__toString()])) {
+              // determine the sortkey and value according to the container object
+              [$sortNode, $sortkey] = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
+                      PersistentObjectProxy::fromObject($orderedNode), $defaultRelationDesc);
+
+              // get previous sortkey value
+              $prevValue = null;
+              if ($i > 0) {
+                $prevNode = $orderedList[$i-1];
+                [$prevSortNode, $sortkeyPrev, $sortdirPrev] = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
+                      PersistentObjectProxy::fromObject($prevNode), $defaultRelationDesc);
+                $prevValue = $prevSortNode->getValue($sortkeyPrev);
+              }
+
+              // get next sortkey value
+              $nextValue = null;
+              if ($i < $count-1) {
+                $nextNode = $orderedList[$i+1];
+                [$nextSortNode, $sortkeyNext, $sortdirNext] = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
+                      PersistentObjectProxy::fromObject($nextNode), $defaultRelationDesc);
+                $nextValue = $nextSortNode->getValue($sortkeyNext);
+              }
+
+              // set edge values
+              if ($prevValue == null) {
+                $prevValue = ceil($sortdirNext == 'ASC' ? $nextValue-1 : $nextValue+1);
+              }
+              if ($nextValue == null) {
+                $nextValue = ceil($sortdirPrev == 'ASC' ? $prevValue+1 : $prevValue-1);
+              }
+
+              // set the sortkey value to the average
+              $sortNode->setValue($sortkey, ($nextValue+$prevValue)/2);
+            }
+          }
+        }
+        else {
+          // sort all nodes, if movedList is missing
+          // collect sortkey values
+          $sortkeyValues = [];
+          for ($i=0, $count=sizeof($orderedList); $i<$count; $i++) {
+            $orderedNode = $orderedList[$i];
             // determine the sortkey and value according to the container object
             [$sortNode, $sortkey] = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
                     PersistentObjectProxy::fromObject($orderedNode), $defaultRelationDesc);
             $sortkeyValues[] = $sortNode->getValue($sortkey);
           }
-        }
 
-        // order sortkey values and resolve duplicates
-        sort($sortkeyValues);
-        $uniqueSortkeyValues = [$sortkeyValues[0]];
-        $prevValue = $sortkeyValues[0];
-        for ($i=1, $count=sizeof($sortkeyValues); $i<$count; $i++) {
-          $curValue = $sortkeyValues[$i];
-          if ($curValue == $prevValue) {
-            $nextValue = $i>$count-1 ? $sortkeyValues[$i+1] : $curValue+1;
-            $curValue = ($prevValue+$nextValue)/2;
+          // order sortkey values and resolve duplicates
+          sort($sortkeyValues);
+          $uniqueSortkeyValues = [$sortkeyValues[0]];
+          $prevValue = $sortkeyValues[0];
+          for ($i=1, $count=sizeof($sortkeyValues); $i<$count; $i++) {
+            $curValue = $sortkeyValues[$i];
+            if ($curValue == $prevValue) {
+              $nextValue = $i>$count-1 ? $sortkeyValues[$i+1] : $curValue+1;
+              $curValue = ($prevValue+$nextValue)/2;
+            }
+            $uniqueSortkeyValues[] = $curValue;
+            $prevValue = $curValue;
           }
-          $uniqueSortkeyValues[] = $curValue;
-          $prevValue = $curValue;
-        }
 
-        // set ordered sortkey values
-        for ($i=0, $count=sizeof($orderedList); $i<$count; $i++) {
-          $orderedNode = $orderedList[$i];
-          // check if node is repositioned
-          if ($movedList == null || isset($movedLookup[$orderedNode->getOID()->__toString()])) {
+          // set ordered sortkey values
+          for ($i=0, $count=sizeof($orderedList); $i<$count; $i++) {
+            $orderedNode = $orderedList[$i];
             // determine the sortkey and value according to the container object
             [$sortNode, $sortkey] = $this->getSortableObject(PersistentObjectProxy::fromObject($object),
                     PersistentObjectProxy::fromObject($orderedNode), $defaultRelationDesc);
@@ -756,13 +794,14 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * @param PersistentObjectProxy $objectProxy
    * @param PersistentObjectProxy $relativeProxy
    * @param RelationDescription $relationDesc The relation description to use (optional)
-   * @return Array of PersistentObjectProxy and sortkey name
+   * @return Array of PersistentObjectProxy, sortkey name and sort direction
    */
   protected function getSortableObject(PersistentObjectProxy $objectProxy,
           PersistentObjectProxy $relativeProxy, RelationDescription $relationDesc=null) {
     $relationDesc = $relationDesc ?: $objectProxy->getNodeRelation($relativeProxy);
     $sortkeyDef = $relativeProxy->getMapper()->getSortkey($relationDesc->getThisRole());
     $sortkey = $sortkeyDef['sortFieldName'];
+    $sortdir = strtoupper($sortkeyDef['sortDirection']);
 
     $sortNode = $relativeProxy;
 
@@ -772,7 +811,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
         $sortNode = $nmObjects[0];
     }
 
-    return [$sortNode, $sortkey];
+    return [$sortNode, $sortkey, $sortdir];
   }
 
   /**
