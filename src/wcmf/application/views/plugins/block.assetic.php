@@ -21,6 +21,7 @@ use Assetic\Asset\StringAsset;
 use Assetic\AssetWriter;
 use Assetic\Cache\FilesystemCache;
 use Assetic\Filter\CssRewriteFilter;
+use Assetic\Filter\ScssphpFilter;
 use Minifier\MinFilter;
 
 if (!class_exists('Assetic\Asset\AssetCollection')) {
@@ -49,99 +50,141 @@ if (!class_exists('Assetic\Asset\AssetCollection')) {
  *
  * @note Works only for local files.
  *
- * @param $params Array with keys:
+ * @param array{'name': string, 'scssImportPaths': array, 'debug': bool} $params Array with keys:
  *   - name: The name of the created file (will be appended by .min.js|.min.css)
+ *   - scssImportPaths: Array of paths to add to the import paths of the scss compiler (relative to WCMF_BASE)
  *   - debug: Boolean, if true the content will be returned as is
- * @param $content
- * @param $template Smarty_Internal_Template
- * @param $repeat
- * @return String
+ * @param string $content
+ * @param Smarty_Internal_Template $template Smarty_Internal_Template
+ * @param bool $repeat
+ * @return string
  */
 function smarty_block_assetic($params, $content, Smarty_Internal_Template $template, &$repeat) {
-  if(!$repeat) {
+  if (!$repeat) {
     if (isset($content)) {
-      if ($params['debug'] == true) {
-        return $content;
+      $debug = $params['debug'];
+
+      $result = '';
+
+      // setup assetic
+      $config = ObjectFactory::getInstance('configuration');
+      $basePath = dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/';
+      $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'FrontendCache');
+      $cacheRootRel = URIUtil::makeRelative($cacheRootAbs, $basePath);
+      $filesystem = new FilesystemCache($cacheRootAbs);
+      $writer = new AssetWriter($cacheRootAbs);
+
+      $hmacKey = $config->getValue('secret', 'application');
+      $hash = hash_init('sha1', HASH_HMAC, $hmacKey);
+
+      // parse urls, caclulate hash and extract asset information
+      $assets = [];
+      $urls = StringUtil::getUrls($content);
+      foreach ($urls as $url) {
+        $parts = pathinfo($url);
+        $extension = isset($parts['extension']) ? strtolower($parts['extension']) : '';
+        $min = preg_match('/\.min$/', $parts['filename']);
+        $type = $extension;
+        $assets[$url] = [
+          'type' => $type,
+          'name' => $parts['filename'],
+          'shape' => $min ? 'min' : 'src',
+          'targetType' => $type == 'scss' ? 'css' : $type,
+        ];
+        $content = file_exists($url) ? strval(file_get_contents($url)) : '';
+        hash_update($hash, $content);
       }
-      else {
-        $result = '';
+      $hash = substr(hash_final($hash), 0, 7);
 
-        // parse urls and group resources by extension and minified state
-        $resources = [];
-        $urls = StringUtil::getUrls($content);
-        foreach ($urls as $url) {
-          $parts = pathinfo($url);
-          $extension = strtolower($parts['extension']);
-          $min = preg_match('/\.min$/', $parts['filename']);
-          if (!isset($resources[$extension])) {
-            $resources[$extension] = ['min' => [], 'src' => []];
+      // setup asset filters
+      $scssFilter = new ScssphpFilter();
+      $scssImportPaths = isset($params['scssImportPaths']) ? $params['scssImportPaths'] : [];
+      foreach ($scssImportPaths as $importPath) {
+        $scssFilter->addImportPath(FileUtil::realpath(WCMF_BASE.$importPath));
+      }
+
+      $filters = [
+        'js' => [
+          'dbg' => [],
+          'src' => [new MinFilter('js')],
+          'min' => [],
+        ],
+        'css' => [
+          'dbg' => [],
+          'src' => [new CssRewriteFilter(), new MinFilter('css')],
+          'min' => [new CssRewriteFilter()],
+        ],
+        'scss' => [
+          'dbg' => [$scssFilter, new CssRewriteFilter()],
+          'src' => [$scssFilter, new CssRewriteFilter(), new MinFilter('css')],
+          'min' => [],
+        ],
+      ];
+
+      // setup cache locations
+      $combinedCacheFileBase = (isset($params['name']) ? $params['name'].'-' : '').$hash.'.min';
+      $combinedCacheFiles = [
+        'js' => $combinedCacheFileBase.'.js',
+        'css' => $combinedCacheFileBase.'.css',
+      ];
+
+      // process assets
+      $minAssets = ['js' => [], 'css' => []];
+      foreach ($assets as $url => $assetInfo) {
+        $type = $assetInfo['type'];
+        $curFilters = $filters[$type][$debug ? 'dbg' : $assetInfo['shape']];
+        if ($debug) {
+          // return assets as is, only compile scss
+          switch ($assetInfo['type']) {
+            case 'js':
+              $result .= '<script src="'.$url.'"></script>';
+              break;
+            case 'css':
+              $result .= '<link rel="stylesheet" href="'.$url.'">';
+              break;
+            case 'scss':
+              $cacheFile = $assetInfo['name'].'.css';
+              $cachePath = $cacheRootRel.$cacheFile;
+
+              $asset = new FileAsset($url, $curFilters, '', $url);
+              $asset->setTargetPath($cachePath);
+
+              $cache = new AssetCache(new StringAsset($asset->dump()), $filesystem);
+              $cache->setTargetPath($cacheFile);
+              $writer->writeAsset($cache);
+              $result .= '<link rel="stylesheet" href="'.$cachePath.'">';
+              break;
           }
-          $resources[$extension][$min ? 'min' : 'src'][] = $url;
         }
+        else {
+          // minify and combine assets
+          $asset = new FileAsset($url, $curFilters, '', $url);
+          $asset->setTargetPath($cacheRootRel.$combinedCacheFiles[$type]);
+          $minAssets[$assetInfo['targetType']][] = new StringAsset($asset->dump());
+        }
+      }
 
-        // setup assetic
-        $config = ObjectFactory::getInstance('configuration');
-        $basePath = dirname(FileUtil::realpath($_SERVER['SCRIPT_FILENAME'])).'/';
-        $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'FrontendCache');
-        $cacheRootRel = URIUtil::makeRelative($cacheRootAbs, $basePath);
-        $hmacKey = $config->getValue('secret', 'application');
-
-        // process resources
-        foreach ($resources as $type => $files) {
-          $filesystem = new FilesystemCache($cacheRootAbs);
-          $writer = new AssetWriter($cacheRootAbs);
-
-          // hash content for cache busting
-          $hash = hash_init('sha1', HASH_HMAC, $hmacKey);
-          foreach (array_merge($files['min'], $files['src']) as $file) {
-            $content = file_exists($file) ? file_get_contents($file) : '';
-            hash_update($hash, $content);
-          }
-          $hash = substr(hash_final($hash), 0, 7);
-
-          $cacheFile = (isset($params['name']) ? $params['name'] : '').'-'.$hash.'.min.'.$type;
-          $cachePathRel = $cacheRootRel.$cacheFile;
-
-          // create filters
-          $filters = [];
-          if ($type == 'css') {
-            $filters[] = new CssRewriteFilter();
-          }
-          $minFilters = array_merge($filters, [new MinFilter($type)]);
-
-          // create string assets from files (sourcePath and targetPath must be
-          // set correctly in order to make CssRewriteFilter work)
-          $minAssets = [];
-          foreach ($files['min'] as $file) {
-             $asset = new FileAsset($file, $filters, '', $file);
-             $asset->setTargetPath($cachePathRel);
-             $minAssets[] = new StringAsset($asset->dump());
-          }
-          foreach ($files['src'] as $file) {
-             $asset = new FileAsset($file, $minFilters, '', $file);
-             $asset->setTargetPath($cachePathRel);
-             $minAssets[] = new StringAsset($asset->dump());
-          }
-
-          // write collected assets into cached file
-          $minCollection = new AssetCollection($minAssets);
+      // write combined assets into cached file
+      \wcmf\lib\core\LogManager::getLogger('assetic')->error($minAssets);
+      foreach ($minAssets as $type => $assets) {
+        if (count($assets) > 0) {
+          $minCollection = new AssetCollection($assets);
           $cache = new AssetCache($minCollection, $filesystem);
-          $cache->setTargetPath($cacheFile);
+          $cache->setTargetPath($combinedCacheFiles[$type]);
           $writer->writeAsset($cache);
 
           // create html tag
           switch ($type) {
             case 'js':
-              $tag = '<script src="'.$cachePathRel.'"></script>';
+              $result .= '<script src="'.$cacheRootRel.$combinedCacheFiles[$type].'"></script>';
               break;
             case 'css':
-              $tag = '<link rel="stylesheet" href="'.$cachePathRel.'">';
+              $result .= '<link rel="stylesheet" href="'.$cacheRootRel.$combinedCacheFiles[$type].'">';
               break;
           }
-          $result .= $tag;
         }
-        return $result;
       }
+      return $result;
     }
   }
 }
