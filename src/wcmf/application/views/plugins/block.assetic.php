@@ -98,10 +98,14 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
 
       // setup asset filters
       $scssFilter = new ScssphpFilter();
+      $scssMinFilter = new ScssphpFilter();
       $scssImportPaths = isset($params['scssImportPaths']) ? $params['scssImportPaths'] : [];
       foreach ($scssImportPaths as $importPath) {
         $scssFilter->addImportPath(FileUtil::realpath(WCMF_BASE.$importPath));
+        $scssMinFilter->addImportPath(FileUtil::realpath(WCMF_BASE.$importPath));
       }
+      $scssFilter->setFormatter(new Leafo\ScssPhp\Formatter\Expanded());
+      $scssMinFilter->setFormatter(new Leafo\ScssPhp\Formatter\Compressed());
 
       $filters = [
         'js' => [
@@ -115,8 +119,8 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
           'min' => [new CssRewriteFilter()],
         ],
         'scss' => [
-          'dbg' => [$scssFilter, new CssRewriteFilter()],
-          'src' => [$scssFilter, new CssRewriteFilter(), new MinFilter('css')],
+          'dbg' => [$scssFilter],
+          'src' => [$scssMinFilter],
           'min' => [],
         ],
       ];
@@ -165,7 +169,6 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
       }
 
       // write combined assets into cached file
-      \wcmf\lib\core\LogManager::getLogger('assetic')->error($minAssets);
       foreach ($minAssets as $type => $assets) {
         if (count($assets) > 0) {
           $minCollection = new AssetCollection($assets);
