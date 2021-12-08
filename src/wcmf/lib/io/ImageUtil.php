@@ -33,8 +33,7 @@ class ImageUtil {
   private static $scriptDirAbs = null;
 
   /**
-   * Create an HTML image tag using srcset and sizes attributes. The original image is supposed
-   * to be located inside the upload directory of the application (_Media_ configuration section).
+   * Create an HTML image tag using srcset and sizes attributes.
    * The image locations in the srcset attribute will point to the frontend cache directory
    * (_FrontendCache_ configuration section).
    * @param $imageFile The image file location relative to the upload directory
@@ -278,9 +277,8 @@ class ImageUtil {
    * @return String
    */
   private static function getMediaRootRelative() {
-    $config = ObjectFactory::getInstance('configuration');
-    $mediaRootAbs = $config->getDirectoryValue('uploadDir', 'Media');
-    return self::makeRelative($mediaRootAbs);
+    // images are located in the same or subdirectory of the directory of the executed script
+    return '';
   }
 
   /**
