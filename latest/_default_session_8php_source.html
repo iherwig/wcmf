@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/core/impl/DefaultSession.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_27e0aca795cb26c429bbcf7cf843ca0a.html">core</a></li><li class="navelem"><a class="el" href="dir_c75659576181487672817f13476fb1cb.html">impl</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">DefaultSession.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1core_1_1impl.html">wcmf\lib\core\impl</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">wcmf\lib\config\Configuration</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_session.html">wcmf\lib\core\Session</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html">wcmf\lib\security\principal\impl\AnonymousUser</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1util_1_1_u_r_i_util.html">wcmf\lib\util\URIUtil</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * DefaultSession uses the default PHP session implementation:</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * - server side storage</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * - session id sent as a cookie to the client</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html">   26</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html">DefaultSession</a> <span class="keyword">implements</span> <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_session.html">Session</a> {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#adab73328747ad0ee9695df14bd0e384c">   28</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#adab73328747ad0ee9695df14bd0e384c">AUTH_USER_NAME</a> = <span class="stringliteral">&#39;auth_user&#39;</span>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keyword">private</span> $cookiePrefix = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">   * Constructor</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">   * @param $configuration</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a9a81f1364d5d70f4d03a219f3edeac3d">   36</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a9a81f1364d5d70f4d03a219f3edeac3d">__construct</a>(<a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">Configuration</a> $configuration) {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">// NOTE: prevent &quot;headers already sent&quot; errors in phpunit tests</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">if</span> (!headers_sent()) {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      <span class="comment">// session configuration</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      ini_set(<span class="stringliteral">&#39;session.cookie_lifetime&#39;</span>, 0);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      ini_set(<span class="stringliteral">&#39;session.use_cookies&#39;</span>, 1);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      ini_set(<span class="stringliteral">&#39;session.use_only_cookies&#39;</span>, 1);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      ini_set(<span class="stringliteral">&#39;session.use_strict_mode&#39;</span>, 1);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      ini_set(<span class="stringliteral">&#39;session.cookie_httponly&#39;</span>, 1);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      ini_set(<span class="stringliteral">&#39;session.cookie_secure&#39;</span>, (<a class="code" href="classwcmf_1_1lib_1_1util_1_1_u_r_i_util.html#a3f99f4be54023ce4c8011f961a929179">URIUtil::isHttps</a>() ? 1 : 0));</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      ini_set(<span class="stringliteral">&#39;session.use_trans_sid&#39;</span>, 0);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      ini_set(<span class="stringliteral">&#39;session.cache_limiter&#39;</span>, <span class="stringliteral">&#39;nocache&#39;</span>);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      ini_set(<span class="stringliteral">&#39;session.hash_function&#39;</span>, 1);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">if</span> (in_array(<span class="stringliteral">&#39;sha256&#39;</span>, hash_algos())) {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        ini_set(<span class="stringliteral">&#39;session.hash_function&#39;</span>, <span class="stringliteral">&#39;sha256&#39;</span>);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      $this-&gt;cookiePrefix = strtolower(<a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html#ac47c15e74388dc0b45c395ded21ebaab">StringUtil::slug</a>($configuration-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html#ade8987dcf8041a3c7724604177be53bd">getValue</a>(<span class="stringliteral">&#39;title&#39;</span>, <span class="stringliteral">&#39;application&#39;</span>)));</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      session_name($this-&gt;getCookieName());</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a421831a265621325e1fdd19aace0c758">   58</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a421831a265621325e1fdd19aace0c758">__destruct</a>() {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    session_write_close();</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * @see Session::isStarted()</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a1ffe0e26cd53b764f58c5bbed489c278">   65</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a1ffe0e26cd53b764f58c5bbed489c278">isStarted</a>() {</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">return</span> isset($_COOKIE[$this-&gt;getCookieName()]);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  }</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * @see Session::getID()</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a30dd7fff4fec7a39f9be9d27d4b22a59">   72</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a30dd7fff4fec7a39f9be9d27d4b22a59">getID</a>() {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordflow">return</span> session_id();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">   * @see Session::get()</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a499d39d1876a05b20e1ca8e8a1c2b466">   79</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <span class="keyword">get</span>($key, $default=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    $this-&gt;start();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    $value = $default;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">if</span> (isset($_SESSION[$key])) {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      $value = $_SESSION[$key];</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">return</span> $value;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">   * @see Session::set()</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aab787bd83f84f4215dceb35f7c305eee">   91</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <span class="keyword">set</span>($key, $value) {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    $this-&gt;start();</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    $_SESSION[$key] = $value;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   * @see Session::remove()</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a95483af4e2c07dc9893fe058b026bd5d">   99</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <span class="keyword">remove</span>($key) {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    $this-&gt;start();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    unset($_SESSION[$key]);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  }</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">   * @see Session::exist()</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#ae5c48a5e6b4931e5a57f81be51de6ea2">  107</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#ae5c48a5e6b4931e5a57f81be51de6ea2">exist</a>($key) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    $this-&gt;start();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    $result = isset($_SESSION[$key]);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">return</span> $result;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   * @see Session::clear()</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aa821bec12eaa7e0f649397c9675ff505">  116</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aa821bec12eaa7e0f649397c9675ff505">clear</a>() {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    $this-&gt;start();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    $_SESSION = [];</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  }</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * @see Session::destroy()</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aa118461de946085fe42989193337044a">  124</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aa118461de946085fe42989193337044a">destroy</a>() {</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    $this-&gt;start();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    $_SESSION = [];</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    @session_destroy();</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * @see Session::setAuthUser()</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aaef73f42e89ca88b82bbbabb8688c9a4">  133</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aaef73f42e89ca88b82bbbabb8688c9a4">setAuthUser</a>($login) {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    $this-&gt;<span class="keyword">set</span>(<a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#adab73328747ad0ee9695df14bd0e384c">self::AUTH_USER_NAME</a>, $login);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="comment">// NOTE: prevent &quot;headers already sent&quot; errors in phpunit tests</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">if</span> (session_status() === PHP_SESSION_ACTIVE &amp;&amp; !headers_sent()) {</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;      session_regenerate_id(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    }</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   * @see Session::getAuthUser()</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a687dba7af92a5d45f6363b17fe941ff7">  144</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a687dba7af92a5d45f6363b17fe941ff7">getAuthUser</a>() {</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    $login = <a class="code" href="classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html#ab9e8cd5c2d042df93eb00fad37997ff6">AnonymousUser::USER_GROUP_NAME</a>;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="comment">// check for auth user in session</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#ae5c48a5e6b4931e5a57f81be51de6ea2">exist</a>(self::AUTH_USER_NAME)) {</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;      $login = $this-&gt;<span class="keyword">get</span>(<a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#adab73328747ad0ee9695df14bd0e384c">self::AUTH_USER_NAME</a>);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    }</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordflow">return</span> $login;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  }</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment">   * Start the session, if it is not started already</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <span class="keyword">private</span> <span class="keyword">function</span> start() {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordflow">if</span> (session_status() == PHP_SESSION_NONE) {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;      <span class="comment">// NOTE: prevent &quot;headers already sent&quot; errors in phpunit tests</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      <span class="keywordflow">if</span> (!headers_sent()) {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        session_start();</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;      }</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">   * Get the cookie prefix</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a99225dc2c9cffcb1461ac3ed402c4cef">  169</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a99225dc2c9cffcb1461ac3ed402c4cef">getCookiePrefix</a>() {</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordflow">return</span> $this-&gt;cookiePrefix;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  }</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">   * Get the cookie name</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  <span class="keyword">private</span> <span class="keyword">function</span> getCookieName() {</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordflow">return</span> $this-&gt;cookiePrefix.<span class="stringliteral">&#39;-session&#39;</span>;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  }</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;}</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_a9a81f1364d5d70f4d03a219f3edeac3d"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a9a81f1364d5d70f4d03a219f3edeac3d">wcmf\lib\core\impl\DefaultSession\__construct</a></div><div class="ttdeci">__construct(Configuration $configuration)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00036">DefaultSession.php:36</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1core_1_1_session_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1core_1_1_session.html">wcmf\lib\core\Session</a></div><div class="ttdoc">Session is the interface for session implementations and defines access to session variables.</div><div class="ttdef"><b>Definition:</b> <a href="_session_8php_source.html#l00019">Session.php:19</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1core_1_1impl_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1core_1_1impl.html">wcmf\lib\core\impl</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00013">namespaces.php:13</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_a1ffe0e26cd53b764f58c5bbed489c278"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a1ffe0e26cd53b764f58c5bbed489c278">wcmf\lib\core\impl\DefaultSession\isStarted</a></div><div class="ttdeci">isStarted()</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00065">DefaultSession.php:65</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_aa118461de946085fe42989193337044a"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aa118461de946085fe42989193337044a">wcmf\lib\core\impl\DefaultSession\destroy</a></div><div class="ttdeci">destroy()</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00124">DefaultSession.php:124</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_a99225dc2c9cffcb1461ac3ed402c4cef"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a99225dc2c9cffcb1461ac3ed402c4cef">wcmf\lib\core\impl\DefaultSession\getCookiePrefix</a></div><div class="ttdeci">getCookiePrefix()</div><div class="ttdoc">Get the cookie prefix.</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00169">DefaultSession.php:169</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_a421831a265621325e1fdd19aace0c758"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a421831a265621325e1fdd19aace0c758">wcmf\lib\core\impl\DefaultSession\__destruct</a></div><div class="ttdeci">__destruct()</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00058">DefaultSession.php:58</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a></div><div class="ttdoc">StringUtil provides support for string manipulation.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00018">StringUtil.php:18</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1config_1_1_configuration_html_ade8987dcf8041a3c7724604177be53bd"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html#ade8987dcf8041a3c7724604177be53bd">wcmf\lib\config\Configuration\getValue</a></div><div class="ttdeci">getValue($key, $section)</div><div class="ttdoc">Get a configuration value.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1config_1_1_configuration_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">wcmf\lib\config\Configuration</a></div><div class="ttdoc">Implementations of Configuration give access to the application configuration.</div><div class="ttdef"><b>Definition:</b> <a href="_configuration_8php_source.html#l00032">Configuration.php:32</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_aaef73f42e89ca88b82bbbabb8688c9a4"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aaef73f42e89ca88b82bbbabb8688c9a4">wcmf\lib\core\impl\DefaultSession\setAuthUser</a></div><div class="ttdeci">setAuthUser($login)</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00133">DefaultSession.php:133</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html">wcmf\lib\security\principal\impl\AnonymousUser</a></div><div class="ttdoc">Anonymous user.</div><div class="ttdef"><b>Definition:</b> <a href="_anonymous_user_8php_source.html#l00020">AnonymousUser.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_ae5c48a5e6b4931e5a57f81be51de6ea2"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#ae5c48a5e6b4931e5a57f81be51de6ea2">wcmf\lib\core\impl\DefaultSession\exist</a></div><div class="ttdeci">exist($key)</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00107">DefaultSession.php:107</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html_ac47c15e74388dc0b45c395ded21ebaab"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html#ac47c15e74388dc0b45c395ded21ebaab">wcmf\lib\util\StringUtil\slug</a></div><div class="ttdeci">static slug($string)</div><div class="ttdoc">Converts all accent characters to ASCII characters.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00419">StringUtil.php:419</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_u_r_i_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_u_r_i_util.html">wcmf\lib\util\URIUtil</a></div><div class="ttdoc">URIUtil provides support for uri manipulation.</div><div class="ttdef"><b>Definition:</b> <a href="_u_r_i_util_8php_source.html#l00018">URIUtil.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_adab73328747ad0ee9695df14bd0e384c"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#adab73328747ad0ee9695df14bd0e384c">wcmf\lib\core\impl\DefaultSession\AUTH_USER_NAME</a></div><div class="ttdeci">const AUTH_USER_NAME</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00028">DefaultSession.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user_html_ab9e8cd5c2d042df93eb00fad37997ff6"><div class="ttname"><a href="classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html#ab9e8cd5c2d042df93eb00fad37997ff6">wcmf\lib\security\principal\impl\AnonymousUser\USER_GROUP_NAME</a></div><div class="ttdeci">const USER_GROUP_NAME</div><div class="ttdef"><b>Definition:</b> <a href="_anonymous_user_8php_source.html#l00022">AnonymousUser.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_a687dba7af92a5d45f6363b17fe941ff7"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a687dba7af92a5d45f6363b17fe941ff7">wcmf\lib\core\impl\DefaultSession\getAuthUser</a></div><div class="ttdeci">getAuthUser()</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00144">DefaultSession.php:144</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_a30dd7fff4fec7a39f9be9d27d4b22a59"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#a30dd7fff4fec7a39f9be9d27d4b22a59">wcmf\lib\core\impl\DefaultSession\getID</a></div><div class="ttdeci">getID()</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00072">DefaultSession.php:72</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html_aa821bec12eaa7e0f649397c9675ff505"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html#aa821bec12eaa7e0f649397c9675ff505">wcmf\lib\core\impl\DefaultSession\clear</a></div><div class="ttdeci">clear()</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00116">DefaultSession.php:116</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1impl_1_1_default_session_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1impl_1_1_default_session.html">wcmf\lib\core\impl\DefaultSession</a></div><div class="ttdoc">DefaultSession uses the default PHP session implementation:</div><div class="ttdef"><b>Definition:</b> <a href="_default_session_8php_source.html#l00026">DefaultSession.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_u_r_i_util_html_a3f99f4be54023ce4c8011f961a929179"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_u_r_i_util.html#a3f99f4be54023ce4c8011f961a929179">wcmf\lib\util\URIUtil\isHttps</a></div><div class="ttdeci">static isHttps()</div><div class="ttdef"><b>Definition:</b> <a href="_u_r_i_util_8php_source.html#l00155">URIUtil.php:155</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:26 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

@@ -1,0 +1,7 @@
+<map id="AbstractPermissionManager" name="AbstractPermissionManager">
+<area shape="rect" id="node1" title="AbstractPermissionManager is the base class for concrete PermissionManager implementations." alt="" coords="216,277,455,707"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_chained_permission_manager.html" title="ChainedPermissionManager retrieves authorization rules included managers." alt="" coords="5,784,209,920"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_default_permission_manager.html" title="DefaultPermissionManager retrieves authorization rules the storage." alt="" coords="234,755,437,949"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_static_permission_manager.html" title="StaticPermissionManager retrieves authorization rules from the application configuration." alt="" coords="461,769,671,935"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1security_1_1_permission_manager.html" title="PermissionManager implementations are used to handle all authorization requests." alt="" coords="219,5,452,229"/>
+</map>

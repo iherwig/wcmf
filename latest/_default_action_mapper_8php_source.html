@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/presentation/impl/DefaultActionMapper.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_e6dcc5836e39dbc26e999c193dd9f2a6.html">presentation</a></li><li class="navelem"><a class="el" href="dir_2cefd509579ed852aa634fbc02f64ad0.html">impl</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">DefaultActionMapper.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1presentation_1_1impl.html">wcmf\lib\presentation\impl</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1config_1_1_action_key.html">wcmf\lib\config\ActionKey</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">wcmf\lib\config\Configuration</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_config_action_key_provider.html">wcmf\lib\config\impl\ConfigActionKeyProvider</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">wcmf\lib\core\EventManager</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_session.html">wcmf\lib\core\Session</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_action_mapper.html">wcmf\lib\presentation\ActionMapper</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_error.html">wcmf\lib\presentation\ApplicationError</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">wcmf\lib\presentation\ApplicationEvent</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_exception.html">wcmf\lib\presentation\ApplicationException</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1format_1_1_formatter.html">wcmf\lib\presentation\format\Formatter</a>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html">wcmf\lib\presentation\Request</a>;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_response.html">wcmf\lib\presentation\Response</a>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1security_1_1_permission_manager.html">wcmf\lib\security\PermissionManager</a>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html">wcmf\lib\security\principal\impl\AnonymousUser</a>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> * Default ActionMapper implementation.</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html">   35</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html">DefaultActionMapper</a> <span class="keyword">implements</span> <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_action_mapper.html">ActionMapper</a> {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $logger = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">private</span> $session = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">private</span> $permissionManager = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">private</span> $eventManager = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">private</span> $formatter = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">private</span> $configuration = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">private</span> $isFinished = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   * Constructor</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">   * @param $session</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">   * @param $permissionManager</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">   * @param $eventManager</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * @param $formatter</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * @param $configuration</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html#a9baef91e8cb71fba74946ece947f8134">   54</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html#a9baef91e8cb71fba74946ece947f8134">__construct</a>(<a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_session.html">Session</a> $session,</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;          <a class="code" href="interfacewcmf_1_1lib_1_1security_1_1_permission_manager.html">PermissionManager</a> $permissionManager,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          <a class="code" href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">EventManager</a> $eventManager,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1format_1_1_formatter.html">Formatter</a> $formatter,</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;          <a class="code" href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">Configuration</a> $configuration) {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">if</span> (self::$logger == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      self::$logger = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">LogManager::getLogger</a>(__CLASS__);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    $this-&gt;session = $session;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    $this-&gt;permissionManager = $permissionManager;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    $this-&gt;eventManager = $eventManager;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    $this-&gt;formatter = $formatter;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    $this-&gt;configuration = $configuration;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  }</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">   * @see ActionMapper::processAction()</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html#a4d68a33b0d9c6e61bf901380282e38ca">   72</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html#a4d68a33b0d9c6e61bf901380282e38ca">processAction</a>(<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html">Request</a> $request, <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_response.html">Response</a> $response) {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    $isDebugEnabled = self::$logger-&gt;isDebugEnabled();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    $this-&gt;eventManager-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a244352f035b82b20b0efa506167fd862">ApplicationEvent::NAME</a>, <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">ApplicationEvent</a>(</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#afa12f250c9fb0df6ea824d32492aaf0b">ApplicationEvent::BEFORE_ROUTE_ACTION</a>, $request));</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    $actionKeyProvider = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1config_1_1impl_1_1_config_action_key_provider.html">ConfigActionKeyProvider</a>($this-&gt;configuration, <span class="stringliteral">&#39;actionmapping&#39;</span>);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    $referrer = $request-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a448557d1caa590a39b8a6ec144b59d94">getSender</a>();</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    $context = $request-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a51609a8c7faaf9948679e3a291ba4733">getContext</a>();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    $action = $request-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a189a4abe5faf11f4320d5d3f1d3d1715">getAction</a>();</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    $response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#ac7649262e730e1de9adea658b485ac1a">setSender</a>($referrer);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    $response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a313783d5477383dd99a2f3785705aaf4">setContext</a>($context);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    $response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a0366b3b0db0bd90abfc461c372f86599">setAction</a>($action);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    $response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#ab5466edec684cb74af2924c02a950c3c">setFormat</a>($request-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html#aae97bd0eb9148fbc922ee5f0a5ee23e0">getResponseFormat</a>());</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="comment">// check authorization for controller/context/action triple</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">if</span> (!$this-&gt;permissionManager-&gt;authorize($referrer, $context, $action)) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      $authUserLogin = $this-&gt;session-&gt;getAuthUser();</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      <span class="keywordflow">if</span> ($authUserLogin == <a class="code" href="classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html#ab9e8cd5c2d042df93eb00fad37997ff6">AnonymousUser::USER_GROUP_NAME</a>) {</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Session invalid. The request was: &quot;</span>.$request-&gt;__toString());</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_exception.html">ApplicationException</a>($request, $response, <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_error.html#a7b6de2953b070910660cee9f229bc554">ApplicationError::get</a>(<span class="stringliteral">&#39;SESSION_INVALID&#39;</span>));</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      }</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Authorization failed for &#39;&quot;</span>.$referrer.<span class="charliteral">&#39;?&#39;</span>.$context.<span class="charliteral">&#39;?&#39;</span>.$action.<span class="stringliteral">&quot;&#39; user &#39;&quot;</span>.$authUserLogin.<span class="stringliteral">&quot;&#39;&quot;</span>);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_exception.html">ApplicationException</a>($request, $response, <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_error.html#a7b6de2953b070910660cee9f229bc554">ApplicationError::get</a>(<span class="stringliteral">&#39;PERMISSION_DENIED&#39;</span>));</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      }</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="comment">// get best matching action key from inifile</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    $actionKey = <a class="code" href="classwcmf_1_1lib_1_1config_1_1_action_key.html#a2207aa22c775177bfb7947b342f4312a">ActionKey::getBestMatch</a>($actionKeyProvider, $referrer, $context, $action);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordflow">if</span> ($isDebugEnabled) {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      self::$logger-&gt;debug($referrer.<span class="stringliteral">&quot;?&quot;</span>.$context.<span class="stringliteral">&quot;?&quot;</span>.$action.<span class="stringliteral">&#39; -&gt; &#39;</span>.$actionKey);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    }</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">if</span> (strlen($actionKey) == 0) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <span class="comment">// return, if action key is not defined</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    }</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="comment">// get next controller</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    $controllerClass = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    $controllerDef = $this-&gt;configuration-&gt;getValue($actionKey, <span class="stringliteral">&#39;actionmapping&#39;</span>);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordflow">if</span> (strlen($controllerDef) == 0) {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      self::$logger-&gt;error(<span class="stringliteral">&quot;No controller found for best action key &quot;</span>.$actionKey.</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;              <span class="stringliteral">&quot;. Request was $referrer?$context?$action&quot;</span>);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_exception.html">ApplicationException</a>($request, $response, <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_error.html#a7b6de2953b070910660cee9f229bc554">ApplicationError::get</a>(<span class="stringliteral">&#39;ACTION_INVALID&#39;</span>));</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="comment">// check if the controller definition contains a method besides the class name</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    $controllerMethod = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordflow">if</span> (strpos($controllerDef, <span class="stringliteral">&#39;::&#39;</span>) !== <span class="keyword">false</span>) {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      list($controllerClass, $controllerMethod) = explode(<span class="stringliteral">&#39;::&#39;</span>, $controllerDef);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      $controllerClass = $controllerDef;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="comment">// instantiate controller</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    $controllerObj = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#a20d4a92df252998417af9572fb5e8ce1">ObjectFactory::getInstanceOf</a>($controllerClass);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="comment">// everything is right in place, start processing</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">if</span> ($isDebugEnabled) {</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Request: &quot;</span>.$request-&gt;__toString());</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    }</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    $this-&gt;formatter-&gt;deserialize($request);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="comment">// initialize controller</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordflow">if</span> ($isDebugEnabled) {</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Execute &quot;</span>.$controllerClass.<span class="stringliteral">&quot; with request: &quot;</span>.$request-&gt;__toString());</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    $this-&gt;eventManager-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a244352f035b82b20b0efa506167fd862">ApplicationEvent::NAME</a>, <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">ApplicationEvent</a>(</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a5cbb3433a5a4668810e9278cbd452329">ApplicationEvent::BEFORE_INITIALIZE_CONTROLLER</a>, $request, $response, $controllerObj));</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    $controllerObj-&gt;initialize($request, $response);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="comment">// execute controller</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    $this-&gt;eventManager-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a244352f035b82b20b0efa506167fd862">ApplicationEvent::NAME</a>, <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">ApplicationEvent</a>(</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a30945e9242bd00205411066022ce5c3e">ApplicationEvent::BEFORE_EXECUTE_CONTROLLER</a>, $request, $response, $controllerObj));</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    $controllerObj-&gt;execute($controllerMethod);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    $this-&gt;eventManager-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a244352f035b82b20b0efa506167fd862">ApplicationEvent::NAME</a>, <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">ApplicationEvent</a>(</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#aedbe99b2e21256aadd22160ee49df417">ApplicationEvent::AFTER_EXECUTE_CONTROLLER</a>, $request, $response, $controllerObj));</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="comment">// return if we are finished</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;isFinished) {</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      $this-&gt;formatter-&gt;serialize($response);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    }</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="comment">// check if an action key exists for the return action</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    $nextActionKey = <a class="code" href="classwcmf_1_1lib_1_1config_1_1_action_key.html#a2207aa22c775177bfb7947b342f4312a">ActionKey::getBestMatch</a>($actionKeyProvider, $controllerClass,</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            $response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a51609a8c7faaf9948679e3a291ba4733">getContext</a>(), $response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a189a4abe5faf11f4320d5d3f1d3d1715">getAction</a>());</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordflow">if</span> ($isDebugEnabled) {</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Next action key: &quot;</span>.$nextActionKey);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    }</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="comment">// terminate</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="comment">// - if there is no next action key or</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="comment">// - if the next action key is the same as the previous one (to prevent recursion)</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    $terminate = strlen($nextActionKey) == 0 || $actionKey == $nextActionKey;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordflow">if</span> ($terminate) {</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;      <span class="keywordflow">if</span> ($isDebugEnabled) {</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        self::$logger-&gt;debug(<span class="stringliteral">&quot;Terminating with response format: &quot;</span>.$response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#ae3c4fbe3e8eb0d6755694bc597d6c52f">getFormat</a>());</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      }</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;      <span class="comment">// stop processing</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      $this-&gt;formatter-&gt;serialize($response);</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;      $this-&gt;isFinished = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    }</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="comment">// proceed with next action key</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordflow">if</span> ($isDebugEnabled) {</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Processing next action&quot;</span>);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    }</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="comment">// set the request based on the result</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    $nextRequest = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#a79bba893d20f9f26f851f6a227aac57d">ObjectFactory::getNewInstance</a>(<span class="stringliteral">&#39;request&#39;</span>);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    $nextRequest-&gt;setSender($controllerClass);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    $nextRequest-&gt;setContext($response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a51609a8c7faaf9948679e3a291ba4733">getContext</a>());</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    $nextRequest-&gt;setAction($response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a189a4abe5faf11f4320d5d3f1d3d1715">getAction</a>());</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    $nextRequest-&gt;setFormat($response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#ae3c4fbe3e8eb0d6755694bc597d6c52f">getFormat</a>());</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    $nextRequest-&gt;setValues($response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a70a0fe08035189260c72e32a9e20d30c">getValues</a>());</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    $nextRequest-&gt;setErrors($response-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a6e548ebf2656742bfd19939ead923ed2">getErrors</a>());</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    $nextRequest-&gt;setResponseFormat($request-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html#aae97bd0eb9148fbc922ee5f0a5ee23e0">getResponseFormat</a>());</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html#a4d68a33b0d9c6e61bf901380282e38ca">processAction</a>($nextRequest, $response);</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  }</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;}</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1core_1_1_session_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1core_1_1_session.html">wcmf\lib\core\Session</a></div><div class="ttdoc">Session is the interface for session implementations and defines access to session variables.</div><div class="ttdef"><b>Definition:</b> <a href="_session_8php_source.html#l00019">Session.php:19</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_ac7649262e730e1de9adea658b485ac1a"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#ac7649262e730e1de9adea658b485ac1a">wcmf\lib\presentation\ControllerMessage\setSender</a></div><div class="ttdeci">setSender($sender)</div><div class="ttdoc">Set the name of the sending Controller.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_response_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_response.html">wcmf\lib\presentation\Response</a></div><div class="ttdoc">Response holds the response values that are used as output from Controller instances.</div><div class="ttdef"><b>Definition:</b> <a href="_response_8php_source.html#l00020">Response.php:20</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_a6e548ebf2656742bfd19939ead923ed2"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a6e548ebf2656742bfd19939ead923ed2">wcmf\lib\presentation\ControllerMessage\getErrors</a></div><div class="ttdeci">getErrors()</div><div class="ttdoc">Get all errors.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html_a20d4a92df252998417af9572fb5e8ce1"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#a20d4a92df252998417af9572fb5e8ce1">wcmf\lib\core\ObjectFactory\getInstanceOf</a></div><div class="ttdeci">static getInstanceOf($class, $dynamicConfiguration=[])</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00063">ObjectFactory.php:63</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_request_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html">wcmf\lib\presentation\Request</a></div><div class="ttdoc">Request holds the request values that are used as input to Controller instances.</div><div class="ttdef"><b>Definition:</b> <a href="_request_8php_source.html#l00018">Request.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_aedbe99b2e21256aadd22160ee49df417"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#aedbe99b2e21256aadd22160ee49df417">wcmf\lib\presentation\ApplicationEvent\AFTER_EXECUTE_CONTROLLER</a></div><div class="ttdeci">const AFTER_EXECUTE_CONTROLLER</div><div class="ttdoc">A AFTER_EXECUTE_CONTROLLER event occurs after the current controller is executed.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00056">ApplicationEvent.php:56</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1core_1_1_event_manager_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1core_1_1_event_manager.html">wcmf\lib\core\EventManager</a></div><div class="ttdoc">EventManager is responsible for dispatching events to registered listeners.</div><div class="ttdef"><b>Definition:</b> <a href="_event_manager_8php_source.html#l00021">EventManager.php:21</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_a448557d1caa590a39b8a6ec144b59d94"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a448557d1caa590a39b8a6ec144b59d94">wcmf\lib\presentation\ControllerMessage\getSender</a></div><div class="ttdeci">getSender()</div><div class="ttdoc">Get the name of the sending Controller.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_a313783d5477383dd99a2f3785705aaf4"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a313783d5477383dd99a2f3785705aaf4">wcmf\lib\presentation\ControllerMessage\setContext</a></div><div class="ttdeci">setContext($context)</div><div class="ttdoc">Set the name of the context.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_a70a0fe08035189260c72e32a9e20d30c"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a70a0fe08035189260c72e32a9e20d30c">wcmf\lib\presentation\ControllerMessage\getValues</a></div><div class="ttdeci">getValues()</div><div class="ttdoc">Get all key value pairs.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_afa12f250c9fb0df6ea824d32492aaf0b"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#afa12f250c9fb0df6ea824d32492aaf0b">wcmf\lib\presentation\ApplicationEvent\BEFORE_ROUTE_ACTION</a></div><div class="ttdeci">const BEFORE_ROUTE_ACTION</div><div class="ttdoc">A BEFORE_ROUTE_ACTION event occurs before the request is mapped to an action key.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00038">ApplicationEvent.php:38</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_a51609a8c7faaf9948679e3a291ba4733"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a51609a8c7faaf9948679e3a291ba4733">wcmf\lib\presentation\ControllerMessage\getContext</a></div><div class="ttdeci">getContext()</div><div class="ttdoc">Get the name of the context.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html">wcmf\lib\presentation\impl\DefaultActionMapper</a></div><div class="ttdoc">Default ActionMapper implementation.</div><div class="ttdef"><b>Definition:</b> <a href="_default_action_mapper_8php_source.html#l00035">DefaultActionMapper.php:35</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_ae3c4fbe3e8eb0d6755694bc597d6c52f"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#ae3c4fbe3e8eb0d6755694bc597d6c52f">wcmf\lib\presentation\ControllerMessage\getFormat</a></div><div class="ttdeci">getFormat()</div><div class="ttdoc">Get the message format.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_a0366b3b0db0bd90abfc461c372f86599"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a0366b3b0db0bd90abfc461c372f86599">wcmf\lib\presentation\ControllerMessage\setAction</a></div><div class="ttdeci">setAction($action)</div><div class="ttdoc">Set the name of the action.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1_action_key_html_a2207aa22c775177bfb7947b342f4312a"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1_action_key.html#a2207aa22c775177bfb7947b342f4312a">wcmf\lib\config\ActionKey\getBestMatch</a></div><div class="ttdeci">static getBestMatch(ActionKeyProvider $actionKeyProvider, $resource, $context, $action)</div><div class="ttdoc">Get an action key that matches a given combination of resource, context, action best.</div><div class="ttdef"><b>Definition:</b> <a href="_action_key_8php_source.html#l00055">ActionKey.php:55</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_a244352f035b82b20b0efa506167fd862"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a244352f035b82b20b0efa506167fd862">wcmf\lib\presentation\ApplicationEvent\NAME</a></div><div class="ttdeci">const NAME</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00031">ApplicationEvent.php:31</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper_html_a4d68a33b0d9c6e61bf901380282e38ca"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html#a4d68a33b0d9c6e61bf901380282e38ca">wcmf\lib\presentation\impl\DefaultActionMapper\processAction</a></div><div class="ttdeci">processAction(Request $request, Response $response)</div><div class="ttdef"><b>Definition:</b> <a href="_default_action_mapper_8php_source.html#l00072">DefaultActionMapper.php:72</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_request_html_aae97bd0eb9148fbc922ee5f0a5ee23e0"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html#aae97bd0eb9148fbc922ee5f0a5ee23e0">wcmf\lib\presentation\Request\getResponseFormat</a></div><div class="ttdeci">getResponseFormat()</div><div class="ttdoc">Get the message response format.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_a189a4abe5faf11f4320d5d3f1d3d1715"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a189a4abe5faf11f4320d5d3f1d3d1715">wcmf\lib\presentation\ControllerMessage\getAction</a></div><div class="ttdeci">getAction()</div><div class="ttdoc">Get the name of the action.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_a5cbb3433a5a4668810e9278cbd452329"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a5cbb3433a5a4668810e9278cbd452329">wcmf\lib\presentation\ApplicationEvent\BEFORE_INITIALIZE_CONTROLLER</a></div><div class="ttdeci">const BEFORE_INITIALIZE_CONTROLLER</div><div class="ttdoc">A BEFORE_INITIALIZE_CONTROLLER event occurs before the current controller is initialized.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00044">ApplicationEvent.php:44</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1config_1_1_configuration_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1config_1_1_configuration.html">wcmf\lib\config\Configuration</a></div><div class="ttdoc">Implementations of Configuration give access to the application configuration.</div><div class="ttdef"><b>Definition:</b> <a href="_configuration_8php_source.html#l00032">Configuration.php:32</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1format_1_1_formatter_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1format_1_1_formatter.html">wcmf\lib\presentation\format\Formatter</a></div><div class="ttdoc">Formatter is the single entry point for request/response formatting.</div><div class="ttdef"><b>Definition:</b> <a href="_formatter_8php_source.html#l00023">Formatter.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html">wcmf\lib\security\principal\impl\AnonymousUser</a></div><div class="ttdoc">Anonymous user.</div><div class="ttdef"><b>Definition:</b> <a href="_anonymous_user_8php_source.html#l00020">AnonymousUser.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_error_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_error.html">wcmf\lib\presentation\ApplicationError</a></div><div class="ttdoc">ApplicationError is used to signal errors that occur while processing a request.</div><div class="ttdef"><b>Definition:</b> <a href="_application_error_8php_source.html#l00041">ApplicationError.php:41</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_error_html_a7b6de2953b070910660cee9f229bc554"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_error.html#a7b6de2953b070910660cee9f229bc554">wcmf\lib\presentation\ApplicationError\get</a></div><div class="ttdeci">static get($code, $data=null)</div><div class="ttdoc">Factory method for retrieving a predefined error instance.</div><div class="ttdef"><b>Definition:</b> <a href="_application_error_8php_source.html#l00144">ApplicationError.php:144</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_exception.html">wcmf\lib\presentation\ApplicationException</a></div><div class="ttdoc">ApplicationException signals a general application exception.</div><div class="ttdef"><b>Definition:</b> <a href="_application_exception_8php_source.html#l00022">ApplicationException.php:22</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_ab5466edec684cb74af2924c02a950c3c"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#ab5466edec684cb74af2924c02a950c3c">wcmf\lib\presentation\ControllerMessage\setFormat</a></div><div class="ttdeci">setFormat($format)</div><div class="ttdoc">Set the message format.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html">wcmf\lib\presentation\ApplicationEvent</a></div><div class="ttdoc">ApplicationEvent instances are fired at different stages of the program flow.</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00029">ApplicationEvent.php:29</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1presentation_1_1impl_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1presentation_1_1impl.html">wcmf\lib\presentation\impl</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00061">namespaces.php:61</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html_a0c195d83bf1cd47fb46a428e77f82b08"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">wcmf\lib\core\LogManager\getLogger</a></div><div class="ttdeci">static getLogger($name)</div><div class="ttdoc">Get the logger with the given name.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00037">LogManager.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1impl_1_1_config_action_key_provider_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1impl_1_1_config_action_key_provider.html">wcmf\lib\config\impl\ConfigActionKeyProvider</a></div><div class="ttdoc">ConfigActionKeyProvider searches for action keys in the application configuration.</div><div class="ttdef"><b>Definition:</b> <a href="_config_action_key_provider_8php_source.html#l00022">ConfigActionKeyProvider.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html_a79bba893d20f9f26f851f6a227aac57d"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#a79bba893d20f9f26f851f6a227aac57d">wcmf\lib\core\ObjectFactory\getNewInstance</a></div><div class="ttdeci">static getNewInstance($name, $dynamicConfiguration=[])</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00055">ObjectFactory.php:55</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1config_1_1_action_key_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1config_1_1_action_key.html">wcmf\lib\config\ActionKey</a></div><div class="ttdoc">An action key is a combination of a resource, context and action that is represented as a string.</div><div class="ttdef"><b>Definition:</b> <a href="_action_key_8php_source.html#l00022">ActionKey.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user_html_ab9e8cd5c2d042df93eb00fad37997ff6"><div class="ttname"><a href="classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html#ab9e8cd5c2d042df93eb00fad37997ff6">wcmf\lib\security\principal\impl\AnonymousUser\USER_GROUP_NAME</a></div><div class="ttdeci">const USER_GROUP_NAME</div><div class="ttdef"><b>Definition:</b> <a href="_anonymous_user_8php_source.html#l00022">AnonymousUser.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_application_event_html_a30945e9242bd00205411066022ce5c3e"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_application_event.html#a30945e9242bd00205411066022ce5c3e">wcmf\lib\presentation\ApplicationEvent\BEFORE_EXECUTE_CONTROLLER</a></div><div class="ttdeci">const BEFORE_EXECUTE_CONTROLLER</div><div class="ttdoc">A BEFORE_EXECUTE_CONTROLLER event occurs after the current controller is initialized and before it is...</div><div class="ttdef"><b>Definition:</b> <a href="_application_event_8php_source.html#l00050">ApplicationEvent.php:50</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_action_mapper_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_action_mapper.html">wcmf\lib\presentation\ActionMapper</a></div><div class="ttdoc">ActionMapper implementations are responsible for instantiating and executing Controllers based on the...</div><div class="ttdef"><b>Definition:</b> <a href="_action_mapper_8php_source.html#l00021">ActionMapper.php:21</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1security_1_1_permission_manager_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1security_1_1_permission_manager.html">wcmf\lib\security\PermissionManager</a></div><div class="ttdoc">PermissionManager implementations are used to handle all authorization requests.</div><div class="ttdef"><b>Definition:</b> <a href="_permission_manager_8php_source.html#l00020">PermissionManager.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a></div><div class="ttdoc">LogManager is used to retrieve Logger instances.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00020">LogManager.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a></div><div class="ttdoc">ObjectFactory implements the service locator pattern by wrapping a Factory instance and providing sta...</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00024">ObjectFactory.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper_html_a9baef91e8cb71fba74946ece947f8134"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1impl_1_1_default_action_mapper.html#a9baef91e8cb71fba74946ece947f8134">wcmf\lib\presentation\impl\DefaultActionMapper\__construct</a></div><div class="ttdeci">__construct(Session $session, PermissionManager $permissionManager, EventManager $eventManager, Formatter $formatter, Configuration $configuration)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_default_action_mapper_8php_source.html#l00054">DefaultActionMapper.php:54</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

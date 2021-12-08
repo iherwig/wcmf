@@ -1,0 +1,4 @@
+<map id="MultipleActionController" name="MultipleActionController">
+<area shape="rect" id="node1" title="MultipleActionController executes multiple actions by passing them to the appropriate controllers and..." alt="" coords="14,351,194,443"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1_controller.html" title="Controller is the base class of all controllers." alt="" coords="5,5,203,303"/>
+</map>

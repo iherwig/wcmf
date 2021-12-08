@@ -1,0 +1,6 @@
+<map id="HierarchicalFormat" name="HierarchicalFormat">
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_json_format.html" title="JsonFormat realizes the JSON request/response format. " alt="" coords="5,645,144,811"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_soap_format.html" title="SoapFormat realizes the SOAP request/response format. " alt="" coords="168,653,307,803"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_abstract_format.html" title="AbstractFormat maybe used as base class for specialized formats. " alt="" coords="85,160,227,399"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1presentation_1_1format_1_1_format.html" title="Format defines the interface for all format classes. " alt="" coords="96,5,216,112"/>
+</map>

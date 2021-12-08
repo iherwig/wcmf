@@ -1,0 +1,4 @@
+<map id="Visitor" name="Visitor">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1visitor_1_1_layout_visitor.html" title="LayoutVisitor is used to position a tree of objects on a plane (the objects must implement the getPar..." alt="" coords="5,189,189,325"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1model_1_1visitor_1_1_output_visitor.html" title="OutputVisitor is used to output an object&#39;s content to different destinations and formats..." alt="" coords="214,189,362,325"/>
+</map>

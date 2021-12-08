@@ -1,0 +1,5 @@
+<map id="FileDocument" name="FileDocument">
+<area shape="rect" id="node1" title="FileDocument represents a local file." alt="" coords="12,388,151,509"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1impl_1_1_abstract_document.html" title="AbstractFormat is used as base class for specialized documents." alt="" coords="10,204,153,340"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1presentation_1_1_response_document.html" title="ResponseDocument is the interface for media returned in a response when using the DownloadFormat." alt="" coords="5,5,157,156"/>
+</map>

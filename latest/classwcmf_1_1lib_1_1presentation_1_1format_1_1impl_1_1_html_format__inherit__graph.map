@@ -1,0 +1,5 @@
+<map id="HtmlFormat" name="HtmlFormat">
+<area shape="rect" id="node1" title="HtmlFormat implements the HTML request/response format." alt="" coords="5,476,284,641"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1presentation_1_1format_1_1impl_1_1_abstract_format.html" title="AbstractFormat is used as base class for specialized formats." alt="" coords="52,204,237,428"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1presentation_1_1format_1_1_format.html" title="Format defines the interface for all format classes." alt="" coords="52,5,237,156"/>
+</map>

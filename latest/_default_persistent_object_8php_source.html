@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/persistence/impl/DefaultPersistentObject.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_81dd432b91dc6ec596e6cc7ff91623b9.html">persistence</a></li><li class="navelem"><a class="el" href="dir_1d7194014bba9136dfb9cbd14508ff8d.html">impl</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">DefaultPersistentObject.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1persistence_1_1impl.html">wcmf\lib\persistence\impl</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_value_iterator.html">wcmf\lib\model\NodeValueIterator</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_null_mapper.html">wcmf\lib\persistence\impl\NullMapper</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">wcmf\lib\persistence\PersistentObject</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_property_change_event.html">wcmf\lib\persistence\PropertyChangeEvent</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_reference_description.html">wcmf\lib\persistence\ReferenceDescription</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html">wcmf\lib\persistence\StateChangeEvent</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_value_change_event.html">wcmf\lib\persistence\ValueChangeEvent</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1validation_1_1_validation_exception.html">wcmf\lib\validation\ValidationException</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1validation_1_1_validator.html">wcmf\lib\validation\Validator</a>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * DefaultPersistentObject is the base class of all persistent objects.</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * It mainly implements an unique identifier for each instance (ObjectId),</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * tracking of the persistent state, methods for setting and getting values</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * as well as callback methods for lifecycle events.</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html">   34</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html">DefaultPersistentObject</a> <span class="keyword">implements</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a>, \Serializable {</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">private</span> $oid = <span class="keyword">null</span>;                <span class="comment">// object identifier</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">private</span> $type = <span class="stringliteral">&#39;&#39;</span>;                 <span class="comment">// the object type</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">private</span> $data = [];            <span class="comment">// associative array holding the data</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">private</span> $properties = [];      <span class="comment">// associative array holding the object properties</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">private</span> $valueProperties = []; <span class="comment">// associative array holding the value properties</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">private</span> $state = <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a1b944c776949e9c0660f4d7b08cf6a55">self::STATE_CLEAN</a>; <span class="comment">// the state of the PersistentObject</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">private</span> $changedAttributes = []; <span class="comment">// used to track changes, see setValue method</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">private</span> $originalData = [];    <span class="comment">// data provided to the initialize method</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">private</span> $mapper = <span class="keyword">null</span>;             <span class="comment">// mapper instance</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $nullMapper = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="comment">// TODO: add static cache for frequently requested entity type data</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * Constructor.</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   * The object will be bound to the appropriate PersistenceMapper automatically,</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">   * if the PersistenceFacade knows the type. The object id is needed to extract</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">   * the type. If the id parameter of the object id is a dummy id, the object</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">   * is supposed to be a newly created object (@see ObjectId::containsDummyIds()).</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">   * @param $oid ObjectId instance (optional)</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">   * @param $initialData Associative array with initial attribute data to override default data (optional)</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a1b65b6b63f6e69bd23ce69f609d38338">   59</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a1b65b6b63f6e69bd23ce69f609d38338">__construct</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid=<span class="keyword">null</span>, array $initialData=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">// set oid and state (avoid calling listeners)</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordflow">if</span> ($oid == <span class="keyword">null</span> || !<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ae5321966f3ade3b4c4ec05477a1e508e">ObjectId::isValid</a>($oid)) {</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      $oid = <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a194c2ee5508a35b5463eb63fc680c8b6">ObjectId::NULL_OID</a>();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    $this-&gt;type = $oid-&gt;getType();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    $this-&gt;oid = $oid;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">if</span> ($oid-&gt;containsDummyIds()) {</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      $this-&gt;state = <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#af47c6a5b8aefd132e8709b8aa2a4edfc">self::STATE_NEW</a>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    }</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      $this-&gt;state = <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a1b944c776949e9c0660f4d7b08cf6a55">self::STATE_CLEAN</a>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">// get default data</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    $data = [];</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    $attributeDescriptions = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getAttributes();</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordflow">foreach</span>($attributeDescriptions as $curAttributeDesc) {</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      $data[$curAttributeDesc-&gt;getName()] = $curAttributeDesc-&gt;getDefaultValue();</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="comment">// merge initial data</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">if</span> ($initialData != <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      $data = array_merge($data, $initialData);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="comment">// set data</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">foreach</span> ($data as $name =&gt; $value) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($name, $value);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    $this-&gt;originalData = $data;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// set primary keys</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#adb38a6bda4e797cdf1eb5e166b0c76c3">setOIDInternal</a>($oid, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  }</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   * Initialize the PersistenceMapper instance</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keyword">private</span> <span class="keyword">function</span> initializeMapper() {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="comment">// set the mapper</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    $persistenceFacade = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;persistenceFacade&#39;</span>);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">if</span> ($persistenceFacade-&gt;isKnownType($this-&gt;type)) {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      $this-&gt;mapper = $persistenceFacade-&gt;getMapper($this-&gt;type);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      <span class="comment">// initialize null mapper if not done already</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      <span class="keywordflow">if</span> (self::$nullMapper == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        self::$nullMapper = <span class="keyword">new</span> NullMapper();</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      }</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      $this-&gt;mapper = self::$nullMapper;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    }</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   * @see PersistentObject::getType()</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a830b5c75df72b32396701bc563fbe3c7">  116</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>() {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">return</span> $this-&gt;type;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   * @see PersistentObject::getMapper()</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">  123</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>() {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;mapper == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      $this-&gt;initializeMapper();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordflow">return</span> $this-&gt;mapper;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">   * @see PersistentObject::getOID()</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">  133</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>() {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">return</span> $this-&gt;oid;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  }</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">   * @see PersistentObject::setOID()</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a093aabef8d7727642c708970c71589">  140</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a093aabef8d7727642c708970c71589">setOID</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid) {</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#adb38a6bda4e797cdf1eb5e166b0c76c3">setOIDInternal</a>($oid, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   * Set the object id of the PersistentObject.</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">   * @param $oid The PersistentObject&#39;s oid.</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">   * @param $triggerListeners Boolean, whether value CahngeListeners should be</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">   * notified or not</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#adb38a6bda4e797cdf1eb5e166b0c76c3">  150</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#adb38a6bda4e797cdf1eb5e166b0c76c3">setOIDInternal</a>(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a> $oid, $triggerListeners) {</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    $this-&gt;type = $oid-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>();</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    $this-&gt;oid = $oid;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="comment">// update the primary key attributes</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    $ids = $oid-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a12251d0c022e9e21c137a105ff683f13">getId</a>();</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    $pkNames = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getPkNames();</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordflow">for</span> ($i=0, $count=<span class="keyword">sizeof</span>($pkNames); $i&lt;$count; $i++) {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      <span class="keywordflow">if</span> ($triggerListeners) {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a838057c0748db6d0db1d38fe5d06ef6b">setValue</a>($pkNames[$i], $ids[$i], <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($pkNames[$i], $ids[$i]);</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  }</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">   * @see PersistentObject::getState()</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afbf787ced76807989fb3093e1772c5a1">  169</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afbf787ced76807989fb3093e1772c5a1">getState</a>() {</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordflow">return</span> $this-&gt;state;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  }</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">   * @see PersistentObject::setState()</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">  176</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">setState</a>($state) {</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    $oldState = $this-&gt;state;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordflow">switch</span> ($oldState) {</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;      <span class="comment">// new object must stay new when it&#39;s modified</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#af47c6a5b8aefd132e8709b8aa2a4edfc">self::STATE_NEW</a>:</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="keywordflow">switch</span> ($state) {</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;          <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a53f40b6aa8360fb891d6516dea517b57">self::STATE_DIRTY</a>:</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            $this-&gt;state = <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#af47c6a5b8aefd132e8709b8aa2a4edfc">self::STATE_NEW</a>;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;          <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            $this-&gt;state = $state;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        }</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        <span class="comment">// deleted object must stay deleted in every case</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a2f444140d375d5c63def72413cadcb47">self::STATE_DELETED</a>:</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        $this-&gt;state = <a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a2f444140d375d5c63def72413cadcb47">self::STATE_DELETED</a>;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        $this-&gt;state = $state;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    }</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keywordflow">if</span> ($oldState != $this-&gt;state) {</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;eventManager&#39;</span>)-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a244352f035b82b20b0efa506167fd862">StateChangeEvent::NAME</a>,</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;              <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html">StateChangeEvent</a>($this, $oldState, $this-&gt;state));</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    }</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  }</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="comment">   * @see PersistentObject::delete()</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a13bdffdd926f26b825ea57066334ff01">  208</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <span class="keyword">delete</span>() {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="comment">// delete the object (will be done in the transaction)</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">setState</a>(self::STATE_DELETED);</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  }</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="comment">   * @see PersistentObject::__clone()</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00216"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ad0cb87b388bc74d63dc884accdca8713">  216</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ad0cb87b388bc74d63dc884accdca8713">__clone</a>() {</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    $class = get_class($this);</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    $copy = <span class="keyword">new</span> $class;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    $copy-&gt;oid = $this-&gt;oid;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    $copy-&gt;type = $this-&gt;type;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    $copy-&gt;data = $this-&gt;data;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    $copy-&gt;properties = $this-&gt;properties;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    $copy-&gt;valueProperties = $this-&gt;valueProperties;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    $copy-&gt;state = $this-&gt;state;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    $copy-&gt;changedAttributes = $this-&gt;changedAttributes;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    $copy-&gt;originalData = $this-&gt;originalData;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    <span class="keywordflow">return</span> $copy;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  }</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="comment">   * @see PersistentObject::copyValues()</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a115ec18b7ada8663ff813968dd2f5633">  234</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a115ec18b7ada8663ff813968dd2f5633">copyValues</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $object, $copyPkValues=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    $pkNames = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getPkNames();</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    $iter = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_value_iterator.html">NodeValueIterator</a>($this, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keywordflow">foreach</span>($iter as $valueName =&gt; $value) {</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;      <span class="keywordflow">if</span> (strlen($value) &gt; 0 &amp;&amp; ($copyPkValues || !in_array($valueName, $pkNames))) {</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        $object-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a838057c0748db6d0db1d38fe5d06ef6b">setValue</a>($valueName, $value, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;      }</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    }</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  }</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">   * @see PersistentObject::mergeValues()</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#af00f8db169b979a60ecaf4b550836010">  247</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#af00f8db169b979a60ecaf4b550836010">mergeValues</a>(<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">PersistentObject</a> $object) {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    $iter = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_value_iterator.html">NodeValueIterator</a>($object, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keywordflow">foreach</span>($iter as $valueName =&gt; $value) {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;      <span class="keywordflow">if</span> (!$this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a270bd65d789405427f5005ef5b0e0f38">hasValue</a>($valueName) &amp;&amp; strlen($value) &gt; 0) {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($valueName, $value);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;      }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    }</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">   * @see PersistentObject::clearValues()</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a5d4231f684d0e52b41bf69afb0bb9fbe">  259</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a5d4231f684d0e52b41bf69afb0bb9fbe">clearValues</a>() {</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    $pkNames = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getPkNames();</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    $iter = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_value_iterator.html">NodeValueIterator</a>($this, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordflow">for</span>($iter-&gt;rewind(); $iter-&gt;valid(); $iter-&gt;next()) {</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;      $valueName = $iter-&gt;key();</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;      <span class="keywordflow">if</span> (!in_array($valueName, $pkNames)) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        $curNode = $iter-&gt;currentNode();</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        $curNode-&gt;setValue($valueName, <span class="keyword">null</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;      }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;  }</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">   * @see PersistentObject::reset()</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a20559544fdf4dcb457e258dc976cf8">  274</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a20559544fdf4dcb457e258dc976cf8">reset</a>() {</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    $this-&gt;data = $this-&gt;originalData;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    $this-&gt;changedAttributes = [];</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  }</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="comment">   * Recalculate the object id</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="keyword">private</span> <span class="keyword">function</span> updateOID() {</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    $pkValues = [];</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="comment">// collect the values of the primary keys and compose the oid from them</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    $pkNames = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getPkNames();</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordflow">foreach</span> ($pkNames as $pkName) {</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;      $pkValues[] = <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a8c584efa272687554bd9abe5e83fe10c">self::getValue</a>($pkName);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    }</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    $this-&gt;oid = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">ObjectId</a>($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>(), $pkValues);</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="comment">   * @see PersistentObject::afterCreate()</span></div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment">   * @note The default implementation does nothing</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00296"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#acfb42c80e11f54475303ae3a58a33994">  296</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#acfb42c80e11f54475303ae3a58a33994">afterCreate</a>() {}</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="comment">   * @see PersistentObject::beforeInsert()</span></div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="comment">   * @note The default implementation does nothing</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aa6c147a602f20f3527d8607186fa253f">  302</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aa6c147a602f20f3527d8607186fa253f">beforeInsert</a>() {}</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;<span class="comment">   * @see PersistentObject::afterInsert()</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="comment">   * @note The default implementation does nothing</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00308"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a7f9241f789f5326d4213c9097437cf">  308</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a7f9241f789f5326d4213c9097437cf">afterInsert</a>() {}</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment">   * @see PersistentObject::afterLoad()</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">   * @note The default implementation does nothing</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afc96ce03b1c876abdaafc59a03b3e9ff">  314</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afc96ce03b1c876abdaafc59a03b3e9ff">afterLoad</a>() {}</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment">   * @see PersistentObject::beforeUpdate()</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment">   * @note The default implementation does nothing</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00320"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a70a4db65b19348b3903ae88a82baee62">  320</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a70a4db65b19348b3903ae88a82baee62">beforeUpdate</a>() {}</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment">   * @see PersistentObject::afterUpdate()</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="comment">   * @note The default implementation does nothing</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afae845016f4e0f43e4214a22d3567b73">  326</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afae845016f4e0f43e4214a22d3567b73">afterUpdate</a>() {}</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">   * @see PersistentObject::beforeDelete()</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="comment">   * @note The default implementation does nothing</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a9439df4bc17e08751f6571b30397c340">  332</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a9439df4bc17e08751f6571b30397c340">beforeDelete</a>() {}</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="comment">   * @see PersistentObject::afterDelete()</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;<span class="comment">   * @note The default implementation does nothing</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00338"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a39a8bcc2a5e284c64b58c3e2b6ddea81">  338</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a39a8bcc2a5e284c64b58c3e2b6ddea81">afterDelete</a>() {}</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="comment">   * @see PersistentObject::getValue()</span></div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00343"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a8c584efa272687554bd9abe5e83fe10c">  343</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a8c584efa272687554bd9abe5e83fe10c">getValue</a>($name) {</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;data[$name])) {</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;      <span class="keywordflow">return</span> $this-&gt;data[$name];</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    }</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  }</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;<span class="comment">   * @see PersistentObject::setValue()</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a838057c0748db6d0db1d38fe5d06ef6b">  353</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a838057c0748db6d0db1d38fe5d06ef6b">setValue</a>($name, $value, $forceSet=<span class="keyword">false</span>, $trackChange=<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="keywordflow">if</span> (!$forceSet) {</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a1a79f61fa591ebe2550b187c1544e1d1">validateValue</a>($name, $value);</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    }</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    $oldValue = <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a8c584efa272687554bd9abe5e83fe10c">self::getValue</a>($name);</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordflow">if</span> ($forceSet || $oldValue !== $value) {</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;      $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($name, $value);</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;      <span class="keywordflow">if</span> (in_array($name, $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getPKNames())) {</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        $this-&gt;updateOID();</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;      }</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;      <span class="keywordflow">if</span> ($trackChange) {</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">self::setState</a>(self::STATE_DIRTY);</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        $this-&gt;changedAttributes[$name] = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;eventManager&#39;</span>)-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_value_change_event.html#a244352f035b82b20b0efa506167fd862">ValueChangeEvent::NAME</a>,</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;            <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_value_change_event.html">ValueChangeEvent</a>($this, $name, $oldValue, $value));</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;      }</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    }</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  }</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">   * Internal (fast) version to set a value without any validation, state change,</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment">   * listener notification etc.</span></div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment">   * @param $name The name of the value</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="comment">   * @param $value The value</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">  380</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">setValueInternal</a>($name, $value) {</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    $this-&gt;data[$name] = $value;</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  }</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">   * @see PersistentObject::hasValue()</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a270bd65d789405427f5005ef5b0e0f38">  387</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a270bd65d789405427f5005ef5b0e0f38">hasValue</a>($name) {</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    <span class="keywordflow">return</span> array_key_exists($name, $this-&gt;data);</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;  }</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="comment">   * @see PersistentObject::removeValue()</span></div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ab11a5b90edec335b251652cd73876317">  394</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ab11a5b90edec335b251652cd73876317">removeValue</a>($name) {</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a270bd65d789405427f5005ef5b0e0f38">hasValue</a>($name)) {</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;      unset($this-&gt;data[$name]);</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    }</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;  }</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="comment">   * @see PersistentObject::validateValues()</span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00403"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a27828d8e8c0fc9a21c24e2ed0d319a79">  403</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a27828d8e8c0fc9a21c24e2ed0d319a79">validateValues</a>() {</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    $errorMessage = <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    $iter = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1_node_value_iterator.html">NodeValueIterator</a>($this, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    <span class="keywordflow">for</span>($iter-&gt;rewind(); $iter-&gt;valid(); $iter-&gt;next()) {</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;      $curNode = $iter-&gt;currentNode();</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;      <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;        $curNode-&gt;validateValue($iter-&gt;key(), $iter-&gt;current());</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;      }</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;      <span class="keywordflow">catch</span> (<a class="code" href="classwcmf_1_1lib_1_1validation_1_1_validation_exception.html">ValidationException</a> $ex) {</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        $errorMessage .= $ex-&gt;getMessage().<span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;      }</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    }</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    <span class="keywordflow">if</span> (strlen($errorMessage) &gt; 0) {</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;      <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1validation_1_1_validation_exception.html">ValidationException</a>(<span class="keyword">null</span>, <span class="keyword">null</span>, $errorMessage);</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    }</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  }</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="comment">   * @see PersistentObject::validateValue()</span></div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00423"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a1a79f61fa591ebe2550b187c1544e1d1">  423</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a1a79f61fa591ebe2550b187c1544e1d1">validateValue</a>($name, $value) {</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a79a4b765c1306b600933ae1ce359d16c">validateValueAgainstValidateType</a>($name, $value);</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;  }</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;<span class="comment">   * Check a value&#39;s value against the validation type set on it. This method uses the</span></div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;<span class="comment">   * validateType property of the attribute definition.</span></div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="comment">   * Throws a ValidationException if the value is not valid.</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;<span class="comment">   * @param $name The name of the item to set.</span></div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="comment">   * @param $value The value of the item.</span></div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00434"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a79a4b765c1306b600933ae1ce359d16c">  434</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a79a4b765c1306b600933ae1ce359d16c">validateValueAgainstValidateType</a>($name, $value) {</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;    <span class="comment">// don&#39;t validate referenced values</span></div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;    <span class="keywordflow">if</span> ($mapper-&gt;hasAttribute($name) &amp;&amp; $mapper-&gt;getAttribute($name) instanceof <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_reference_description.html">ReferenceDescription</a>) {</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;    }</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    $validateType = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a095af4f09e7aa62ba45e94a35c047c1d">getValueProperty</a>($name, <span class="stringliteral">&#39;validate_type&#39;</span>);</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    <span class="keywordflow">if</span> (($validateType == <span class="stringliteral">&#39;&#39;</span> || <a class="code" href="classwcmf_1_1lib_1_1validation_1_1_validator.html#a53caf4e6a104095444452928dea631ad">Validator::validate</a>($value, $validateType,</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;            [<span class="stringliteral">&#39;entity&#39;</span> =&gt; $this, <span class="stringliteral">&#39;value&#39;</span> =&gt; $name]))) {</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;    }</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;    <span class="comment">// construct the error message</span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    $messageInstance = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;message&#39;</span>);</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    $validateDescription = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a095af4f09e7aa62ba45e94a35c047c1d">getValueProperty</a>($name, <span class="stringliteral">&#39;validate_description&#39;</span>);</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    <span class="keywordflow">if</span> (strlen($validateDescription) &gt; 0) {</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;      <span class="comment">// use configured message if existing</span></div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;      $errorMessage = $messageInstance-&gt;getText($validateDescription);</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    }</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;      <span class="comment">// default text</span></div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;      $errorMessage = $messageInstance-&gt;getText(<span class="stringliteral">&quot;The value of &#39;%0%&#39; (%1%) is invalid.&quot;</span>, [$messageInstance-&gt;getText($name), $value]);</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    }</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1validation_1_1_validation_exception.html">ValidationException</a>($name, $value, $errorMessage);</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;  }</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="comment">   * @see PersistentObject::getChangedValues()</span></div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00462"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a6e19f1226f93bea2b036d404f58412e9">  462</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a6e19f1226f93bea2b036d404f58412e9">getChangedValues</a>() {</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    <span class="keywordflow">return</span> array_keys($this-&gt;changedAttributes);</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;  }</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;<span class="comment">   * @see PersistentObject::getOriginalValue()</span></div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00469"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a7a026101155a1c37616ffbb20fb608a0">  469</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a7a026101155a1c37616ffbb20fb608a0">getOriginalValue</a>($name) {</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;originalData[$name])) {</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;      <span class="keywordflow">return</span> $this-&gt;originalData[$name];</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    }</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;  }</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;<span class="comment">   * @see PersistentObject::getIndispensableObjects()</span></div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00479"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a756a28909cda55de0256078569533aa2">  479</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a756a28909cda55de0256078569533aa2">getIndispensableObjects</a>() {</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    <span class="keywordflow">return</span> [];</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;  }</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;<span class="comment">   * @see PersistentObject::getProperty()</span></div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00486"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aa54d71e15bac85c5f7a13e62b9933652">  486</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aa54d71e15bac85c5f7a13e62b9933652">getProperty</a>($name) {</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;properties[$name])) {</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;      <span class="keywordflow">return</span> $this-&gt;properties[$name];</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    }</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;      <span class="comment">// get the default property value from the mapper</span></div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;      $properties = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getProperties();</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;      <span class="keywordflow">if</span> (isset($properties[$name])) {</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;        <span class="keywordflow">return</span> $properties[$name];</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;      }</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;    }</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;  }</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment">   * @see PersistentObject::setProperty()</span></div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00503"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aec9a68c84f392b3ae74cd70d552562b0">  503</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aec9a68c84f392b3ae74cd70d552562b0">setProperty</a>($name, $value) {</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    $oldValue = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aa54d71e15bac85c5f7a13e62b9933652">getProperty</a>($name);</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    $this-&gt;properties[$name] = $value;</div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;    <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;eventManager&#39;</span>)-&gt;dispatch(<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_property_change_event.html#a244352f035b82b20b0efa506167fd862">PropertyChangeEvent::NAME</a>,</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;        <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_property_change_event.html">PropertyChangeEvent</a>($this, $name, $oldValue, $value));</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;  }</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;<span class="comment">   * @see PersistentObject::getPropertyNames()</span></div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00513"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a6c948a23a84e4e613957afb3d6532a7c">  513</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a6c948a23a84e4e613957afb3d6532a7c">getPropertyNames</a>() {</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;    $result = array_keys($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getProperties());</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;    <span class="keywordflow">return</span> array_merge($result, array_keys($this-&gt;properties));</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;  }</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;<span class="comment">   * @see PersistentObject::getValueProperty()</span></div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00521"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a095af4f09e7aa62ba45e94a35c047c1d">  521</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a095af4f09e7aa62ba45e94a35c047c1d">getValueProperty</a>($name, $property) {</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    <span class="keywordflow">if</span> (!isset($this-&gt;valueProperties[$name]) || !isset($this-&gt;valueProperties[$name][$property])) {</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;      <span class="comment">// get the default property value from the mapper</span></div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;      $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;      <span class="keywordflow">if</span> ($mapper-&gt;hasAttribute($name)) {</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;        $attr = $mapper-&gt;getAttribute($name);</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;        <span class="keywordflow">if</span> ($attr) {</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;          $getter = <span class="stringliteral">&#39;get&#39;</span>.ucfirst(<a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html#ae8693e889e7ba2a04d6b500258c8d093">StringUtil::underScoreToCamelCase</a>($property, <span class="keyword">true</span>));</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;          <span class="keywordflow">return</span> $attr-&gt;$getter();</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;        }</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;      }</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;    }</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;      <span class="comment">// the default property value is overidden</span></div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;      <span class="keywordflow">return</span> $this-&gt;valueProperties[$name][$property];</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    }</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;  }</div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;<span class="comment">   * @see PersistentObject::setValueProperty()</span></div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00543"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ad97867d143202b45bd320c16258c5f3c">  543</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ad97867d143202b45bd320c16258c5f3c">setValueProperty</a>($name, $property, $value) {</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    <span class="keywordflow">if</span> (!isset($this-&gt;valueProperties[$name])) {</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;      $this-&gt;valueProperties[$name] = [];</div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    }</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    $this-&gt;valueProperties[$name][$property] = $value;</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;  }</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;<span class="comment">   * @see PersistentObject::getValuePropertyNames()</span></div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00553"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4994c60ede3191c63465f96dfa36abdb">  553</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4994c60ede3191c63465f96dfa36abdb">getValuePropertyNames</a>($name) {</div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;    $result = [];</div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;    $mapper = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>();</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    <span class="keywordflow">if</span> ($mapper-&gt;hasAttribute($name)) {</div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;      $attr = $mapper-&gt;getAttribute($name);</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;      <span class="keywordflow">if</span> ($attr) {</div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;        $result = $attr-&gt;getPropertyNames();</div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;      }</div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    }</div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;    <span class="keywordflow">return</span> array_merge($result, array_keys($this-&gt;valueProperties[$name]));</div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;  }</div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;<span class="comment">   * @see PersistentObject::getValueNames()</span></div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00568"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a91b10951978a3d34b2c3d38437627014">  568</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a91b10951978a3d34b2c3d38437627014">getValueNames</a>($excludeTransient=<span class="keyword">false</span>) {</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;    <span class="keywordflow">if</span> ($excludeTransient) {</div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;      <span class="comment">// get only value names from mapper</span></div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;      $names = [];</div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;      $attributes = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">getMapper</a>()-&gt;getAttributes();</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;      <span class="keywordflow">foreach</span> ($attributes as $attribute) {</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;        $names[] = $attribute-&gt;getName();</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;      }</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;    }</div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;      $names = array_keys($this-&gt;data);</div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;    }</div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;    <span class="keywordflow">return</span> $names;</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;  }</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;<span class="comment">   * @see PersistentObject::getDisplayValue()</span></div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;<span class="comment">   * @note Subclasses will override this for special application requirements</span></div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00587"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a10c4f56b4c915a4a77e75a3b4452240b">  587</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a10c4f56b4c915a4a77e75a3b4452240b">getDisplayValue</a>() {</div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>()-&gt;__toString();</div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;  }</div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;<span class="comment">   * @see PersistentObject::dump()</span></div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00594"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">  594</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">dump</a>() {</div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;    $str = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">getOID</a>()-&gt;__toString().<span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a91b10951978a3d34b2c3d38437627014">getValueNames</a>() as $valueName) {</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;      $value = <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a8c584efa272687554bd9abe5e83fe10c">self::getValue</a>($valueName);</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;      $valueStr = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;      <span class="keywordflow">if</span> (is_array($value)) {</div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;        $valueStr = self::dumpArray($value).<span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;      }</div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;        <span class="keywordflow">if</span> (is_object($value)) {</div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;          $valueStr = $value-&gt;__toString().<span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;        }</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;        <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;          $valueStr = <a class="code" href="classwcmf_1_1lib_1_1util_1_1_string_util.html#a8fc3f16ba66c35d8586129dd3faecac6">StringUtil::getDump</a>($value);</div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;        }</div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;      }</div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;      $str .= <span class="stringliteral">&quot;  &quot;</span>.$valueName.<span class="stringliteral">&quot;: &quot;</span>.$valueStr;</div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    }</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    <span class="keywordflow">return</span> $str;</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;  }</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;<span class="comment">   * Get a string representation of an array of values.</span></div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;<span class="comment">   * @param $array The array to dump</span></div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">function</span> dumpArray(array $array) {</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    $str = <span class="stringliteral">&quot;[&quot;</span>;</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;    <span class="keywordflow">foreach</span> ($array as $value) {</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;      <span class="keywordflow">if</span> (is_object($value)) {</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;        $str .= $value-&gt;__toString().<span class="stringliteral">&quot;, &quot;</span>;</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;      }</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;      <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;        $str .= $value.<span class="stringliteral">&quot;, &quot;</span>;</div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;      }</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;    }</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;    $str = preg_replace(<span class="stringliteral">&quot;/, $/&quot;</span>, <span class="stringliteral">&quot;&quot;</span>, $str).<span class="stringliteral">&quot;]&quot;</span>;</div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;    <span class="keywordflow">return</span> $str;</div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;  }</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;<span class="comment">   * Get a string representation of the PersistentObject.</span></div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00638"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a7516ca30af0db3cdbf9a7739b48ce91d">  638</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>() {</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a10c4f56b4c915a4a77e75a3b4452240b">self::getDisplayValue</a>();</div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;  }</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160; </div>
+<div class="line"><a name="l00642"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4d9813fea8525b19a1d370eeb8fe41d6">  642</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4d9813fea8525b19a1d370eeb8fe41d6">serialize</a>() {</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;    $this-&gt;mapper = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4d9813fea8525b19a1d370eeb8fe41d6">serialize</a>(get_object_vars($this));</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;  }</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160; </div>
+<div class="line"><a name="l00647"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac2f3a0997c46fd9bb24fe4190f738eb0">  647</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac2f3a0997c46fd9bb24fe4190f738eb0">unserialize</a>($serialized) {</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;    $values = <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac2f3a0997c46fd9bb24fe4190f738eb0">unserialize</a>($serialized);</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;    <span class="keywordflow">foreach</span> ($values as $key =&gt; $value) {</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;      $this-&gt;$key = $value;</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;    }</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;  }</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;}</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a194c2ee5508a35b5463eb63fc680c8b6"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a194c2ee5508a35b5463eb63fc680c8b6">wcmf\lib\persistence\ObjectId\NULL_OID</a></div><div class="ttdeci">static NULL_OID()</div><div class="ttdoc">Get the NULL instance.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00078">ObjectId.php:78</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a16aa52eac17a3f79894854eaf52739bd"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a16aa52eac17a3f79894854eaf52739bd">wcmf\lib\persistence\impl\DefaultPersistentObject\getMapper</a></div><div class="ttdeci">getMapper()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00123">DefaultPersistentObject.php:123</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a756a28909cda55de0256078569533aa2"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a756a28909cda55de0256078569533aa2">wcmf\lib\persistence\impl\DefaultPersistentObject\getIndispensableObjects</a></div><div class="ttdeci">getIndispensableObjects()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00479">DefaultPersistentObject.php:479</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_afae845016f4e0f43e4214a22d3567b73"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afae845016f4e0f43e4214a22d3567b73">wcmf\lib\persistence\impl\DefaultPersistentObject\afterUpdate</a></div><div class="ttdeci">afterUpdate()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00326">DefaultPersistentObject.php:326</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1validation_1_1_validation_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1validation_1_1_validation_exception.html">wcmf\lib\validation\ValidationException</a></div><div class="ttdoc">ValidationException signals an exception in validation.</div><div class="ttdef"><b>Definition:</b> <a href="_validation_exception_8php_source.html#l00018">ValidationException.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a830b5c75df72b32396701bc563fbe3c7"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a830b5c75df72b32396701bc563fbe3c7">wcmf\lib\persistence\impl\DefaultPersistentObject\getType</a></div><div class="ttdeci">getType()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00116">DefaultPersistentObject.php:116</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a70a4db65b19348b3903ae88a82baee62"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a70a4db65b19348b3903ae88a82baee62">wcmf\lib\persistence\impl\DefaultPersistentObject\beforeUpdate</a></div><div class="ttdeci">beforeUpdate()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00320">DefaultPersistentObject.php:320</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_null_mapper_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_null_mapper.html">wcmf\lib\persistence\impl\NullMapper</a></div><div class="ttdoc">NullMapper acts as there is no mapper.</div><div class="ttdef"><b>Definition:</b> <a href="_null_mapper_8php_source.html#l00027">NullMapper.php:27</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a12251d0c022e9e21c137a105ff683f13"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a12251d0c022e9e21c137a105ff683f13">wcmf\lib\persistence\ObjectId\getId</a></div><div class="ttdeci">getId()</div><div class="ttdoc">Get the id.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00105">ObjectId.php:105</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html_a8fc3f16ba66c35d8586129dd3faecac6"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html#a8fc3f16ba66c35d8586129dd3faecac6">wcmf\lib\util\StringUtil\getDump</a></div><div class="ttdeci">static getDump($variable, $strlen=100, $width=25, $depth=10, $i=0, &amp;$objects=[])</div><div class="ttdoc">Get the dump of a variable as string.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00029">StringUtil.php:29</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html">wcmf\lib\persistence\impl\DefaultPersistentObject</a></div><div class="ttdoc">DefaultPersistentObject is the base class of all persistent objects.</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00034">DefaultPersistentObject.php:34</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_property_change_event_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_property_change_event.html">wcmf\lib\persistence\PropertyChangeEvent</a></div><div class="ttdoc">PropertyChangeEvent signals a change of a property of a PersistentObject instance.</div><div class="ttdef"><b>Definition:</b> <a href="_property_change_event_8php_source.html#l00022">PropertyChangeEvent.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a1b65b6b63f6e69bd23ce69f609d38338"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a1b65b6b63f6e69bd23ce69f609d38338">wcmf\lib\persistence\impl\DefaultPersistentObject\__construct</a></div><div class="ttdeci">__construct(ObjectId $oid=null, array $initialData=null)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00059">DefaultPersistentObject.php:59</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a5d4231f684d0e52b41bf69afb0bb9fbe"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a5d4231f684d0e52b41bf69afb0bb9fbe">wcmf\lib\persistence\impl\DefaultPersistentObject\clearValues</a></div><div class="ttdeci">clearValues()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00259">DefaultPersistentObject.php:259</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_af00f8db169b979a60ecaf4b550836010"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#af00f8db169b979a60ecaf4b550836010">wcmf\lib\persistence\impl\DefaultPersistentObject\mergeValues</a></div><div class="ttdeci">mergeValues(PersistentObject $object)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00247">DefaultPersistentObject.php:247</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1_node_value_iterator_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1_node_value_iterator.html">wcmf\lib\model\NodeValueIterator</a></div><div class="ttdoc">NodeValueIterator is used to iterate over all persistent values of a Node (not including relations).</div><div class="ttdef"><b>Definition:</b> <a href="_node_value_iterator_8php_source.html#l00043">NodeValueIterator.php:43</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a115ec18b7ada8663ff813968dd2f5633"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a115ec18b7ada8663ff813968dd2f5633">wcmf\lib\persistence\impl\DefaultPersistentObject\copyValues</a></div><div class="ttdeci">copyValues(PersistentObject $object, $copyPkValues=true)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00234">DefaultPersistentObject.php:234</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1validation_1_1_validator_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1validation_1_1_validator.html">wcmf\lib\validation\Validator</a></div><div class="ttdoc">Validator is is the single entry point for validation.</div><div class="ttdef"><b>Definition:</b> <a href="_validator_8php_source.html#l00023">Validator.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a7516ca30af0db3cdbf9a7739b48ce91d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a7516ca30af0db3cdbf9a7739b48ce91d">wcmf\lib\persistence\impl\DefaultPersistentObject\__toString</a></div><div class="ttdeci">__toString()</div><div class="ttdoc">Get a string representation of the PersistentObject.</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00638">DefaultPersistentObject.php:638</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_ad0cb87b388bc74d63dc884accdca8713"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ad0cb87b388bc74d63dc884accdca8713">wcmf\lib\persistence\impl\DefaultPersistentObject\__clone</a></div><div class="ttdeci">__clone()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00216">DefaultPersistentObject.php:216</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a5bf63e4ac70cfd9d97e3f2eab936ec8b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a5bf63e4ac70cfd9d97e3f2eab936ec8b">wcmf\lib\persistence\impl\DefaultPersistentObject\dump</a></div><div class="ttdeci">dump()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00594">DefaultPersistentObject.php:594</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html_ae8693e889e7ba2a04d6b500258c8d093"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html#ae8693e889e7ba2a04d6b500258c8d093">wcmf\lib\util\StringUtil\underScoreToCamelCase</a></div><div class="ttdeci">static underScoreToCamelCase($string, $firstLowerCase=false)</div><div class="ttdoc">Convert a string in underscore notation to camel case notation.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00365">StringUtil.php:365</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a095af4f09e7aa62ba45e94a35c047c1d"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a095af4f09e7aa62ba45e94a35c047c1d">wcmf\lib\persistence\impl\DefaultPersistentObject\getValueProperty</a></div><div class="ttdeci">getValueProperty($name, $property)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00521">DefaultPersistentObject.php:521</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a2f444140d375d5c63def72413cadcb47"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a2f444140d375d5c63def72413cadcb47">wcmf\lib\persistence\PersistentObject\STATE_DELETED</a></div><div class="ttdeci">const STATE_DELETED</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00028">PersistentObject.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_state_change_event_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html">wcmf\lib\persistence\StateChangeEvent</a></div><div class="ttdoc">StateChangeEvent signals a change of the state of a PersistentObject instance.</div><div class="ttdef"><b>Definition:</b> <a href="_state_change_event_8php_source.html#l00022">StateChangeEvent.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a94042b70768a686decc42594ef36bbd6"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a94042b70768a686decc42594ef36bbd6">wcmf\lib\persistence\impl\DefaultPersistentObject\setState</a></div><div class="ttdeci">setState($state)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00176">DefaultPersistentObject.php:176</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a4a7f9241f789f5326d4213c9097437cf"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a7f9241f789f5326d4213c9097437cf">wcmf\lib\persistence\impl\DefaultPersistentObject\afterInsert</a></div><div class="ttdeci">afterInsert()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00308">DefaultPersistentObject.php:308</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a6c948a23a84e4e613957afb3d6532a7c"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a6c948a23a84e4e613957afb3d6532a7c">wcmf\lib\persistence\impl\DefaultPersistentObject\getPropertyNames</a></div><div class="ttdeci">getPropertyNames()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00513">DefaultPersistentObject.php:513</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a838057c0748db6d0db1d38fe5d06ef6b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a838057c0748db6d0db1d38fe5d06ef6b">wcmf\lib\persistence\impl\DefaultPersistentObject\setValue</a></div><div class="ttdeci">setValue($name, $value, $forceSet=false, $trackChange=true)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00353">DefaultPersistentObject.php:353</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_property_change_event_html_a244352f035b82b20b0efa506167fd862"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_property_change_event.html#a244352f035b82b20b0efa506167fd862">wcmf\lib\persistence\PropertyChangeEvent\NAME</a></div><div class="ttdeci">const NAME</div><div class="ttdef"><b>Definition:</b> <a href="_property_change_event_8php_source.html#l00024">PropertyChangeEvent.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a4994c60ede3191c63465f96dfa36abdb"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4994c60ede3191c63465f96dfa36abdb">wcmf\lib\persistence\impl\DefaultPersistentObject\getValuePropertyNames</a></div><div class="ttdeci">getValuePropertyNames($name)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00553">DefaultPersistentObject.php:553</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a7a026101155a1c37616ffbb20fb608a0"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a7a026101155a1c37616ffbb20fb608a0">wcmf\lib\persistence\impl\DefaultPersistentObject\getOriginalValue</a></div><div class="ttdeci">getOriginalValue($name)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00469">DefaultPersistentObject.php:469</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1util_1_1_string_util_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1util_1_1_string_util.html">wcmf\lib\util\StringUtil</a></div><div class="ttdoc">StringUtil provides support for string manipulation.</div><div class="ttdef"><b>Definition:</b> <a href="_string_util_8php_source.html#l00018">StringUtil.php:18</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a838057c0748db6d0db1d38fe5d06ef6b"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a838057c0748db6d0db1d38fe5d06ef6b">wcmf\lib\persistence\PersistentObject\setValue</a></div><div class="ttdeci">setValue($name, $value, $forceSet=false, $trackChange=true)</div><div class="ttdoc">Set the value of an attribute if it exists.</div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_af47c6a5b8aefd132e8709b8aa2a4edfc"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#af47c6a5b8aefd132e8709b8aa2a4edfc">wcmf\lib\persistence\PersistentObject\STATE_NEW</a></div><div class="ttdeci">const STATE_NEW</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00027">PersistentObject.php:27</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a1a79f61fa591ebe2550b187c1544e1d1"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a1a79f61fa591ebe2550b187c1544e1d1">wcmf\lib\persistence\impl\DefaultPersistentObject\validateValue</a></div><div class="ttdeci">validateValue($name, $value)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00423">DefaultPersistentObject.php:423</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a6e19f1226f93bea2b036d404f58412e9"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a6e19f1226f93bea2b036d404f58412e9">wcmf\lib\persistence\impl\DefaultPersistentObject\getChangedValues</a></div><div class="ttdeci">getChangedValues()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00462">DefaultPersistentObject.php:462</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html">wcmf\lib\persistence\ObjectId</a></div><div class="ttdoc">ObjectId is the unique identifier of an object.</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00028">ObjectId.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_afbf787ced76807989fb3093e1772c5a1"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afbf787ced76807989fb3093e1772c5a1">wcmf\lib\persistence\impl\DefaultPersistentObject\getState</a></div><div class="ttdeci">getState()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00169">DefaultPersistentObject.php:169</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_value_change_event_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_value_change_event.html">wcmf\lib\persistence\ValueChangeEvent</a></div><div class="ttdoc">ValueChangeEvent signals a change of a value of a PersistentObject instance.</div><div class="ttdef"><b>Definition:</b> <a href="_value_change_event_8php_source.html#l00022">ValueChangeEvent.php:22</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a8c584efa272687554bd9abe5e83fe10c"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a8c584efa272687554bd9abe5e83fe10c">wcmf\lib\persistence\impl\DefaultPersistentObject\getValue</a></div><div class="ttdeci">getValue($name)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00343">DefaultPersistentObject.php:343</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a9439df4bc17e08751f6571b30397c340"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a9439df4bc17e08751f6571b30397c340">wcmf\lib\persistence\impl\DefaultPersistentObject\beforeDelete</a></div><div class="ttdeci">beforeDelete()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00332">DefaultPersistentObject.php:332</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a91b10951978a3d34b2c3d38437627014"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a91b10951978a3d34b2c3d38437627014">wcmf\lib\persistence\impl\DefaultPersistentObject\getValueNames</a></div><div class="ttdeci">getValueNames($excludeTransient=false)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00568">DefaultPersistentObject.php:568</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a4a093aabef8d7727642c708970c71589"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a093aabef8d7727642c708970c71589">wcmf\lib\persistence\impl\DefaultPersistentObject\setOID</a></div><div class="ttdeci">setOID(ObjectId $oid)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00140">DefaultPersistentObject.php:140</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_aa6c147a602f20f3527d8607186fa253f"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aa6c147a602f20f3527d8607186fa253f">wcmf\lib\persistence\impl\DefaultPersistentObject\beforeInsert</a></div><div class="ttdeci">beforeInsert()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00302">DefaultPersistentObject.php:302</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_reference_description_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_reference_description.html">wcmf\lib\persistence\ReferenceDescription</a></div><div class="ttdoc">Instances of ReferenceDescription describe reference attributes of PersistentObjects.</div><div class="ttdef"><b>Definition:</b> <a href="_reference_description_8php_source.html#l00021">ReferenceDescription.php:21</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_afc96ce03b1c876abdaafc59a03b3e9ff"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#afc96ce03b1c876abdaafc59a03b3e9ff">wcmf\lib\persistence\impl\DefaultPersistentObject\afterLoad</a></div><div class="ttdeci">afterLoad()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00314">DefaultPersistentObject.php:314</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_a830b5c75df72b32396701bc563fbe3c7"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#a830b5c75df72b32396701bc563fbe3c7">wcmf\lib\persistence\ObjectId\getType</a></div><div class="ttdeci">getType()</div><div class="ttdoc">Get the type (including namespace)</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00097">ObjectId.php:97</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a39a8bcc2a5e284c64b58c3e2b6ddea81"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a39a8bcc2a5e284c64b58c3e2b6ddea81">wcmf\lib\persistence\impl\DefaultPersistentObject\afterDelete</a></div><div class="ttdeci">afterDelete()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00338">DefaultPersistentObject.php:338</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a71a273f5aef767615099c573a832f3e5"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a71a273f5aef767615099c573a832f3e5">wcmf\lib\persistence\impl\DefaultPersistentObject\setValueInternal</a></div><div class="ttdeci">setValueInternal($name, $value)</div><div class="ttdoc">Internal (fast) version to set a value without any validation, state change, listener notification et...</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00380">DefaultPersistentObject.php:380</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a10c4f56b4c915a4a77e75a3b4452240b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a10c4f56b4c915a4a77e75a3b4452240b">wcmf\lib\persistence\impl\DefaultPersistentObject\getDisplayValue</a></div><div class="ttdeci">getDisplayValue()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00587">DefaultPersistentObject.php:587</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_acfb42c80e11f54475303ae3a58a33994"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#acfb42c80e11f54475303ae3a58a33994">wcmf\lib\persistence\impl\DefaultPersistentObject\afterCreate</a></div><div class="ttdeci">afterCreate()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00296">DefaultPersistentObject.php:296</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_value_change_event_html_a244352f035b82b20b0efa506167fd862"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_value_change_event.html#a244352f035b82b20b0efa506167fd862">wcmf\lib\persistence\ValueChangeEvent\NAME</a></div><div class="ttdeci">const NAME</div><div class="ttdef"><b>Definition:</b> <a href="_value_change_event_8php_source.html#l00024">ValueChangeEvent.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html_ac54511d3948ce6338f8a0a9b007e0edf"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">wcmf\lib\core\ObjectFactory\getInstance</a></div><div class="ttdeci">static getInstance($name, $dynamicConfiguration=[])</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00047">ObjectFactory.php:47</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a27828d8e8c0fc9a21c24e2ed0d319a79"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a27828d8e8c0fc9a21c24e2ed0d319a79">wcmf\lib\persistence\impl\DefaultPersistentObject\validateValues</a></div><div class="ttdeci">validateValues()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00403">DefaultPersistentObject.php:403</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_aa54d71e15bac85c5f7a13e62b9933652"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aa54d71e15bac85c5f7a13e62b9933652">wcmf\lib\persistence\impl\DefaultPersistentObject\getProperty</a></div><div class="ttdeci">getProperty($name)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00486">DefaultPersistentObject.php:486</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1validation_1_1_validator_html_a53caf4e6a104095444452928dea631ad"><div class="ttname"><a href="classwcmf_1_1lib_1_1validation_1_1_validator.html#a53caf4e6a104095444452928dea631ad">wcmf\lib\validation\Validator\validate</a></div><div class="ttdeci">static validate($value, $validateDesc, $context=null)</div><div class="ttdoc">Validate the given value against the given validateType description.</div><div class="ttdef"><b>Definition:</b> <a href="_validator_8php_source.html#l00035">Validator.php:35</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a1b944c776949e9c0660f4d7b08cf6a55"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a1b944c776949e9c0660f4d7b08cf6a55">wcmf\lib\persistence\PersistentObject\STATE_CLEAN</a></div><div class="ttdeci">const STATE_CLEAN</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00025">PersistentObject.php:25</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_ad97867d143202b45bd320c16258c5f3c"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ad97867d143202b45bd320c16258c5f3c">wcmf\lib\persistence\impl\DefaultPersistentObject\setValueProperty</a></div><div class="ttdeci">setValueProperty($name, $property, $value)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00543">DefaultPersistentObject.php:543</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_aec9a68c84f392b3ae74cd70d552562b0"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#aec9a68c84f392b3ae74cd70d552562b0">wcmf\lib\persistence\impl\DefaultPersistentObject\setProperty</a></div><div class="ttdeci">setProperty($name, $value)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00503">DefaultPersistentObject.php:503</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html">wcmf\lib\persistence\PersistentObject</a></div><div class="ttdoc">PersistentObject defines the interface of all persistent objects.</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00023">PersistentObject.php:23</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_ab11a5b90edec335b251652cd73876317"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ab11a5b90edec335b251652cd73876317">wcmf\lib\persistence\impl\DefaultPersistentObject\removeValue</a></div><div class="ttdeci">removeValue($name)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00394">DefaultPersistentObject.php:394</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_id_html_ae5321966f3ade3b4c4ec05477a1e508e"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_id.html#ae5321966f3ade3b4c4ec05477a1e508e">wcmf\lib\persistence\ObjectId\isValid</a></div><div class="ttdeci">static isValid($oid)</div><div class="ttdoc">Check if a serialized ObjectId has a valid syntax, the type is known and if the number of primary key...</div><div class="ttdef"><b>Definition:</b> <a href="_object_id_8php_source.html#l00123">ObjectId.php:123</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_ac2f3a0997c46fd9bb24fe4190f738eb0"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac2f3a0997c46fd9bb24fe4190f738eb0">wcmf\lib\persistence\impl\DefaultPersistentObject\unserialize</a></div><div class="ttdeci">unserialize($serialized)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00647">DefaultPersistentObject.php:647</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_adb38a6bda4e797cdf1eb5e166b0c76c3"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#adb38a6bda4e797cdf1eb5e166b0c76c3">wcmf\lib\persistence\impl\DefaultPersistentObject\setOIDInternal</a></div><div class="ttdeci">setOIDInternal(ObjectId $oid, $triggerListeners)</div><div class="ttdoc">Set the object id of the PersistentObject.</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00150">DefaultPersistentObject.php:150</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a270bd65d789405427f5005ef5b0e0f38"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a270bd65d789405427f5005ef5b0e0f38">wcmf\lib\persistence\impl\DefaultPersistentObject\hasValue</a></div><div class="ttdeci">hasValue($name)</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00387">DefaultPersistentObject.php:387</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_ac886ae95a746f43906bb3b2515092440"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#ac886ae95a746f43906bb3b2515092440">wcmf\lib\persistence\impl\DefaultPersistentObject\getOID</a></div><div class="ttdeci">getOID()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00133">DefaultPersistentObject.php:133</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a79a4b765c1306b600933ae1ce359d16c"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a79a4b765c1306b600933ae1ce359d16c">wcmf\lib\persistence\impl\DefaultPersistentObject\validateValueAgainstValidateType</a></div><div class="ttdeci">validateValueAgainstValidateType($name, $value)</div><div class="ttdoc">Check a value's value against the validation type set on it.</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00434">DefaultPersistentObject.php:434</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_state_change_event_html_a244352f035b82b20b0efa506167fd862"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_state_change_event.html#a244352f035b82b20b0efa506167fd862">wcmf\lib\persistence\StateChangeEvent\NAME</a></div><div class="ttdeci">const NAME</div><div class="ttdef"><b>Definition:</b> <a href="_state_change_event_8php_source.html#l00024">StateChangeEvent.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a4a20559544fdf4dcb457e258dc976cf8"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4a20559544fdf4dcb457e258dc976cf8">wcmf\lib\persistence\impl\DefaultPersistentObject\reset</a></div><div class="ttdeci">reset()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00274">DefaultPersistentObject.php:274</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a></div><div class="ttdoc">ObjectFactory implements the service locator pattern by wrapping a Factory instance and providing sta...</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00024">ObjectFactory.php:24</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistent_object_html_a53f40b6aa8360fb891d6516dea517b57"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistent_object.html#a53f40b6aa8360fb891d6516dea517b57">wcmf\lib\persistence\PersistentObject\STATE_DIRTY</a></div><div class="ttdeci">const STATE_DIRTY</div><div class="ttdef"><b>Definition:</b> <a href="_persistent_object_8php_source.html#l00026">PersistentObject.php:26</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object_html_a4d9813fea8525b19a1d370eeb8fe41d6"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1impl_1_1_default_persistent_object.html#a4d9813fea8525b19a1d370eeb8fe41d6">wcmf\lib\persistence\impl\DefaultPersistentObject\serialize</a></div><div class="ttdeci">serialize()</div><div class="ttdef"><b>Definition:</b> <a href="_default_persistent_object_8php_source.html#l00642">DefaultPersistentObject.php:642</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1persistence_1_1impl_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1persistence_1_1impl.html">wcmf\lib\persistence\impl</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00044">namespaces.php:44</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:27 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

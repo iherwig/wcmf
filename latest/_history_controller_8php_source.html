@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/application/controller/HistoryController.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_136aa653477132119a96b321253abfda.html">application</a></li><li class="navelem"><a class="el" href="dir_fcb83fd13f7d59d5787ee42ee5d9ab66.html">controller</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">HistoryController.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1application_1_1controller.html">wcmf\application\controller</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1application_1_1controller_1_1_list_controller.html">wcmf\application\controller\ListController</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html">wcmf\lib\persistence\BuildDepth</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_comparator.html">wcmf\lib\persistence\ObjectComparator</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistence_action.html">wcmf\lib\persistence\PersistenceAction</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html">wcmf\lib\presentation\Request</a>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;use <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_response.html">wcmf\lib\presentation\Response</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * HistoryController returns a list of last changed entity instances.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * The controller supports the following actions:</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * &lt;div class=&quot;controller-action&quot;&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> * &lt;div&gt; __Action__ _default_ &lt;/div&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * &lt;div&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * Search.</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * | Parameter              | Description</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * |------------------------|-------------------------</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> * | __Response Actions__   | |</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * | `ok`                   | In all cases</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * &lt;/div&gt;</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> * &lt;/div&gt;</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> * For additional actions and parameters see [ListController actions](@ref ListController).</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html">   40</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html">HistoryController</a> <span class="keyword">extends</span> <a class="code" href="classwcmf_1_1application_1_1controller_1_1_list_controller.html">ListController</a> {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   * @see Controller::initialize()</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#a47a24ac0d700f62a9434d298ade72fb9">   45</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#a47a24ac0d700f62a9434d298ade72fb9">initialize</a>(<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html">Request</a> $request, <a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_response.html">Response</a> $response) {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    $request-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a8e7aaacf604710d7f853f3261d84b9fc">setValue</a>(<span class="stringliteral">&#39;completeObjects&#39;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    parent::initialize($request, $response);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">   * @see Controller::validate()</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#a184909dab34698899937d810a9f5d393">   53</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#a184909dab34698899937d810a9f5d393">validate</a>() {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// skip validation</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">   * @see ListController::getObjects()</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#aee0c13106efc83808dee7e460b9dddd8">   61</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#aee0c13106efc83808dee7e460b9dddd8">getObjects</a>($type, $queryCondition, $sortArray, $pagingInfo) {</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    $permissionManager = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_controller.html#a1e14b9d668577f58a358b3f6674b0e98">getPermissionManager</a>();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    $persistenceFacade = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_controller.html#ad01d1e66179edfeb910b32001222361d">getPersistenceFacade</a>();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">// find types with attributes created, creator, modified, last_editor</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    $requiredAttributes = [<span class="stringliteral">&#39;created&#39;</span>, <span class="stringliteral">&#39;creator&#39;</span>, <span class="stringliteral">&#39;modified&#39;</span>, <span class="stringliteral">&#39;last_editor&#39;</span>];</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    $types = [];</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">foreach</span> ($persistenceFacade-&gt;getKnownTypes() as $type) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      $mapper = $persistenceFacade-&gt;getMapper($type);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      $matches = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <span class="keywordflow">foreach</span> ($requiredAttributes as $attribute) {</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">if</span> (!$mapper-&gt;hasAttribute($attribute)) {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;          $matches = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;          <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      }</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <span class="keywordflow">if</span> ($matches) {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        $types[] = $type;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="comment">// load objects</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="comment">// NOTE: we always get last changed objects and sort by requested value later</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    $historyItems = $persistenceFacade-&gt;loadObjects($types, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">BuildDepth::SINGLE</a>,</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            <span class="keyword">null</span>, [<span class="stringliteral">&#39;modified DESC&#39;</span>], $pagingInfo);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    $objects = [];</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">foreach</span>($historyItems as $historyItem) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keywordflow">if</span> ($permissionManager-&gt;authorize($historyItem-&gt;getOID(), <span class="stringliteral">&#39;&#39;</span>, <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistence_action.html#add302975378da047de904daa059a332b">PersistenceAction::READ</a>)) {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        $objects[] = $historyItem;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    $pagingInfo-&gt;setTotalCount(<span class="keyword">sizeof</span>($objects));</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">return</span> $objects;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">   * @see ListController::modifyModel()</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#af30302265401d0dd753e60c7c3819911">  100</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#af30302265401d0dd753e60c7c3819911">modifyModel</a>(&amp;$nodes) {</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    parent::modifyModel($nodes);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="comment">// add common values</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    $persistenceFacade = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_controller.html#ad01d1e66179edfeb910b32001222361d">getPersistenceFacade</a>();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordflow">for</span> ($i=0, $count=<span class="keyword">sizeof</span>($nodes); $i&lt;$count; $i++) {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      $curNode = $nodes[$i];</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      $curNode-&gt;setValue(<span class="stringliteral">&#39;_displayValue&#39;</span>, $curNode-&gt;getDisplayValue(), <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      $curNode-&gt;setValue(<span class="stringliteral">&#39;_type&#39;</span>, $persistenceFacade-&gt;getSimpleType($curNode-&gt;getType()), <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="comment">// sort</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    $request = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1presentation_1_1_controller.html#adf1a35ad20e475c59cc0967d5764aa22">getRequest</a>();</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">if</span> ($request-&gt;hasValue(<span class="stringliteral">&#39;sortFieldName&#39;</span>)) {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      $sortDir = $request-&gt;hasValue(<span class="stringliteral">&#39;sortDirection&#39;</span>) ? $request-&gt;getValue(<span class="stringliteral">&#39;sortDirection&#39;</span>) : <span class="stringliteral">&#39;asc&#39;</span>;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;      $sortCriteria = [</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;         $request-&gt;getValue(<span class="stringliteral">&#39;sortFieldName&#39;</span>) =&gt; $sortDir == <span class="stringliteral">&#39;asc&#39;</span> ?</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_comparator.html#ab7b4e939aa13501d3e5bc54c40fa0eb3">ObjectComparator::SORTTYPE_ASC</a> : <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_comparator.html#af580a503f69c7dbed71a36cdee2c8e0c">ObjectComparator::SORTTYPE_DESC</a></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      ];</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      $comparator = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_object_comparator.html">ObjectComparator</a>($sortCriteria);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      usort($nodes, [$comparator, <span class="stringliteral">&#39;compare&#39;</span>]);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  }</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_persistence_action_html_add302975378da047de904daa059a332b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_persistence_action.html#add302975378da047de904daa059a332b">wcmf\lib\persistence\PersistenceAction\READ</a></div><div class="ttdeci">const READ</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_action_8php_source.html#l00022">PersistenceAction.php:22</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_response_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_response.html">wcmf\lib\presentation\Response</a></div><div class="ttdoc">Response holds the response values that are used as output from Controller instances.</div><div class="ttdef"><b>Definition:</b> <a href="_response_8php_source.html#l00020">Response.php:20</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_request_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_request.html">wcmf\lib\presentation\Request</a></div><div class="ttdoc">Request holds the request values that are used as input to Controller instances.</div><div class="ttdef"><b>Definition:</b> <a href="_request_8php_source.html#l00018">Request.php:18</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1application_1_1controller_1_1_history_controller_html"><div class="ttname"><a href="classwcmf_1_1application_1_1controller_1_1_history_controller.html">wcmf\application\controller\HistoryController</a></div><div class="ttdoc">HistoryController returns a list of last changed entity instances.</div><div class="ttdef"><b>Definition:</b> <a href="_history_controller_8php_source.html#l00040">HistoryController.php:40</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1application_1_1controller_1_1_history_controller_html_af30302265401d0dd753e60c7c3819911"><div class="ttname"><a href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#af30302265401d0dd753e60c7c3819911">wcmf\application\controller\HistoryController\modifyModel</a></div><div class="ttdeci">modifyModel(&amp;$nodes)</div><div class="ttdef"><b>Definition:</b> <a href="_history_controller_8php_source.html#l00100">HistoryController.php:100</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_comparator_html_af580a503f69c7dbed71a36cdee2c8e0c"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_comparator.html#af580a503f69c7dbed71a36cdee2c8e0c">wcmf\lib\persistence\ObjectComparator\SORTTYPE_DESC</a></div><div class="ttdeci">const SORTTYPE_DESC</div><div class="ttdef"><b>Definition:</b> <a href="_object_comparator_8php_source.html#l00050">ObjectComparator.php:50</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1application_1_1controller_1_1_history_controller_html_a184909dab34698899937d810a9f5d393"><div class="ttname"><a href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#a184909dab34698899937d810a9f5d393">wcmf\application\controller\HistoryController\validate</a></div><div class="ttdeci">validate()</div><div class="ttdef"><b>Definition:</b> <a href="_history_controller_8php_source.html#l00053">HistoryController.php:53</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_controller_html_a1e14b9d668577f58a358b3f6674b0e98"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_controller.html#a1e14b9d668577f58a358b3f6674b0e98">wcmf\lib\presentation\Controller\getPermissionManager</a></div><div class="ttdeci">getPermissionManager()</div><div class="ttdoc">Get the PermissionManager instance.</div><div class="ttdef"><b>Definition:</b> <a href="_controller_8php_source.html#l00291">Controller.php:291</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_build_depth_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html">wcmf\lib\persistence\BuildDepth</a></div><div class="ttdoc">BuildDepth values are used to define the depth when loading object trees.</div><div class="ttdef"><b>Definition:</b> <a href="_build_depth_8php_source.html#l00019">BuildDepth.php:19</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1application_1_1controller_1_1_list_controller_html"><div class="ttname"><a href="classwcmf_1_1application_1_1controller_1_1_list_controller.html">wcmf\application\controller\ListController</a></div><div class="ttdoc">ListController is used to load Node lists.</div><div class="ttdef"><b>Definition:</b> <a href="_list_controller_8php_source.html#l00051">ListController.php:51</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_controller_html_ad01d1e66179edfeb910b32001222361d"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_controller.html#ad01d1e66179edfeb910b32001222361d">wcmf\lib\presentation\Controller\getPersistenceFacade</a></div><div class="ttdeci">getPersistenceFacade()</div><div class="ttdoc">Get the PersistenceFacade instance.</div><div class="ttdef"><b>Definition:</b> <a href="_controller_8php_source.html#l00283">Controller.php:283</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1presentation_1_1_controller_message_html_a8e7aaacf604710d7f853f3261d84b9fc"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1presentation_1_1_controller_message.html#a8e7aaacf604710d7f853f3261d84b9fc">wcmf\lib\presentation\ControllerMessage\setValue</a></div><div class="ttdeci">setValue($name, $value)</div><div class="ttdoc">Set a value.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1presentation_1_1_controller_html_adf1a35ad20e475c59cc0967d5764aa22"><div class="ttname"><a href="classwcmf_1_1lib_1_1presentation_1_1_controller.html#adf1a35ad20e475c59cc0967d5764aa22">wcmf\lib\presentation\Controller\getRequest</a></div><div class="ttdeci">getRequest()</div><div class="ttdoc">Get the Request instance.</div><div class="ttdef"><b>Definition:</b> <a href="_controller_8php_source.html#l00251">Controller.php:251</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_build_depth_html_af33f2aced1762d825db23934d1b3205b"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_build_depth.html#af33f2aced1762d825db23934d1b3205b">wcmf\lib\persistence\BuildDepth\SINGLE</a></div><div class="ttdeci">const SINGLE</div><div class="ttdef"><b>Definition:</b> <a href="_build_depth_8php_source.html#l00022">BuildDepth.php:22</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1application_1_1controller_html"><div class="ttname"><a href="namespacewcmf_1_1application_1_1controller.html">wcmf\application\controller</a></div><div class="ttdoc">Application controllers.</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00003">namespaces.php:3</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1application_1_1controller_1_1_history_controller_html_a47a24ac0d700f62a9434d298ade72fb9"><div class="ttname"><a href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#a47a24ac0d700f62a9434d298ade72fb9">wcmf\application\controller\HistoryController\initialize</a></div><div class="ttdeci">initialize(Request $request, Response $response)</div><div class="ttdef"><b>Definition:</b> <a href="_history_controller_8php_source.html#l00045">HistoryController.php:45</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1application_1_1controller_1_1_history_controller_html_aee0c13106efc83808dee7e460b9dddd8"><div class="ttname"><a href="classwcmf_1_1application_1_1controller_1_1_history_controller.html#aee0c13106efc83808dee7e460b9dddd8">wcmf\application\controller\HistoryController\getObjects</a></div><div class="ttdeci">getObjects($type, $queryCondition, $sortArray, $pagingInfo)</div><div class="ttdef"><b>Definition:</b> <a href="_history_controller_8php_source.html#l00061">HistoryController.php:61</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_comparator_html_ab7b4e939aa13501d3e5bc54c40fa0eb3"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_comparator.html#ab7b4e939aa13501d3e5bc54c40fa0eb3">wcmf\lib\persistence\ObjectComparator\SORTTYPE_ASC</a></div><div class="ttdeci">const SORTTYPE_ASC</div><div class="ttdef"><b>Definition:</b> <a href="_object_comparator_8php_source.html#l00049">ObjectComparator.php:49</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_persistence_action_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_persistence_action.html">wcmf\lib\persistence\PersistenceAction</a></div><div class="ttdoc">PersistenceAction values are used to define actions on PersistentObject instances.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_action_8php_source.html#l00019">PersistenceAction.php:19</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_object_comparator_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_object_comparator.html">wcmf\lib\persistence\ObjectComparator</a></div><div class="ttdoc">ObjectComparator is used to compare persistent objects by given criterias.</div><div class="ttdef"><b>Definition:</b> <a href="_object_comparator_8php_source.html#l00047">ObjectComparator.php:47</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:26 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

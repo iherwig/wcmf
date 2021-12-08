@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>wCMF 4.1: /home/travis/build/iherwig/wcmf/src/wcmf/lib/model/mapper/SelectStatement.php Source File</title>
+  <meta name="generator" content="Doxygen 1.8.17"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A MDSD framework for building reliable, maintainable and extendable web applications with PHP">
+  <meta name="keywords" content="PHP, web application framework, model driven development">
+  <meta name="author" content="wemove digital solutions">
+  <link rel="shortcut icon" href="theme/images/favicon.ico">
+  <script src="jquery.js"></script>
+  <script src="theme/vendor/popper/popper.min.js"></script>
+  <script src="theme/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="theme/vendor/fontawesome/css/all.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap-toc/bootstrap-toc.min.js"></script>
+  <link href="theme/vendor/bootstrap-toc/bootstrap-toc.min.css" rel="stylesheet">
+  <script src="theme/vendor/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+  <script src="theme/vendor/highlight/highlight.pack.js"></script>
+  <link href="theme/vendor/highlight/styles/solarized-dark.css" rel="stylesheet">
+  <script src="theme/js/application.js"></script>
+  <script src="dynsections.js"></script>
+  <link href="theme/css/style.css" rel="stylesheet">
+</head>
+<body data-spy="scroll" data-target="#toc">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="index.html">wCMF 4.1</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="guidesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-hand-point-right"></i> Guides <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="guidesDropdownMenuLink">
+          <a class="dropdown-item" href="gettingstarted.html">Getting started</a>
+          <a class="dropdown-item" href="architecture.html">Architecture</a>
+          <a class="dropdown-item" href="model.html">Model</a>
+          <a class="dropdown-item" href="persistence.html">Persistence</a>
+          <a class="dropdown-item" href="presentation.html">Presentation</a>
+          <a class="dropdown-item" href="configuration.html">Configuration</a>
+          <a class="dropdown-item" href="security.html">Security</a>
+          <a class="dropdown-item" href="i18n_l10n.html">I18n & l10n</a>
+          <a class="dropdown-item" href="tests.html">Tests</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="versionsDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-tags"></i> Versions <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="versionsDropdownMenuLink">
+          <a class="dropdown-item" href="4.1/index.html">4.1.x</a>
+          <a class="dropdown-item" href="4.0/index.html">4.0.x</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="apiDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file-alt"></i> API <b class="caret"></b>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="apiDropdownMenuLink">
+          <a class="dropdown-item" href="annotated.html">Classes</a>
+          <a class="dropdown-item" href="hierarchy.html">Hierarchy</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://github.com/iherwig/wcmf"><i class="fab fa-github"></i> Code</a></li>
+      <li class="nav-item"><a class="nav-link" href="support.html"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input id="search-field" class="form-control mr-sm-2" type="search" placeholder="Search API" disabled>
+    </form>
+  </div>
+</nav>
+<a class="anchor" id="top"></a>
+<div class="content" id="content">
+  <div class="container">
+    <div class="row mt-4">
+      <div id="toc-container" class="col-lg-3 d-none d-lg-block d-none">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div id="content-container" class="col-md-12 col-lg-12">
+        <div>
+<!-- end header part --><!-- Generated by Doxygen 1.8.17 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+//var searchBox = new SearchBox("searchBox", "search",false,'Search');
+/* @license-end */
+</script>
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_43e0a1f539e00dcfa1a6bc4d4fee4fc2.html">home</a></li><li class="navelem"><a class="el" href="dir_4e496f5e6697afec50da37e36008863c.html">travis</a></li><li class="navelem"><a class="el" href="dir_3855c8e49052c09581c4b9621938e815.html">build</a></li><li class="navelem"><a class="el" href="dir_5fb63628e78b0098bf6d69327c3320e7.html">iherwig</a></li><li class="navelem"><a class="el" href="dir_e2015046bb23abe0aee487b90351226b.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_c04491e9f014b4cb3cf4eee022a8c161.html">src</a></li><li class="navelem"><a class="el" href="dir_3b70d2524a473e836c3d2ba9b0590daf.html">wcmf</a></li><li class="navelem"><a class="el" href="dir_e4b5253c6ef2270f5839b63b35bf2bfe.html">lib</a></li><li class="navelem"><a class="el" href="dir_f57071bff1402464ed1755fe1c1a7d41.html">model</a></li><li class="navelem"><a class="el" href="dir_e8ffd556aec7cdaa64e3b6380f2376c1.html">mapper</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">SelectStatement.php</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;&lt;?php<span class="comment"></span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * wCMF - wemove Content Management Framework</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Copyright (C) 2005-2020 wemove digital solutions GmbH</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Licensed under the terms of the MIT License.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * See the LICENSE file distributed with this work for</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * additional information.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacewcmf_1_1lib_1_1model_1_1mapper.html">wcmf\lib\model\mapper</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;use <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">wcmf\lib\persistence\PersistenceException</a>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;use Laminas\Db\Adapter\AdapterInterface;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;use Laminas\Db\Sql\Select;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;use Laminas\Db\Sql\Sql;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/**</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * Select statement</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * @author ingo herwig &lt;ingo@wemove.com&gt;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html">SelectStatement</a> <span class="keyword">extends</span> Select {</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a7f0a4e752a9b88d4989ef0726c0bb330">   27</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a7f0a4e752a9b88d4989ef0726c0bb330">NO_CACHE</a> = <span class="stringliteral">&#39;no_cache&#39;</span>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a2d93f5b8fef752262748bd24474c6450">   28</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a2d93f5b8fef752262748bd24474c6450">CACHE_KEY</a> = <span class="stringliteral">&#39;select&#39;</span>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">   30</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a> = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9a4a6fba2208984cabb3afacadf33919">   31</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9a4a6fba2208984cabb3afacadf33919">$type</a> = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ab79d246480c4ac3a0db6bbceca92ad32">   32</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ab79d246480c4ac3a0db6bbceca92ad32">$parameters</a> = [];</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9e2540ff3196886ba01ba7f7580d7f6b">   33</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9e2540ff3196886ba01ba7f7580d7f6b">$parametersStripped</a> = [];</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9e6fc1ae0498be7d1e682f8bcc9299df">   34</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9e6fc1ae0498be7d1e682f8bcc9299df">$meta</a> = [];</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9ee338c7ba7b1b6d65911f4e4f07682d">   35</a></span>&#160;  <span class="keyword">protected</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9ee338c7ba7b1b6d65911f4e4f07682d">$cachedSql</a> = [];</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">private</span> $adapter = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">private</span> <span class="keyword">static</span> $logger = <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">   * Get the SelectStatement instance with the given id.</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">   * If the id equals SelectStatement::NO_CACHE or is not cached, a new one will be created.</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">   * @param $mapper RDBMapper instance used to retrieve the database adapter</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">   * @param $id The statement id (optional, default: _SelectStatement::NO_CACHE_)</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">   * @return SelectStatement</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ad7ec842b20bc800eedeb43d8a9ef397f">   48</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">function</span> <span class="keyword">get</span>(<a class="code" href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html">RDBMapper</a> $mapper, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a>=<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a7f0a4e752a9b88d4989ef0726c0bb330">self::NO_CACHE</a>) {</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    $cache = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;staticCache&#39;</span>);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    $cacheSection = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#acd3153332438aa0a398f9e2fb360a837">self::getCacheSection</a>($mapper-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>());</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    $cacheId = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ac83b0b87dfe7073eb728d106288dbefa">self::getCacheId</a>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a>);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a> == self::NO_CACHE || !$cache-&gt;exists($cacheSection, $cacheId)) {</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      $selectStmt = <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html">SelectStatement</a>($mapper, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a>);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      $selectStmt = $cache-&gt;get($cacheSection, $cacheId);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      $selectStmt-&gt;adapter = $mapper-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">getAdapter</a>();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">return</span> $selectStmt;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">   * Constructor</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">   * @param $mapper RDBMapper instance</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">   * @param $id The statement id (optional, default: _SelectStatement::NO_CACHE_)</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a360983bc4d635f523954a1e2d1633a18">   67</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a360983bc4d635f523954a1e2d1633a18">__construct</a>(<a class="code" href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html">RDBMapper</a> $mapper, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a>=self::NO_CACHE) {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    parent::__construct();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    $this-&gt;<span class="keywordtype">id</span> = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a>;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    $this-&gt;type = $mapper-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    $this-&gt;adapter = $mapper-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">getAdapter</a>();</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordflow">if</span> (self::$logger == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      self::$logger = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">LogManager::getLogger</a>(__CLASS__);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">   * Get the query string</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a7516ca30af0db3cdbf9a7739b48ce91d">   81</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a7516ca30af0db3cdbf9a7739b48ce91d">__toString</a>() {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ad53d6d06affd7337d46e4efce0f6b2a1">getSql</a>();</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">   * Get the id of the statement</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a12251d0c022e9e21c137a105ff683f13">   89</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a12251d0c022e9e21c137a105ff683f13">getId</a>() {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$this-&gt;id</a>;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">   * Get the entity type associated with the statement</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a830b5c75df72b32396701bc563fbe3c7">   97</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a830b5c75df72b32396701bc563fbe3c7">getType</a>() {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9a4a6fba2208984cabb3afacadf33919">$this-&gt;type</a>;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">   * Check if the statement is cached already</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">   * @return Boolean</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#afac82e816d0fc5049c3295f0d356acdb">  105</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#afac82e816d0fc5049c3295f0d356acdb">isCached</a>() {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    $cache = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;staticCache&#39;</span>);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">return</span> $this-&gt;<span class="keywordtype">id</span> == self::NO_CACHE ? false :</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            $cache-&gt;exists(self::getCacheSection($this-&gt;type), self::getCacheId($this-&gt;<span class="keywordtype">id</span>));</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">   * Add custom meta value</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">   * @param $key</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">   * @param $value</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a81abcce027514003b27341ba2911b0e0">  116</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a81abcce027514003b27341ba2911b0e0">setMeta</a>($key, $value) {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    $this-&gt;meta[$key] = $value;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">   * Get custom meta value</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">   * @param $key</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">   * @return Associative array</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aab6979537ffa052082c26366abca1231">  125</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aab6979537ffa052082c26366abca1231">getMeta</a>($key) {</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;meta[$key])) {</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      <span class="keywordflow">return</span> $this-&gt;meta[$key];</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">   * Set the parameter values to replace the placeholders with when doing the select</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">   * @param $parameters Associative array with placeholders as keys</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a1c783809a74b71213ef7137d292fd628">  136</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a1c783809a74b71213ef7137d292fd628">setParameters</a>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ab79d246480c4ac3a0db6bbceca92ad32">$parameters</a>) {</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    $this-&gt;parameters = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ab79d246480c4ac3a0db6bbceca92ad32">$parameters</a>;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="comment">// store version with colons stripped</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    $this-&gt;parametersStripped = array_combine(array_map(<span class="keyword">function</span>($name) {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keywordflow">return</span> preg_replace(<span class="stringliteral">&#39;/^:/&#39;</span>, <span class="stringliteral">&#39;&#39;</span>, $name);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    }, array_keys($this-&gt;parameters)), $this-&gt;parameters);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   * Get the select parameters</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">   * @param $stripColons Indicates whether to strip the colon character from the parameter name or not (default: false)</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">   * @return Array</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae2bc06541d1855a152dad944595751bf">  149</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae2bc06541d1855a152dad944595751bf">getParameters</a>($stripColons=<span class="keyword">false</span>) {</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordflow">return</span> $stripColons ? $this-&gt;parametersStripped : <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ab79d246480c4ac3a0db6bbceca92ad32">$this-&gt;parameters</a>;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  }</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment">   * Execute a count query and return the row count</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">   * @return Integer</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#acd2b2336c79f980c6d2bba9e9afba8e4">  157</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#acd2b2336c79f980c6d2bba9e9afba8e4">getRowCount</a>() {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    $mapper = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;persistenceFacade&#39;</span>)-&gt;getMapper($this-&gt;type);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;table) {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      $table = !is_array($this-&gt;table) ? $this-&gt;table : key($this-&gt;table);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;      <span class="comment">// use pk columns for counting</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;      $countColumns = array_map(<span class="keyword">function</span>($valueName) use ($mapper, $table) {</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">return</span> $mapper-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html#abe707d8966fc66436884e8f88e96cc7c">quoteIdentifier</a>($table).<span class="charliteral">&#39;.&#39;</span>.$mapper-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html#abe707d8966fc66436884e8f88e96cc7c">quoteIdentifier</a>($mapper-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html#ae954da422d40fc286691e54679e44c6f">getAttribute</a>($valueName)-&gt;getColumn());</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;      }, $mapper-&gt;<a class="code" href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html#a3d1403c81daa088071b2b84bc403ce0e">getPkNames</a>());</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    }</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      <span class="comment">// fallback if table is not defined: take first column</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      $adapter = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">getAdapter</a>();</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;      $columns = $this-&gt;processSelect($adapter-&gt;getPlatform());</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      $countColumns = [$columns[$this-&gt;quantifier ? 1 : 0][0][0]];</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    }</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    $countStatement = clone $this;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    $countStatement-&gt;reset(Select::COLUMNS);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    $countStatement-&gt;reset(Select::LIMIT);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    $countStatement-&gt;reset(Select::OFFSET);</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    $countStatement-&gt;reset(Select::ORDER);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    $countStatement-&gt;reset(Select::GROUP);</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="comment">// remove all join columns to prevent errors because of missing group by for non aggregated columns (42000 - 1140)</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    $joins = $countStatement-&gt;joins-&gt;getJoins();</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    $countStatement-&gt;reset(Select::JOINS);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordflow">foreach</span> ($joins as $key =&gt; $join) {</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;      <span class="comment">// re add join without cols</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;      $countStatement-&gt;join($join[<span class="stringliteral">&quot;name&quot;</span>], $join[<span class="stringliteral">&quot;on&quot;</span>], [], $join[<span class="stringliteral">&quot;type&quot;</span>]);</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="comment">// create aggregation column</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    $countStatement-&gt;columns([<span class="stringliteral">&#39;nRows&#39;</span> =&gt; <span class="keyword">new</span> \Laminas\Db\Sql\Expression(<span class="stringliteral">&#39;COUNT(&#39;</span>.$this-&gt;quantifier.<span class="charliteral">&#39; &#39;</span>.<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a8b0e7a6659f960583611728b5c520b87">join</a>(<span class="stringliteral">&#39;, &#39;</span>, $countColumns).<span class="charliteral">&#39;)&#39;</span>)]);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    $countStatement-&gt;id = $this-&gt;<span class="keywordtype">id</span> != self::NO_CACHE ? $this-&gt;<span class="keywordtype">id</span>.<span class="stringliteral">&#39;-count&#39;</span> : <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a7f0a4e752a9b88d4989ef0726c0bb330">self::NO_CACHE</a>;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      $result = $countStatement-&gt;query();</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      $row = $result-&gt;fetch();</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;      <span class="comment">// update cache with count query</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      $this-&gt;cachedSql = array_merge($this-&gt;cachedSql, $countStatement-&gt;cachedSql);</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      <span class="keywordflow">return</span> $row[<span class="stringliteral">&#39;nRows&#39;</span>];</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    }</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keywordflow">catch</span> (\Exception $ex) {</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;      self::$logger-&gt;error(<span class="stringliteral">&quot;The query: &quot;</span>.$countStatement-&gt;__toString().<span class="stringliteral">&quot;\ncaused the following exception:\n&quot;</span>.$ex-&gt;getMessage());</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code" href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">PersistenceException</a>(<span class="stringliteral">&quot;Error in persistent operation. See log file for details.&quot;</span>);</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    }</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;  }</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="comment">   * Put the statement into the cache</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#afc8a3c62679cf00ade9f15fb2a6d6132">  207</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#afc8a3c62679cf00ade9f15fb2a6d6132">save</a>() {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;<span class="keywordtype">id</span> != self::NO_CACHE) {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      $cache = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">ObjectFactory::getInstance</a>(<span class="stringliteral">&#39;staticCache&#39;</span>);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      $cache-&gt;put(self::getCacheSection($this-&gt;type), self::getCacheId($this-&gt;<span class="keywordtype">id</span>), $this);</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    }</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="comment">   * @see Select::join()</span></div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a8b0e7a6659f960583611728b5c520b87">  217</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a8b0e7a6659f960583611728b5c520b87">join</a>($name, $on, $columns=self::SQL_STAR, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9a4a6fba2208984cabb3afacadf33919">$type</a>=self::JOIN_INNER) {</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="comment">// prevent duplicate joins</span></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;joins-&gt;getJoins() as $join) {</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;      <span class="keywordflow">if</span> ($join[<span class="stringliteral">&#39;name&#39;</span>] == $name) {</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        <span class="keywordflow">return</span> $this;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;      }</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    }</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="keywordflow">return</span> parent::join($name, $on, $columns, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9a4a6fba2208984cabb3afacadf33919">$type</a>);</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  }</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment">   * Add columns to the statement</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment">   * @param $columns Array of columns (@see Select::columns())</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="comment">   * @param $joinName The name of the join to which the columns belong</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aef315db4382907d17eff9dfb14c1d7c2">  232</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aef315db4382907d17eff9dfb14c1d7c2">addColumns</a>(array $columns, $joinName=<span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordflow">if</span> ($joinName === <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;      <span class="comment">// add normal column</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;      $this-&gt;columns = $this-&gt;columns + $columns;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    }</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;      <span class="comment">// add column to join</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;      $joins = [];</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;      <span class="keywordflow">foreach</span> ($this-&gt;joins-&gt;getJoins() as $join) {</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        <span class="keywordflow">if</span> ($join[<span class="stringliteral">&#39;name&#39;</span>] == $joinName || in_array($joinName, array_keys($join[<span class="stringliteral">&#39;name&#39;</span>]))) {</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;          $join[<span class="stringliteral">&#39;columns&#39;</span>] += $columns;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        }</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        $joins[] = $join;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;      }</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;      $this-&gt;joins-&gt;reset();</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;      <span class="keywordflow">foreach</span> ($joins as $join) {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        parent::join($join[<span class="stringliteral">&#39;name&#39;</span>], $join[<span class="stringliteral">&#39;on&#39;</span>], $join[<span class="stringliteral">&#39;columns&#39;</span>], $join[<span class="stringliteral">&#39;type&#39;</span>]);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      }</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    }</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="comment">   * Get the alias names for a table name</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="comment">   * @param $tables</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="comment">   * @return Array</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ac675a7d22bf60b6c509eff31be4ccac8">  258</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ac675a7d22bf60b6c509eff31be4ccac8">getAliasNames</a>($table) {</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    $names = [];</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordflow">if</span> (is_array($this-&gt;table) &amp;&amp; current($this-&gt;table) == $table) {</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;      $names[] = key($this-&gt;table);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    }</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordflow">foreach</span> ($this-&gt;joins-&gt;getJoins() as $join) {</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;      $joinName = $join[<span class="stringliteral">&#39;name&#39;</span>];</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;      <span class="keywordflow">if</span> (is_array($joinName) &amp;&amp; current($joinName) == $table) {</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        $names[] = key($joinName);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;      }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="keywordflow">return</span> $names;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">   * Get the sql string for this statement</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ad53d6d06affd7337d46e4efce0f6b2a1">  276</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ad53d6d06affd7337d46e4efce0f6b2a1">getSql</a>() {</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;<span class="keywordtype">id</span> == self::NO_CACHE) {</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;      <span class="keywordflow">return</span> trim((<span class="keyword">new</span> Sql($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">getAdapter</a>()))-&gt;buildSqlString($this));</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    }</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160; </div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    $cacheKey = <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ac83b0b87dfe7073eb728d106288dbefa">self::getCacheId</a>($this-&gt;<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="keywordflow">if</span> (!isset($this-&gt;cachedSql[$cacheKey])) {</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;      $sql = trim((<span class="keyword">new</span> Sql($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">getAdapter</a>()))-&gt;buildSqlString($this));</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;      $this-&gt;cachedSql[$cacheKey] = $sql;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    }</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordflow">return</span> $this-&gt;cachedSql[$cacheKey];</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;  }</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="comment">   * Execute the statement</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;<span class="comment">   * @return PDOStatement</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a8dbd35d765e8ff0d1c34461ef67c5abf">  293</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a8dbd35d765e8ff0d1c34461ef67c5abf">query</a>() {</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    $adapter = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">getAdapter</a>();</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    $sql = $this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ad53d6d06affd7337d46e4efce0f6b2a1">getSql</a>();</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="comment">// always update offset, since it&#39;s most likely not contained in the cache id</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    $sql = preg_replace(<span class="stringliteral">&#39;/OFFSET\s+[0-9]+/i&#39;</span>, <span class="stringliteral">&#39;OFFSET &#39;</span>.$this-&gt;getRawState(Select::OFFSET), $sql);</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    $stmt = $adapter-&gt;getDriver()-&gt;getConnection()-&gt;prepare($sql);</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordflow">if</span> (self::$logger-&gt;isDebugEnabled()) {</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;      self::$logger-&gt;debug(<span class="stringliteral">&quot;Execute statement: &quot;</span>.$sql);</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;      self::$logger-&gt;debug($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae2bc06541d1855a152dad944595751bf">getParameters</a>(<span class="keyword">true</span>));</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    }</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">return</span> $stmt-&gt;execute($this-&gt;<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae2bc06541d1855a152dad944595751bf">getParameters</a>(<span class="keyword">true</span>))-&gt;getResource();</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  }</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="comment">   * Get the adapter corresponding to the statement&#39;s type</span></div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment">   * @return AdapterInterface</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">  310</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">getAdapter</a>() {</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordflow">return</span> $this-&gt;adapter;</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;  }</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="comment">   * Get the cache section</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="comment">   * @param $type The type</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#acd3153332438aa0a398f9e2fb360a837">  319</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#acd3153332438aa0a398f9e2fb360a837">getCacheSection</a>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9a4a6fba2208984cabb3afacadf33919">$type</a>) {</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keywordflow">return</span> self::CACHE_KEY.<span class="charliteral">&#39;/&#39;</span>.<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9a4a6fba2208984cabb3afacadf33919">$type</a>;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;  }</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="comment">   * Get the compressed cache id from the id</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment">   * @param $id</span></div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment">   * @return String</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ac83b0b87dfe7073eb728d106288dbefa">  328</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ac83b0b87dfe7073eb728d106288dbefa">getCacheId</a>(<a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a>) {</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">return</span> hash(<span class="stringliteral">&#39;sha256&#39;</span>, <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">$id</a>);</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  }</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="comment">  /**</span></div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="comment">   * Serialization handlers</span></div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="comment">   */</span></div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160; </div>
+<div class="line"><a name="l00336"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aaf11785905da71774e052912d784e3b4">  336</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aaf11785905da71774e052912d784e3b4">__sleep</a>() {</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="keywordflow">return</span> [<span class="stringliteral">&#39;id&#39;</span>, <span class="stringliteral">&#39;type&#39;</span>, <span class="stringliteral">&#39;table&#39;</span>, <span class="stringliteral">&#39;meta&#39;</span>, <span class="stringliteral">&#39;cachedSql&#39;</span>, <span class="stringliteral">&#39;specifications&#39;</span>];</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;  }</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
+<div class="line"><a name="l00340"></a><span class="lineno"><a class="line" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a19dd44fe063cfd1cbafe97452e57666c">  340</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a19dd44fe063cfd1cbafe97452e57666c">__wakeup</a>() {</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    parent::__construct();</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <span class="keywordflow">if</span> (self::$logger == <span class="keyword">null</span>) {</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;      self::$logger = <a class="code" href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">LogManager::getLogger</a>(__CLASS__);</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    }</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  }</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;}</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;?&gt;</div>
+</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper_html"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html">wcmf\lib\model\mapper\RDBMapper</a></div><div class="ttdoc">RDBMapper defines the interface for mapper classes that map to relational databases.</div><div class="ttdef"><b>Definition:</b> <a href="_r_d_b_mapper_8php_source.html#l00024">RDBMapper.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_ae2bc06541d1855a152dad944595751bf"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae2bc06541d1855a152dad944595751bf">wcmf\lib\model\mapper\SelectStatement\getParameters</a></div><div class="ttdeci">getParameters($stripColons=false)</div><div class="ttdoc">Get the select parameters.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00149">SelectStatement.php:149</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html">wcmf\lib\model\mapper\SelectStatement</a></div><div class="ttdoc">Select statement.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00025">SelectStatement.php:25</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_acd2b2336c79f980c6d2bba9e9afba8e4"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#acd2b2336c79f980c6d2bba9e9afba8e4">wcmf\lib\model\mapper\SelectStatement\getRowCount</a></div><div class="ttdeci">getRowCount()</div><div class="ttdoc">Execute a count query and return the row count.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00157">SelectStatement.php:157</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper_html_a830b5c75df72b32396701bc563fbe3c7"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html#a830b5c75df72b32396701bc563fbe3c7">wcmf\lib\persistence\PersistenceMapper\getType</a></div><div class="ttdeci">getType()</div><div class="ttdoc">Get the entity type that this mapper handles.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1persistence_1_1_persistence_exception_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1persistence_1_1_persistence_exception.html">wcmf\lib\persistence\PersistenceException</a></div><div class="ttdoc">PersistenceException signals an exception in the persistence service.</div><div class="ttdef"><b>Definition:</b> <a href="_persistence_exception_8php_source.html#l00018">PersistenceException.php:18</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper_html_abe707d8966fc66436884e8f88e96cc7c"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html#abe707d8966fc66436884e8f88e96cc7c">wcmf\lib\model\mapper\RDBMapper\quoteIdentifier</a></div><div class="ttdeci">quoteIdentifier($identifier)</div><div class="ttdoc">Add quotation to a given identifier (like column name).</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_afc8a3c62679cf00ade9f15fb2a6d6132"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#afc8a3c62679cf00ade9f15fb2a6d6132">wcmf\lib\model\mapper\SelectStatement\save</a></div><div class="ttdeci">save()</div><div class="ttdoc">Put the statement into the cache.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00207">SelectStatement.php:207</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a7516ca30af0db3cdbf9a7739b48ce91d"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a7516ca30af0db3cdbf9a7739b48ce91d">wcmf\lib\model\mapper\SelectStatement\__toString</a></div><div class="ttdeci">__toString()</div><div class="ttdoc">Get the query string.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00081">SelectStatement.php:81</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper_html_a3d1403c81daa088071b2b84bc403ce0e"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html#a3d1403c81daa088071b2b84bc403ce0e">wcmf\lib\persistence\PersistenceMapper\getPkNames</a></div><div class="ttdeci">getPkNames()</div><div class="ttdoc">Get the names of the primary key values.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a81abcce027514003b27341ba2911b0e0"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a81abcce027514003b27341ba2911b0e0">wcmf\lib\model\mapper\SelectStatement\setMeta</a></div><div class="ttdeci">setMeta($key, $value)</div><div class="ttdoc">Add custom meta value.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00116">SelectStatement.php:116</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_acd3153332438aa0a398f9e2fb360a837"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#acd3153332438aa0a398f9e2fb360a837">wcmf\lib\model\mapper\SelectStatement\getCacheSection</a></div><div class="ttdeci">static getCacheSection($type)</div><div class="ttdoc">Get the cache section.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00319">SelectStatement.php:319</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a8dbd35d765e8ff0d1c34461ef67c5abf"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a8dbd35d765e8ff0d1c34461ef67c5abf">wcmf\lib\model\mapper\SelectStatement\query</a></div><div class="ttdeci">query()</div><div class="ttdoc">Execute the statement.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00293">SelectStatement.php:293</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_ad53d6d06affd7337d46e4efce0f6b2a1"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ad53d6d06affd7337d46e4efce0f6b2a1">wcmf\lib\model\mapper\SelectStatement\getSql</a></div><div class="ttdeci">getSql()</div><div class="ttdoc">Get the sql string for this statement.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00276">SelectStatement.php:276</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_ac83b0b87dfe7073eb728d106288dbefa"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ac83b0b87dfe7073eb728d106288dbefa">wcmf\lib\model\mapper\SelectStatement\getCacheId</a></div><div class="ttdeci">static getCacheId($id)</div><div class="ttdoc">Get the compressed cache id from the id.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00328">SelectStatement.php:328</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a2d93f5b8fef752262748bd24474c6450"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a2d93f5b8fef752262748bd24474c6450">wcmf\lib\model\mapper\SelectStatement\CACHE_KEY</a></div><div class="ttdeci">const CACHE_KEY</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00028">SelectStatement.php:28</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a9e2540ff3196886ba01ba7f7580d7f6b"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9e2540ff3196886ba01ba7f7580d7f6b">wcmf\lib\model\mapper\SelectStatement\$parametersStripped</a></div><div class="ttdeci">$parametersStripped</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00033">SelectStatement.php:33</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a7f0a4e752a9b88d4989ef0726c0bb330"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a7f0a4e752a9b88d4989ef0726c0bb330">wcmf\lib\model\mapper\SelectStatement\NO_CACHE</a></div><div class="ttdeci">const NO_CACHE</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00027">SelectStatement.php:27</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_aef315db4382907d17eff9dfb14c1d7c2"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aef315db4382907d17eff9dfb14c1d7c2">wcmf\lib\model\mapper\SelectStatement\addColumns</a></div><div class="ttdeci">addColumns(array $columns, $joinName=null)</div><div class="ttdoc">Add columns to the statement.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00232">SelectStatement.php:232</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a8b0e7a6659f960583611728b5c520b87"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a8b0e7a6659f960583611728b5c520b87">wcmf\lib\model\mapper\SelectStatement\join</a></div><div class="ttdeci">join($name, $on, $columns=self::SQL_STAR, $type=self::JOIN_INNER)</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00217">SelectStatement.php:217</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_afac82e816d0fc5049c3295f0d356acdb"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#afac82e816d0fc5049c3295f0d356acdb">wcmf\lib\model\mapper\SelectStatement\isCached</a></div><div class="ttdeci">isCached()</div><div class="ttdoc">Check if the statement is cached already.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00105">SelectStatement.php:105</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_ac675a7d22bf60b6c509eff31be4ccac8"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ac675a7d22bf60b6c509eff31be4ccac8">wcmf\lib\model\mapper\SelectStatement\getAliasNames</a></div><div class="ttdeci">getAliasNames($table)</div><div class="ttdoc">Get the alias names for a table name.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00258">SelectStatement.php:258</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a9e6fc1ae0498be7d1e682f8bcc9299df"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9e6fc1ae0498be7d1e682f8bcc9299df">wcmf\lib\model\mapper\SelectStatement\$meta</a></div><div class="ttdeci">$meta</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00034">SelectStatement.php:34</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_ae97941710d863131c700f069b109991e"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ae97941710d863131c700f069b109991e">wcmf\lib\model\mapper\SelectStatement\$id</a></div><div class="ttdeci">$id</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00030">SelectStatement.php:30</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html_a0c195d83bf1cd47fb46a428e77f82b08"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html#a0c195d83bf1cd47fb46a428e77f82b08">wcmf\lib\core\LogManager\getLogger</a></div><div class="ttdeci">static getLogger($name)</div><div class="ttdoc">Get the logger with the given name.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00037">LogManager.php:37</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html_ac54511d3948ce6338f8a0a9b007e0edf"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html#ac54511d3948ce6338f8a0a9b007e0edf">wcmf\lib\core\ObjectFactory\getInstance</a></div><div class="ttdeci">static getInstance($name, $dynamicConfiguration=[])</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00047">ObjectFactory.php:47</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_ab79d246480c4ac3a0db6bbceca92ad32"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#ab79d246480c4ac3a0db6bbceca92ad32">wcmf\lib\model\mapper\SelectStatement\$parameters</a></div><div class="ttdeci">$parameters</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00032">SelectStatement.php:32</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a23a4c71383d4d2dfc4ccade9fc78e5b9"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">wcmf\lib\model\mapper\SelectStatement\getAdapter</a></div><div class="ttdeci">getAdapter()</div><div class="ttdoc">Get the adapter corresponding to the statement's type.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00310">SelectStatement.php:310</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a1c783809a74b71213ef7137d292fd628"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a1c783809a74b71213ef7137d292fd628">wcmf\lib\model\mapper\SelectStatement\setParameters</a></div><div class="ttdeci">setParameters($parameters)</div><div class="ttdoc">Set the parameter values to replace the placeholders with when doing the select.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00136">SelectStatement.php:136</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_aaf11785905da71774e052912d784e3b4"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aaf11785905da71774e052912d784e3b4">wcmf\lib\model\mapper\SelectStatement\__sleep</a></div><div class="ttdeci">__sleep()</div><div class="ttdoc">Serialization handlers.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00336">SelectStatement.php:336</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper_html_ae954da422d40fc286691e54679e44c6f"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1persistence_1_1_persistence_mapper.html#ae954da422d40fc286691e54679e44c6f">wcmf\lib\persistence\PersistenceMapper\getAttribute</a></div><div class="ttdeci">getAttribute($name)</div><div class="ttdoc">Get the definition for an attribute.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a19dd44fe063cfd1cbafe97452e57666c"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a19dd44fe063cfd1cbafe97452e57666c">wcmf\lib\model\mapper\SelectStatement\__wakeup</a></div><div class="ttdeci">__wakeup()</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00340">SelectStatement.php:340</a></div></div>
+<div class="ttc" id="ainterfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper_html_a23a4c71383d4d2dfc4ccade9fc78e5b9"><div class="ttname"><a href="interfacewcmf_1_1lib_1_1model_1_1mapper_1_1_r_d_b_mapper.html#a23a4c71383d4d2dfc4ccade9fc78e5b9">wcmf\lib\model\mapper\RDBMapper\getAdapter</a></div><div class="ttdeci">getAdapter()</div><div class="ttdoc">Get the database adapter.</div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_log_manager_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_log_manager.html">wcmf\lib\core\LogManager</a></div><div class="ttdoc">LogManager is used to retrieve Logger instances.</div><div class="ttdef"><b>Definition:</b> <a href="_log_manager_8php_source.html#l00020">LogManager.php:20</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a360983bc4d635f523954a1e2d1633a18"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a360983bc4d635f523954a1e2d1633a18">wcmf\lib\model\mapper\SelectStatement\__construct</a></div><div class="ttdeci">__construct(RDBMapper $mapper, $id=self::NO_CACHE)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00067">SelectStatement.php:67</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a9ee338c7ba7b1b6d65911f4e4f07682d"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9ee338c7ba7b1b6d65911f4e4f07682d">wcmf\lib\model\mapper\SelectStatement\$cachedSql</a></div><div class="ttdeci">$cachedSql</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00035">SelectStatement.php:35</a></div></div>
+<div class="ttc" id="anamespacewcmf_1_1lib_1_1model_1_1mapper_html"><div class="ttname"><a href="namespacewcmf_1_1lib_1_1model_1_1mapper.html">wcmf\lib\model\mapper</a></div><div class="ttdoc">&amp;#160;</div><div class="ttdef"><b>Definition:</b> <a href="namespaces_8php_source.html#l00030">namespaces.php:30</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1core_1_1_object_factory_html"><div class="ttname"><a href="classwcmf_1_1lib_1_1core_1_1_object_factory.html">wcmf\lib\core\ObjectFactory</a></div><div class="ttdoc">ObjectFactory implements the service locator pattern by wrapping a Factory instance and providing sta...</div><div class="ttdef"><b>Definition:</b> <a href="_object_factory_8php_source.html#l00024">ObjectFactory.php:24</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_aab6979537ffa052082c26366abca1231"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#aab6979537ffa052082c26366abca1231">wcmf\lib\model\mapper\SelectStatement\getMeta</a></div><div class="ttdeci">getMeta($key)</div><div class="ttdoc">Get custom meta value.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00125">SelectStatement.php:125</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a12251d0c022e9e21c137a105ff683f13"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a12251d0c022e9e21c137a105ff683f13">wcmf\lib\model\mapper\SelectStatement\getId</a></div><div class="ttdeci">getId()</div><div class="ttdoc">Get the id of the statement.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00089">SelectStatement.php:89</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a830b5c75df72b32396701bc563fbe3c7"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a830b5c75df72b32396701bc563fbe3c7">wcmf\lib\model\mapper\SelectStatement\getType</a></div><div class="ttdeci">getType()</div><div class="ttdoc">Get the entity type associated with the statement.</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00097">SelectStatement.php:97</a></div></div>
+<div class="ttc" id="aclasswcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement_html_a9a4a6fba2208984cabb3afacadf33919"><div class="ttname"><a href="classwcmf_1_1lib_1_1model_1_1mapper_1_1_select_statement.html#a9a4a6fba2208984cabb3afacadf33919">wcmf\lib\model\mapper\SelectStatement\$type</a></div><div class="ttdeci">$type</div><div class="ttdef"><b>Definition:</b> <a href="_select_statement_8php_source.html#l00031">SelectStatement.php:31</a></div></div>
+<!-- start footer part -->
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <small>&copy; 2020 <a href="http://www.wemove.com" target="_blank">wemove digital solutions</a><br>
+          Generated on Mon Dec 21 2020 22:40:26 for wCMF by &#160;<a href="http://www.doxygen.org/index.html" target="_blank">doxygen</a> 1.8.17</small>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.wemove.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><img src="https://piwik.wemove.com/piwik.php?idsite=7&rec=1" style="border:0" alt="" /></noscript>
+<!-- End Matomo -->
+</body>
+</html>

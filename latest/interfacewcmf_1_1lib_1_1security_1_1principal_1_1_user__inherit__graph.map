@@ -1,0 +1,5 @@
+<map id="User" name="User">
+<area shape="rect" id="node1" title="User is the interface for users." alt="" coords="139,5,284,273"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_abstract_user.html" title="Default implementation of a user that is persistent." alt="" coords="5,321,207,604"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1security_1_1principal_1_1impl_1_1_anonymous_user.html" title="Anonymous user." alt="" coords="231,329,403,597"/>
+</map>

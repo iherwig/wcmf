@@ -1,0 +1,6 @@
+<map id="PermissionManager" name="PermissionManager">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_chained_permission_manager.html" title="ChainedPermissionManager retrieves authorization rules included managers. " alt="" coords="5,307,189,443"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_default_permission_manager.html" title="DefaultPermissionManager retrieves authorization rules the storage. " alt="" coords="214,277,394,472"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_null_permission_manager.html" title="NullPermissionManager acts like an absent PermissionManager. " alt="" coords="418,314,577,435"/>
+<area shape="rect" id="node5" href="$classwcmf_1_1lib_1_1security_1_1impl_1_1_static_permission_manager.html" title="StaticPermissionManager retrieves authorization rules from the application configuration. " alt="" coords="601,292,799,457"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="PersistenceOperation" name="PersistenceOperation">
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1persistence_1_1_delete_operation.html" title="DeleteOperation holds data necessary to accomplish an delete operation on the persistent store..." alt="" coords="5,219,120,296"/>
+<area shape="rect" id="node3" href="$classwcmf_1_1lib_1_1persistence_1_1_insert_operation.html" title="InsertOperation holds data necessary to accomplish an insert operation on the persistent store..." alt="" coords="145,219,255,296"/>
+<area shape="rect" id="node4" href="$classwcmf_1_1lib_1_1persistence_1_1_update_operation.html" title="UpdateOperation instances hold data necessary to accomplish an update operation on the persistent sto..." alt="" coords="279,219,398,296"/>
+</map>

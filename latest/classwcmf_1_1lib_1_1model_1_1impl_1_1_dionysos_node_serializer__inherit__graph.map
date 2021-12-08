@@ -1,0 +1,5 @@
+<map id="DionysosNodeSerializer" name="DionysosNodeSerializer">
+<area shape="rect" id="node1" title="DionysosNodeSerializer is used to serialize Nodes into the Dionysos format and vice versa." alt="" coords="5,329,183,436"/>
+<area shape="rect" id="node2" href="$classwcmf_1_1lib_1_1model_1_1impl_1_1_abstract_node_serializer.html" title="NodeSerializerBase is a base class for NodeSerialize implementations." alt="" coords="9,160,179,281"/>
+<area shape="rect" id="node3" href="$interfacewcmf_1_1lib_1_1model_1_1_node_serializer.html" title="NodeSerializer implementations are used to serialize Nodes into an array representation or deserializ..." alt="" coords="16,5,172,112"/>
+</map>

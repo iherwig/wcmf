@@ -1,0 +1,171 @@
+.jumbotron h2 {
+  line-height: 1.2;
+}
+
+.tocify {
+  width: 175px;
+  margin-left: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.tocify ul, .tocify li {
+  line-height: inherit;
+}
+
+.tocify-header li,
+.tocify-subheader li,
+.tocify-subheader .tocify-subheader li {
+  text-indent: 0;
+}
+
+.tocify-header li {
+  text-transform: uppercase;
+}
+
+.tocify-subheader li {
+  text-transform: none;
+  font-size: inherit;
+}
+
+.tocify-subheader .tocify-subheader li {
+  font-style: italic;
+}
+
+.tocify-subheader .tocify-subheader .tocify-subheader li a:before {
+  content: "- ";
+}
+
+.tocify .nav-list > .active > a, .tocify .nav-list > .active > a:hover {
+  font-weight: bold;
+  border-left: medium solid #428bca;
+}
+
+.tocify .nav > li > a:hover, .tocify .nav > li > a:focus {
+  font-weight: bold;
+  background: none;
+}
+
+.tocify .nav-list > li > a {
+  padding: 10px;
+}
+
+.header-link {
+  position: relative;
+  font-size: 0.7em;
+  left: 0;
+  bottom: -1.4em;
+  margin-left: -1.3em;
+  opacity: 0;
+
+  -webkit-transition: opacity 0.1s ease-in-out 0.1s;
+  -moz-transition: opacity 0.1s ease-in-out 0.1s;
+  -ms-transition: opacity 0.1s ease-in-out 0.1s;
+}
+
+i.fa-slack {
+  -ms-transform: rotate(19deg);
+  -webkit-transform: rotate(19deg);
+  transform: rotate(19deg);
+}
+
+h2:hover .header-link,
+h3:hover .header-link,
+h4:hover .header-link,
+h5:hover .header-link,
+h6:hover .header-link {
+  opacity: 1;
+}
+
+a.anchor{
+  display: block;
+  position: relative;
+  top: -55px;
+  visibility: hidden;
+}
+
+img {
+  max-width: 100% !important;
+  height: auto;
+}
+
+.image-table table th, .image-table table td {
+  border: none !important;
+}
+
+.controller-action table {
+  border: none;
+}
+
+.controller-action table th {
+  background-color: #FFF;
+}
+
+tr[class^='separator:'] {
+  display: none;
+}
+
+td.entry {
+  white-space: nowrap;
+}
+
+.icona span.label-info {
+  padding-left: 9px;
+  padding-right: 8px;
+}
+
+.image {
+  padding-top: 20px;
+}
+
+.caption {
+  padding: 10px 0 20px 0;
+  font-style: italic;
+}
+
+.panel-default {
+  border: none;
+}
+
+.textblock h2, .textblock h3, .textblock h4, .textblock h5 {
+  margin-top: 20px;
+}
+
+/* Code */
+
+div.line {
+  text-indent: 0;
+  padding-left: 0;
+}
+
+/* Search */
+
+#MSearchSelectWindow {
+  display: none;
+}
+
+#MSearchResultsWindow {
+  display: none;
+}
+
+#MSearchResults {
+  width: 300px;
+  height: 200px;
+}
+
+.SRChildren {
+  padding-left: 10px;
+  padding-bottom: .5em
+}
+
+.SRPage .SRChildren {
+  display: none;
+}
+
+a.SRScope {
+  display: block;
+}
+
+span.SRScope {
+  padding-left: 4px;
+}

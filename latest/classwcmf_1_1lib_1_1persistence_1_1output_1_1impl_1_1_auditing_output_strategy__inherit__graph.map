@@ -1,0 +1,4 @@
+<map id="AuditingOutputStrategy" name="AuditingOutputStrategy">
+<area shape="rect" id="node1" title="AuditingOutputStrategy outputs object changes to the logger category AuditingOutputStrategy,..." alt="" coords="5,160,180,281"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1persistence_1_1output_1_1_output_strategy.html" title="OutputStrategy defines the interface for classes that write an object&#39;s content to a destination (cal..." alt="" coords="29,5,156,112"/>
+</map>

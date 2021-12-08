@@ -1,0 +1,4 @@
+<map id="FileListStrategy" name="FileListStrategy">
+<area shape="rect" id="node1" title="FileListStrategy implements a list of key value pairs that is retrieved from an configuration section..." alt="" coords="5,145,128,237"/>
+<area shape="rect" id="node2" href="$interfacewcmf_1_1lib_1_1presentation_1_1control_1_1lists_1_1_list_strategy.html" title="ListStrategy defines the interface for classes that retrieve value lists." alt="" coords="17,5,117,97"/>
+</map>
