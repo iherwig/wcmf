@@ -104,8 +104,10 @@ function smarty_block_assetic($params, $content, Smarty_Internal_Template $templ
         $scssFilter->addImportPath(FileUtil::realpath(WCMF_BASE.$importPath));
         $scssMinFilter->addImportPath(FileUtil::realpath(WCMF_BASE.$importPath));
       }
-      $scssFilter->setFormatter(new Leafo\ScssPhp\Formatter\Expanded());
-      $scssMinFilter->setFormatter(new Leafo\ScssPhp\Formatter\Compressed());
+      if (class_exists('Leafo\ScssPhp\Formatter\Expanded') && class_exists('Leafo\ScssPhp\Formatter\Compressed')) {
+        $scssFilter->setFormatter(new Leafo\ScssPhp\Formatter\Expanded());
+        $scssMinFilter->setFormatter(new Leafo\ScssPhp\Formatter\Compressed());
+      }
 
       $filters = [
         'js' => [
