@@ -14,31 +14,34 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\validation\ValidateType;
 
 /**
- * RegExp validates against the given regular expression.
+ * ValueList validates against a list of values.
  *
  * Configuration example:
  * @code
  * // integer or empty
- * regexp:{"pattern":"/^[0-9]*$/"}
+ * list:{"values":"value1,value2,value3","separator":","}
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class RegExp implements ValidateType {
+class ValueList implements ValidateType {
+  const DEFAULT_SEPARATOR = ',';
 
   /**
    * @see ValidateType::validate
-   * $options is an associative array with key 'pattern'
+   * $options is an associative array with keys 'values' and 'separator'
    */
   public function validate($value, $options=null, $context=null) {
-    if (!isset($options['pattern'])) {
-      throw new ConfigurationException("No 'pattern' given in regexp options: ".json_encode($options));
+    if (!isset($options['values'])) {
+      throw new ConfigurationException("No 'values' given in regexp options: ".json_encode($options));
     }
     if (!is_array($value)) {
-      return preg_match($options['pattern'], $value);
+      $separator = isset($options['separator']) ? $options['separator'] : self::DEFAULT_SEPARATOR;
+      $value = explode($separator, $value);
     }
+    $allValues = explode(self::DEFAULT_SEPARATOR, $options['values']);
     foreach ($value as $single) {
-      if (!preg_match($options['pattern'], $single)) {
+      if (!in_array($single, $allValues)) {
         return false;
       }
     }
