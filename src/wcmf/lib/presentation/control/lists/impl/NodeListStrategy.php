@@ -29,11 +29,21 @@ use wcmf\lib\util\StringUtil;
  * // list all authors
  * {"type":"node","types":["Author"]}
  *
+ * // list all authors and display only the name (instead of default display values)
+ * {"type":"node","types":["Author"],"displayValues":["name"]}
+ *
  * // list all authors and books
  * {"type":"node","types":["Author","Book"]}
  *
  * // list all authors with name starting with A (see StringQuery)
  * {"type":"node","types":["Author"],"query":"Author.name LIKE 'A%'"}
+ *
+ * // list all authors and books with different queries (see StringQuery)
+ * {"type":"node","types":["Author"],"query":{"Author":"Author.name LIKE 'A%'","Book":"Book.title LIKE 'A%'"}}
+ *
+ * // list all authors and books with specified display values
+ * {"type":"node","types":["Author","Book"],"displayValues":{"Author":["name"],"Book":["title"]}}
+ *
  * @endcode
  *
  * @author ingo herwig <ingo@wemove.com>
@@ -66,7 +76,7 @@ class NodeListStrategy implements ListStrategy {
     $types = $options['types'];
 
     $isSingleType = sizeof($types) == 1;
-    $hasQuery = (isset($options['query']) && strlen($options['query']) > 0) || $valuePattern || $key;
+    $hasQuery = (isset($options['query']) && !empty($options['query'])) || $valuePattern || $key;
     $needsTranslation = $language != null && $language != $localization->getDefaultLanguage();
 
     // set cache id for unfiltered result
@@ -79,15 +89,22 @@ class NodeListStrategy implements ListStrategy {
     else {
       if ($key) {
         // load single object
-        $oid = $isSingleType ? new ObjectId($types[0], $key) : ObjectId::parse($key);
+        $type = $types[0];
+        $oid = $isSingleType ? new ObjectId($type, $key) : ObjectId::parse($key);
         $object = $persistenceFacade->load($oid);
-        $list[$key] = $object ? $object->getDisplayValue() : '';
+        $list[$key] = $object ? $this->getDisplayValue($type, $object, $options) : '';
       }
       else {
         foreach ($types as $type) {
           $query = new StringQuery($type);
           if ($hasQuery) {
-            $query->setConditionString($options['query']);
+            $queryValue = $options['query'];
+            if (is_string($queryValue)) {
+              $query->setConditionString($queryValue);
+            }
+            else if (isset($queryValue[$type])) {
+              $query->setConditionString($queryValue[$type]);
+            }
           }
           // add display value query
           if ($valuePattern) {
@@ -108,7 +125,7 @@ class NodeListStrategy implements ListStrategy {
               $object = $localization->loadTranslation($object, $language);
             }
             $id = $isSingleType ? $object->getOID()->getFirstId() : $object->getOID()->__toString();
-            $list[$id] = $object->getDisplayValue();
+            $list[$id] = $this->getDisplayValue($type, $object, $options);
           }
         }
       }
@@ -124,6 +141,22 @@ class NodeListStrategy implements ListStrategy {
    */
   public function isStatic($options) {
     return false;
+  }
+
+  /**
+   * Get the display value for an object
+   * @param $type
+   * @param $object
+   * @param $options
+   * @return string
+   */
+  protected function getDisplayValue($type, $object, $options) {
+    if (isset($options['displayValues'])) {
+      $displayValues = $options['displayValues'];
+      $typeDisplayValues = isset($displayValues[$type]) ? $displayValues[$type] : $displayValues;
+      $object->setProperty('displayValues', $typeDisplayValues);
+    }
+    return $object->getDisplayValue();
   }
 }
 ?>
