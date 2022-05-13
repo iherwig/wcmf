@@ -142,7 +142,7 @@ class NodeUtil {
 
   /**
    * Get the display value for a Node defined by the 'displayValues' property.
-   * If the 'displayValues' property is an array the items will be put together with ' - '.
+   * If the 'displayValues' property is an array the items will be put together with ' '.
    * If the 'displayValues' property is empty the function returns an empty string.
    * Example: 'name,text' shows the name of the Node together with the content of the text attribute
    * @param $node Node instance to display
@@ -150,7 +150,7 @@ class NodeUtil {
    * @return String
    */
   public static function getDisplayValue(Node $node, $language=null) {
-    return join(' - ', array_values(self::getDisplayValues($node, $language)));
+    return join(' ', array_values(self::getDisplayValues($node, $language)));
   }
 
   /**
@@ -182,12 +182,9 @@ class NodeUtil {
 
         // translate any list value
         $tmpDisplay = ValueListProvider::translateValue($tmpDisplay, $inputType, $language);
-        if (strlen($tmpDisplay) == 0) {
-          // fallback to oid
-          $tmpDisplay = $node->getOID();
+        if (strlen($tmpDisplay) > 0) {
+          $displayArray[$displayValueName] = $tmpDisplay;
         }
-
-        $displayArray[$displayValueName] = $tmpDisplay;
       }
     }
     return $displayArray;
