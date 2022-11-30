@@ -17,7 +17,7 @@ language: php
 
 env:
   global:
-  - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+  - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
   - TEST_DIR=$TRAVIS_BUILD_DIR/src/wcmf/test WCMF_BASE_DIR=$TRAVIS_BUILD_DIR/src
   - VENDOR_DIR=$TRAVIS_BUILD_DIR/vendor
   - PHPUNIT_DIR=$VENDOR_DIR/phpunit/phpunit
