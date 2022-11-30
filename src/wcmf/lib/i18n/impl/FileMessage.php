@@ -60,7 +60,7 @@ class FileMessage implements Message {
    */
   public function getText($message, $parameters=null, $lang='') {
     // get the translations
-    $lang = strlen($lang) == 0 ? $this->language : $lang;
+    $lang = strlen($lang ?? '') == 0 ? $this->language : $lang;
     $translations = $this->getTranslations($lang);
     $localizedMessage = $message;
     if (isset($translations[$message]) && strlen($translations[$message]) > 0) {

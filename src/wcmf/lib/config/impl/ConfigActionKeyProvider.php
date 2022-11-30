@@ -33,7 +33,6 @@ class ConfigActionKeyProvider implements ActionKeyProvider {
   public function __construct(Configuration $configuration, $configSection) {
     $this->configuration = $configuration;
     $this->configSection = $configSection;
-    $this->id = null;
   }
 
   /**

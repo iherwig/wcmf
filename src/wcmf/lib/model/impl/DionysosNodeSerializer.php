@@ -116,7 +116,7 @@ class DionysosNodeSerializer extends AbstractNodeSerializer {
     $curResult = [];
     $curResult['className'] = $node->getType();
     $curResult['oid'] = $node->getOID()->__toString();
-    $curResult['lastChange'] = strtotime($node->getValue('modified'));
+    $curResult['lastChange'] = strtotime($node->getValue('modified') ?? '');
 
     $oidStr = $node->getOID()->__toString();
     if (in_array($oidStr, $this->serializedOIDs)) {

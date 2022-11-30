@@ -159,7 +159,7 @@ class StringQuery extends ObjectQuery {
           }
         }
       }
-      if (strlen($conditionString)) {
+      if (strlen($conditionString ?? '')) {
         $selectStmt->where($conditionString);
       }
 
@@ -201,7 +201,7 @@ class StringQuery extends ObjectQuery {
    * @return String
    */
   protected function parseRQL($query) {
-    if (strlen($query) > 0) {
+    if (strlen($query ?? '') > 0) {
       // replace rql operators
       $operatorMap = ['eq' => '=', 'ne' => '!=', 'lt' => '<', 'lte' => '<=',
           'gt' => '>', 'gte' => '>=', 'in' => 'in', 'match' => 'regexp', '=' => '='];

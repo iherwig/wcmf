@@ -47,6 +47,7 @@ class DefaultFormatter implements Formatter {
    */
   public function getFormatFromMimeType($mimeType) {
     $firstFormat = null;
+    $mimeType ??= '';
     foreach ($this->formats as $name => $instance) {
       $firstFormat = $firstFormat == null ? $name : $firstFormat;
       $formatMimeType = $instance->getMimeType();
@@ -128,7 +129,7 @@ class DefaultFormatter implements Formatter {
       // send headers
       if (!headers_sent()) {
         foreach ($format->getResponseHeaders($response) as $name => $value) {
-          if (strlen($value) > 0) {
+          if (strlen($value ?? '') > 0) {
             header($name.": ".$value);
           }
           else {

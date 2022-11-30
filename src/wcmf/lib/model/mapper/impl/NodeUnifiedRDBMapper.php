@@ -777,7 +777,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
       $type = $this->getAttribute($valueName)->getType();
       // integer
       if (strpos(strtolower($type), 'int') === 0) {
-        $value = (strlen($value) == 0) ? null : intval($value);
+        $value = (strlen($value ?? '') == 0) ? null : intval($value);
         $values[$valueName] = $value;
       }
       // null values

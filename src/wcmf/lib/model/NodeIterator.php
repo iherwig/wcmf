@@ -35,9 +35,9 @@ use wcmf\lib\model\Node;
  */
 class NodeIterator implements \Iterator {
 
-  protected $end;              // indicates if the iteration is ended
-  protected $nodeList;         // the list of seen nodes
-  protected $processedOidList; // the list of processed object ids
+  protected $end = false;              // indicates if the iteration is ended
+  protected $nodeList = [];         // the list of seen nodes
+  protected $processedOidList = []; // the list of processed object ids
   protected $currentNode;      // the node the iterator points to
   protected $startNode;        // the start node
   protected $aggregationKinds; // array of aggregation kind values to follow (empty: all)
@@ -49,9 +49,6 @@ class NodeIterator implements \Iterator {
    *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
   public function __construct($node, $aggregationKinds=[]) {
-    $this->end = false;
-    $this->nodeList = [];
-    $this->processedOidList = [];
     $this->currentNode = $node;
     $this->startNode = $node;
     $this->aggregationKinds = $aggregationKinds;
@@ -61,7 +58,7 @@ class NodeIterator implements \Iterator {
    * Return the current element
    * @return Node instance
    */
-  public function current() {
+  public function current(): mixed {
     return $this->currentNode;
   }
 
@@ -69,14 +66,14 @@ class NodeIterator implements \Iterator {
    * Return the key of the current element
    * @return String, the serialized object id
    */
-  public function key() {
+  public function key(): mixed {
     return $this->currentNode->getOID()->__toString();
   }
 
   /**
    * Move forward to next element
    */
-  public function next() {
+  public function next(): void {
     // the current node was processed
     $this->processedOidList[] = $this->currentNode->getOID()->__toString();
 
@@ -117,13 +114,12 @@ class NodeIterator implements \Iterator {
     else {
       $this->end = true;
     }
-    return $this;
   }
 
   /**
    * Rewind the Iterator to the first element
    */
-  public function rewind() {
+  public function rewind(): void {
     $this->end = false;
     $this->nodeList = [];
     $this->processedOidList = [];
@@ -133,7 +129,7 @@ class NodeIterator implements \Iterator {
   /**
    * Checks if current position is valid
    */
-  public function valid() {
+  public function valid(): bool {
     return !$this->end;
   }
 

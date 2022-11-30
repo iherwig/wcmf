@@ -52,7 +52,7 @@ class SoapTest extends DatabaseTestCase {
     ]);
   }
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     TestUtil::startServer(WCMF_BASE.'app/public', WCMF_BASE.'wcmf/test/router.php');
 
@@ -67,6 +67,9 @@ class SoapTest extends DatabaseTestCase {
     $this->assertRegExp('/<\?xml/', $wsdl);
   }
 
+  /**
+   * @return never
+   */
   public function testSearch() {
     $this->markTestIncomplete('Relies on lucene search.');
 

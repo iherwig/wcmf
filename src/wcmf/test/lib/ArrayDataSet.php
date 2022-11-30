@@ -10,9 +10,17 @@
  */
 namespace wcmf\test\lib;
 
+use PHPUnit\DbUnit\Database\DataSet;
+use PHPUnit\DbUnit\Database\TableIterator;
+use PHPUnit\DbUnit\DataSet\ITable;
+use PHPUnit\DbUnit\DataSet\ITableIterator;
+use PHPUnit\DbUnit\DataSet\DefaultTable;
+use PHPUnit\DbUnit\DataSet\DefaultTableMetadata;
+use PHPUnit\DbUnit\Exception\InvalidArgumentException;
+
 //\PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
-class ArrayDataSet extends \PHPUnit_Extensions_Database_DataSet_AbstractDataSet {
+class ArrayDataSet extends DataSet {
   protected $tables = [];
 
   /**
@@ -25,8 +33,8 @@ class ArrayDataSet extends \PHPUnit_Extensions_Database_DataSet_AbstractDataSet 
         $columns = array_keys($rows[0]);
       }
 
-      $metaData = new \PHPUnit_Extensions_Database_DataSet_DefaultTableMetaData($tableName, $columns);
-      $table = new \PHPUnit_Extensions_Database_DataSet_DefaultTable($metaData);
+      $metaData = new DefaultTableMetaData($tableName, $columns);
+      $table = new DefaultTable($metaData);
 
       foreach ($rows AS $row) {
         $table->addRow($row);
@@ -35,11 +43,14 @@ class ArrayDataSet extends \PHPUnit_Extensions_Database_DataSet_AbstractDataSet 
     }
   }
 
-  protected function createIterator($reverse = FALSE) {
-    return new \PHPUnit_Extensions_Database_DataSet_DefaultTableIterator($this->tables, $reverse);
+  protected function createIterator($reverse=FALSE): ITableIterator {
+    return new TableIterator($this->tables, $this, $reverse);
   }
 
-  public function getTable($tableName) {
+  public function getTable($tableName): ITable {
+    if ($tableName instanceof ITable) {
+      return $tableName;
+    }
     if (!isset($this->tables[$tableName])) {
       throw new InvalidArgumentException("$tableName is not a table in the current database.");
     }

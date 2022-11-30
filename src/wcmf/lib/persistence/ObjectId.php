@@ -167,7 +167,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
    * @return Associative array with keys 'type', 'id', 'prefix'
    */
   private static function parseOidString($oid) {
-    if (strlen($oid) == 0) {
+    if (strlen($oid ?? '') == 0) {
       return null;
     }
 
@@ -215,7 +215,7 @@ class ObjectId implements \Serializable, \JsonSerializable {
   public function __toString() {
     if ($this->strVal == null) {
       $oidStr = $this->fqType.self::DELIMITER.join(self::DELIMITER, $this->id);
-      if (strlen(trim($this->prefix)) > 0) {
+      if (strlen(trim($this->prefix ?? '')) > 0) {
         $oidStr = $this->prefix.self::DELIMITER.$oidStr;
       }
       $this->strVal = $oidStr;
@@ -279,18 +279,26 @@ class ObjectId implements \Serializable, \JsonSerializable {
   }
 
   public function serialize() {
-    return $this->__toString();
+    return $this->__serialize()['data'];
+  }
+
+  public function __serialize() {
+    return ['data' => $this->__toString()];
   }
 
   public function unserialize($data) {
-    $oidParts = self::parseOidString($data);
+    $this->__unserialize($data);
+  }
+
+  public function __unserialize($data) {
+    $oidParts = self::parseOidString($data['data']);
     $this->prefix = $oidParts['prefix'];
     $this->fqType = $oidParts['type'];
     $this->id = $oidParts['id'];
     $this->strVal = $this->__toString();
   }
 
-  public function jsonSerialize() {
+  public function jsonSerialize(): mixed {
     return $this->__toString();
   }
 }

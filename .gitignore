@@ -17,3 +17,5 @@ src/wcmf/test/model/model-transformed
 vendor
 composer.lock
 src/wcmf/test/log/testdox.txt
+.vscode/launch.json
+src/wcmf/test/.phpunit.result.cache

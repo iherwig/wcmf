@@ -78,10 +78,8 @@ class PermissionsTest extends DatabaseTestCase {
     TestUtil::endSession();
   }
 
-  /**
-   * @expectedException wcmf\lib\security\AuthorizationException
-   */
   public function te_stPermissionOk() {
+    $this->expectException(\wcmf\lib\security\AuthorizationException::class);
     TestUtil::startSession('userPermTest', 'user1');
     $transaction = ObjectFactory::getInstance('persistenceFacade')->getTransaction();
     $transaction->begin();

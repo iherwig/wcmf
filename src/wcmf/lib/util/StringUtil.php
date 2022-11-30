@@ -341,7 +341,7 @@ class StringUtil {
   public static function splitQuoted($string, $delim='/ /', $quoteChr='"', $preserve=false){
     $resArr = [];
     $n = 0;
-    $expEncArr = explode($quoteChr, $string);
+    $expEncArr = explode($quoteChr, $string ?? '');
     foreach($expEncArr as $encItem) {
       if ($n++%2) {
         $resArr[] = array_pop($resArr) . ($preserve?$quoteChr:'') . $encItem.($preserve?$quoteChr:'');

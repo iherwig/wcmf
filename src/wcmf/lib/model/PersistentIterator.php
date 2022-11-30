@@ -27,12 +27,12 @@ class PersistentIterator implements \Iterator {
   private $persistenceFacade = null;
   private $session = null;
 
-  protected $end;              // indicates if the iteration is ended
-  protected $oidList;          // the list of oids to process
-  protected $processedOidList; // the list of all seen object ids
+  protected $end = false;              // indicates if the iteration is ended
+  protected $oidList = [];          // the list of oids to process
+  protected $processedOidList = []; // the list of all seen object ids
   protected $currentOid;       // the oid the iterator points to
   protected $startOid;         // the oid the iterator started with
-  protected $currentDepth;     // the depth in the tree of the oid the iterator points to
+  protected $currentDepth = 0;     // the depth in the tree of the oid the iterator points to
   protected $aggregationKinds; // array of aggregation kind values to follow (empty: all)
 
   /**
@@ -51,13 +51,8 @@ class PersistentIterator implements \Iterator {
     $this->id = $id;
     $this->persistenceFacade = $persistenceFacade;
     $this->session = $session;
-
-    $this->end = false;
-    $this->oidList = [];
-    $this->processedOidList = [];
     $this->currentOid = $oid;
     $this->startOid = $oid;
-    $this->currentDepth = 0;
     $this->aggregationKinds = $aggregationKinds;
     $this->session->remove($this->id);
   }
@@ -108,7 +103,7 @@ class PersistentIterator implements \Iterator {
    * Return the current element
    * @return ObjectId, the current object id
    */
-  public function current() {
+  public function current(): mixed {
     return $this->currentOid;
   }
 
@@ -116,14 +111,14 @@ class PersistentIterator implements \Iterator {
    * Return the key of the current element
    * @return Number, the current depth
    */
-  public function key() {
+  public function key(): mixed {
     return $this->currentDepth;
   }
 
   /**
    * Move forward to next element
    */
-  public function next() {
+  public function next(): void {
     // the current oid was processed
     $this->processedOidList[] = $this->currentOid->__toString();
 
@@ -167,13 +162,12 @@ class PersistentIterator implements \Iterator {
     else {
       $this->end = true;
     }
-    return $this;
   }
 
   /**
    * Rewind the Iterator to the first element
    */
-  public function rewind() {
+  public function rewind(): void {
     $this->end = false;
     $this->oidList= [];
     $this->processedOidList = [];
@@ -184,7 +178,7 @@ class PersistentIterator implements \Iterator {
   /**
    * Checks if current position is valid
    */
-  public function valid() {
+  public function valid(): bool {
     return !$this->end;
   }
 

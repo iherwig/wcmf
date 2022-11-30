@@ -235,7 +235,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
     $pkNames = $this->getMapper()->getPkNames();
     $iter = new NodeValueIterator($this, false);
     foreach($iter as $valueName => $value) {
-      if (strlen($value) > 0 && ($copyPkValues || !in_array($valueName, $pkNames))) {
+      if (strlen($value ?? '') > 0 && ($copyPkValues || !in_array($valueName, $pkNames))) {
         $object->setValue($valueName, $value, true);
       }
     }
@@ -640,12 +640,20 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   }
 
   public function serialize() {
-    $this->mapper = null;
-    return serialize(get_object_vars($this));
+    return $this->__serialize()['data'];
   }
 
-  public function unserialize($serialized) {
-    $values = unserialize($serialized);
+  public function __serialize() {
+    $this->mapper = null;
+    return ['data' => serialize(get_object_vars($this))];
+  }
+
+  public function unserialize($data) {
+    $this->__unserialize($data);
+  }
+
+  public function __unserialize($serialized) {
+    $values = unserialize($serialized['data']);
     foreach ($values as $key => $value) {
       $this->$key = $value;
     }

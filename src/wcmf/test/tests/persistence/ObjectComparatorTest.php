@@ -24,7 +24,7 @@ class ObjectComparatorTest extends BaseTestCase {
 
   private $nodes = [];
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
 

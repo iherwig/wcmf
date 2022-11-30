@@ -10,6 +10,8 @@
  */
 namespace wcmf\test\lib;
 
+use PHPUnit\DbUnit\TestCase;
+use PHPUnit\Framework\TestResult;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\TestUtil;
 
@@ -18,7 +20,7 @@ use wcmf\lib\util\TestUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
+abstract class DatabaseTestCase extends TestCase {
   use TestTrait;
 
   private static $frameworkReady = false;
@@ -32,12 +34,12 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
     return $this->createDefaultDBConnection($params['connection'], $params['dbName']);
   }
 
-  public function run(\PHPUnit_Framework_TestResult $result=null) {
+  public function run(TestResult $result=null): TestResult {
     $this->setPreserveGlobalState(false);
     return parent::run($result);
   }
 
-  protected function setUp() {
+  protected function setUp(): void {
     if (!self::$frameworkReady) {
       TestUtil::initFramework(WCMF_BASE.'app/config/');
       self::$frameworkReady = true;
@@ -46,7 +48,7 @@ abstract class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase {
     $this->getLogger(__CLASS__)->info("Running: ".get_class($this).".".$this->getName());
   }
 
-  protected function tearDown() {
+  protected function tearDown(): void {
     self::$frameworkReady = false;
   }
 

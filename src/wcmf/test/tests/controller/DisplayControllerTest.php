@@ -148,6 +148,7 @@ class DisplayControllerTest extends ControllerTestCase {
 
   /**
    * @group controller
+   * @return never
    */
   public function testDisplayTranslationOfReferencedValues() {
     $this->markTestIncomplete('This test is not ready to run yet.');

@@ -136,10 +136,8 @@ class StringQueryTest extends DatabaseTestCase {
     $this->executeSql('Publisher', $sql);
   }
 
-  /**
-   * @expectedException wcmf\lib\core\IllegalArgumentException
-   */
   public function testAmbiguousRelation() {
+    $this->expectException(\wcmf\lib\core\IllegalArgumentException::class);
     $queryStr = $this->fixQueryQuotes("`Author`.`name` LIKE '%ingo%' AND `Image`.`file` = 'image.jpg'", 'Author');
     $query = new StringQuery('Author', __CLASS__.__METHOD__."8");
     $query->setConditionString($queryStr);

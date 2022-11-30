@@ -65,7 +65,7 @@ class NodeValueIterator implements \Iterator {
    * Return the current element
    * @return Value of the current attribute
    */
-  public function current() {
+  public function current(): mixed {
     $node = $this->nodeIterator->current();
     return $node->getValue($this->currentAttribute);
   }
@@ -74,14 +74,14 @@ class NodeValueIterator implements \Iterator {
    * Return the key of the current element
    * @return String, the name of the current attribute
    */
-  public function key() {
+  public function key(): mixed {
     return $this->currentAttribute;
   }
 
   /**
    * Move forward to next element
    */
-  public function next() {
+  public function next(): void {
     $next = next($this->currentAttributes);
     if ($next !== false) {
       $this->currentAttribute = $next;
@@ -102,13 +102,12 @@ class NodeValueIterator implements \Iterator {
         $this->end = true;
       }
     }
-    return $this;
   }
 
   /**
    * Rewind the Iterator to the first element
    */
-  public function rewind() {
+  public function rewind(): void {
     $this->nodeIterator->rewind();
     $this->currentAttributes = $this->nodeIterator->current()->getValueNames(false);
     $this->currentAttribute = current($this->currentAttributes);
@@ -118,7 +117,7 @@ class NodeValueIterator implements \Iterator {
   /**
    * Checks if current position is valid
    */
-  public function valid() {
+  public function valid(): bool {
     return !$this->end;
   }
 

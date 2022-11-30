@@ -72,7 +72,7 @@ class NodeRelationTest extends DatabaseTestCase {
     ]);
   }
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     // setup the object tree
     $this->oids = [

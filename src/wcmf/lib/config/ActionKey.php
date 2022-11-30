@@ -53,9 +53,9 @@ class ActionKey {
    * @return The best matching key or an empty string if nothing matches.
    */
   public static function getBestMatch(ActionKeyProvider $actionKeyProvider, $resource, $context, $action) {
-    $hasResource = strlen($resource) > 0;
-    $hasContext = strlen($context) > 0;
-    $hasAction = strlen($action) > 0;
+    $hasResource = strlen($resource ?? '') > 0;
+    $hasContext = strlen($context ?? '') > 0;
+    $hasAction = strlen($action ?? '') > 0;
 
     // check resource?context?action
     if ($hasResource && $hasContext && $hasAction) {

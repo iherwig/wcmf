@@ -35,7 +35,7 @@ class RegExp implements ValidateType {
       throw new ConfigurationException("No 'pattern' given in regexp options: ".json_encode($options));
     }
     if (!is_array($value)) {
-      return preg_match($options['pattern'], $value);
+      return preg_match($options['pattern'], $value ?? '');
     }
     foreach ($value as $single) {
       if (!preg_match($options['pattern'], $single)) {

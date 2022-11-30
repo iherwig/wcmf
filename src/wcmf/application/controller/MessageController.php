@@ -67,7 +67,6 @@ class MessageController extends Controller {
    */
   protected function assignResponseDefaults() {
     if (sizeof($this->getResponse()->getErrors()) > 0) {
-      parent::assignResponseDefaults();
     }
     // don't add anything in case of success
   }

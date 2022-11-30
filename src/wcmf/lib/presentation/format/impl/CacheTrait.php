@@ -67,7 +67,7 @@ trait CacheTrait {
    * @param Boolean
    */
   protected function isCaching(Response $response) {
-    return strlen($response->getCacheId()) > 0;
+    return strlen($response->getCacheId() ?? '') > 0;
   }
 
   /**

@@ -160,7 +160,7 @@ abstract class AbstractUser extends Node implements User {
   protected function ensureHashedPassword() {
     // the password is expected to be stored in the 'password' value
     $password = $this->getValue('password');
-    if (strlen($password) > 0 && !PasswordService::isHashed($password)) {
+    if (strlen($password ?? '') > 0 && !PasswordService::isHashed($password)) {
       $this->setValue('password', PasswordService::hash($password));
     }
   }

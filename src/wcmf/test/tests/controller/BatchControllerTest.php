@@ -27,7 +27,7 @@ class BatchControllerTest extends ControllerTestCase {
     return 'wcmf\application\controller\SimpleBatchController';
   }
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $conf = ObjectFactory::getInstance('configuration');
     $conf->addConfiguration('controller.ini', true);

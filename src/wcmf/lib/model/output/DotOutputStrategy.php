@@ -45,7 +45,6 @@ class DotOutputStrategy implements OutputStrategy {
    */
   public function __construct($file, $nodeStyle='', $edgeStyle='') {
     $this->file = $file;
-    $this->fileOk = false;
 
     if ($nodeStyle != '') {
       $this->nodeStyle = $nodeStyle;

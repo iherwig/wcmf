@@ -781,7 +781,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * @return Array with section as first entry and key as second or null if not found
    */
   protected function lookup($section, $key=null) {
-    $lookupKey = strtolower($section).':'.strtolower($key);
+    $lookupKey = strtolower($section ?? '').':'.strtolower($key ?? '');
     if (isset($this->lookupTable[$lookupKey])) {
       return $this->lookupTable[$lookupKey];
     }

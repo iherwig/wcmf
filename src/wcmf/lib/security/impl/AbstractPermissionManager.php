@@ -245,6 +245,7 @@ abstract class AbstractPermissionManager implements PermissionManager {
    *   'typeProperty' (type id with entity property)
    */
   protected function parseResource($resource) {
+    $resource ??= '';
     $resourceType = null;
     $oid = null;
     $type = null;

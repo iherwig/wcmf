@@ -10,6 +10,8 @@
  */
 namespace wcmf\test\lib;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestResult;
 use wcmf\lib\util\TestUtil;
 
 /**
@@ -17,15 +19,15 @@ use wcmf\lib\util\TestUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
+abstract class BaseTestCase extends TestCase {
   use TestTrait;
 
-  public function run(\PHPUnit_Framework_TestResult $result=null) {
+  public function run(TestResult $result=null): TestResult {
     $this->setPreserveGlobalState(false);
     return parent::run($result);
   }
 
-  protected function setUp() {
+  protected function setUp(): void {
     TestUtil::initFramework(WCMF_BASE.'app/config/');
     parent::setUp();
     $this->getLogger(__CLASS__)->info("Running: ".get_class($this).".".$this->getName());

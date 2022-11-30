@@ -19,10 +19,16 @@ use wcmf\test\lib\BaseTestCase;
  */
 class UserTest extends BaseTestCase {
 
+  /**
+   * @return never
+   */
   public function testForbidEmptyPasswort() {
     $this->markTestIncomplete('This test is not ready to run yet.');
   }
 
+  /**
+   * @return never
+   */
   public function testForbidEmptyLogin() {
     $this->markTestIncomplete('This test is not ready to run yet.');
   }

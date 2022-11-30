@@ -28,7 +28,7 @@ class Required implements ValidateType {
    * @see ValidateType::validate
    */
   public function validate($value, $options=null, $context=null) {
-    return is_array($value) && count($value) > 0 || strlen($value) > 0;
+    return is_array($value) && count($value) > 0 || strlen($value ?? '') > 0;
   }
 }
 ?>

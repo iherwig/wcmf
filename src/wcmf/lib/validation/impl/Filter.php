@@ -45,7 +45,7 @@ class Filter implements ValidateType {
       throw new ConfigurationException("No 'type' given in filter options: ".json_encode($options));
     }
     $filterName = $options['type'];
-    $filterOptions = isset($options['options']) ? $options['options'] : null;
+    $filterOptions = isset($options['options']) ? $options['options'] : 0;
     return filter_var($value, filter_id($filterName), $filterOptions) !== false;
   }
 }

@@ -26,7 +26,7 @@ class ControllerChainTest extends ControllerTestCase {
     return 'app\src\controller\CalcController';
   }
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $conf = ObjectFactory::getInstance('configuration');
     $conf->addConfiguration('controller.ini', true);

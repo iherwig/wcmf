@@ -34,7 +34,7 @@ class NodeUnifiedRDBMapperTest extends DatabaseTestCase {
 
   protected $dbParams;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $config = ObjectFactory::getInstance('configuration');
     $this->dbParams = $config->getSection('database');

@@ -109,7 +109,7 @@ class ListController extends Controller {
 
     // add sort term
     $sortArray = null;
-    $orderBy = $request->getValue('sortFieldName');
+    $orderBy = $request->getValue('sortFieldName') ?? '';
     if (strlen($orderBy) > 0) {
       $mapper = $persistenceFacade->getMapper($className);
       $sortArray = [(strpos($orderBy, '.') === false && $mapper->hasAttribute($orderBy) ? $className."." : "").$orderBy." ".$request->getValue('sortDirection')];

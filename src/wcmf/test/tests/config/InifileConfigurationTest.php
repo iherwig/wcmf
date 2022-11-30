@@ -25,15 +25,14 @@ class InifileConfigurationTest extends BaseTestCase {
   const INI_FILE = WCMF_BASE.'app/config/config.ini';
   const CONFIG_CACHE_PATH = WCMF_BASE.'app/config/cache';
 
-  protected function setUp() {
+  protected function setUp(): void {
     FileUtil::mkdirRec(self::CONFIG_CACHE_PATH);
     FileUtil::emptyDir(self::CONFIG_CACHE_PATH);
     parent::setUp();
   }
 
-  protected function tearDown() {
+  protected function tearDown(): void {
     FileUtil::emptyDir(self::CONFIG_CACHE_PATH);
-    parent::tearDown();
   }
 
   public function testConfigFileNotChanged() {

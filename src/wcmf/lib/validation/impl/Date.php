@@ -36,7 +36,7 @@ class Date implements ValidateType {
    */
   public function validate($value, $options=null, $context=null) {
     $format = isset($options['format']) ? $options['format'] : self::DEFAULT_FORMAT;
-    return strlen($value) === 0 || (\DateTime::createFromFormat($format, $value) !== false);
+    return strlen($value ?? '') === 0 || (\DateTime::createFromFormat($format, $value) !== false);
   }
 }
 ?>
