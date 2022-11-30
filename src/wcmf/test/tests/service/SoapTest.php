@@ -64,7 +64,7 @@ class SoapTest extends DatabaseTestCase {
     $wsdl = curl_exec($ch);
     curl_close($ch);
     $this->getLogger(__CLASS__)->info($wsdl);
-    $this->assertRegExp('/<\?xml/', $wsdl);
+    $this->assertMatchesRegularExpression('/<\?xml/', $wsdl);
   }
 
   /**

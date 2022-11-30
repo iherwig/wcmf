@@ -29,19 +29,11 @@ env:
 
 matrix:
   include:
-  - php: 7.0
-    dist: trusty
-  - php: 7.1
-    dist: bionic
-  - php: 7.2
-    dist: bionic
-  - php: 7.3
-    dist: bionic
   - php: 7.4
+  - php: 8.0
     env: ENABLE_COVERAGE=1 ENABLE_SONAR=1 ENABLE_DOCS=1
-  - php: 8.0
   allow_failures:
-  - php: 8.0
+  - php: 7.4
 
 before_script:
 - if [[ "$ENABLE_COVERAGE" == "0" ]]; then phpenv config-rm xdebug.ini; fi
