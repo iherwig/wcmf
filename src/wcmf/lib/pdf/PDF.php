@@ -10,23 +10,23 @@
  */
 namespace wcmf\lib\pdf;
 
-use FPDI;
+use setasign\Fpdi\Fpdi;
 
-if (!class_exists('FPDI')) {
+if (!class_exists('setasign\Fpdi\Fpdi')) {
     throw new \wcmf\lib\config\ConfigurationException(
             'wcmf\lib\pdf\PDF requires '.
-            'FPDI. If you are using composer, add setasign/fpdi '.
+            'Fpdi. If you are using composer, add setasign/fpdf and setasign/fpdi '.
             'as dependency to your project');
 }
 
 /**
- * PDF extends FPDF/FPDI.
+ * PDF extends setasign\Fpdi\Fpdi.
  *
- * @note This class requires FPDI
+ * @note This class requires setasign\Fpdi\Fpdi
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class PDF extends FPDI {
+class PDF extends Fpdi {
 
   private $pageStarted = false;
   private $pageEnded = false;
