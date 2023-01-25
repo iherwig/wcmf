@@ -103,7 +103,8 @@ class PDFTemplate {
       // add each page
       $tplIndex = $this->pdf->ImportPage($i);
       $size = $this->pdf->getTemplatesize($tplIndex);
-      $this->pdf->AddPage($size['h'] > $size['w'] ? 'P' : 'L');
+      $this->pdf->AddPage($size['orientation']);
+      $this->pdf->useTemplate($tplIndex);
 
       // render the PDFPage onto the template page
       if ($pageIndex < sizeof($this->pages)) {
