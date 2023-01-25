@@ -33,10 +33,13 @@ class PDF extends Fpdi {
 
   /**
    * Overridden to set the template on the page
+   * TODO check if this is still necessary, if useTemplate is called in PDFTemplate::output() now
    */
   public function Header() {
     parent::Header();
-    $this->useTemplate($this->tpl);
+    if ($this->currentTemplateId) {
+      $this->useTemplate($this->currentTemplateId);
+    }
   }
 
   /**
