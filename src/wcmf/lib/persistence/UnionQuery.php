@@ -24,13 +24,13 @@ class UnionQuery {
 
   /**
    * Execute the provided queries
-   * @param $queryProvider
-   * @param $buildDepth
-   * @param $orderby
-   * @param Info $pagingInfo
-   * @return Array of PersistentObject instances
+   * @param UnionQueryProvider $queryProvider
+   * @param int $buildDepth
+   * @param array<string> $orderby
+   * @param PagingInfo $pagingInfo
+   * @return array<PersistentObject>
    */
-  public static function execute(UnionQueryProvider $queryProvider, $buildDepth=BuildDepth::SINGLE, $orderby=null, PagingInfo $pagingInfo=null) {
+  public static function execute(UnionQueryProvider $queryProvider, int $buildDepth=BuildDepth::SINGLE, array $orderby=null, PagingInfo $pagingInfo=null): array {
     $cache = ObjectFactory::getInstance('dynamicCache');
     $cacheSection = str_replace('\\', '.', __CLASS__);
 
@@ -46,6 +46,7 @@ class UnionQuery {
     $prevCacheKey = self::getCacheKey($queryIds, $buildDepth, $orderby, $prevPagingInfo);
 
     // get offsets
+    $offsets = [];
     if ($page == 1) {
       $offsets = array_fill(0, $numQueries, 0);
     }
@@ -110,17 +111,17 @@ class UnionQuery {
 
   /**
    * Get a unique string for the given parameter values
-   * @param $ids
-   * @param $buildDepth
-   * @param $orderby
-   * @param $pagingInfo
-   * @return String
+   * @param mixed $ids
+   * @param int $buildDepth
+   * @param array<string> $orderby
+   * @param PagingInfo $pagingInfo
+   * @return string
    */
-  private static function getCacheKey($ids, $buildDepth, $orderby=null, PagingInfo $pagingInfo=null) {
+  private static function getCacheKey($ids, int $buildDepth, array $orderby=null, PagingInfo $pagingInfo=null): string {
     $result = is_array($ids) ? join(',', $ids) : $ids;
     $result .= ','.$buildDepth;
     if ($orderby != null) {
-      $result .= ','.(is_array($orderby) ? join(',', $orderby) : $orderby);
+      $result .= ','.join(',', $orderby);
     }
     if ($pagingInfo != null) {
       $result .= ','.$pagingInfo->getOffset().','.$pagingInfo->getPageSize();

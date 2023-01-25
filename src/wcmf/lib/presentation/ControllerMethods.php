@@ -21,7 +21,7 @@ trait ControllerMethods {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute($method=null) {
+  protected function doExecute(string $method=null) {
     if (method_exists($this, $method)) {
       call_user_func([$this, $method]);
     }

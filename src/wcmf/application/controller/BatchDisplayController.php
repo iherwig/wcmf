@@ -266,7 +266,7 @@ class BatchDisplayController extends BatchController {
   /**
    * Check if an object id is registered in the registry
    * @param $oid The object id to check
-   * @return Boolean whether the object id is registered or not
+   * @return bool whether the object id is registered or not
    */
   protected function isRegistered(ObjectId $oid) {
     $registry = $this->getLocalSessionValue(self::REGISTRY_VAR);

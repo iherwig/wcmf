@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\service;
 
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\presentation\Application;
@@ -21,28 +21,24 @@ use wcmf\lib\util\URIUtil;
  * SoapServer extends nusoap server to actually process
  * requests inside the application context.
  *
- * Soap requests must include credentials in the form of a wsse:UsernameToken header as 
+ * Soap requests must include credentials in the form of a wsse:UsernameToken header as
  * described in the WS-Security UsernameToken Profile. Passwords must be sent as plain text
  * using the PasswordText type and therefore should be sent over a confidential channel.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
 class SoapServer extends \nusoap_server {
+  use LogTrait;
 
   const TNS = 'http://wcmf.sourceforge.net';
 
   private $application = null;
   private $serverResponse = '';
 
-  private static $logger = null;
-
   /**
    * Constructor
    */
   public function __construct() {
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
     $scriptURL = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
     $endpoint = dirname($scriptURL).'/soap';
     $this->configureWSDL('SOAPService', self::TNS, $endpoint, 'document');
@@ -94,8 +90,8 @@ class SoapServer extends \nusoap_server {
    * @see nusoap_server::service
    */
   public function service($data) {
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug($data);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug($data);
     }
     try {
       $oldErrorReporting = error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
@@ -108,8 +104,8 @@ class SoapServer extends \nusoap_server {
       parent::service($data);
       ob_end_clean();
       error_reporting($oldErrorReporting);
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug($this->serverResponse);
+      if (self::logger()->isDebugEnabled()) {
+        self::logger()->debug($this->serverResponse);
       }
     }
     catch (\Exception $ex) {
@@ -156,9 +152,9 @@ class SoapServer extends \nusoap_server {
    * @return The Response instance from the executed Controller
    */
   public function doCall($action, $params) {
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("SoapServer action: ".$action);
-      self::$logger->debug($params);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("SoapServer action: ".$action);
+      self::logger()->debug($params);
     }
     $authHeader = $this->requestHeader['Security']['UsernameToken'];
 
@@ -203,8 +199,8 @@ class SoapServer extends \nusoap_server {
         $actionResponse->setValues($data);
         $formatter = ObjectFactory::getInstance('formatter');
         $formatter->serialize($actionResponse);
-        if (self::$logger->isDebugEnabled()) {
-          self::$logger->debug($actionResponse->__toString());
+        if (self::logger()->isDebugEnabled()) {
+          self::logger()->debug($actionResponse->__toString());
         }
       }
     }
@@ -219,7 +215,7 @@ class SoapServer extends \nusoap_server {
    * @param $ex
    */
   private function handleException($ex) {
-    self::$logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
+    self::logger()->error($ex->getMessage()."\n".$ex->getTraceAsString());
     $this->fault('SOAP-ENV:SERVER', $ex->getMessage(), '', '');
   }
 }

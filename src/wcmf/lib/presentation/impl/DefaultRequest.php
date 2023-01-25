@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\presentation\impl;
 
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\presentation\ApplicationError;
 use wcmf\lib\presentation\ApplicationException;
@@ -25,13 +25,13 @@ use wcmf\lib\util\StringUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultRequest extends AbstractControllerMessage implements Request {
+  use LogTrait;
 
   private $response = null;
   private $responseFormat = null;
   private $method = null;
 
   private static $requestDataFixed = false;
-  private static $logger = null;
   private static $errorsDefined = false;
 
   /**
@@ -40,9 +40,6 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    */
   public function __construct(Formatter $formatter) {
     parent::__construct($formatter);
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
     self::defineErrors();
 
     // set headers and method
@@ -74,7 +71,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * @see Response::setResponse()
    */
-  public function setResponse(Response $response) {
+  public function setResponse(Response $response): void {
     $this->response = $response;
     if ($response->getRequest() !== $this) {
       $response->setRequest($this);
@@ -84,7 +81,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * @see Request::getResponse()
    */
-  public function getResponse() {
+  public function getResponse(): Response {
     return $this->response;
   }
 
@@ -103,21 +100,21 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
    * GET,POST,PUT,DELETE/rest/{language}/{className}/{id|[0-9]+} = action=restAction&collection=0
    * @endcode
    */
-  public function initialize($controller=null, $context=null, $action=null) {
+  public function initialize(string $controller=null, string $context=null, string $action=null): void {
     // get base request data from request path
     $basePath = preg_replace('/\/?[^\/]*$/', '', $_SERVER['SCRIPT_NAME']);
     $requestUri = preg_replace('/\?.*$/', '', $_SERVER['REQUEST_URI']);
     $requestPath = preg_replace('/^'.StringUtil::escapeForRegex($basePath).'/', '', $requestUri);
     $requestMethod = $this->getMethod();
-    if (self::$logger->isInfoEnabled()) {
-      self::$logger->info("Request: ".$requestMethod." ".$requestPath);
+    if (self::logger()->isInfoEnabled()) {
+      self::logger()->info("Request: ".$requestMethod." ".$requestPath);
     }
 
     // get all routes from the configuration that match the request path
     $matchingRoutes = $this->getMatchingRoutes($requestPath);
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Matching routes:");
-      self::$logger->debug($matchingRoutes);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Matching routes:");
+      self::logger()->debug($matchingRoutes);
     }
 
     // get client info error for logging
@@ -136,9 +133,9 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
     // get the best matching route
     $route = $this->getBestRoute($matchingRoutes);
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Best route:");
-      self::$logger->debug($route);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Best route:");
+      self::logger()->debug($route);
     }
 
     // check if method is allowed
@@ -187,21 +184,21 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * @see Request::getMethod()
    */
-  public function getMethod() {
+  public function getMethod(): string {
     return $this->method;
   }
 
   /**
    * @see Request::setResponseFormat()
    */
-  public function setResponseFormat($format) {
+  public function setResponseFormat(string $format): void {
     $this->responseFormat = $format;
   }
 
   /**
    * @see Request::getResponseFormat()
    */
-  public function getResponseFormat() {
+  public function getResponseFormat(): string {
     if ($this->responseFormat == null) {
       $this->responseFormat = $this->getFormatter()->getFormatFromMimeType($this->getHeader('Accept'));
     }
@@ -210,9 +207,9 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
   /**
    * Get a string representation of the message
-   * @return The string
+   * @return string
    */
-  public function __toString() {
+  public function __toString(): string {
     $str = 'method='.$this->method.', ';
     $str .= 'responseformat='.$this->responseFormat.', ';
     $str .= parent::__toString();
@@ -222,14 +219,14 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * Get all routes from the Routes configuration section that match the given
    * request path
-   * @param $requestPath
-   * @return Array of arrays with keys 'route', 'numPathParameters', 'numPathPatterns', 'parameters', 'methods'
+   * @param string $requestPath
+   * @return array{'route': string, 'numPathParameters': int, 'numPathPatterns': int, 'parameters': array<string, mixed>, 'methods': array<string>}
    */
-  protected function getMatchingRoutes($requestPath) {
+  protected function getMatchingRoutes(string $requestPath): array {
     $matchingRoutes = [];
     $defaultValuePattern = '([^/]+)';
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Get mathching routes for request path: ".$requestPath);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Get mathching routes for request path: ".$requestPath);
     }
 
     $config = ObjectFactory::getInstance('configuration');
@@ -268,13 +265,13 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
         $routePattern = str_replace(['*', '/'], ['.*', '\/'], $routePattern);
 
         // try to match the current request path
-        if (self::$logger->isDebugEnabled()) {
-          self::$logger->debug("Check path: ".$route." -> ".$routePattern);
+        if (self::logger()->isDebugEnabled()) {
+          self::logger()->debug("Check path: ".$route." -> ".$routePattern);
         }
         $matches = [];
         if (preg_match('/^'.$routePattern.'\/?$/', $requestPath, $matches)) {
-          if (self::$logger->isDebugEnabled()) {
-            self::$logger->debug("Match");
+          if (self::logger()->isDebugEnabled()) {
+            self::logger()->debug("Match");
           }
           // ignore first match
           array_shift($matches);
@@ -305,8 +302,8 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
             $matchingRoutes[] = $routeData;
           }
           else {
-            if (self::$logger->isDebugEnabled()) {
-              self::$logger->debug("Match removed by custom matching");
+            if (self::logger()->isDebugEnabled()) {
+              self::logger()->debug("Match removed by custom matching");
             }
           }
         }
@@ -318,19 +315,19 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * Check if the given route data match a route definition
    * @note Subclasses will override this to implement custom matching. The default implementation returns true.
-   * @param $routeData Array as single match returned from DefaultRequest::getMatchingRoutes()
-   * @return Boolean
+   * @param array $routeData Array as single match returned from DefaultRequest::getMatchingRoutes()
+   * @return bool
    */
-  protected function isMatch($routeData) {
+  protected function isMatch(array $routeData): bool {
     return true;
   }
 
   /**
    * Get the best matching route from the given list of routes
-   * @param $routes Array of route definitions as returned by getMatchingRoutes()
-   * @return Array with keys 'numPathParameters', 'parameters', 'methods'
+   * @param array $routes Array of route definitions as returned by getMatchingRoutes()
+   * @return array{'numPathParameters': int, 'parameters': array<string, mixed>, 'methods': array<string>}
    */
-  protected function getBestRoute($routes) {
+  protected function getBestRoute(array $routes): array {
     // order matching routes by number of parameters
     $method = $this->getMethod();
     usort($routes, function($a, $b) use ($method) {
@@ -359,9 +356,9 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
       return $result;
     });
 
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Ordered routes:");
-      self::$logger->debug($routes);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Ordered routes:");
+      self::logger()->debug($routes);
     }
     // return most specific route
     return array_shift($routes);
@@ -369,9 +366,9 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
 
   /**
    * Get all http headers
-   * @return Associative array
+   * @return array<string, mixed>
    */
-  private static function getAllHeaders() {
+  private static function getAllHeaders(): array {
     $headers = [];
     if (function_exists('apache_request_headers')) {
       foreach (apache_request_headers() as $name => $value) {
@@ -396,11 +393,11 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * Fix request parameters (e.g. PHP replaces dots by underscore)
    * Code from http://stackoverflow.com/questions/68651/get-php-to-stop-replacing-characters-in-get-or-post-arrays/18163411#18163411
-   * @param $target
-   * @param $source
-   * @param $keep
+   * @param array<string, mixed> $target
+   * @param mixed $source
+   * @param bool $keep
    */
-  private static function fix(&$target, $source, $keep=false) {
+  private static function fix(array &$target, $source, bool $keep=false): void {
     if (!$source) {
       return;
     }
@@ -451,7 +448,7 @@ class DefaultRequest extends AbstractControllerMessage implements Request {
   /**
    * Define errors
    */
-  private static function defineErrors() {
+  private static function defineErrors(): void {
     if (!self::$errorsDefined) {
       $message = ObjectFactory::getInstance('message');
       define('ROUTE_NOT_FOUND', serialize(['ROUTE_NOT_FOUND', ApplicationError::LEVEL_WARNING, 404,

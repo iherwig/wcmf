@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\persistence\output\impl;
 
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PersistentObject;
 
@@ -21,42 +21,28 @@ use wcmf\lib\persistence\PersistentObject;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultOutputStrategy implements OutputStrategy {
-
-  private static $logger = null;
-
-  /**
-   * Constructor
-   */
-  public function __construct() {
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
-  }
+  use LogTrait;
 
   /**
    * @see OutputStrategy::writeHeader
    */
   public function writeHeader() {
-    if (self::$logger->isInfoEnabled()) {
-      self::$logger->info("DOCUMENT START.");
-    }
+    self::logger()->info("DOCUMENT START.");
   }
 
   /**
    * @see OutputStrategy::writeFooter
    */
   public function writeFooter() {
-    if (self::$logger->isInfoEnabled()) {
-      self::$logger->info("DOCUMENT END.");
-    }
+    self::logger()->info("DOCUMENT END.");
   }
 
   /**
    * @see OutputStrategy::writeObject
    */
   public function writeObject(PersistentObject $obj) {
-    if (self::$logger->isInfoEnabled()) {
-      self::$logger->info($obj->toString());
+    if (self::logger()->isInfoEnabled()) {
+      self::logger()->info($obj->dump());
     }
   }
 }

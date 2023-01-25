@@ -33,15 +33,10 @@ class NullPermissionManager implements PermissionManager {
   }
 
   /**
-   * @see PermissionManager::addTempPermission()
+   * @see PermissionManager::withTempPermissions()
    */
-  public function addTempPermission($resource, $context, $action) {
-  }
-
-  /**
-   * @see PermissionManager::removeTempPermission()
-   */
-  public function removeTempPermission($handle) {
+  public function withTempPermissions(callable $callable, array ...$permissions) {
+    return $callable();
   }
 
   /**
@@ -49,12 +44,6 @@ class NullPermissionManager implements PermissionManager {
    */
   public function hasTempPermission($resource, $context, $action) {
     return true;
-  }
-
-  /**
-   * @see PermissionManager::clearTempPermissions()
-   */
-  public function clearTempPermissions() {
   }
 
   /**

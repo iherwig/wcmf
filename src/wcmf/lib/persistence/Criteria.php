@@ -10,8 +10,6 @@
  */
 namespace wcmf\lib\persistence;
 
-use wcmf\lib\persistence\Criteria;
-
 /**
  * Criteria defines a condition on a PersistentObject's attribute
  * used to select specific instances.

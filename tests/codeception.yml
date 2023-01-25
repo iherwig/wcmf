@@ -1,0 +1,25 @@
+namespace: Tests
+support_namespace: Support
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/Support/Data
+    support: tests/Support
+    envs: tests/_envs
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+modules:
+    config:
+        Db:
+            dsn: 'sqlite:../src/app/test-db.sq3'
+            user: 'root'
+            password: ''
+            dump:
+                - '../src/install/tables_sqlite.sql'
+                - 'tests/Support/Data/fixtures.sql'
+            cleanup: true
+            populate: true
+            reconnect: true
+bootstrap: bootstrap.php

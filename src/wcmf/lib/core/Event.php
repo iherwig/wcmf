@@ -28,9 +28,9 @@ abstract class Event {
 
   /**
    * Check if the event is stopped
-   * @return Boolean
+   * @return bool
    */
-  public function isStopped() {
+  public function isStopped(): bool {
     return $this->isStopped;
   }
 }

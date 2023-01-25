@@ -19,43 +19,35 @@ interface Request extends ControllerMessage {
 
   /**
    * Set the Response instance belonging to the request and vice versa.
-   * @param $response Response
+   * @param Response $response
    */
-  public function setResponse(Response $response);
+  public function setResponse(Response $response): void;
 
   /**
    * Get the Response instance belonging to the request.
    * @return Response
    */
-  public function getResponse();
-
-  /**
-   * Initialize the request instance from the HTTP request.
-   * @param $controller The controller to call if none is given in request parameters (optional)
-   * @param $context The context to set if none is given in request parameters (optional)
-   * @param $action The action to perform if none is given in request parameters (optional)
-   */
-  public function initialize($controller=null, $context=null, $action=null);
+  public function getResponse(): Response;
 
   /**
    * Get the HTTP method of the request
-   * @return String (uppercase)
+   * @return string (uppercase)
    */
-  public function getMethod();
+  public function getMethod(): string;
 
   /**
    * Set the desired response format
-   * @param $format A key of the configuration section 'Formats'
+   * @param string $format A key of the configuration section 'Formats'
    */
-  public function setResponseFormat($format);
+  public function setResponseFormat(string $format): void;
 
   /**
    * Get the message response format. If no explicit format is set, the
    * format is derived from the Content-Type header value, if existing.
    * If no format can be derived, the first format in the configuration
    * key 'Formats' will be used.
-   * @return String
+   * @return string
    */
-  public function getResponseFormat();
+  public function getResponseFormat(): string;
 }
 ?>

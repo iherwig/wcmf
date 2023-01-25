@@ -81,9 +81,9 @@ class RelationDescription {
 
   /**
    * Determine if there may more than one objects at the other side of the relation
-   * @return Boolean
+   * @return bool
    */
-  public function isMultiValued() {
+  public function isMultiValued(): bool {
     if ($this->isMultiValued == null) {
       $maxMultiplicity = $this->getOtherMaxMultiplicity();
       $this->isMultiValued = ($maxMultiplicity > 1 || $maxMultiplicity == 'unbounded');
@@ -93,9 +93,9 @@ class RelationDescription {
 
   /**
    * Get the PersistentObject type at this end
-   * @return String
+   * @return string
    */
-  public function getThisType() {
+  public function getThisType(): string {
     return $this->thisType;
   }
 
@@ -103,23 +103,23 @@ class RelationDescription {
    * Get the PersistentMapper at this end
    * @return PersistenceMapper
    */
-  public function getThisMapper() {
+  public function getThisMapper(): PersistenceMapper {
     return ObjectFactory::getInstance('persistenceFacade')->getMapper($this->getThisType());
   }
 
   /**
    * Get the role name at this end
-   * @return String
+   * @return string
    */
-  public function getThisRole() {
+  public function getThisRole(): string {
     return $this->thisRole;
   }
 
   /**
    * Get the PersistentObject type at the other end
-   * @return String
+   * @return string
    */
-  public function getOtherType() {
+  public function getOtherType(): string {
     return $this->otherType;
   }
 
@@ -127,21 +127,21 @@ class RelationDescription {
    * Get the PersistentMapper at the other end
    * @return PersistenceMapper
    */
-  public function getOtherMapper() {
+  public function getOtherMapper(): PersistenceMapper {
     return ObjectFactory::getInstance('persistenceFacade')->getMapper($this->getOtherType());
   }
 
   /**
    * Get the role name at the other end
-   * @return String
+   * @return string
    */
-  public function getOtherRole() {
+  public function getOtherRole(): string {
     return $this->otherRole;
   }
 
   /**
    * Get the minimum number of instances at this end
-   * @return Number or 'unbound'
+   * @return mixed int or 'unbound'
    */
   public function getThisMinMultiplicity() {
     return $this->thisMinMultiplicity;
@@ -149,7 +149,7 @@ class RelationDescription {
 
   /**
    * Get the maximum number of instances at this end
-   * @return Number or 'unbound'
+   * @return mixed int or 'unbound'
    */
   public function getThisMaxMultiplicity() {
     return $this->thisMaxMultiplicity;
@@ -157,7 +157,7 @@ class RelationDescription {
 
   /**
    * Get the minimum number of instances at the other end
-   * @return Number or 'unbound'
+   * @return mixed int or 'unbound'
    */
   public function getOtherMinMultiplicity() {
     return $this->otherMinMultiplicity;
@@ -165,7 +165,7 @@ class RelationDescription {
 
   /**
    * Get the maximum number of instances at the other end
-   * @return Number or 'unbound'
+   * @return mixed int or 'unbound'
    */
   public function getOtherMaxMultiplicity() {
     return $this->otherMaxMultiplicity;
@@ -173,41 +173,41 @@ class RelationDescription {
 
   /**
    * Get the aggregation kind at this end
-   * @return String 'none', 'shared' or 'composite'
+   * @return string 'none', 'shared' or 'composite'
    */
-  public function getThisAggregationKind() {
+  public function getThisAggregationKind(): string {
     return $this->thisAggregationKind;
   }
 
   /**
    * Get the aggregation kind at the other end
-   * @return String 'none', 'shared' or 'composite'
+   * @return string 'none', 'shared' or 'composite'
    */
-  public function getOtherAggregationKind() {
+  public function getOtherAggregationKind(): string {
     return $this->otherAggregationKind;
   }
 
   /**
    * Check whether this end is navigable from the other end or not
-   * @return Boolean
+   * @return bool
    */
-  public function getThisNavigability() {
+  public function getThisNavigability(): bool {
     return $this->thisNavigability;
   }
 
   /**
    * Check whether the other end is navigable from this end or not
-   * @return Boolean
+   * @return bool
    */
-  public function getOtherNavigability() {
+  public function getOtherNavigability(): bool {
     return $this->otherNavigability;
   }
 
   /**
    * Get the hierarchy type that the other end has in relation to this end
-   * @return String 'parent', 'child', 'undefined'
+   * @return string 'parent', 'child', 'undefined'
    */
-  public function getHierarchyType() {
+  public function getHierarchyType(): string {
     return $this->hierarchyType;
   }
 
@@ -215,10 +215,10 @@ class RelationDescription {
    * Check if another RelationDescription instance describes the same relation as
    * this one. This is true if they connect the same types using the same role names
    * (independent from the direction). All other attributes are not compared.
-   * @param $other The other RelationDescription
-   * @return Boolean
+   * @param RelationDescription $other The other RelationDescription
+   * @return bool
    */
-  public function isSameRelation(RelationDescription $other) {
+  public function isSameRelation(RelationDescription $other): bool {
     if (($this->getThisType() == $other->getThisType() && $this->getOtherType() == $other->getOtherType()
             && $this->getThisRole() == $other->getThisRole() && $this->getOtherRole() == $other->getOtherRole()) ||
         ($this->getThisType() == $other->getOtherType() && $this->getOtherType() == $other->getThisType()

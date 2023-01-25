@@ -12,14 +12,16 @@ namespace wcmf\lib\model;
 
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeUtil;
+use wcmf\lib\model\visitor\Visitor;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\impl\DefaultPersistentObject;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
+use wcmf\lib\persistence\RelationDescription;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -32,36 +34,33 @@ use wcmf\lib\util\StringUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 class Node extends DefaultPersistentObject {
+  use LogTrait;
 
   const RELATION_STATE_UNINITIALIZED = -1;
   const RELATION_STATE_INITIALIZING = -2;
   const RELATION_STATE_INITIALIZED = -3;
   const RELATION_STATE_LOADED = -4;
 
-  private $relationStates = [];
+  private array $relationStates = [];
 
-  private $addedNodes = [];
-  private $deletedNodes = [];
-  private $orderedNodes = null;
+  private array $addedNodes = [];
+  private array $deletedNodes = [];
+  private ?array $orderedNodes = null;
 
-  private static $parentGetValueMethod = null;
-  private static $logger = null;
+  private static ?\ReflectionMethod $parentGetValueMethod = null;
 
   /**
    * Constructor
    * @param $oid ObjectId instance (optional)
    * @param $initialData Associative array with initial data to override default data (optional)
    */
-  public function __construct(ObjectId $oid=null, array $initialData=null) {
+  public function __construct(?ObjectId $oid=null, ?array $initialData=null) {
     parent::__construct($oid, $initialData);
     // get parent::getValue method by reflection
     if (self::$parentGetValueMethod == null) {
       $reflector = new \ReflectionClass(__CLASS__);
       $parent = $reflector->getParentClass();
       self::$parentGetValueMethod = $parent->getMethod('getValue');
-    }
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
     }
   }
 
@@ -78,7 +77,7 @@ class Node extends DefaultPersistentObject {
   /**
    * @see PersistentObject::getValueNames()
    */
-  public function getValueNames($excludeTransient=false) {
+  public function getValueNames(bool $excludeTransient=false): array {
     // exclude relations
     $allAttributes = parent::getValueNames($excludeTransient);
     $attributes = [];
@@ -122,7 +121,7 @@ class Node extends DefaultPersistentObject {
   /**
    * @see PersistentObject::setValue()
    */
-  public function setValue($name, $value, $forceSet=false, $trackChange=true) {
+  public function setValue(string $name, $value, bool $forceSet=false, bool $trackChange=true): bool {
     // if the attribute is a relation, a special handling is required
     $mapper = $this->getMapper();
     if ($mapper->hasRelation($name)) {
@@ -149,7 +148,7 @@ class Node extends DefaultPersistentObject {
   /**
    * @see PersistentObject::removeValue()
    */
-  public function removeValue($name) {
+  public function removeValue(string $name): void {
     parent::removeValue($name);
     // set relation state to loaded in order to prevent lazy initialization
     $mapper = $this->getMapper();
@@ -161,7 +160,7 @@ class Node extends DefaultPersistentObject {
   /**
    * @see PersistentObject::getIndispensableObjects()
    */
-  public function getIndispensableObjects() {
+  public function getIndispensableObjects(): array {
     // return the parent objects
     return $this->getParents();
   }
@@ -177,10 +176,10 @@ class Node extends DefaultPersistentObject {
    * @param $properties An associative array holding key value pairs that the Node properties should match
    *        (values are interpreted as regular expression, optional, default: _null_)
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
-   * @return An Array holding references to the Nodes that matched.
+   * @return array holding references to the Nodes that matched.
    */
-  public static function filter(array $nodeList, ObjectId $oid=null, $type=null, $values=null,
-          $properties=null, $useRegExp=true) {
+  public static function filter(array $nodeList, ?ObjectId $oid=null, ?string $type=null, ?array $values=null,
+          ?array $properties=null, ?bool $useRegExp=true): array {
 
     $returnArray = [];
     for ($i=0, $count=sizeof($nodeList); $i<$count; $i++) {
@@ -226,8 +225,7 @@ class Node extends DefaultPersistentObject {
         }
       }
       else {
-        self::$logger->warn(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".ErrorHandler::getStackTrace(),
-          __CLASS__);
+        self::logger()->warning(StringUtil::getDump($curNode)." found, where a PersistentObject was expected.\n".ErrorHandler::getStackTrace());
       }
     }
     return $returnArray;
@@ -236,7 +234,7 @@ class Node extends DefaultPersistentObject {
   /**
    * @see PersistentObject::mergeValues
    */
-  public function mergeValues(PersistentObject $object) {
+  public function mergeValues(PersistentObject $object): void {
     parent::mergeValues($object);
     // implement special handling for relation values
     $mapper = $this->getMapper();
@@ -259,12 +257,12 @@ class Node extends DefaultPersistentObject {
    * Merge two object lists using the following rules:
    * - proxies in list1 are replaced by the appropriate objects from list2
    * - proxies/objects from list2 that don't exist in list1 are added to list1
-   * @param $list1 Array of PersistentObject(Proxy) instances
-   * @param $list2 Array of PersistentObject(Proxy) instances
-   * @return Associative array with keys 'result' and 'added' and arrays of
+   * @param ?array $list1 Array of PersistentObject(Proxy) instances
+   * @param ?array $list2 Array of PersistentObject(Proxy) instances
+   * @return array with keys 'result' and 'added' and arrays of
    *   all and only added objects respectively.
    */
-  protected static function mergeObjectLists($list1, $list2) {
+  protected static function mergeObjectLists(?array $list1, ?array $list2): array {
     // ensure arrays
     if (!is_array($list1)) {
       $list1 = [];
@@ -297,9 +295,9 @@ class Node extends DefaultPersistentObject {
 
   /**
    * Get the names of all relations.
-   * @return An array of relation names.
+   * @return array of relation names.
    */
-  public function getRelationNames() {
+  public function getRelationNames(): array {
     $result = [];
     $relations = $this->getRelations();
     foreach ($relations as $curRelation) {
@@ -310,15 +308,15 @@ class Node extends DefaultPersistentObject {
 
   /**
    * Add a Node to the given relation. Delegates to setValue internally.
-   * @param $other PersistentObject
+   * @param $other Node
    * @param $role The role of the Node in the created relation. If null, the role will be
    *        the Node's simple type (without namespace) (default: _null_)
    * @param $forceSet @see PersistentObject::setValue()
    * @param $trackChange @see PersistentObject::setValue()
    * @param $updateOtherSide Boolean whether to update also the other side of the relation (default: _true_)
-   * @return Boolean whether the operation succeeds or not
+   * @return bool whether the operation succeeds or not
    */
-  public function addNode(PersistentObject $other, $role=null, $forceSet=false, $trackChange=true, $updateOtherSide=true) {
+  public function addNode(Node $other, ?string $role=null, ?bool $forceSet=false, ?bool $trackChange=true, ?bool $updateOtherSide=true): bool {
     $mapper = $this->getMapper();
 
     // set role if missing
@@ -338,8 +336,8 @@ class Node extends DefaultPersistentObject {
       // check multiplicity if multivalued
       $maxMultiplicity = $relDesc->getOtherMaxMultiplicity();
       if ($relDesc->isMultiValued() && !($maxMultiplicity == 'unbounded') &&
-          sizeof(oldValue) >= $maxMultiplicity) {
-            throw new IllegalArgumentException("Maximum number of related objects exceeded: ".$role." (".(sizeof(oldValue)+1)." > ".$maxMultiplicity.")");
+          sizeof($oldValue) >= $maxMultiplicity) {
+            throw new IllegalArgumentException("Maximum number of related objects exceeded: ".$role." (".(sizeof($oldValue)+1)." > ".$maxMultiplicity.")");
       }
       // make sure that the value is an array if multivalued
       $mergeResult = self::mergeObjectLists($oldValue, [$value]);
@@ -372,10 +370,10 @@ class Node extends DefaultPersistentObject {
   /**
    * Get the object ids of the nodes that were added since the node was loaded.
    * Persistence mappers use this method when persisting the node relations.
-   * @return Associative array with the roles as keys and an array of PersistentObject instances
+   * @return array with the roles as keys and an array of PersistentObject instances
    *  as values
    */
-  public function getAddedNodes() {
+  public function getAddedNodes(): array {
     return $this->addedNodes;
   }
 
@@ -385,7 +383,7 @@ class Node extends DefaultPersistentObject {
    * @param $role The role of the Node. If null, the role is the Node's type (without namespace) (default: _null_)
    * @param $updateOtherSide Boolean whether to update also the other side of the relation (default: _true_)
    */
-  public function deleteNode(PersistentObject $other, $role=null, $updateOtherSide=true) {
+  public function deleteNode(Node $other, ?string $role=null, ?bool $updateOtherSide=true): void {
 
     $mapper = $this->getMapper();
 
@@ -442,10 +440,10 @@ class Node extends DefaultPersistentObject {
   /**
    * Get the object ids of the nodes that were deleted since the node was loaded.
    * Persistence mappers use this method when persisting the node relations.
-   * @return Associative array with the roles as keys and an array of ObjectId instances
+   * @return array with the roles as keys and an array of ObjectId instances
    *  as values
    */
-  public function getDeletedNodes() {
+  public function getDeletedNodes(): array {
     return $this->deletedNodes;
   }
 
@@ -460,7 +458,7 @@ class Node extends DefaultPersistentObject {
    * @param $movedList Array of repositioned Node instances (optional, improves performance)
    * @param $role Role name of the Node instances (optional)
    */
-  public function setNodeOrder(array $orderedList, array $movedList=null, $role=null) {
+  public function setNodeOrder(array $orderedList, ?array $movedList=null, ?string $role=null): void {
     $this->orderedNodes = [
         'ordered' => $orderedList,
         'moved' => $movedList,
@@ -472,9 +470,9 @@ class Node extends DefaultPersistentObject {
   /**
    * Get the order of related Node instances, if it was defined using
    * the Node::setNodeOrder() method.
-   * @return Associative array of with keys 'ordered', 'moved', 'role' or null
+   * @return array of with keys 'ordered', 'moved', 'role' or null
    */
-  public function getNodeOrder() {
+  public function getNodeOrder(): array {
     return $this->orderedNodes;
   }
 
@@ -485,7 +483,7 @@ class Node extends DefaultPersistentObject {
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (default: _BuildDepth::SINGLE_)
    */
-  public function loadChildren($role=null, $buildDepth=BuildDepth::SINGLE) {
+  public function loadChildren(?string $role=null, ?int $buildDepth=BuildDepth::SINGLE): void {
     if ($role != null) {
       $this->loadRelations([$role], $buildDepth);
     }
@@ -497,9 +495,9 @@ class Node extends DefaultPersistentObject {
   /**
    * Get the number of children of the Node.
    * @param $memOnly Boolean whether to only get the number of loaded children or all children (default: _true_).
-   * @return The number of children.
+   * @return int
    */
-  public function getNumChildren($memOnly=true) {
+  public function getNumChildren(bool $memOnly=true): int {
     return $this->getNumRelatives('child', $memOnly);
   }
 
@@ -513,7 +511,7 @@ class Node extends DefaultPersistentObject {
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Node instance or null.
    */
-  public function getFirstChild($role=null, $type=null, $values=null, $properties=null, $useRegExp=true) {
+  public function getFirstChild(?string $role=null, ?string $type=null, ?array $values=null, ?bool $properties=null, ?bool $useRegExp=true): ?Node {
     $children = $this->getChildrenEx(null, $role, $type, $values, $properties, $useRegExp);
     if (sizeof($children) > 0) {
       return $children[0];
@@ -526,9 +524,9 @@ class Node extends DefaultPersistentObject {
   /**
    * Get the Node's children.
    * @param $memOnly Boolean whether to only get the loaded children or all children (default: _true_).
-   * @return Array PersistentObject instances.
+   * @return array PersistentObject instances.
    */
-  public function getChildren($memOnly=true) {
+  public function getChildren(?bool $memOnly=true): array {
     return $this->getRelatives('child', $memOnly);
   }
 
@@ -544,10 +542,11 @@ class Node extends DefaultPersistentObject {
    * @param $values An associative array holding key value pairs that the children values should match (optional, default: _null_).
    * @param $properties An associative array holding key value pairs that the children properties should match (optional, default: _null_).
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
-   * @return Array containing children Nodes that matched (proxies not included).
+   * @return array containing children Nodes that matched (proxies not included).
    */
-  public function getChildrenEx(ObjectId $oid=null, $role=null, $type=null, $values=null,
-          $properties=null, $useRegExp=true) {
+  public function getChildrenEx(?ObjectId $oid=null, ?string $role=null, ?string $type=null, ?array $values=null,
+          ?array $properties=null, ?bool $useRegExp=true): array {
+    $result = [];
     if ($role != null) {
       // nodes of a given role are requested
       // make sure it is a child role
@@ -567,18 +566,19 @@ class Node extends DefaultPersistentObject {
           $children[] = $curNode;
         }
       }
-      return self::filter($children, $oid, $type, $values, $properties, $useRegExp);
+      $result = self::filter($children, $oid, $type, $values, $properties, $useRegExp);
     }
     else {
-      return self::filter($this->getChildren(), $oid, $type, $values, $properties, $useRegExp);
+      $result = self::filter($this->getChildren(), $oid, $type, $values, $properties, $useRegExp);
     }
+    return $result;
   }
 
   /**
    * Get possible children of this node type (independent of existing children).
-   * @return An Array with role names as keys and RelationDescription instances as values.
+   * @return array with role names as keys and RelationDescription instances as values.
    */
-  public function getPossibleChildren() {
+  public function getPossibleChildren(): array {
     $result = [];
     $relations = $this->getRelations('child');
     foreach ($relations as $curRelation) {
@@ -594,7 +594,7 @@ class Node extends DefaultPersistentObject {
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (default: _BuildDepth::SINGLE_)
    */
-  public function loadParents($role=null, $buildDepth=BuildDepth::SINGLE) {
+  public function loadParents(?string $role=null, ?int $buildDepth=BuildDepth::SINGLE): void {
     if ($role != null) {
       $this->loadRelations([$role], $buildDepth);
     }
@@ -606,9 +606,9 @@ class Node extends DefaultPersistentObject {
   /**
    * Get the number of parents of the Node.
    * @param $memOnly Boolean whether to only get the number of loaded parents or all parents (default: _true_).
-   * @return The number of parents.
+   * @return int
    */
-  public function getNumParents($memOnly=true) {
+  public function getNumParents(?bool $memOnly=true): int {
     return $this->getNumRelatives('parent', $memOnly);
   }
 
@@ -617,14 +617,9 @@ class Node extends DefaultPersistentObject {
    * versions. It returns the first parent.
    * @return Node
    */
-  public function getParent() {
+  public function getParent(): ?Node {
     $parents = $this->getParents();
-    if (sizeof($parents) > 0) {
-      return $parents[0];
-    }
-    else {
-      return null;
-    }
+    return (sizeof($parents) > 0) ? $parents[0] : null;
   }
 
   /**
@@ -637,23 +632,17 @@ class Node extends DefaultPersistentObject {
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
    * @return Node instance or null.
    */
-  public function getFirstParent($role=null, $type=null, $values=null, $properties=null, $useRegExp=true) {
-
+  public function getFirstParent(?string $role=null, ?string $type=null, ?array $values=null, ?array $properties=null, ?bool $useRegExp=true): ?Node {
     $parents = $this->getParentsEx(null, $role, $type, $values, $properties, $useRegExp);
-    if (sizeof($parents) > 0) {
-      return $parents[0];
-    }
-    else {
-      return null;
-    }
+    return (sizeof($parents) > 0) ? $parents[0] : null;
   }
 
   /**
    * Get the Nodes parents.
    * @param $memOnly Boolean whether to only get the loaded parents or all parents (default: _true_).
-   * @return Array PersistentObject instances.
+   * @return array of PersistentObject instances.
    */
-  public function getParents($memOnly=true) {
+  public function getParents(?bool $memOnly=true): array {
     return $this->getRelatives('parent', $memOnly);
   }
 
@@ -669,10 +658,11 @@ class Node extends DefaultPersistentObject {
    * @param $values An associative array holding key value pairs that the parent values should match (optional, default: _null_).
    * @param $properties An associative array holding key value pairs that the parent properties should match (optional, default: _null_).
    * @param $useRegExp Boolean whether to interpret the given values/properties as regular expressions or not (default: _true_)
-   * @return Array containing parent Nodes that matched (proxies not included).
+   * @return array containing parent Nodes that matched (proxies not included).
    */
-  public function getParentsEx(ObjectId $oid=null, $role=null, $type=null, $values=null,
-          $properties=null, $useRegExp=true) {
+  public function getParentsEx(?ObjectId $oid=null, ?string $role=null, ?string $type=null, ?array $values=null,
+          ?array $properties=null, ?bool $useRegExp=true): array {
+    $result = [];
     if ($role != null) {
       // nodes of a given role are requested
       // make sure it is a parent role
@@ -692,18 +682,19 @@ class Node extends DefaultPersistentObject {
           $parents[] = $curNode;
         }
       }
-      return self::filter($parents, $oid, $type, $values, $properties, $useRegExp);
+      $result = self::filter($parents, $oid, $type, $values, $properties, $useRegExp);
     }
     else {
-      return self::filter($this->getParents(), $oid, $type, $values, $properties, $useRegExp);
+      $result = self::filter($this->getParents(), $oid, $type, $values, $properties, $useRegExp);
     }
+    return $result;
   }
 
   /**
    * Get possible parents of this node type (independent of existing parents).
-   * @return An Array with role names as keys and RelationDescription instances as values.
+   * @return array with role names as keys and RelationDescription instances as values.
    */
-  public function getPossibleParents() {
+  public function getPossibleParents(): array {
     $result = [];
     $relations = $this->getRelations('parent');
     foreach ($relations as $curRelation) {
@@ -717,7 +708,7 @@ class Node extends DefaultPersistentObject {
    * @param $object PersistentObject instance to look for
    * @return RelationDescription instance or null, if the Node is not related
    */
-  public function getNodeRelation($object) {
+  public function getNodeRelation(PersistentObject $object): ?RelationDescription {
     $relations = $this->getRelations();
     foreach ($relations as $curRelation) {
       $curRelatives = parent::getValue($curRelation->getOtherRole());
@@ -741,7 +732,7 @@ class Node extends DefaultPersistentObject {
    * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (default: _BuildDepth::SINGLE_)
    */
-  protected function loadRelations(array $roles, $buildDepth=BuildDepth::SINGLE) {
+  protected function loadRelations(array $roles, ?int $buildDepth=BuildDepth::SINGLE): void {
     $oldState = $this->getState();
     foreach ($roles as $curRole) {
       if (isset($this->relationStates[$curRole]) &&
@@ -785,9 +776,9 @@ class Node extends DefaultPersistentObject {
   /**
    * Get the relation descriptions of a given hierarchyType.
    * @param $hierarchyType @see PersistenceMapper::getRelations (default: 'all')
-   * @return An array containing the RelationDescription instances.
+   * @return array containing the RelationDescription instances.
    */
-  protected function getRelations($hierarchyType='all') {
+  protected function getRelations(?string $hierarchyType='all'): array {
     return $this->getMapper()->getRelations($hierarchyType);
   }
 
@@ -795,9 +786,9 @@ class Node extends DefaultPersistentObject {
    * Get the relatives of a given hierarchyType.
    * @param $hierarchyType @see PersistenceMapper::getRelations
    * @param $memOnly Boolean whether to only get the relatives in memory or all relatives (including proxies) (default: _true_).
-   * @return An array containing the relatives.
+   * @return array containing the relatives.
    */
-  public function getRelatives($hierarchyType, $memOnly=true) {
+  public function getRelatives(string $hierarchyType, ?bool $memOnly=true): array {
     $relatives = [];
     $relations = $this->getRelations($hierarchyType);
     foreach ($relations as $curRelation) {
@@ -831,9 +822,9 @@ class Node extends DefaultPersistentObject {
    * Get the number of relatives of a given hierarchyType.
    * @param $hierarchyType @see PersistenceMapper::getRelations
    * @param $memOnly Boolean whether to only get the number of the relatives in memory or all relatives (default: _true_).
-   * @return The number of relatives.
+   * @return int
    */
-  public function getNumRelatives($hierarchyType, $memOnly=true) {
+  public function getNumRelatives(string $hierarchyType, ?bool $memOnly=true): int {
     return sizeof($this->getRelatives($hierarchyType, $memOnly));
   }
 
@@ -841,7 +832,7 @@ class Node extends DefaultPersistentObject {
    * Accept a Visitor. For use with the _Visitor Pattern_.
    * @param $visitor Visitor instance.
    */
-  public function acceptVisitor($visitor) {
+  public function acceptVisitor(Visitor $visitor): void {
     $visitor->visit($this);
   }
 
@@ -851,7 +842,7 @@ class Node extends DefaultPersistentObject {
    * on first access.
    * @param $name The relation name (= role)
    */
-  public function addRelation($name) {
+  public function addRelation(string $name): void {
     if (!$this->hasValue($name)) {
       $this->relationStates[$name] = self::RELATION_STATE_UNINITIALIZED;
       $this->setValueInternal($name, null);
@@ -866,7 +857,7 @@ class Node extends DefaultPersistentObject {
    * @see PersistentObject::getDisplayValue()
    * Delegates to NodeUtil::getDisplayValue
    */
-  public function getDisplayValue() {
+  public function getDisplayValue(): string {
     return NodeUtil::getDisplayValue($this);
   }
 
@@ -874,7 +865,7 @@ class Node extends DefaultPersistentObject {
    * Get a string representation of the Node.
    * @return The string representation of the Node.
    */
-  public function __toString() {
+  public function __toString(): string {
     $pStr = parent::__toString();
     $str = $this->getDisplayValue();
     if ($pStr != $str) {

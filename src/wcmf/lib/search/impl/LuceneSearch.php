@@ -11,7 +11,7 @@
 namespace wcmf\lib\search\impl;
 
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\ObjectId;
@@ -40,6 +40,7 @@ use ZendSearch\Lucene\Search\Weight\Boolean;
  * @author Niko <enikao@users.sourceforge.net>
  */
 class LuceneSearch implements IndexedSearch {
+  use LogTrait;
 
   private $indexStrategy;
   private $indexPath = '';
@@ -48,15 +49,10 @@ class LuceneSearch implements IndexedSearch {
   private $index;
   private $indexIsDirty = false;
 
-  private static $logger = null;
-
   /**
    * Constructor
    */
   public function __construct() {
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
     $this->indexStrategy = new DefaultIndexStrategy();
 
     // listen to object change events
@@ -92,8 +88,8 @@ class LuceneSearch implements IndexedSearch {
     if (!is_writeable($this->indexPath)) {
       throw new ConfigurationException("Index path '".$indexPath."' is not writeable.");
     }
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Lucene index location: ".$this->indexPath);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Lucene index location: ".$this->indexPath);
     }
   }
 
@@ -155,23 +151,23 @@ class LuceneSearch implements IndexedSearch {
     if ($index) {
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
       $query = QueryParser::parse($searchTerm, 'UTF-8');
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug("Search term: ".$searchTerm);
-        self::$logger->debug("Parsed query: ".$query);
-        self::$logger->debug("Optimized query: ".$query->rewrite($index)->optimize($index));
+      if (self::logger()->isDebugEnabled()) {
+        self::logger()->debug("Search term: ".$searchTerm);
+        self::logger()->debug("Parsed query: ".$query);
+        self::logger()->debug("Optimized query: ".$query->rewrite($index)->optimize($index));
       }
       try {
         $hits = $index->find($query);
-        if (self::$logger->isDebugEnabled()) {
-          self::$logger->debug("Hits: ".sizeof($hits));
+        if (self::logger()->isDebugEnabled()) {
+          self::logger()->debug("Hits: ".sizeof($hits));
         }
         if ($pagingInfo != null && $pagingInfo->getPageSize() > 0) {
           $pagingInfo->setTotalCount(sizeof($hits));
           $hits = array_slice($hits, $pagingInfo->getOffset(), $pagingInfo->getPageSize());
         }
         foreach($hits as $hit) {
-          if (self::$logger->isDebugEnabled()) {
-            self::$logger->debug(['oid' => $hit->oid, 'lang' => $hit->lang, 'document_id' => $hit->document_id, 'score' => $hit->score]);
+          if (self::logger()->isDebugEnabled()) {
+            self::logger()->debug(['oid' => $hit->oid, 'lang' => $hit->lang, 'document_id' => $hit->document_id, 'score' => $hit->score]);
           }
           $oidStr = $hit->oid;
           $oid = ObjectId::parse($oidStr);
@@ -237,8 +233,8 @@ class LuceneSearch implements IndexedSearch {
    * @see IndexedSearch::commitIndex()
    */
   public function commitIndex($optimize = true) {
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Commit index");
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Commit index");
     }
     if ($this->indexIsDirty) {
       $index = $this->getIndex(false);
@@ -273,8 +269,8 @@ class LuceneSearch implements IndexedSearch {
         // load translation
         $indexObj = $localization->loadTranslation($obj, $language, $this->defaultLanguageFallback);
 
-        if (self::$logger->isDebugEnabled()) {
-          self::$logger->debug("Add/Update index for: ".$oidStr." language:".$language);
+        if (self::logger()->isDebugEnabled()) {
+          self::logger()->debug("Add/Update index for: ".$oidStr." language:".$language);
         }
 
         $doc = $this->indexStrategy->getDocument($indexObj, $language);
@@ -290,8 +286,8 @@ class LuceneSearch implements IndexedSearch {
    * @see IndexedSearch::deleteFromIndex()
    */
   public function deleteFromIndex(ObjectId $oid) {
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Delete from index: ".$oid);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Delete from index: ".$oid);
     }
     $index = $this->getIndex();
 
@@ -317,7 +313,7 @@ class LuceneSearch implements IndexedSearch {
           $this->addToIndex($object);
         }
         else {
-          self::$logger->warn("Could not index object with oid ".$oid." because it does not exist");
+          self::logger()->warning("Could not index object with oid ".$oid." because it does not exist");
         }
       }
       // remove deleted objects

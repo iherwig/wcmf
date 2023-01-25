@@ -20,13 +20,13 @@ interface Session {
 
   /**
    * Check if the session is started.
-   * @return Boolean.
+   * @return boolean.
    */
   public function isStarted();
 
   /**
    * Get the id of the session.
-   * @return The id of the current session.
+   * @return string
    */
   public function getID();
 
@@ -34,7 +34,7 @@ interface Session {
    * Returns the value of a session variable
    * @param $key The key (name) of the session vaiable.
    * @param $default The default value if the key is not defined (optional, default: _null_)
-   * @return The session var or null if it doesn't exist.
+   * @return mixed or null if it doesn't exist.
    */
   public function get($key, $default=null);
 
@@ -54,7 +54,7 @@ interface Session {
   /**
    * Tests, if a certain session variable is defined.
    * @param $key The key (name) of the session variable.
-   * @return Boolean whether the session variable is set or not.
+   * @return boolean whether the session variable is set or not.
    */
   public function exist($key);
 
@@ -76,7 +76,7 @@ interface Session {
 
   /**
    * Get the login of the authenticated user.
-   * @return String
+   * @return string
    */
   public function getAuthUser();
 }

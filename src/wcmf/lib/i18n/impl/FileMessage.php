@@ -58,7 +58,7 @@ class FileMessage implements Message {
   /**
    * @see Message::getText()
    */
-  public function getText($message, $parameters=null, $lang='') {
+  public function getText(string $message, $parameters=null, $lang=''): string {
     // get the translations
     $lang = strlen($lang) == 0 ? $this->language : $lang;
     $translations = $this->getTranslations($lang);
@@ -83,7 +83,7 @@ class FileMessage implements Message {
   /**
    * @see Message::getAll()
    */
-  public function getAll($lang='') {
+  public function getAll($lang=''): array {
     // get the translations
     $translations = $this->getTranslations($lang);
     return $translations;
@@ -92,9 +92,9 @@ class FileMessage implements Message {
   /**
    * Get all translations for a language.
    * @param $lang The language (optional, default: '')
-   * @return The translations as associative array
+   * @return array
    */
-  private function getTranslations($lang) {
+  private function getTranslations($lang): array {
     if (!isset($this->translations[$lang])) {
       $messageFile = $this->localeDir."/messages_".$lang.".php";
       if (file_exists($messageFile)) {

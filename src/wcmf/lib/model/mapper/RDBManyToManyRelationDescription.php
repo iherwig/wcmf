@@ -42,53 +42,53 @@ class RDBManyToManyRelationDescription extends RelationDescription {
   /**
    * Get the RDBOneToManyRelationDescription describing the relation between
    * 'this' end and the connecting type
-   * @return RelationDescription
+   * @return RDBOneToManyRelationDescription
    */
-  public function getThisEndRelation() {
+  public function getThisEndRelation(): RDBOneToManyRelationDescription {
     return $this->thisEndRelation;
   }
 
   /**
    * Get the RDBManyToOneRelationDescription describing the relation between
    * the connecting type and the 'other' end
-   * @return RelationDescription
+   * @return RDBManyToOneRelationDescription
    */
-  public function getOtherEndRelation() {
+  public function getOtherEndRelation(): RDBManyToOneRelationDescription {
     return $this->otherEndRelation;
   }
 
   /**
    * @see RelationDescription::isMultiValued
    */
-  public function isMultiValued() {
+  public function isMultiValued(): bool {
     return true;
   }
 
   /**
    * @see RelationDescription::getThisType
    */
-  public function getThisType() {
+  public function getThisType(): string {
     return $this->thisEndRelation->thisType;
   }
 
   /**
    * @see RelationDescription::getThisRole
    */
-  public function getThisRole() {
+  public function getThisRole(): string {
     return $this->thisEndRelation->thisRole;
   }
 
   /**
    * @see RelationDescription::getOtherType
    */
-  public function getOtherType() {
+  public function getOtherType(): string {
     return $this->otherEndRelation->otherType;
   }
 
   /**
    * @see RelationDescription::getOtherRole
    */
-  public function getOtherRole() {
+  public function getOtherRole(): string {
     return $this->otherEndRelation->otherRole;
   }
 
@@ -123,35 +123,35 @@ class RDBManyToManyRelationDescription extends RelationDescription {
   /**
    * @see RelationDescription::getThisAggregationKind
    */
-  public function getThisAggregationKind() {
+  public function getThisAggregationKind(): string {
     return $this->thisEndRelation->thisAggregationKind;
   }
 
   /**
    * @see RelationDescription::getOtherAggregationKind
    */
-  public function getOtherAggregationKind() {
+  public function getOtherAggregationKind(): string {
     return $this->otherEndRelation->otherAggregationKind;
   }
 
   /**
    * @see RelationDescription::getThisNavigability
    */
-  public function getThisNavigability() {
+  public function getThisNavigability(): bool {
     return $this->thisEndRelation->thisNavigability;
   }
 
   /**
    * @see RelationDescription::getOtherNavigability
    */
-  public function getOtherNavigability() {
+  public function getOtherNavigability(): bool {
     return $this->otherEndRelation->otherNavigability;
   }
 
   /**
    * @see RelationDescription::getHierarchyType
    */
-  public function getHierarchyType() {
+  public function getHierarchyType(): string {
     return 'child';
   }
 }

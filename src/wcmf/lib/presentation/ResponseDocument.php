@@ -21,38 +21,38 @@ interface ResponseDocument {
 
   /**
    * Get the MIME type of the document
-   * @return String
+   * @return string
    */
-  public function getMimeType();
+  public function getMimeType(): string;
 
   /**
    * Determine whether the document should be return as download or not
-   * @return Boolean
+   * @return bool
    */
-  public function isDownload();
+  public function isDownload(): bool;
 
   /**
    * Get the filename used in the 'Content-Disposition' header when used as a download
-   * @return String
+   * @return string
    */
-  public function getFilename();
+  public function getFilename(): string;
 
   /**
    * Get the cache date of the document, if it is cached locally
-   * @return DateTime or null
+   * @return \DateTime or null
    */
-  public function getCacheDate();
+  public function getCacheDate(): ?\DateTime;
 
   /**
    * Get the content of the document
    * NOTE The result might be null depending on the implementation
-   * @return String
+   * @return string
    */
-  public function getContent();
+  public function getContent(): string;
 
   /**
    * Output the document using echo
    */
-  public function output();
+  public function output(): void;
 }
 ?>

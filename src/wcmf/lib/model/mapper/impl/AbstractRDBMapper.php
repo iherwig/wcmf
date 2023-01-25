@@ -11,15 +11,16 @@
 namespace wcmf\lib\model\mapper\impl;
 
 use PDO;
+
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
+use wcmf\lib\model\Node;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
 use wcmf\lib\model\mapper\RDBMapper;
 use wcmf\lib\model\mapper\SelectStatement;
-use wcmf\lib\model\Node;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\Criteria;
@@ -30,17 +31,20 @@ use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PersistentObjectProxy;
 use wcmf\lib\persistence\UpdateOperation;
 use wcmf\lib\security\PermissionManager;
+use Laminas\EventManager\Event;
 use Laminas\EventManager\EventManager as LaminasEventManager;
 use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\TableGateway\Feature\EventFeature;
 use Laminas\Db\TableGateway\Feature\EventFeatureEventsInterface;
 use Laminas\Db\TableGateway\TableGateway;
+use PDOStatement;
+use wcmf\lib\model\mapper\RDBAttributeDescription;
 
 /**
  * AbstractRDBMapper maps objects of one type to a relational database schema.
@@ -50,35 +54,35 @@ use Laminas\Db\TableGateway\TableGateway;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
+  use LogTrait;
 
   const SEQUENCE_CLASS = 'DBSequence';
 
-  private static $adapters = [];      // registry for adapters, key: connId
-  private static $inTransaction = []; // registry for transaction status (boolean), key: connId
-  private static $sequenceMapper = null;
-  private static $isDebugEnabled = false;
-  private static $logger = null;
-  private static $dbEvents = null;
+  private static array $adapters = [];      // registry for adapters, key: connId
+  private static array $inTransaction = []; // registry for transaction status (boolean), key: connId
+  private static ?RDBMapper $sequenceMapper = null;
+  private static bool $isDebugEnabled = false;
+  private static ?LaminasEventManager $dbEvents = null;
 
-  private $connectionParams = null; // database connection parameters
-  private $connId = null;  // a connection identifier composed of the connection parameters
-  private $adapter = null; // database adapter
-  private $dbPrefix = '';  // database prefix (if given in the configuration file)
-  private $isFileDB = false;
+  private array $connectionParams = []; // database connection parameters
+  private ?string $connId = null;  // a connection identifier composed of the connection parameters
+  private ?Adapter $adapter = null; // database adapter
+  private string $dbPrefix = '';  // database prefix (if given in the configuration file)
+  private bool $isFileDB = false;
 
-  private $relations = null;
-  private $attributes = null;
+  private ?array $relations = null;
+  private ?array $attributes = null;
 
   // prepared statements
-  private $idSelectStmt = null;
-  private $idInsertStmt = null;
-  private $idUpdateStmt = null;
+  private ?PDOStatement $idSelectStmt = null;
+  private ?PDOStatement $idInsertStmt = null;
+  private ?PDOStatement $idUpdateStmt = null;
 
   // statement collected inside a transaction
-  private $statements = [];
+  private array $statements = [];
 
   // keeps track of currently loading relations to avoid circular loading
-  private $loadingRelations = [];
+  private array $loadingRelations = [];
 
   const INTERNAL_VALUE_PREFIX = '_mapper_internal_';
 
@@ -95,10 +99,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
           EventManager $eventManager) {
     parent::__construct($persistenceFacade, $permissionManager,
             $concurrencyManager, $eventManager);
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
-    self::$isDebugEnabled = self::$logger->isDebugEnabled();
+    self::$isDebugEnabled = self::logger()->isDebugEnabled();
 
     // listen to db events
     self::$dbEvents = new LaminasEventManager();
@@ -111,7 +112,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * Destructor
    */
   public function __destruct() {
-    self::$dbEvents->detach([$this, 'handleDbEvent']);
+    if (self::$dbEvents) {
+      self::$dbEvents->detach([$this, 'handleDbEvent']);
+    }
   }
 
   /**
@@ -124,12 +127,11 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
   /**
    * Set the connection parameters.
-   * @param $params Initialization data given in an associative array with the following keys:
-   *               dbType, dbHostName, dbUserName, dbPassword, dbName
+   * @param array{'dbType': string, 'dbHostName': string, 'dbUserName': string, 'dbPassword': string, 'dbName': string, 'dbPrefix': string} $params Initialization data
    *               if dbPrefix is given it will be appended to every table string, which is
    *               useful if different applications operate on the same database
    */
-  public function setConnectionParams($params) {
+  public function setConnectionParams(array $params): void {
     $this->connectionParams = $params;
     if (isset($this->connectionParams['dbPrefix'])) {
       $this->dbPrefix = $this->connectionParams['dbPrefix'];
@@ -138,10 +140,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
   /**
    * Get the connection parameters.
-   * @return Assoziative array with the following keys:
-   *               dbType, dbHostName, dbUserName, dbPassword, dbName, dbPrefix
+   * @return array{'dbType': string, 'dbHostName': string, 'dbUserName': string, 'dbPassword': string, 'dbName': string, 'dbPrefix': string}
    */
-  public function getConnectionParams() {
+  public function getConnectionParams(): array {
     return $this->connectionParams;
   }
 
@@ -150,7 +151,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    */
   public function getConnection() {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     return $this->adapter->getDriver()->getConnection()->getResource();
   }
@@ -158,20 +159,20 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::getAdapter()
    */
-  public function getAdapter() {
+  public function getAdapter(): Adapter {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     return $this->adapter;
   }
 
   /**
    * Get the mapper for a Node and optionally check if it is a supported one.
-   * @param $type The type of Node to get the mapper for
-   * @param $strict Boolean indicating if the mapper must be an instance of RDBMapper (default true)
+   * @param string $type The type of Node to get the mapper for
+   * @param bool $strict Boolean indicating if the mapper must be an instance of RDBMapper (default true)
    * @return RDBMapper instance
    */
-  protected static function getMapper($type, $strict=true) {
+  protected static function getMapper(string $type, bool $strict=true): RDBMapper {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = $persistenceFacade->getMapper($type);
     if ($strict && !($mapper instanceof RDBMapper)) {
@@ -184,8 +185,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * Actually connect to the database using the configuration parameters given
    * to the constructor. The implementation ensures that only one connection is
    * used for all RDBMappers with the same configuration parameters.
+   * @return Adapter
    */
-  private function connect() {
+  private function connect(): Adapter {
     // connect
     if (isset($this->connectionParams['dbType']) && isset($this->connectionParams['dbHostName']) &&
       isset($this->connectionParams['dbUserName']) && isset($this->connectionParams['dbPassword']) &&
@@ -257,13 +259,15 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     else {
       throw new IllegalArgumentException("Wrong parameters for constructor.");
     }
+    assert(!is_null($this->adapter));
+    return $this->adapter;
   }
 
   /**
    * Get the sequence mapper
-   * @return PersistenceMapper
+   * @return RDBMapper
    */
-  protected function getSequenceMapper() {
+  protected function getSequenceMapper(): RDBMapper {
     if (self::$sequenceMapper == null) {
       self::$sequenceMapper = self::getMapper(self::SEQUENCE_CLASS);
     }
@@ -272,9 +276,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
   /**
    * Get a new id for inserting into the database
-   * @return An id value.
+   * @return int
    */
-  protected function getNextId() {
+  protected function getNextId(): int {
     try {
       $sequenceMapper = $this->getSequenceMapper();
       $sequenceTable = $sequenceMapper->getRealTableName();
@@ -318,7 +322,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       return $id;
     }
     catch (\Exception $ex) {
-      self::$logger->error("The next id query caused the following exception:\n".$ex->getMessage());
+      self::logger()->error("The next id query caused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
   }
@@ -326,9 +330,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::getQuoteIdentifierSymbol()
    */
-  public function getQuoteIdentifierSymbol() {
+  public function getQuoteIdentifierSymbol(): string {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     return $this->adapter->getPlatform()->getQuoteIdentifierSymbol();
   }
@@ -336,9 +340,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::quoteIdentifier()
    */
-  public function quoteIdentifier($identifier) {
+  public function quoteIdentifier(string $identifier): string {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     return $this->adapter->getPlatform()->quoteIdentifier($identifier);
   }
@@ -346,9 +350,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::quoteValue()
    */
-  public function quoteValue($value) {
+  public function quoteValue($value): string {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     return $this->adapter->getPlatform()->quoteValue($value);
   }
@@ -356,23 +360,23 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::getRealTableName()
    */
-  public function getRealTableName() {
+  public function getRealTableName(): string {
     return $this->dbPrefix.$this->getTableName();
   }
 
   /**
    * Execute a query on the connection.
-   * @param $sql The SQL statement as string
-   * @param $parameters An associative array of parameter name/values pairs to replace the placeholders with (optional, default: empty array)
-   * @return If the query is a select, an array of associative arrays containing the selected data,
+   * @param string $sql The SQL statement as string
+   * @param array<string, mixed> $parameters An associative array of parameter name/values pairs to replace the placeholders with (optional, default: empty array)
+   * @return array|int If the query is a select, an array of associative arrays containing the selected data,
    * the number of affected rows else
    */
-  public function executeSql($sql, $parameters=[]) {
+  public function executeSql(string $sql, array $parameters=[]) {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     try {
-      $stmt = $this->adapter->createStatement($sql, $parameters);
+      $stmt = $this->adapter->createStatement($sql, new ParameterContainer($parameters));
       $results = $stmt->execute();
       if ($results->isQueryResult()) {
         return $results->getResource()->fetchAll();
@@ -382,7 +386,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       }
     }
     catch (\Exception $ex) {
-      self::$logger->error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage());
+      self::logger()->error("The query: ".$sql."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
   }
@@ -390,9 +394,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::select()
    */
-  public function select(SelectStatement $selectStmt, PagingInfo $pagingInfo=null) {
+  public function select(SelectStatement $selectStmt, PagingInfo $pagingInfo=null): array {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     try {
       if ($pagingInfo != null) {
@@ -406,20 +410,20 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
         }
       }
       if (self::$isDebugEnabled) {
-        self::$logger->debug("Execute statement: ".$selectStmt->__toString());
-        self::$logger->debug($selectStmt->getParameters());
+        self::logger()->debug("Execute statement: ".$selectStmt->__toString());
+        self::logger()->debug(var_export($selectStmt->getParameters(), true));
       }
       $result = $selectStmt->query();
       // save statement on success
       $selectStmt->save();
       $rows = $result->fetchAll();
       if (self::$isDebugEnabled) {
-        self::$logger->debug("Result: ".sizeof($rows)." row(s)");
+        self::logger()->debug("Result: ".sizeof($rows)." row(s)");
       }
       return $rows;
     }
     catch (\Exception $ex) {
-      self::$logger->error("The query: ".$selectStmt->__toString()."\ncaused the following exception:\n".$ex->getMessage());
+      self::logger()->error("The query: ".$selectStmt->__toString()."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
   }
@@ -427,13 +431,13 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see PersistenceMapper::executeOperation()
    */
-  public function executeOperation(PersistenceOperation $operation) {
+  public function executeOperation(PersistenceOperation $operation): int {
     if ($operation->getType() != $this->getType()) {
       throw new IllegalArgumentException("Operation: ".$operation.
               " can't be executed by ".get_class($this));
     }
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
 
     // transform table name
@@ -443,7 +447,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     $translatedValues = [];
     foreach($operation->getValues() as $name => $value) {
       $attrDesc = $this->getAttribute($name);
-      if ($attrDesc) {
+      if ($attrDesc instanceof RDBAttributeDescription) {
         $translatedValues[$attrDesc->getColumn()] = $value;
       }
     }
@@ -473,7 +477,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
       }
     }
     catch (\Exception $ex) {
-      self::$logger->error("The operation: ".$operation."\ncaused the following exception:\n".$ex->getMessage());
+      self::logger()->error("The operation: ".$operation."\ncaused the following exception:\n".$ex->getMessage());
       throw new PersistenceException("Error in persistent operation. See log file for details.");
     }
     return $affectedRows;
@@ -482,7 +486,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see PersistenceMapper::getRelations()
    */
-  public function getRelations($hierarchyType='all') {
+  public function getRelations(string $hierarchyType='all'): array {
     $this->initRelations();
     return $hierarchyType == 'all' ? $this->relations['all'] : $this->relations[$hierarchyType];
   }
@@ -490,10 +494,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * Implementation of PersistenceMapper::getRelation() including nm classes in
    *    many to many relations
-   * @param $roleName The role name of the relation
-   * @return RelationDescription
+   * @param string $roleName The role name of the relation
+   * @return array<RelationDescription>
    */
-  protected function getRelationIncludingNM($roleName) {
+  protected function getRelationIncludingNM(string $roleName): array {
     $this->initRelations();
     if ($this->hasRelation($roleName)) {
       return $this->getRelation($roleName);
@@ -507,9 +511,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   }
 
   /**
-   * Get the relation descriptions defined in the subclass and add them to internal arrays.
+   * Initialize the relation descriptions defined in the subclass and add them to internal arrays.
    */
-  private function initRelations() {
+  private function initRelations(): void {
     if ($this->relations == null) {
       $this->relations = [];
       $this->relations['all'] = array_values($this->getRelationDescriptions());
@@ -537,7 +541,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see PersistenceMapper::getAttributes()
    */
-  public function getAttributes(array $tags=[], $matchMode='all') {
+  public function getAttributes(array $tags=[], string $matchMode='all'): array {
     $this->initAttributes();
     $result = [];
     if (sizeof($tags) == 0) {
@@ -554,9 +558,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   }
 
   /**
-   * Get the attribute descriptions defined in the subclass and add them to internal arrays.
+   * Initialize the attribute descriptions defined in the subclass and add them to internal arrays.
    */
-  private function initAttributes() {
+  private function initAttributes(): void {
     if ($this->attributes == null) {
       $this->attributes = array_values($this->getAttributeDescriptions());
     }
@@ -565,14 +569,14 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see PersistenceMapper::isSortable()
    */
-  public function isSortable($roleName=null) {
+  public function isSortable(string $roleName=null): bool {
     return $this->getSortkey($roleName) != null;
   }
 
   /**
    * @see PersistenceMapper::getSortkey()
    */
-  public function getSortkey($roleName=null) {
+  public function getSortkey(string $roleName=null): array {
     $sortDefs = $this->getDefaultOrder($roleName);
     if (sizeof($sortDefs) > 0 && $sortDefs[0]['isSortkey'] == true) {
       return $sortDefs[0];
@@ -583,7 +587,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see PersistenceMapper::getDefaultOrder()
    */
-  public function getDefaultOrder($roleName=null) {
+  public function getDefaultOrder(string $roleName=null): array {
     $sortDef = null;
     $sortType = null;
     if ($roleName != null && $this->hasRelation($roleName) &&
@@ -609,10 +613,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
   /**
    * Check if a value is a primary key value
-   * @param $name The name of the value
-   * @return Boolean
+   * @param string $name The name of the value
+   * @return bool
    */
-  protected function isPkValue($name) {
+  protected function isPkValue(string $name): bool {
     $pkNames = $this->getPKNames();
     return in_array($name, $pkNames);
   }
@@ -620,7 +624,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::constructOID()
    */
-  public function constructOID($data) {
+  public function constructOID(array $data): ObjectId {
     $pkNames = $this->getPkNames();
     $ids = [];
     foreach ($pkNames as $pkName) {
@@ -632,7 +636,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::renderCriteria()
    */
-  public function renderCriteria(Criteria $criteria, $placeholder=null, $tableName=null, $columnName=null) {
+  public function renderCriteria(Criteria $criteria, $placeholder=null, $tableName=null, $columnName=null): array {
     $type = $criteria->getType();
     if (!$this->persistenceFacade->isKnownType($type)) {
       throw new IllegalArgumentException("Unknown type referenced in Criteria: $type");
@@ -676,9 +680,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see AbstractMapper::loadImpl()
    */
-  protected function loadImpl(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
+  protected function loadImpl(ObjectId $oid, int $buildDepth=BuildDepth::SINGLE): ?PersistentObject {
     if (self::$isDebugEnabled) {
-      self::$logger->debug("Load object: ".$oid->__toString());
+      self::logger()->debug("Load object: ".$oid->__toString());
     }
     // delegate to loadObjects
     $criteria = $this->createPKCondition($oid);
@@ -696,7 +700,7 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * @see AbstractMapper::createImpl()
    * @note The type parameter is not used here because this class only constructs one type
    */
-  protected function createImpl($type, $buildDepth=BuildDepth::SINGLE) {
+  protected function createImpl(string $type, int $buildDepth=BuildDepth::SINGLE): PersistentObject {
     if ($buildDepth < 0 && !in_array($buildDepth, [BuildDepth::SINGLE, BuildDepth::REQUIRED])) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
@@ -736,9 +740,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see AbstractMapper::saveImpl()
    */
-  protected function saveImpl(PersistentObject $object) {
+  protected function saveImpl(PersistentObject $object): void {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
 
     // set all missing attributes
@@ -774,15 +778,14 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
     // postcondition: the object is saved to the db
     //                the object state is STATE_CLEAN
     //                attributes are only inserted if their values differ from ''
-    return true;
   }
 
   /**
    * @see AbstractMapper::deleteImpl()
    */
-  protected function deleteImpl(PersistentObject $object) {
+  protected function deleteImpl(PersistentObject $object): bool {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
 
     // log action
@@ -841,9 +844,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * @see AbstractMapper::getOIDsImpl()
    * @note The type parameter is not used here because this class only constructs one type
    */
-  protected function getOIDsImpl($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  protected function getOIDsImpl(string $type, ?array $criteria=null, ?array $orderby=null, ?PagingInfo $pagingInfo=null): array {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     $oids = [];
 
@@ -864,9 +867,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see AbstractMapper::loadObjectsImpl()
    */
-  protected function loadObjectsImpl($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  protected function loadObjectsImpl(string $type, int $buildDepth=BuildDepth::SINGLE, ?array $criteria=null, ?array $orderby=null, ?PagingInfo $pagingInfo=null): array {
     if (self::$isDebugEnabled) {
-      self::$logger->debug("Load objects: ".$type);
+      self::logger()->debug("Load objects: ".$type);
     }
     $objects = $this->loadObjectsFromQueryParts($type, $buildDepth, $criteria, $orderby, $pagingInfo);
     return $objects;
@@ -897,10 +900,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see RDBMapper::loadObjectsFromSQL()
    */
-  public function loadObjectsFromSQL(SelectStatement $selectStmt, $buildDepth=BuildDepth::SINGLE, PagingInfo $pagingInfo=null,
-          &$originalData=null) {
+  public function loadObjectsFromSQL(SelectStatement $selectStmt, int $buildDepth=BuildDepth::SINGLE, ?PagingInfo $pagingInfo=null,
+          &$originalData=null): array {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     $objects = [];
 
@@ -944,10 +947,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
   /**
    * Create an object of the mapper's type with the given attributes from the given data
-   * @param $data An associative array with the attribute names as keys and the attribute values as values
+   * @param array<string, mixed> $data An associative array with the attribute names as keys and the attribute values as values
    * @return PersistentObject
    */
-  protected function createObjectFromData(array $data) {
+  protected function createObjectFromData(array $data): PersistentObject {
     // determine if we are loading or creating
     $createFromLoadedData = (sizeof($data) > 0) ? true : false;
 
@@ -975,11 +978,11 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
   /**
    * Convert value after retrieval from storage
-   * @param $valueName
-   * @param $value
-   * @return Mixed
+   * @param string $valueName
+   * @param mixed $value
+   * @return mixed
    */
-  protected function convertValueFromStorage($valueName, $value) {
+  protected function convertValueFromStorage(string $valueName, $value) {
     // filter values according to type
     if ($this->hasAttribute($valueName)) {
       $type = $this->getAttribute($valueName)->getType();
@@ -994,10 +997,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * Append the child data to a list of object. If the buildDepth does not determine to load a
    * child generation, only the oids of the children will be loaded.
-   * @param $objects Array of PersistentObject instances to append the children to
-   * @param $buildDepth @see PersistenceFacade::loadObjects()
+   * @param array<PersistentObject> $objects Array of PersistentObject instances to append the children to
+   * @param int $buildDepth @see PersistenceFacade::loadObjects()
    */
-  protected function addRelatedObjects(array $objects, $buildDepth=BuildDepth::SINGLE) {
+  protected function addRelatedObjects(array $objects, int $buildDepth=BuildDepth::SINGLE): void {
     // recalculate build depth for the next generation
     $newBuildDepth = $buildDepth;
     if ($buildDepth != BuildDepth::SINGLE && $buildDepth != BuildDepth::INFINITE && $buildDepth > 0) {
@@ -1039,10 +1042,10 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
   /**
    * @see AbstractMapper::loadRelationImpl()
    */
-  protected function loadRelationImpl(array $objects, $role, $buildDepth=BuildDepth::SINGLE,
-    $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  protected function loadRelationImpl(array $objects, string $role, int $buildDepth=BuildDepth::SINGLE,
+    ?array $criteria=null, ?array $orderby=null, ?PagingInfo $pagingInfo=null): array {
     if (self::$isDebugEnabled) {
-      self::$logger->debug("Load relation: ".$role);
+      self::logger()->debug("Load relation: ".$role);
     }
     $relatives = [];
     if (sizeof($objects) == 0) {
@@ -1094,9 +1097,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
 
   /**
    * Handle an event triggered from the laminas db layer
-   * @param $e
+   * @param Event $e
    */
-  public function handleDbEvent($e) {
+  public function handleDbEvent(Event $e): void {
     $statement = $e->getParam('statement', null);
     if ($statement != null) {
       $this->statements[] = [$statement->getSql(), $statement->getParameterContainer()->getNamedArray()];
@@ -1109,9 +1112,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * one connection, the call will be ignored, if the method was already called
    * for another instance.
    */
-  public function beginTransaction() {
+  public function beginTransaction(): void {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     if (!$this->isInTransaction() && ($this->isFileDB || $this != $this->getSequenceMapper())) {
       $this->getConnection()->beginTransaction();
@@ -1126,9 +1129,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * one connection, the call will be ignored, if the method was already called
    * for another instance.
    */
-  public function commitTransaction() {
+  public function commitTransaction(): void {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     if ($this->isInTransaction() && ($this->isFileDB || $this != $this->getSequenceMapper())) {
       $this->getConnection()->commit();
@@ -1143,9 +1146,9 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * one connection, the call will be ignored, if the method was already called
    * for another instance.
    */
-  public function rollbackTransaction() {
+  public function rollbackTransaction(): void {
     if ($this->adapter == null) {
-      $this->connect();
+      $this->adapter = $this->connect();
     }
     if ($this->isInTransaction() && ($this->isFileDB || $this != $this->getSequenceMapper())) {
       $this->getConnection()->rollBack();
@@ -1157,23 +1160,23 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * @see PersistenceMapper::getStatements()
    * This method an array of arrays with the first item being the sql string and the second the bind parameter array
    */
-  public function getStatements() {
+  public function getStatements(): array {
     return $this->statements;
   }
 
   /**
    * Set the transaction state for the connection
-   * @param $isInTransaction Boolean whether the connection is in a transaction or not
+   * @param bool $isInTransaction Boolean whether the connection is in a transaction or not
    */
-  protected function setIsInTransaction($isInTransaction) {
+  protected function setIsInTransaction(bool $isInTransaction): void {
     self::$inTransaction[$this->connId] = $isInTransaction;
   }
 
   /**
    * Check if the connection is currently in a transaction
-   * @return Boolean
+   * @return bool
    */
-  protected function isInTransaction() {
+  protected function isInTransaction(): bool {
     return isset(self::$inTransaction[$this->connId]) && self::$inTransaction[$this->connId] === true;
   }
 
@@ -1186,106 +1189,109 @@ abstract class AbstractRDBMapper extends AbstractMapper implements RDBMapper {
    * Get the names of the attributes in the mapped class to order by default and the sort directions
    * (ASC or DESC). The roleName parameter allows to ask for the order with respect to a specific role.
    * @param $roleName The role name of the relation (optional, default: _null_)
-   * @return An array of assciative arrays with the keys sortFieldName and sortDirection (ASC or DESC)
+   * @return array<array{'sortFieldName': string, 'sortDirection': string}> of assciative arrays with the keys sortFieldName and sortDirection (ASC or DESC)
    */
-  abstract protected function getOwnDefaultOrder($roleName=null);
+  abstract protected function getOwnDefaultOrder(string $roleName=null): array;
 
   /**
    * Get a list of all RelationDescriptions.
-   * @return An associative array with the relation names as keys and the RelationDescription instances as values.
+   * @return array<string, RelationDescription> with the relation names as keys and the RelationDescription instances as values.
    */
-  abstract protected function getRelationDescriptions();
+  abstract protected function getRelationDescriptions(): array;
 
   /**
    * Get a list of all AttributeDescriptions.
-   * @return An associative array with the attribute names as keys and the AttributeDescription instances as values.
+   * @return array<string, AttributeDescription> with the attribute names as keys and the AttributeDescription instances as values.
    */
-  abstract protected function getAttributeDescriptions();
+  abstract protected function getAttributeDescriptions(): array;
 
   /**
    * Factory method for the supported object type.
-   * @param $oid The object id (maybe null)
-   * @return PersitentObject
+   * @param ObjectId $oid The object id (maybe null)
+   * @param array $initialData
+   * @return PersistentObject
    */
-  abstract protected function createObject(ObjectId $oid=null);
+  abstract protected function createObject(?ObjectId $oid=null, ?array $initialData=null): PersistentObject;
 
   /**
    * Set the object primary key and foreign key values for storing the object in the database.
-   * @param $object PersistentObject instance to insert.
+   * @param PersistentObject $object PersistentObject instance to insert.
    * @note The object does not have the final object id set. If a new id value for a primary key column is needed.
    * @note The prepared object will be used in the application afterwards. So values that are only to be modified for
    * the storage process should be changed in getInsertSQL() and getUpdateSQL() only!
    * for the insert statement, use RDBMapper::getNextId().
    */
-  abstract protected function prepareForStorage(PersistentObject $object);
+  abstract protected function prepareForStorage(PersistentObject $object): void;
 
   /**
    * Get the SQL command to select object data from the database.
-   * @param $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
-   * @param $alias The alias for the table name (default: _null_)
-   * @param $attributes An array holding names of attributes to select (optional, default: _null_)
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
-   * @param $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_))
-   * @param $queryId Identifier for the query cache (maybe null to let implementers handle it). (default: _null_)
+   * @param array $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
+   * @param string $alias The alias for the table name (default: _null_)
+   * @param array $attributes An array holding names of attributes to select (optional, default: _null_)
+   * @param array $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param PagingInfo $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_))
+   * @param string $queryId Identifier for the query cache (maybe null to let implementers handle it). (default: _null_)
    * @return SelectStatement instance that selects all object data that match the condition or an array with the query parts.
    * @note The names of the data item columns MUST match the data item names provided in the '_datadef' array from RDBMapper::getObjectDefinition()
    *       Use alias names if not! The selected data will be put into the '_data' array of the object definition.
    */
-  abstract public function getSelectSQL($criteria=null, $alias=null, $attributes=null, $orderby=null, PagingInfo $pagingInfo=null, $queryId=null);
+  abstract public function getSelectSQL(?array $criteria=null, ?string $alias=null, ?array $attributes=null,
+          ?array $orderby=null, ?PagingInfo $pagingInfo=null, ?string $queryId=null): SelectStatement;
 
   /**
    * Get the SQL command to select those objects from the database that are related to the given object.
    * @note Navigability may not be checked in this method
    * @note In case of a sortable many to many relation, the sortkey value must also be selected
-   * @param $otherObjectProxies Array of PersistentObjectProxy instances for the objects to load the relatives for.
-   * @param $otherRole The role of the other object in relation to the objects to load.
-   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (optional, default: _null_)
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
-   * @param $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_)
-   * @return Array with SelectStatement instance and the attribute names which establish the relation between
+   * @param array<PersistentObjectProxy> $otherObjectProxies Array of PersistentObjectProxy instances for the objects to load the relatives for.
+   * @param string $otherRole The role of the other object in relation to the objects to load.
+   * @param array $criteria An array of Criteria instances that define conditions on the object's attributes (optional, default: _null_)
+   * @param array $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param PagingInfo $pagingInfo An PagingInfo instance describing which page to load (optional, default: _null_)
+   * @return array with SelectStatement instance and the attribute names which establish the relation between
    * the loaded objects and the proxies (proxies's attribute name first)
    */
-  abstract protected function getRelationSelectSQL(array $otherObjectProxies, $otherRole,
-          $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  abstract protected function getRelationSelectSQL(array $otherObjectProxies, string $otherRole,
+          ?array $criteria=null, ?array $orderby=null, ?PagingInfo $pagingInfo=null): array;
 
   /**
    * Get the SQL command to insert a object into the database.
-   * @param $object PersistentObject instance to insert.
-   * @return Array of PersistenceOperation instances that insert a new object.
+   * @param PersistentObject $object PersistentObject instance to insert.
+   * @return array<PersistenceOperation>
    */
-  abstract protected function getInsertSQL(PersistentObject $object);
+  abstract protected function getInsertSQL(PersistentObject $object): array ;
 
   /**
    * Get the SQL command to update a object in the database.
-   * @param $object PersistentObject instance to update.
-   * @return Array of PersistenceOperation instances that update an existing object.
+   * @param PersistentObject $object PersistentObject instance to update.
+   * @return array<PersistenceOperation>
    */
-  abstract protected function getUpdateSQL(PersistentObject $object);
+  abstract protected function getUpdateSQL(PersistentObject $object): array;
 
   /**
    * Get the SQL command to delete a object from the database.
-   * @param $oid The object id of the object to delete.
-   * @return Array of PersistenceOperation instances that delete an existing object.
+   * @param ObjectId $oid The object id of the object to delete.
+   * @return array<PersistenceOperation>
    */
-  abstract protected function getDeleteSQL(ObjectId $oid);
+  abstract protected function getDeleteSQL(ObjectId $oid): array;
 
   /**
    * Create an array of condition Criteria instances for the primary key values
-   * @param $oid The object id that defines the primary key values
-   * @return Array of Criteria instances
+   * @param ObjectId $oid The object id that defines the primary key values
+   * @return array<Criteria>
    */
-  abstract protected function createPKCondition(ObjectId $oid);
+  abstract protected function createPKCondition(ObjectId $oid): array ;
 
   /**
    * Get the name of the database table, where this type is mapped to
-   * @return String
+   * @return string
    */
-  abstract protected function getTableName();
+  abstract protected function getTableName(): string;
 
   /**
    * Determine if an attribute is a foreign key
-   * @return Boolean
+   * @param string $name The attribute name
+   * @return bool
    */
-  abstract public function isForeignKey($name);
+  abstract public function isForeignKey(string $name): bool;
 }
 ?>

@@ -19,22 +19,22 @@ interface ActionKeyProvider {
 
   /**
    * Check if the given action key is existing.
-   * @param $actionKey ActionKey string
-   * @return Boolean
+   * @param string $actionKey ActionKey string
+   * @return bool
    */
-  public function containsKey($actionKey);
+  public function containsKey(string $actionKey): bool;
 
   /**
    * Get the value of the given action key.
-   * @param $actionKey ActionKey string
-   * @return String or null, if not existing
+   * @param string $actionKey ActionKey string
+   * @return string or null, if not existing
    */
-  public function getKeyValue($actionKey);
+  public function getKeyValue(string $actionKey): ?string;
 
   /**
    * Get a string value that uniquely describes the provider configuration.
-   * @return String
+   * @return string
    */
-  public function getId();
+  public function getId(): string;
 }
 ?>

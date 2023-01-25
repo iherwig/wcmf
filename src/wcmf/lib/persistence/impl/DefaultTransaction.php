@@ -12,7 +12,7 @@ namespace wcmf\lib\persistence\impl;
 
 use Exception;
 use wcmf\lib\core\EventManager;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\PersistenceException;
 use wcmf\lib\persistence\PersistenceFacade;
@@ -27,15 +27,14 @@ use wcmf\lib\persistence\TransactionEvent;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultTransaction implements Transaction {
+  use LogTrait;
 
   private static $isInfoEnabled = false;
   private static $isDebugEnabled = false;
-  private static $logger = null;
 
   private $persistenceFacade = null;
   private $eventManager = null;
 
-  private $id = '';
   private $isActive = false;
   private $isInCommit = false;
   private $observedObjects = [];
@@ -57,16 +56,13 @@ class DefaultTransaction implements Transaction {
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           EventManager $eventManager) {
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
     $this->persistenceFacade = $persistenceFacade;
     $this->eventManager = $eventManager;
 
     $this->id = __CLASS__.'_'.ObjectId::getDummyId();
     $this->eventManager->addListener(StateChangeEvent::NAME, [$this, 'stateChanged']);
-    self::$isInfoEnabled = self::$logger->isInfoEnabled();
-    self::$isDebugEnabled = self::$logger->isDebugEnabled();
+    self::$isInfoEnabled = self::logger()->isInfoEnabled();
+    self::$isDebugEnabled = self::logger()->isDebugEnabled();
   }
 
   /**
@@ -79,9 +75,9 @@ class DefaultTransaction implements Transaction {
   /**
    * @see Transaction::begin()
    */
-  public function begin() {
+  public function begin(): void {
     if (self::$isInfoEnabled) {
-      self::$logger->info("Starting transaction");
+      self::logger()->info("Starting transaction");
     }
     $this->isActive = true;
   }
@@ -89,23 +85,23 @@ class DefaultTransaction implements Transaction {
   /**
    * @see Transaction::commit()
    */
-  public function commit() {
+  public function commit(): array {
     return $this->commitImpl(false);
   }
 
   /**
    * @see Transaction::commitCollect()
    */
-  public function commitCollect() {
+  public function commitCollect(): array {
     return $this->commitImpl(true);
   }
 
   /**
    * @see Transaction::rollback()
    */
-  public function rollback() {
+  public function rollback(): void {
     if (self::$isInfoEnabled) {
-      self::$logger->info("Rollback transaction");
+      self::logger()->info("Rollback transaction");
     }
     // forget changes
     $this->clear();
@@ -118,14 +114,14 @@ class DefaultTransaction implements Transaction {
   /**
    * @see Transaction::isActive()
    */
-  public function isActive() {
+  public function isActive(): bool {
     return $this->isActive;
   }
 
   /**
    * @see Transaction::attach()
    */
-  public function attach(PersistentObject $object) {
+  public function attach(PersistentObject $object): PersistentObject {
     unset($this->detachedObjects[$object->getOID()->__toString()]);
 
     $state = $object->getState();
@@ -151,7 +147,7 @@ class DefaultTransaction implements Transaction {
   /**
    * @see Transaction::detach()
    */
-  public function detach(ObjectId $oid) {
+  public function detach(ObjectId $oid): void {
     $key = $oid->__toString();
     $object = null;
     if (isset($this->newObjects[$key])) {
@@ -177,7 +173,7 @@ class DefaultTransaction implements Transaction {
   /**
    * @see Transaction::getLoaded()
    */
-  public function getLoaded(ObjectId $oid) {
+  public function getLoaded(ObjectId $oid): ?PersistentObject {
     $registeredObject = null;
     $key = $oid->__toString();
     if (isset($this->loadedObjects[$key])) {
@@ -192,7 +188,7 @@ class DefaultTransaction implements Transaction {
   /**
    * @see Transaction::getObjects()
    */
-  public function getObjects() {
+  public function getObjects(): array {
     return $this->observedObjects;
   }
 
@@ -205,8 +201,8 @@ class DefaultTransaction implements Transaction {
     $oid = $object->getOID();
     $key = $oid->__toString();
     if (self::$isDebugEnabled) {
-      self::$logger->debug("New Data:\n".$object->dump());
-      self::$logger->debug("Registry before:\n".$this->dump());
+      self::logger()->debug("New Data:\n".$object->dump());
+      self::logger()->debug("Registry before:\n".$this->dump());
     }
     // register the object if it is newly loaded or
     // merge the attributes, if it is already loaded
@@ -215,26 +211,26 @@ class DefaultTransaction implements Transaction {
       $registeredObject = $this->loadedObjects[$key];
       // merge existing attributes with new attributes
       if (self::$isDebugEnabled) {
-        self::$logger->debug("Merging data of ".$key);
+        self::logger()->debug("Merging data of ".$key);
       }
       $registeredObject->mergeValues($object);
     }
     else {
       if (self::$isDebugEnabled) {
-        self::$logger->debug("Register loaded object: ".$key);
+        self::logger()->debug("Register loaded object: ".$key);
       }
       $this->loadedObjects[$key] = $object;
       // start to listen to changes if the transaction is active
       if ($this->isActive) {
         if (self::$isDebugEnabled) {
-          self::$logger->debug("Start listening to: ".$key);
+          self::logger()->debug("Start listening to: ".$key);
         }
         $this->observedObjects[$key] = $object;
       }
       $registeredObject = $object;
     }
     if (self::$isDebugEnabled) {
-      self::$logger->debug("Registry after:\n".$this->dump());
+      self::logger()->debug("Registry after:\n".$this->dump());
     }
     return $registeredObject;
   }
@@ -246,7 +242,7 @@ class DefaultTransaction implements Transaction {
   protected function registerNew(PersistentObject $object) {
     $key = $object->getOID()->__toString();
     if (self::$isDebugEnabled) {
-      self::$logger->debug("Register new object: ".$key);
+      self::logger()->debug("Register new object: ".$key);
     }
     $this->newObjects[$key] = $object;
     $this->observedObjects[$key] = $object;
@@ -264,7 +260,7 @@ class DefaultTransaction implements Transaction {
       return $object;
     }
     if (self::$isDebugEnabled) {
-      self::$logger->debug("Register dirty object: ".$key);
+      self::logger()->debug("Register dirty object: ".$key);
     }
     $this->dirtyObjects[$key] = $object;
     return $object;
@@ -287,7 +283,7 @@ class DefaultTransaction implements Transaction {
       unset($this->dirtyObjects[$key]);
     }
     if (self::$isDebugEnabled) {
-      self::$logger->debug("Register deleted object: ".$key);
+      self::logger()->debug("Register deleted object: ".$key);
     }
     $this->deletedObjects[$key] = $object;
     return $object;
@@ -303,7 +299,7 @@ class DefaultTransaction implements Transaction {
       return;
     }
     if (self::$isInfoEnabled) {
-      self::$logger->info("Commit transaction [collect=".($collect ? "true" : "false")."]");
+      self::logger()->info("Commit transaction [collect=".($collect ? "true" : "false")."]");
     }
     $this->isInCommit = true;
     $this->eventManager->dispatch(TransactionEvent::NAME, new TransactionEvent(
@@ -346,7 +342,7 @@ class DefaultTransaction implements Transaction {
         }
         // commit transaction for each mapper
         if (self::$isInfoEnabled) {
-          self::$logger->info("Committing transaction");
+          self::logger()->info("Committing transaction");
         }
         foreach ($knowTypes as $type) {
           $mapper = $this->persistenceFacade->getMapper($type);
@@ -361,7 +357,7 @@ class DefaultTransaction implements Transaction {
       }
       catch (Exception $ex) {
         // rollback transaction for each mapper
-        self::$logger->error("Rolling back transaction. Exception: ".$ex->__toString());
+        self::logger()->error("Rolling back transaction. Exception: ".$ex->__toString());
         foreach ($knowTypes as $type) {
           $mapper = $this->persistenceFacade->getMapper($type);
           $mapper->rollbackTransaction();
@@ -417,7 +413,7 @@ class DefaultTransaction implements Transaction {
     while (sizeof($insertOids) > 0) {
       $key = array_shift($insertOids);
       if (self::$isDebugEnabled) {
-        self::$logger->debug("Process insert on object: ".$key);
+        self::logger()->debug("Process insert on object: ".$key);
       }
       $object = $this->newObjects[$key];
       // postpone insert, if the object has required objects that are
@@ -427,7 +423,7 @@ class DefaultTransaction implements Transaction {
       foreach ($requiredObjects as $requiredObject) {
         if ($requiredObject->getState() == PersistentObject::STATE_NEW) {
           if (self::$isDebugEnabled) {
-            self::$logger->debug("Postpone insert of object: ".$key.". Required objects are not saved yet.");
+            self::logger()->debug("Postpone insert of object: ".$key.". Required objects are not saved yet.");
           }
           $pendingInserts[] = $object;
           $canInsert = false;
@@ -462,7 +458,7 @@ class DefaultTransaction implements Transaction {
     while (sizeof($updateOids) > 0) {
       $key = array_shift($updateOids);
       if (self::$isDebugEnabled) {
-        self::$logger->debug("Process update on object: ".$key);
+        self::logger()->debug("Process update on object: ".$key);
       }
       $object = $this->dirtyObjects[$key];
       $object->getMapper()->save($object);
@@ -483,7 +479,7 @@ class DefaultTransaction implements Transaction {
     while (sizeof($deleteOids) > 0) {
       $key = array_shift($deleteOids);
       if (self::$isDebugEnabled) {
-        self::$logger->debug("Process delete on object: ".$key);
+        self::logger()->debug("Process delete on object: ".$key);
       }
       $object = $this->deletedObjects[$key];
       $object->getMapper()->delete($object);
@@ -511,7 +507,7 @@ class DefaultTransaction implements Transaction {
     $oldState = $event->getOldValue();
     $newState = $event->getNewValue();
     if (self::$isDebugEnabled) {
-      self::$logger->debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState);
+      self::logger()->debug("State changed: ".$object->getOID()." old:".$oldState." new:".$newState);
     }
     switch ($newState) {
       case PersistentObject::STATE_NEW:

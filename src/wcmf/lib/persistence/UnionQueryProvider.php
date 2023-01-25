@@ -19,18 +19,18 @@ interface UnionQueryProvider {
 
   /**
    * Get identifiers for the contained queries
-   * @return Array of string
+   * @return array<string>
    */
-  public function getIds();
+  public function getIds(): array;
 
   /**
    * Execute a single query
-   * @param $queryId
-   * @param $buildDepth
-   * @param $orderby
-   * @param $pagingInfo
-   * @return Array of PersistentObject instances
+   * @param string $queryId
+   * @param int $buildDepth
+   * @param array<string> $orderby
+   * @param PagingInfo $pagingInfo
+   * @return array<PersistentObject>
    */
-  public function execute($queryId, $buildDepth, $orderby, $pagingInfo);
+  public function execute(string $queryId, int $buildDepth, array $orderby, PagingInfo $pagingInfo): array;
 }
 ?>

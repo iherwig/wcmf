@@ -44,13 +44,13 @@ class CreatorRole {
           $result = true;
         }
         else {
-          $tmpPerm = $this->permissionManager->addTempPermission(
-                  $oidObj->__toString(), '', PersistenceAction::READ);
-          if (($obj = $this->persistenceFacade->load($oidObj)) !== null) {
-            $creator = $obj->getValue(self::CREATOR_ATTRIBUTE);
-            $result = $creator === $user->getLogin();
-          }
-          $this->permissionManager->removeTempPermission($tmpPerm);
+          $result = $this->permissionManager->withTempPermissions(function() use ($oidObj, $user) {
+            if (($obj = $this->persistenceFacade->load($oidObj)) !== null) {
+              $creator = $obj->getValue(self::CREATOR_ATTRIBUTE);
+              return $creator === $user->getLogin();
+            }
+            return false;
+          }, [$oidObj->__toString(), '', PersistenceAction::READ]);
         }
       }
     }

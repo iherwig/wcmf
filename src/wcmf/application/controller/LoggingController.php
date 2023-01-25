@@ -46,10 +46,6 @@ class LoggingController extends Controller {
     $logType = $request->getValue('type');
     $message = $request->getValue('message');
     switch($logType) {
-      case 'TRACE':
-        $logger->trace($message);
-        break;
-
       case 'DEBUG':
         $logger->debug($message);
         break;
@@ -59,7 +55,7 @@ class LoggingController extends Controller {
         break;
 
       case 'WARNING':
-        $logger->warn($message);
+        $logger->warning($message);
         break;
 
       case 'ERROR':
@@ -67,7 +63,7 @@ class LoggingController extends Controller {
         break;
 
       case 'FATAL':
-        $logger->fatal($message);
+        $logger->critical($message);
         break;
 
       default:

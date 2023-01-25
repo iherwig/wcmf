@@ -24,7 +24,7 @@ class ClassLoader {
    * @param $baseDir Base directory from which namespaces will be resolved
    *    (usually WCMF_BASE)
    */
-  public function __construct($baseDir) {
+  public function __construct(string $baseDir) {
     if (!file_exists($baseDir) || is_file($baseDir)) {
       throw new \Exception("Base dir '".$baseDir."' is not a directory.");
     }
@@ -37,7 +37,7 @@ class ClassLoader {
    * Load the given class definition
    * @param $className The class name
    */
-  public function load($className) {
+  public function load(string $className) {
     // search under baseDir assuming that namespaces match directories
     $filename = $this->baseDir.str_replace("\\", "/", $className).'.php';
     if (file_exists($filename)) {

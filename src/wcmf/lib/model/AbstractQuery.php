@@ -45,9 +45,9 @@ abstract class AbstractQuery {
    * or false if only object ids should be returned
    * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (maybe null) (default: _null_)
    * @param $pagingInfo A reference paging info instance (optional, default: _null_)
-   * @return A list of objects that match the given conditions or a list of object ids
+   * @return array of objects that match the given conditions or a list of object ids
    */
-  public function execute($buildDepth, $orderby=null, $pagingInfo=null) {
+  public function execute($buildDepth, $orderby=null, $pagingInfo=null): array {
     // build the query
     $this->selectStmt = $this->buildQuery($buildDepth, $orderby, $pagingInfo);
 

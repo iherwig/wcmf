@@ -11,7 +11,7 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\core\ErrorHandler;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 
 /**
@@ -20,6 +20,7 @@ use wcmf\lib\core\ObjectFactory;
  * @author ingo herwig <ingo@wemove.com>
  */
 class Application {
+  use LogTrait;
 
   private $startTime = null;
   private $request = null;
@@ -27,19 +28,13 @@ class Application {
 
   private $debug = false;
 
-  private static $logger = null;
-  private static $errorHandler = null;
-  
   /**
    * Constructor
    */
   public function __construct() {
     $this->startTime = microtime(true);
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
     ob_start([$this, "outputHandler"]);
-    self::$errorHandler = new ErrorHandler();
+    new ErrorHandler();
   }
 
   /**
@@ -47,7 +42,7 @@ class Application {
    */
   public function __destruct() {
     // log resource usage
-    if (self::$logger->isDebugEnabled()) {
+    if (self::logger()->isDebugEnabled()) {
       $timeDiff = microtime(true)-$this->startTime;
       $memory = number_format(memory_get_peak_usage()/(1024*1024), 2);
       $msg = "Time[".round($timeDiff, 2)."s] Memory[".$memory."mb]";
@@ -56,7 +51,7 @@ class Application {
                 $this->request->getContext()."?".$this->request->getAction()."]";
       }
       $msg .= " URI[".$_SERVER['REQUEST_URI']."]";
-      self::$logger->debug($msg);
+      self::logger()->debug($msg);
     }
     ob_end_flush();
   }
@@ -134,7 +129,7 @@ class Application {
       $logFunction = $exception->getError()->getLevel() == ApplicationError::LEVEL_WARNING ?
               'warn' : 'error';
     }
-    self::$logger->$logFunction($exception);
+    self::logger()->$logFunction($exception);
 
     try {
       if (ObjectFactory::getInstance('configuration') != null) {
@@ -157,7 +152,7 @@ class Application {
       throw $exception;
     }
     catch (\Exception $ex) {
-      self::$logger->error($ex->getMessage()."\n".$ex->getTraceAsString());
+      self::logger()->error($ex->getMessage()."\n".$ex->getTraceAsString());
     }
   }
 
@@ -172,7 +167,7 @@ class Application {
     $error = error_get_last();
     if ($error !== null && (in_array($error['type'], [E_ERROR, E_PARSE, E_COMPILE_ERROR]))) {
       $errorStr = $error['file']."::".$error['line'].": ".$error['type'].": ".$error['message'];
-      self::$logger->error($errorStr);
+      self::logger()->error($errorStr);
       // suppress error message in browser
       if (!$this->debug) {
         header('HTTP/1.1 500 Internal Server Error');

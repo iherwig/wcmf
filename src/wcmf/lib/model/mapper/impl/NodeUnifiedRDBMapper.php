@@ -48,7 +48,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   /**
    * @see RDBMapper::prepareForStorage()
    */
-  protected function prepareForStorage(PersistentObject $object) {
+  protected function prepareForStorage(PersistentObject $object): void {
     $oldState = $object->getState();
 
     // set primary key values
@@ -255,7 +255,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   /**
    * @see RDBMapper::getSelectSQL()
    */
-  public function getSelectSQL($criteria=null, $alias=null, $attributes=null, $orderby=null, PagingInfo $pagingInfo=null, $queryId=null) {
+  public function getSelectSQL($criteria=null, $alias=null, $attributes=null, $orderby=null, ?PagingInfo $pagingInfo=null, $queryId=null): SelectStatement {
     // use own query id, if none is given
     $queryId = $queryId == null ? $this->getCacheKey($alias, $attributes, $criteria, $orderby, $pagingInfo) : $queryId;
 
@@ -307,7 +307,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * @see RDBMapper::getRelationSelectSQL()
    */
   protected function getRelationSelectSQL(array $otherObjectProxies,
-          $otherRole, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+          string $otherRole, $criteria=null, $orderby=null, ?PagingInfo $pagingInfo=null): array {
     $relationDescription = $this->getRelationIncludingNM($otherRole);
     if ($relationDescription instanceof RDBManyToOneRelationDescription) {
       return $this->getManyToOneRelationSelectSQL($relationDescription,
@@ -328,8 +328,8 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * Get the statement for selecting a many-to-one relation
    * @see RDBMapper::getRelationSelectSQL()
    */
-  protected function getManyToOneRelationSelectSQL(RelationDescription $relationDescription,
-          array $otherObjectProxies, $otherRole, $criteria=null, $orderby=null,
+  protected function getManyToOneRelationSelectSQL(RDBManyToOneRelationDescription $relationDescription,
+          array $otherObjectProxies, string $otherRole, $criteria=null, $orderby=null,
           PagingInfo $pagingInfo=null) {
     $thisAttr = $this->getAttribute($relationDescription->getFkName());
     $tableName = $this->getRealTableName();
@@ -355,7 +355,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * Get the statement for selecting a one-to-many relation
    * @see RDBMapper::getRelationSelectSQL()
    */
-  protected function getOneToManyRelationSelectSQL(RelationDescription $relationDescription,
+  protected function getOneToManyRelationSelectSQL(RDBOneToManyRelationDescription $relationDescription,
           array $otherObjectProxies, $otherRole, $criteria=null, $orderby=null,
           PagingInfo $pagingInfo=null) {
     $thisAttr = $this->getAttribute($relationDescription->getIdName());
@@ -424,7 +424,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * Get the statement for selecting a many-to-many relation
    * @see RDBMapper::getRelationSelectSQL()
    */
-  protected function getManyToManyRelationSelectSQL(RelationDescription $relationDescription,
+  protected function getManyToManyRelationSelectSQL(RDBManyToManyRelationDescription $relationDescription,
           array $otherObjectProxies, $otherRole, $criteria=null, $orderby=null,
           PagingInfo $pagingInfo=null) {
     $thisRelationDesc = $relationDescription->getThisEndRelation();
@@ -500,7 +500,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   /**
    * @see RDBMapper::getInsertSQL()
    */
-  protected function getInsertSQL(PersistentObject $object) {
+  protected function getInsertSQL(PersistentObject $object): array {
     // get the attributes to store
     $values = $this->convertValuesForStorage($this->getPersistentValues($object));
 
@@ -513,7 +513,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   /**
    * @see RDBMapper::getUpdateSQL()
    */
-  protected function getUpdateSQL(PersistentObject $object) {
+  protected function getUpdateSQL(PersistentObject $object): array {
     // get the attributes to store
     $values = $this->convertValuesForStorage($this->getPersistentValues($object));
 
@@ -529,7 +529,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   /**
    * @see RDBMapper::getDeleteSQL()
    */
-  protected function getDeleteSQL(ObjectId $oid) {
+  protected function getDeleteSQL(ObjectId $oid): array {
     // primary key definition
     $pkCriteria = $this->createPKCondition($oid);
 
@@ -546,7 +546,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * @param $attributes Array of attribute names (optional)
    * @return SelectStatement
    */
-  protected function addColumns(SelectStatement $selectStmt, $tableName, $attributes=null) {
+  protected function addColumns(SelectStatement $selectStmt, string $tableName, $attributes=null): SelectStatement {
     // columns
     $attributeDescs = $this->getAttributes();
     $columns = [];
@@ -569,7 +569,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * @param $tableName The name for this table (the alias, if used).
    * @return SelectStatement
    */
-  protected function addReferences(SelectStatement $selectStmt, $tableName) {
+  protected function addReferences(SelectStatement $selectStmt, string $tableName): SelectStatement {
     // collect all references first
     $references = [];
     foreach($this->getReferences() as $curReferenceDesc) {
@@ -633,9 +633,9 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * @param $selectStmt The select statement (instance of SelectStatement)
    * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
    * @param $tableName The table name
-   * @return Array of placeholder/value pairs
+   * @return array of placeholder/value pairs
    */
-  protected function addCriteria(SelectStatement $selectStmt, $criteria, $tableName) {
+  protected function addCriteria(SelectStatement $selectStmt, $criteria, string $tableName) {
     $parameters = [];
     if ($criteria != null) {
       foreach ($criteria as $criterion) {
@@ -716,9 +716,9 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * Get an array of placeholder/value pairs
    * @param $criteria An array of Criteria instances that define conditions on the object's attributes (maybe null)
    * @param $tableName The table name
-   * @return Array of placeholder/value pairs
+   * @return array of placeholder/value pairs
    */
-  protected function getParameters($criteria, $tableName) {
+  protected function getParameters($criteria, string $tableName) {
     $parameters = [];
     if ($criteria != null) {
       foreach ($criteria as $criterion) {
@@ -747,7 +747,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * Get an associative array of attribute name-value pairs to be stored for a
    * given oject (references are not included)
    * @param $object The PeristentObject.
-   * @return Associative array
+   * @return array
    */
   protected function getPersistentValues(PersistentObject $object) {
     $values = [];
@@ -769,7 +769,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   /**
    * Convert values before putting into storage
    * @param $values Associative Array
-   * @return Associative Array
+   * @return array
    */
   protected function convertValuesForStorage($values) {
     // filter values according to type
@@ -794,7 +794,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * @param PersistentObjectProxy $objectProxy
    * @param PersistentObjectProxy $relativeProxy
    * @param RelationDescription $relationDesc The relation description to use (optional)
-   * @return Array of PersistentObjectProxy, sortkey name and sort direction
+   * @return array of PersistentObjectProxy, sortkey name and sort direction
    */
   protected function getSortableObject(PersistentObjectProxy $objectProxy,
           PersistentObjectProxy $relativeProxy, RelationDescription $relationDesc=null) {
@@ -820,11 +820,11 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * @param $relativeProxy The proxy at the other end of the relation.
    * @param $relationDesc The RDBManyToManyRelationDescription instance describing the relation.
    * @param $includeTransaction Boolean whether to also search in the current transaction (default: false)
-   * @return Array of PersistentObject instances
+   * @return array<PersistentObject>
    */
   protected function loadRelationObjects(PersistentObjectProxy $objectProxy,
           PersistentObjectProxy $relativeProxy, RDBManyToManyRelationDescription $relationDesc,
-          $includeTransaction=false) {
+          $includeTransaction=false): array {
     $nmMapper = self::getMapper($relationDesc->getThisEndRelation()->getOtherType());
     $nmType = $nmMapper->getType();
 
@@ -861,7 +861,7 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   /**
    * @see RDBMapper::createPKCondition()
    */
-  protected function createPKCondition(ObjectId $oid) {
+  protected function createPKCondition(ObjectId $oid): array {
     $criterias = [];
     $type = $this->getType();
     $pkNames = $this->getPKNames();
@@ -875,9 +875,9 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
 
   /**
    * Get all foreign key relations (used to reference a parent)
-   * @return An array of RDBManyToOneRelationDescription instances
+   * @return array<RDBManyToOneRelationDescription>
    */
-  protected function getForeignKeyRelations() {
+  protected function getForeignKeyRelations(): array {
     if ($this->fkRelations == null) {
       $this->fkRelations = [];
       $relationDescs = $this->getRelations();
@@ -893,10 +893,10 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
   /**
    * Check if a given attribute is a foreign key (used to reference a parent)
    * @param $name The attribute name
-   * @return Boolean
+   * @return bool
    * @note Public in order to be callable by ObjectQuery
    */
-  public function isForeignKey($name) {
+  public function isForeignKey(string $name): bool {
     $fkDescs = $this->getForeignKeyRelations();
     foreach($fkDescs as $fkDesc) {
       if ($fkDesc->getFkName() == $name) {
@@ -913,9 +913,9 @@ abstract class NodeUnifiedRDBMapper extends AbstractRDBMapper {
    * @param $criteriaArray
    * @param $orderArray
    * @param $pagingInfo
-   * @return String
+   * @return string
    */
-  protected function getCacheKey($alias, $attributeArray, $criteriaArray, $orderArray, PagingInfo $pagingInfo=null) {
+  protected function getCacheKey($alias, $attributeArray, $criteriaArray, $orderArray, PagingInfo $pagingInfo=null): string {
     $result = $this->getRealTableName().','.$alias.',';
     if ($attributeArray != null) {
       $result .= join(',', $attributeArray);

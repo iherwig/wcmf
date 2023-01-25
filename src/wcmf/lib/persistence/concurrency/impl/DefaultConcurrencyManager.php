@@ -11,7 +11,7 @@
 namespace wcmf\lib\persistence\concurrency\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\Session;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\BuildDepth;
@@ -32,12 +32,11 @@ use wcmf\lib\persistence\TransientAttributeDescription;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultConcurrencyManager implements ConcurrencyManager {
+  use LogTrait;
 
   private $persistenceFacade = null;
   private $lockHandler = null;
   private $session = null;
-
-  private static $logger = null;
 
   /**
    * Constructor
@@ -51,9 +50,6 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
     $this->persistenceFacade = $persistenceFacade;
     $this->lockHandler = $lockHandler;
     $this->session = $session;
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
   }
 
   /**
@@ -147,8 +143,8 @@ class DefaultConcurrencyManager implements ConcurrencyManager {
           if ($attribute && !($attribute instanceof ReferenceDescription) && !($attribute instanceof TransientAttributeDescription)) {
             $currentValue = $currentState->getValue($valueName);
             if (strval($currentValue) != strval($originalValue)) {
-              if (self::$logger->isDebugEnabled()) {
-                self::$logger->debug("Current state is different to original state: ".$object->getOID()."-".$valueName.": current[".
+              if (self::logger()->isDebugEnabled()) {
+                self::logger()->debug("Current state is different to original state: ".$object->getOID()."-".$valueName.": current[".
                         serialize($currentValue)."], original[".serialize($originalValue)."]");
               }
               throw new OptimisticLockException($currentState);

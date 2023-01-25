@@ -24,28 +24,28 @@ interface Formatter {
 
   /**
    * Get a Format instance from it's name.
-   * @param $name The format name
+   * @param string $name The format name
    * @return Format
    */
-  public function getFormat($name);
+  public function getFormat(string $name): Format;
 
   /**
    * Get the format name for the given mime type.
-   * @param $mimeType The mime type
-   * @return String
+   * @param ?string $mimeType The mime type
+   * @return ?string
    */
-  public function getFormatFromMimeType($mimeType);
+  public function getFormatFromMimeType(?string $mimeType): ?string;
 
   /**
    * Deserialize Request data into objects.
-   * @param $request The Request instance
+   * @param Request $request The Request instance
    */
-  public function deserialize(Request $request);
+  public function deserialize(Request $request): void;
 
   /**
    * Serialize Response according to the output format.
-   * @param $response The Response instance
+   * @param Response $response The Response instance
    */
-  public function serialize(Response $response);
+  public function serialize(Response $response): void;
 }
 ?>

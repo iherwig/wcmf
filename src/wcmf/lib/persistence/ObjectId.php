@@ -28,31 +28,31 @@ use wcmf\lib\util\StringUtil;
 class ObjectId implements \Serializable, \JsonSerializable {
 
   const DELIMITER = ':';
+  const DUMMY_ID_PATTERN = 'wcmf[A-Za-z0-9]{32}';
 
-  private $prefix;
-  private $fqType;
-  private $id;
-  private $strVal = null;
+  private ?string $prefix;
+  private string $fqType;
+  private array $id;
+  private ?string $strVal = null;
 
-  private static $dummyIdPattern = 'wcmf[A-Za-z0-9]{32}';
-  private static $idPattern = null;
-  private static $delimiterPattern = null;
-  private static $numPkKeys = [];
+  private static string $idPattern = '/^[0-9]*$|^'.self::DUMMY_ID_PATTERN.'$/';
+  private static string $delimiterPattern = '/'.self::DELIMITER.'/';
+  private static array $numPkKeys = [];
 
-  private static $nullOID = null;
+  private static ?ObjectId $nullOID = null;
 
   /**
    * Constructor.
-   * @param $type The type name of the object (either fully qualified or simple, if not ambiguous)
-   * @param $id Either a single value or an array of values (for compound primary keys) identifying
+   * @param string $type The type name of the object (either fully qualified or simple, if not ambiguous)
+   * @param int|string|array $id Either a single value or an array of values (for compound primary keys) identifying
    * the object between others of the same type. If not given, a dummy id will be
    * assigned (optional, default: empty array)
-   * @param $prefix A prefix for identifying a set of objects belonging to one storage in a
+   * @param string $prefix A prefix for identifying a set of objects belonging to one storage in a
    * distributed environment (optional, default: _null_)
    * @note If id is an array, the order of the values must match the order of the primary key names given
    * by PersistenceMapper::getPkNames().
    */
-  public function __construct($type, $id=[], $prefix=null) {
+  public function __construct(string $type, $id=[], $prefix=null) {
     $this->prefix = $prefix;
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $this->fqType = $type != 'NULL' ? $persistenceFacade->getFullyQualifiedType($type) : 'NULL';
@@ -73,9 +73,9 @@ class ObjectId implements \Serializable, \JsonSerializable {
 
   /**
    * Get the NULL instance
-   * @return String
+   * @return self
    */
-  public static function NULL_OID() {
+  public static function NULL_OID(): self {
     if (self::$nullOID == null) {
       self::$nullOID = new ObjectId('NULL');
     }
@@ -84,31 +84,31 @@ class ObjectId implements \Serializable, \JsonSerializable {
 
   /**
    * Get the prefix
-   * @return String
+   * @return ?string
    */
-  public function getPrefix() {
+  public function getPrefix(): ?string {
     return $this->prefix;
   }
 
   /**
    * Get the type (including namespace)
-   * @return String
+   * @return string
    */
-  public function getType() {
+  public function getType(): string {
     return $this->fqType;
   }
 
   /**
    * Get the id
-   * @return Array
+   * @return array<int|string>
    */
-  public function getId() {
+  public function getId(): array {
     return $this->id;
   }
 
   /**
    * Get the first id. This is especially useful, when you know that this id only consists of one id.
-   * @return String
+   * @return int|string
    */
   public function getFirstId() {
     return $this->id[0];
@@ -117,10 +117,10 @@ class ObjectId implements \Serializable, \JsonSerializable {
   /**
    * Check if a serialized ObjectId has a valid syntax, the type is known and
    * if the number of primary keys match the type.
-   * @param $oid The serialized ObjectId.
-   * @return Boolean
+   * @param string $oid The serialized ObjectId.
+   * @return bool
    */
-  public static function isValid($oid) {
+  public static function isValid(string $oid): bool {
     if (self::parse($oid) == null) {
       return false;
     }
@@ -129,10 +129,10 @@ class ObjectId implements \Serializable, \JsonSerializable {
 
   /**
    * Parse a serialized object id string into an ObjectId instance.
-   * @param $oid The string
+   * @param string $oid The string
    * @return ObjectId or null, if the id cannot be parsed
    */
-  public static function parse($oid) {
+  public static function parse(string $oid): ?ObjectId {
     // fast checks first
     if ($oid instanceof ObjectId) {
       return $oid;
@@ -158,26 +158,22 @@ class ObjectId implements \Serializable, \JsonSerializable {
       return null;
     }
 
-    return new ObjectID($type, $ids, $prefix);
+    return new ObjectId($type, $ids, $prefix);
   }
 
   /**
    * Parse the given object id string into it's parts
-   * @param $oid The string
-   * @return Associative array with keys 'type', 'id', 'prefix'
+   * @param string $oid The string
+   * @return array{'type': string, 'id': array<int|string>, 'prefix': string} or null
    */
-  private static function parseOidString($oid) {
+  private static function parseOidString(string $oid): ?array {
     if (strlen($oid) == 0) {
       return null;
     }
 
-    $oidParts = preg_split(self::getDelimiterPattern(), $oid);
+    $oidParts = preg_split(self::$delimiterPattern, $oid);
     if (sizeof($oidParts) < 2) {
       return null;
-    }
-
-    if (self::$idPattern == null) {
-      self::$idPattern = '/^[0-9]*$|^'.self::$dummyIdPattern.'$/';
     }
 
     // get the ids from the oid
@@ -210,12 +206,12 @@ class ObjectId implements \Serializable, \JsonSerializable {
 
   /**
    * Get a string representation of the object id.
-   * @return String
+   * @return string
    */
-  public function __toString() {
+  public function __toString(): string {
     if ($this->strVal == null) {
       $oidStr = $this->fqType.self::DELIMITER.join(self::DELIMITER, $this->id);
-      if (strlen(trim($this->prefix)) > 0) {
+      if ($this->prefix != null && strlen(trim($this->prefix)) > 0) {
         $oidStr = $this->prefix.self::DELIMITER.$oidStr;
       }
       $this->strVal = $oidStr;
@@ -225,26 +221,26 @@ class ObjectId implements \Serializable, \JsonSerializable {
 
   /**
    * Get a dummy id ("wcmf" + unique 32 character string).
-   * @return String
+   * @return string
    */
-  public static function getDummyId() {
+  public static function getDummyId(): string {
     return 'wcmf'.str_replace('-', '', StringUtil::guidv4());
   }
 
   /**
    * Check if a given id is a dummy id.
-   * @param $id The id to check
-   * @return Boolean
+   * @param int|string $id The id to check
+   * @return bool
    */
-  public static function isDummyId($id) {
-    return (strlen($id) == 36 && strpos($id, 'wcmf') === 0);
+  public static function isDummyId($id): bool {
+    return is_string($id) && (strlen($id) == 36 && strpos($id, 'wcmf') === 0);
   }
 
   /**
    * Check if this object id contains a dummy id.
-   * @return Boolean
+   * @return bool
    */
-  public function containsDummyIds() {
+  public function containsDummyIds(): bool {
     foreach ($this->getId() as $id) {
       if (self::isDummyId($id)) {
         return true;
@@ -255,10 +251,10 @@ class ObjectId implements \Serializable, \JsonSerializable {
 
   /**
    * Get the number of primary keys a type has.
-   * @param $type The type
-   * @return Integer (1 if the type is unknown)
+   * @param string $type The type
+   * @return int (1 if the type is unknown)
    */
-  private static function getNumberOfPKs($type) {
+  private static function getNumberOfPKs(string $type): int {
     if (!isset(self::$numPkKeys[$type])) {
       $numPKs = 1;
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
@@ -271,26 +267,21 @@ class ObjectId implements \Serializable, \JsonSerializable {
     return self::$numPkKeys[$type];
   }
 
-  private static function getDelimiterPattern() {
-    if (self::$delimiterPattern == null) {
-      self::$delimiterPattern = '/'.self::DELIMITER.'/';
-    }
-    return self::$delimiterPattern;
-  }
-
   public function serialize() {
     return $this->__toString();
   }
 
-  public function unserialize($data) {
+  public function unserialize($data): void {
     $oidParts = self::parseOidString($data);
-    $this->prefix = $oidParts['prefix'];
-    $this->fqType = $oidParts['type'];
-    $this->id = $oidParts['id'];
+    if ($oidParts != null) {
+      $this->prefix = $oidParts['prefix'];
+      $this->fqType = $oidParts['type'];
+      $this->id = $oidParts['id'];
+    }
     $this->strVal = $this->__toString();
   }
 
-  public function jsonSerialize() {
+  public function jsonSerialize(): string {
     return $this->__toString();
   }
 }

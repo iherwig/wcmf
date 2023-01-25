@@ -111,6 +111,7 @@ class ListController extends Controller {
     $sortArray = null;
     $orderBy = $request->getValue('sortFieldName');
     if (strlen($orderBy) > 0) {
+      // TODO review if class name is necessary or if it will be resolved in ObjectQuery
       $mapper = $persistenceFacade->getMapper($className);
       $sortArray = [(strpos($orderBy, '.') === false && $mapper->hasAttribute($orderBy) ? $className."." : "").$orderBy." ".$request->getValue('sortDirection')];
     }

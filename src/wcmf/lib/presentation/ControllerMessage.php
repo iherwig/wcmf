@@ -24,196 +24,202 @@ interface ControllerMessage {
 
   /**
    * Set the name of the sending Controller
-   * @param $sender The name of the Controller
+   * @param string $sender The name of the Controller
    */
-  public function setSender($sender);
+  public function setSender(string $sender): void;
 
   /**
    * Get the name of the sending Controller
-   * @return The name of the Controller
+   * @return string name of the Controller
    */
-  public function getSender();
+  public function getSender(): string;
 
   /**
    * Set the name of the context
-   * @param $context The name of the context
+   * @param string $context The name of the context
    */
-  public function setContext($context);
+  public function setContext(string $context): void;
 
   /**
    * Get the name of the context
-   * @return The name of the context
+   * @return string name of the context
    */
-  public function getContext();
+  public function getContext(): string;
 
   /**
    * Set the name of the action
-   * @param $action The name of the action
+   * @param string $action The name of the action
    */
-  public function setAction($action);
+  public function setAction(string $action): void;
 
   /**
    * Get the name of the action
-   * @return The name of the action
+   * @return string name of the action
    */
-  public function getAction();
+  public function getAction(): string;
 
   /**
    * Set the message format
-   * @param $format A key of the configuration section 'Formats'
+   * @param string $format A key of the configuration section 'Formats'
    */
-  public function setFormat($format);
+  public function setFormat(string $format): void;
 
   /**
    * Get the message format. If no explicit format is set, the
    * format is derived from the Content-Type header value, if existing.
    * If no format can be derived, the first format in the configuration
    * section 'Formats' will be used.
-   * @return String
+   * @return string
    */
-  public function getFormat();
+  public function getFormat(): string;
 
   /**
    * Set a header value
-   * @param $name The header name
-   * @param $value The header value
+   * @param string $name The header name
+   * @param mixed $value The header value
    */
-  public function setHeader($name, $value);
+  public function setHeader(string $name, $value): void;
 
   /**
    * Set all headers at once
-   * @param $headers The associative array
+   * @param array<string, mixed> $headers The header names and values
    */
-  public function setHeaders(array $headers);
+  public function setHeaders(array $headers): void;
 
   /**
    * Get a header value
-   * @param $name The header name
-   * @param $default The default value if the header is not defined (default: _null_)
-   * @return The header value or default, if it does not exist
+   * @param string $name The header name
+   * @param mixed $default The default value if the header is not defined (default: _null_)
+   * @return mixed header value or default, if it does not exist
    */
-  public function getHeader($name, $default=null);
+  public function getHeader(string $name, $default=null);
 
   /**
    * Get all key headers
-   * @return An associative array
+   * @return array<string, mixed>
    */
-  public function getHeaders() ;
+  public function getHeaders(): array;
 
   /**
    * Remove a header
-   * @param $name The name of the header
+   * @param string $name The name of the header
    */
-  public function clearHeader($name);
+  public function clearHeader(string $name): void;
 
   /**
    * Remove all headers
    */
-  public function clearHeaders();
+  public function clearHeaders(): void;
 
   /**
    * Check for existence of a header
-   * @param $name The name of the header
-   * @return Boolean whether the header exists or not exist
+   * @param string $name The name of the header
+   * @return bool whether the header exists or not exist
    */
-  public function hasHeader($name);
+  public function hasHeader(string $name): bool;
 
   /**
    * Set a value
-   * @param $name The name of the variable
-   * @param $value The value of the variable
+   * @param string $name The name of the variable
+   * @param mixed $value The value of the variable
    */
-  public function setValue($name, $value);
+  public function setValue(string $name, $value): void;
 
   /**
    * Set all key value pairs at once
-   * @param $values The associative array
+   * @param array<string, mixed> $values The associative array
    */
-  public function setValues(array $values);
+  public function setValues(array $values): void;
 
   /**
    * Get a value
-   * @param $name The name of the variable
-   * @param $default The default value if the value is not defined or invalid while exceptions are suppressed (optional, default: _null_)
-   * @param $validateDesc An validation description to be used with Validator::validate() (optional, default: _null_)
-   * @param $suppressException Boolean whether to suppress a validation exception or not (optional, default: _false_)
-   * @return The (filtered) value or default, if it does not exist
+   * @param string $name The name of the variable
+   * @param mixed $default The default value if the value is not defined or invalid while exceptions are suppressed (optional, default: _null_)
+   * @param string $validateDesc An validation description to be used with Validator::validate() (optional, default: _null_)
+   * @param bool $suppressException Boolean whether to suppress a validation exception or not (optional, default: _false_)
+   * @return mixed (filtered) value or default, if it does not exist
    */
-  public function getValue($name, $default=null, $validateDesc=null, $suppressException=false);
+  public function getValue(string $name, $default=null, string $validateDesc=null, bool $suppressException=false);
 
   /**
    * Get a value as boolean
-   * @param $name The name of the variable
-   * @param $default The default value if the value is not defined (default: _false_)
-   * @return The value or null if it does not exist
+   * @param string $name The name of the variable
+   * @param bool $default The default value if the value is not defined (default: _false_)
+   * @return bool value or null if it does not exist
    */
-  public function getBooleanValue($name, $default=false);
+  public function getBooleanValue(string $name, bool $default=false): ?bool;
 
   /**
    * Get all key value pairs
-   * @return An associative array
+   * @return array<string, mixed>
    */
-  public function getValues();
+  public function getValues(): array;
 
   /**
    * Remove a value
-   * @param $name The name of the variable
+   * @param string $name The name of the variable
    */
-  public function clearValue($name);
+  public function clearValue(string $name): void;
 
   /**
    * Remove all values
    */
-  public function clearValues();
+  public function clearValues(): void;
 
   /**
    * Check for existence of a value
-   * @param $name The name of the variable
-   * @return Boolean whether the value exists or not exist
+   * @param string $name The name of the variable
+   * @return bool whether the value exists or not exist
    */
-  public function hasValue($name);
+  public function hasValue(string $name): bool;
 
   /**
    * Set a property
-   * @param $name The name of the property
-   * @param $value The value of the property
+   * @param string $name The name of the property
+   * @param mixed $value The value of the property
    */
-  public function setProperty($name, $value);
+  public function setProperty(string $name, $value): void;
 
   /**
    * Get a property
-   * @param $name The name of the property
-   * @return The property value or null
+   * @param string $name The name of the property
+   * @return mixed property value or null
    */
-  public function getProperty($name);
+  public function getProperty(string $name);
 
   /**
    * Add an error to the list of errors.
-   * @param $error The error.
+   * @param ApplicationError $error
    */
-  public function addError(ApplicationError $error);
+  public function addError(ApplicationError $error): void;
 
   /**
    * Set all errors at once
-   * @param $errors The errors array
+   * @param array<ApplicationError> $errors The errors array
    */
-  public function setErrors(array $errors);
+  public function setErrors(array $errors): void;
 
   /**
    * Get all errors.
-   * @return An array of Error instances.
+   * @return array<ApplicationError> array of Error instances.
    */
-  public function getErrors();
+  public function getErrors(): array;
 
  /**
    * Remove all errors
    */
-  public function clearErrors();
+  public function clearErrors(): void;
 
   /**
    * Check if errors exist.
-   * @return Boolean whether there are errors or not.
+   * @return bool whether there are errors or not.
    */
-  public function hasErrors();
+  public function hasErrors(): bool;
+
+  /**
+   * Get a string representation of the message
+   * @return string
+   */
+  public function __toString(): string;
 }
 ?>

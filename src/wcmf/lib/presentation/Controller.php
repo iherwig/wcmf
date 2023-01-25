@@ -11,6 +11,7 @@
 namespace wcmf\lib\presentation;
 
 use wcmf\lib\config\Configuration;
+use wcmf\lib\core\Logger;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\core\Session;
@@ -50,29 +51,29 @@ abstract class Controller {
 
   const CSRF_TOKEN_PARAM = 'csrf_token';
 
-  private $request = null;
-  private $response = null;
+  private Request $request;
+  private Response $response;
 
-  private $logger = null;
-  private $session = null;
-  private $persistenceFacade = null;
-  private $permissionManager = null;
-  private $actionMapper = null;
-  private $localization = null;
-  private $message = null;
-  private $configuration = null;
+  private Logger $logger;
+  private Session $session;
+  private PersistenceFacade $persistenceFacade;
+  private PermissionManager $permissionManager;
+  private ActionMapper $actionMapper;
+  private Localization $localization;
+  private Message $message;
+  private Configuration $configuration;
 
-  private $startedTransaction = false;
+  private bool $startedTransaction = false;
 
   /**
    * Constructor
-   * @param $session
-   * @param $persistenceFacade
-   * @param $permissionManager
-   * @param $actionMapper
-   * @param $localization
-   * @param $message
-   * @param $configuration
+   * @param Session $session
+   * @param PersistenceFacade $persistenceFacade
+   * @param PermissionManager $permissionManager
+   * @param ActionMapper $actionMapper
+   * @param Localization $localization
+   * @param Message $message
+   * @param Configuration $configuration
    */
   public function __construct(Session $session,
           PersistenceFacade $persistenceFacade,
@@ -92,76 +93,37 @@ abstract class Controller {
   }
 
   /**
-   * Initialize the Controller with request/response data. Which data is required is defined by the Controller.
-   * The base class method just stores the parameters in a member variable. Specialized Controllers may override
-   * this behavior for further initialization.
-   * @attention It lies in its responsibility to fail or do some default action if some data is missing.
-   * @param $request Request instance sent to the Controller. The sender attribute of the Request is the
-   * last controller's name, the context is the current context and the action is the requested one.
-   * All data sent from the last controller are accessible using the Request::getValue method. The request is
-   * supposed to be read-only. It will not be used any more after being passed to the controller.
-   * @param $response Response instance that will be modified by the Controller. The initial values for
-   * context and action are the same as in the request parameter and are meant to be modified according to the
-   * performed action. The sender attribute of the response is set to the current controller. Initially there
-   * are no data stored in the response.
-   */
-  public function initialize(Request $request, Response $response) {
-    // set sender on response
-    $response->setSender(get_class($this));
-
-    $this->request = $request;
-    $this->response = $response;
-  }
-
-  /**
-   * Check if the request is valid.
-   * Subclasses will override this method to validate against their special requirements.
-   * Besides returning false, validation errors should be indicated by using the
-   * Response::addError method.
-   * @return Boolean whether the data are ok or not.
-   */
-  protected function validate() {
-    return true;
-  }
-
-  /**
    * Execute the Controller resulting in its action processed. The actual
    * processing is delegated to the doExecute() method.
-   * @param $method The name of the method to execute, will be passed to doExecute() (optional)
+   * @param string $method The name of the method to execute, will be passed to doExecute() (optional)
    */
-  public function execute($method=null) {
+  public function execute(Request $request, Response $response, string $method=null): void {
+    $this->request = $request;
+    $this->response = $response;
     $isDebugEnabled = $this->logger->isDebugEnabled();
     if ($isDebugEnabled) {
       $this->logger->debug('Executing: '.get_class($this).($method ? '::'.$method: ''));
       $this->logger->debug('Request: '.$this->request);
     }
 
-    // validate controller data
-    $validationFailed = false;
-    if (!$this->validate()) {
-      $validationFailed = true;
-    }
-
     // execute controller logic
-    if (!$validationFailed) {
-      try {
-        $this->doExecute($method);
-        $this->endTransaction(true);
+    try {
+      $this->doExecute($method);
+      $this->endTransaction(true);
+    }
+    catch (\Exception $ex) {
+      if ($ex instanceof ApplicationException) {
+        $error = $ex->getError();
+        $this->response->addError($error);
+        $this->response->setStatus($error->getStatusCode());
       }
-      catch (\Exception $ex) {
-        if ($ex instanceof ApplicationException) {
-          $error = $ex->getError();
-          $this->response->addError($error);
-          $this->response->setStatus($error->getStatusCode());
-        }
-        else {
-          $this->getLogger()->error($ex);
-          $error = ApplicationError::fromException($ex);
-          $this->response->addError($error);
-          $this->response->setStatus($error->getStatusCode());
-        }
-        $this->endTransaction(false);
+      else {
+        $this->getLogger()->error($ex);
+        $error = ApplicationError::fromException($ex);
+        $this->response->addError($error);
+        $this->response->setStatus($error->getStatusCode());
       }
+      $this->endTransaction(false);
     }
 
     // return the last error
@@ -180,7 +142,7 @@ abstract class Controller {
       $message = $error->__toString();
       switch ($error->getLevel()) {
         case ApplicationError::LEVEL_WARNING:
-          $this->logger->warn($message);
+          $this->logger->warning($message);
           break;
         default:
           $this->logger->error($message);
@@ -443,7 +405,7 @@ abstract class Controller {
   protected function getLocalSessionValue($key, $default=null) {
     $sessionVarname = get_class($this);
     $localValues = $this->session->get($sessionVarname, null);
-    return array_key_exists($key, $localValues) ? $localValues[$key] : $default;
+    return is_array($localValues) && array_key_exists($key, $localValues) ? $localValues[$key] : $default;
   }
 
   /**

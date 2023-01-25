@@ -15,7 +15,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\WritableConfiguration;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\io\IOException;
@@ -28,41 +28,48 @@ use wcmf\lib\util\StringUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 class InifileConfiguration implements Configuration, WritableConfiguration {
+  use LogTrait;
 
-  private $configArray = []; // an assoziate array that holds sections with keys with values
-  private $comments = []; // an assoziate array that holds the comments/blank lines in the file
-                          // (each comment is attached to the following section/key)
-                          // the key ';' holds the comments at the end of the file
-  private $lookupTable = []; // an assoziate array that has lowercased section or section:key
-                             // keys and [section, key] values for fast lookup
+  /** @var array<string, mixed> assoziate array that holds sections with keys with values */
+  private array $configArray = [];
 
-  private $isModified = false;
-  private $addedFiles = []; // files added to the configuration
-  private $containedFiles = []; // all included files (also by config include)
+  /** @var array<string, string> assoziate array that holds the comments/blank lines in the file
+   * (each comment is attached to the following section/key)
+   * the key ';' holds the comments at the end of the file
+   */
+  private array $comments = [];
 
-  private $configPath = null;
-  private $configExtension = 'ini';
-  private $cachePath = null;
+  /** @var array<string, string> assoziate array that has lowercased section or section:key
+   * keys and [section, key] values for fast lookup
+   */
+  private array $lookupTable = [];
 
-  private $fileUtil = null;
+  /** @var array<string> files added to the configuration */
+  private array $addedFiles = [];
 
-  private static $logger = null;
+  /** @var array<string> all included files (also by config include) */
+  private array $containedFiles = [];
+
+  private bool $isModified = false;
+
+  private string $configPath;
+  private string $configExtension = 'ini';
+  private ?string $cachePath = null;
+
+  private FileUtil $fileUtil;
 
   /**
    * Constructor.
-   * @param $configPath The path, either absolute or relative to the executed script
-   * @param $cachePath The cache path, either absolute or relative to the executed script (optional)
+   * @param string $configPath The path, either absolute or relative to the executed script
+   * @param string $cachePath The cache path, either absolute or relative to the executed script (optional)
    */
-  public function __construct($configPath, $cachePath=null) {
+  public function __construct(string $configPath, string $cachePath=null) {
     $this->configPath = $configPath;
     $this->cachePath = $cachePath;
     $this->fileUtil = new FileUtil();
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
   }
 
-  public function __toString() {
+  public function __toString(): string {
     $configArray = $this->configArray;
     ksort($configArray);
     $result = '';
@@ -78,9 +85,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Get the file system path to the configuration files.
-   * @return The path, either absolute or relative to the executed script
+   * @return string The path, either absolute or relative to the executed script
    */
-  public function getConfigPath() {
+  public function getConfigPath(): string {
     return $this->configPath;
   }
 
@@ -91,7 +98,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::getConfigurations()
    */
-  public function getConfigurations() {
+  public function getConfigurations(): array {
     return $this->fileUtil->getFiles($this->configPath, '/\.'.$this->configExtension.'$/', true);
   }
 
@@ -100,9 +107,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Name is the ini file to be parsed (relative to configPath)
    * @note ini files referenced in section 'config' key 'include' are parsed afterwards
    */
-  public function addConfiguration($name, $processValues=true) {
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Add configuration: ".$name);
+  public function addConfiguration(string $name, bool $processValues=true): void {
+    $logger = self::logger();
+    if ($logger->isDebugEnabled()) {
+      $logger->debug("Add configuration: ".$name);
     }
     $filename = $this->configPath.$name;
 
@@ -110,18 +118,18 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     // we don't only check if it's parsed, because order matters
     $numParsedFiles = sizeof($this->addedFiles);
     $lastFile = $numParsedFiles > 0 ? $this->addedFiles[$numParsedFiles-1] : '';
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Parsed files: ".$numParsedFiles.", last file: ".$lastFile);
+    if ($logger->isDebugEnabled()) {
+      $logger->debug("Parsed files: ".$numParsedFiles.", last file: ".$lastFile);
       foreach($this->addedFiles as $addedFile) {
-        self::$logger->debug("File date ".$addedFile.": ".@filemtime($addedFile));
+        $logger->debug("File date ".$addedFile.": ".@filemtime($addedFile));
       }
       $cachedFile = $this->getSerializeFilename($this->addedFiles);
-      self::$logger->debug("Cache file date ".$cachedFile.": ".@filemtime($cachedFile));
+      $logger->debug("Cache file date ".$cachedFile.": ".@filemtime($cachedFile));
     }
     if ($numParsedFiles > 0 && $lastFile == $filename &&
             !$this->checkFileDate($this->addedFiles, $this->getSerializeFilename($this->addedFiles))) {
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug("Skipping");
+      if ($logger->isDebugEnabled()) {
+        $logger->debug("Skipping");
       }
       return;
     }
@@ -130,14 +138,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       throw new ConfigurationException('Configuration file '.$filename.' not found!');
     }
 
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Adding...");
+    if ($logger->isDebugEnabled()) {
+      $logger->debug("Adding...");
     }
     // try to unserialize an already parsed ini file sequence
     $this->addedFiles[] = $filename;
     if (!$this->unserialize($this->addedFiles)) {
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug("Parse first time");
+      if ($logger->isDebugEnabled()) {
+        $logger->debug("Parse first time");
       }
       $result = $this->processFile($filename, $this->configArray, $this->containedFiles);
       $this->configArray = $result['config'];
@@ -157,21 +165,20 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
       $this->configChanged();
     }
     else {
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug("Reuse from cache");
+      if ($logger->isDebugEnabled()) {
+        $logger->debug("Reuse from cache");
       }
     }
   }
 
   /**
    * Process the given file recursively
-   * @param $filename The filename
-   * @param $configArray Configuration array
-   * @param $parsedFiles Parsed files
-   * @return Associative array with keys 'config' (configuration array) and 'files'
-   * (array of parsed files)
+   * @param string $filename The filename
+   * @param array<string, mixed> $configArray Configuration array
+   * @param array<string> $parsedFiles Parsed files
+   * @return array{'config': array, 'files': array} with configuration array and parsed files
    */
-  protected function processFile($filename, $configArray=[], $parsedFiles=[]) {
+  protected function processFile(string $filename, array $configArray=[], array $parsedFiles=[]) {
     // avoid circular includes
     if (!in_array($filename, $parsedFiles)) {
       $parsedFiles[] = $filename;
@@ -198,21 +205,21 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::getSections()
    */
-  public function getSections() {
+  public function getSections(): array {
     return array_keys($this->configArray);
   }
 
   /**
    * @see Configuration::hasSection()
    */
-  public function hasSection($section) {
+  public function hasSection(string $section): bool {
     return ($this->lookup($section) != null);
   }
 
   /**
    * @see Configuration::getSection()
    */
-  public function getSection($section, $includeMeta=false) {
+  public function getSection(string $section, bool $includeMeta=false): array {
     $lookupEntry = $this->lookup($section);
     if ($lookupEntry == null) {
       throw new ConfigurationException('Section \''.$section.'\' not found!');
@@ -232,14 +239,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::hasValue()
    */
-  public function hasValue($key, $section) {
+  public function hasValue(string $key, string $section): bool {
     return ($this->lookup($section, $key) != null);
   }
 
   /**
    * @see Configuration::getValue()
    */
-  public function getValue($key, $section) {
+  public function getValue(string $key, string $section) {
     $lookupEntry = $this->lookup($section, $key);
     if ($lookupEntry == null || sizeof($lookupEntry) == 1) {
       throw new ConfigurationException('Key \''.$key.'\' not found in section \''.$section.'\'!');
@@ -252,7 +259,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::getBooleanValue()
    */
-  public function getBooleanValue($key, $section) {
+  public function getBooleanValue(string $key, string $section) {
     $value = $this->getValue($key, $section);
     return StringUtil::getBoolean($value);
   }
@@ -260,7 +267,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::getDirectoryValue()
    */
-  public function getDirectoryValue($key, $section) {
+  public function getDirectoryValue(string $key, string $section) {
     $value = $this->getValue($key, $section);
     $isArray = is_array($value);
     $values = !$isArray ? [$value] : $value;
@@ -277,7 +284,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::getFileValue()
    */
-  public function getFileValue($key, $section) {
+  public function getFileValue(string $key, string $section) {
     $value = $this->getValue($key, $section);
     $isArray = is_array($value);
     $values = !$isArray ? [$value] : $value;
@@ -294,7 +301,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see Configuration::getKey()
    */
-  public function getKey($value, $section) {
+  public function getKey(string $value, string $section): string {
     $map = array_flip($this->getSection($section));
     if (!isset($map[$value])) {
       throw new ConfigurationException('Value \''.$value.'\' not found in section \''.$section.'\'!');
@@ -309,7 +316,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see WritableConfiguration::isEditable()
    */
-  public function isEditable($section) {
+  public function isEditable(string $section): bool {
     if ($this->hasValue('readonlySections', 'config')) {
       $readonlySections = $this->getValue('readonlySections', 'config');
       $sectionLower = strtolower($section);
@@ -327,14 +334,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see WritableConfiguration::isModified()
    */
-  public function isModified() {
+  public function isModified(): bool {
     return $this->isModified;
   }
 
   /**
    * @see WritableConfiguration::createSection()
    */
-  public function createSection($section) {
+  public function createSection(string $section): void {
     $section = trim($section);
     if (strlen($section) == 0) {
       throw new IllegalArgumentException('Empty section names are not allowed!');
@@ -345,13 +352,12 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
     $this->configArray[$section] = '';
     $this->buildLookupTable();
     $this->isModified = true;
-    return true;
   }
 
   /**
    * @see WritableConfiguration::removeSection()
    */
-  public function removeSection($section) {
+  public function removeSection(string $section): void {
     if (!$this->isEditable($section)) {
       throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
@@ -366,7 +372,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see WritableConfiguration::renameSection()
    */
-  public function renameSection($oldname, $newname) {
+  public function renameSection(string $oldname, string $newname): void {
     $newname = trim($newname);
     if (strlen($newname) == 0) {
       throw new IllegalArgumentException('Empty section names are not allowed!');
@@ -393,7 +399,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see WritableConfiguration::setValue()
    */
-  public function setValue($key, $value, $section, $createSection=true) {
+  public function setValue(string $key, $value, string $section, bool $createSection=true): void {
     $key = trim($key);
     if (strlen($key) == 0) {
       throw new IllegalArgumentException('Empty key names are not allowed!');
@@ -437,7 +443,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see WritableConfiguration::removeKey()
    */
-  public function removeKey($key, $section) {
+  public function removeKey(string $key, string $section): void {
     if (!$this->isEditable($section)) {
       throw new IllegalArgumentException('Section \''.$section.'\' is not editable!');
     }
@@ -452,7 +458,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see WritableConfiguration::renameKey()
    */
-  public function renameKey($oldname, $newname, $section) {
+  public function renameKey(string $oldname, string $newname, string $section): void {
     $newname = trim($newname);
     if (strlen($newname) == 0) {
       throw new IllegalArgumentException('Empty key names are not allowed!');
@@ -482,7 +488,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * @see WritableConfiguration::writeConfiguration()
    */
-  public function writeConfiguration($name) {
+  public function writeConfiguration(string $name): void {
     $filename = $name;
     $content = "";
     foreach($this->configArray as $section => $values) {
@@ -525,14 +531,14 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Load in the ini file specified in filename, and return
    * the settings in a multidimensional array, with the section names and
    * settings included. All section names and keys are lowercased.
-   * @param $filename The filename of the ini file to parse
-   * @return An associative array containing the data
+   * @param string $filename The filename of the ini file to parse
+   * @return array containing the data
    *
    * @author: Sebastien Cevey <seb@cine7.net>
    *          Original Code base: <info@megaman.nl>
    *          Added comment handling/Removed process sections flag: Ingo Herwig
    */
-  protected function parseIniFile($filename) {
+  protected function parseIniFile(string $filename): array {
     if (!file_exists($filename)) {
       throw new ConfigurationException('The config file '.$filename.' does not exist.');
     }
@@ -578,7 +584,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * This method turns string values that hold array definitions
    * (comma separated values enclosed by curly brackets) into array values.
    */
-  protected function processValues() {
+  protected function processValues(): void {
     array_walk_recursive($this->configArray, [$this, 'processValue']);
   }
 
@@ -586,9 +592,9 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Process the values in the ini array.
    * This method turns string values that hold array definitions
    * (comma separated values enclosed by curly brackets) into array values.
-   * @param $value A reference to the value
+   * @param mixed $value A reference to the value
    */
-  protected function processValue(&$value) {
+  protected function processValue(&$value): void {
     if (!is_array($value)) {
       // decode encoded (%##) values
       if (preg_match ("/%/", $value)) {
@@ -609,12 +615,12 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * Merge the second array into the first, preserving entries of the first array
    * unless the second array contains the special key '__inherit' set to false
    * or they are re-defined in the second array.
-   * @param $array1 First array.
-   * @param $array2 Second array.
-   * @param $override Boolean whether values defined in array1 should be overridden by values defined in array2.
-   * @return The merged array.
+   * @param array $array1 First array.
+   * @param array $array2 Second array.
+   * @param bool $override Boolean whether values defined in array1 should be overridden by values defined in array2.
+   * @return array
    */
-  protected function configMerge($array1, $array2, $override) {
+  protected function configMerge(array $array1, array $array2, bool $override) {
     $result = $array1;
     foreach(array_keys($array2) as $key) {
       if (!array_key_exists($key, $result)) {
@@ -643,10 +649,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Search the given value for a 'include' key in a section named 'config' (case-insensivite)
-   * @param $array The array to search in
-   * @return Mixed
+   * @param array $array The array to search in
+   * @return mixed
    */
-  protected function getConfigIncludes($array) {
+  protected function getConfigIncludes(array $array) {
     $sectionMatches = null;
     if (preg_match('/(?:^|,)(config)(?:,|$)/i', join(',', array_keys($array)), $sectionMatches)) {
       $sectionKey = sizeof($sectionMatches) > 0 ? $sectionMatches[1] : null;
@@ -663,10 +669,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Store the instance in the file system. If the instance is modified, this call is ignored.
    */
-  protected function serialize() {
+  protected function serialize(): void {
     if (!$this->isModified() && ($cacheFile = $this->getSerializeFilename($this->addedFiles))) {
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug("Serialize configuration: ".join(',', $this->addedFiles)." to file: ".$cacheFile);
+      if (self::logger()->isDebugEnabled()) {
+        self::logger()->debug("Serialize configuration: ".join(',', $this->addedFiles)." to file: ".$cacheFile);
       }
       $this->fileUtil->mkdirRec(dirname($cacheFile));
       if ($fh = @fopen($cacheFile, "w")) {
@@ -684,10 +690,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
    * If the current instance is modified or any file given in parsedFiles
    * is newer than the serialized data, this call is ignored.
    * If InifileConfiguration class changed, the call will be ignored as well.
-   * @param $parsedFiles An array of ini filenames that must be contained in the data.
-   * @return Boolean whether the data could be retrieved or not
+   * @param array<string> $parsedFiles An array of ini filenames that must be contained in the data.
+   * @return bool whether the data could be retrieved or not
    */
-  protected function unserialize($parsedFiles) {
+  protected function unserialize(array $parsedFiles): bool {
     if (!$this->isModified() && ($cacheFile = $this->getSerializeFilename($parsedFiles)) && file_exists($cacheFile)) {
       $parsedFiles[] = __FILE__;
       if (!$this->checkFileDate($parsedFiles, $cacheFile)) {
@@ -714,10 +720,10 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Get the filename for the serialized data that correspond to the the given ini file sequence.
    * NOTE: The method returns null, if no cache path is configured
-   * @param $parsedFiles An array of parsed filenames
-   * @return String
+   * @param array<string> $parsedFiles An array of parsed filenames
+   * @return string
    */
-  protected function getSerializeFilename($parsedFiles) {
+  protected function getSerializeFilename(array $parsedFiles): string {
     if (!$this->cachePath) {
       return null;
     }
@@ -728,11 +734,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Check if one file in fileList is newer than the referenceFile.
-   * @param $fileList An array of files
-   * @param $referenceFile The file to check against
-   * @return True, if one of the files is newer, false else
+   * @param array<string> $fileList An array of files
+   * @param string $referenceFile The file to check against
+   * @return bool, true if one of the files is newer, false else
    */
-  protected function checkFileDate($fileList, $referenceFile) {
+  protected function checkFileDate(array $fileList, string $referenceFile): bool {
     foreach ($fileList as $file) {
       if (@filemtime($file) > @filemtime($referenceFile)) {
         return true;
@@ -744,13 +750,13 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Notify configuration change listeners
    */
-  protected function configChanged() {
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Configuration is changed");
+  protected function configChanged(): void {
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Configuration is changed");
     }
     if (ObjectFactory::isConfigured()) {
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug("Emitting change event");
+      if (self::logger()->isDebugEnabled()) {
+        self::logger()->debug("Emitting change event");
       }
       ObjectFactory::getInstance('eventManager')->dispatch(ConfigChangeEvent::NAME,
               new ConfigChangeEvent());
@@ -760,7 +766,7 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
   /**
    * Build the internal lookup table
    */
-  protected function buildLookupTable() {
+  protected function buildLookupTable(): void {
     $this->lookupTable = [];
     foreach ($this->configArray as $section => $entry) {
       // create section entry
@@ -776,11 +782,11 @@ class InifileConfiguration implements Configuration, WritableConfiguration {
 
   /**
    * Lookup section and key.
-   * @param $section The section to lookup
-   * @param $key The key to lookup (optional)
-   * @return Array with section as first entry and key as second or null if not found
+   * @param string $section The section to lookup
+   * @param string $key The key to lookup (optional)
+   * @return array with section as first entry and key as second or null if not found
    */
-  protected function lookup($section, $key=null) {
+  protected function lookup(string $section, string $key=null): ?array {
     $lookupKey = strtolower($section).':'.strtolower($key);
     if (isset($this->lookupTable[$lookupKey])) {
       return $this->lookupTable[$lookupKey];

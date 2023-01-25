@@ -29,47 +29,47 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * The name of the controller from which the message origins.
    */
-  private $sender = null;
+  private string $sender = '';
 
   /**
    * The name of the context of the message.
    */
-  private $context = null;
+  private string $context = '';
 
   /**
    * The name of the action that should be executed with this message.
    */
-  private $action = null;
+  private string $action = '';
 
   /**
    * The format of the message.
    */
-  private $format = null;
+  private ?string $format = null;
 
   /**
    * The formatter used for de-, serialization into the format.
    */
-  private $formatter = null;
+  private ?Formatter $formatter = null;
 
   /**
    * The message headers
    */
-  private $headers = [];
+  private array $headers = [];
 
   /**
    * Key value pairs of data contained in this message.
    */
-  private $values = [];
+  private array $values = [];
 
   /**
    * Key value pairs of user defined properties contained in this message.
    */
-  private $properties = [];
+  private array $properties = [];
 
   /**
    * A list of errors associated with this message.
    */
-  private $errors = [];
+  private array $errors = [];
 
   /**
    * Constructor
@@ -82,56 +82,56 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * @see ControllerMessage::setSender()
    */
-  public function setSender($sender) {
+  public function setSender(string $sender): void {
     $this->sender = $sender;
   }
 
   /**
    * @see ControllerMessage::getSender()
    */
-  public function getSender() {
+  public function getSender(): string {
     return $this->sender;
   }
 
   /**
    * @see ControllerMessage::setContext()
    */
-  public function setContext($context) {
+  public function setContext(string $context): void {
     $this->context = $context;
   }
 
   /**
    * @see ControllerMessage::getContext()
    */
-  public function getContext() {
+  public function getContext(): string {
     return $this->context;
   }
 
   /**
    * @see ControllerMessage::setAction()
    */
-  public function setAction($action) {
+  public function setAction(string $action): void {
     $this->action = $action;
   }
 
   /**
    * @see ControllerMessage::getAction()
    */
-  public function getAction() {
+  public function getAction(): string {
     return $this->action;
   }
 
   /**
    * @see ControllerMessage::setFormat()
    */
-  public function setFormat($format) {
+  public function setFormat(string $format): void {
     $this->format = $format;
   }
 
   /**
    * @see ControllerMessage::getFormat()
    */
-  public function getFormat() {
+  public function getFormat(): string {
     if ($this->format == null) {
       $this->format = $this->formatter->getFormatFromMimeType($this->getHeader('Content-Type'));
     }
@@ -141,21 +141,21 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * @see ControllerMessage::setHeader()
    */
-  public function setHeader($name, $value) {
+  public function setHeader(string $name, $value): void {
     $this->headers[$name] = $value;
   }
 
   /**
    * @see ControllerMessage::setHeaders()
    */
-  public function setHeaders(array $headers) {
+  public function setHeaders(array $headers): void {
     $this->headers = $headers;
   }
 
   /**
    * @see ControllerMessage::getHeader()
    */
-  public function getHeader($name, $default=null) {
+  public function getHeader(string $name, $default=null) {
     if ($this->hasHeader($name)) {
       return $this->headers[$name];
     }
@@ -167,49 +167,49 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * @see ControllerMessage::getHeaders()
    */
-  public function getHeaders() {
+  public function getHeaders(): array {
     return $this->headers;
   }
 
   /**
    * @see ControllerMessage::clearHeader()
    */
-  public function clearHeader($name) {
+  public function clearHeader(string $name): void {
     unset($this->headers[$name]);
   }
 
   /**
    * @see ControllerMessage::clearHeaders()
    */
-  public function clearHeaders() {
+  public function clearHeaders(): void {
     $this->headers = [];
   }
 
   /**
    * @see ControllerMessage::hasHeader()
    */
-  public function hasHeader($name) {
+  public function hasHeader(string $name): bool {
     return array_key_exists($name, $this->headers);
   }
 
   /**
    * @see ControllerMessage::setValue()
    */
-  public function setValue($name, $value) {
+  public function setValue(string $name, $value): void {
     $this->values[$name] = $value;
   }
 
   /**
    * @see ControllerMessage::setValues()
    */
-  public function setValues(array $values) {
+  public function setValues(array $values): void {
     $this->values = $values;
   }
 
   /**
    * @see ControllerMessage::getValue()
    */
-  public function getValue($name, $default=null, $validateDesc=null, $suppressException=false) {
+  public function getValue(string $name, $default=null, ?string $validateDesc=null, ?bool $suppressException=false) {
     if ($this->hasValue($name)) {
       $value = $this->values[$name];
       if ($validateDesc === null || Validator::validate($value, $validateDesc, ['request' => $this])) {
@@ -228,7 +228,7 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * @see ControllerMessage::getBooleanValue()
    */
-  public function getBooleanValue($name, $default=false) {
+  public function getBooleanValue(string $name, ?bool $default=false): ?bool {
     if ($this->hasValue($name)) {
       return StringUtil::getBoolean($this->values[$name]);
     }
@@ -240,42 +240,42 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * @see ControllerMessage::getValues()
    */
-  public function getValues() {
+  public function getValues(): array {
     return $this->values;
   }
 
   /**
    * @see ControllerMessage::clearValue()
    */
-  public function clearValue($name) {
+  public function clearValue(string $name): void {
     unset($this->values[$name]);
   }
 
   /**
    * @see ControllerMessage::clearValues()
    */
-  public function clearValues() {
+  public function clearValues(): void {
     $this->values = [];
   }
 
   /**
    * @see ControllerMessage::hasValue()
    */
-  public function hasValue($name) {
+  public function hasValue(string $name): bool {
     return array_key_exists($name, $this->values);
   }
 
   /**
    * @see ControllerMessage::setProperty()
    */
-  public function setProperty($name, $value) {
+  public function setProperty(string $name, $value): void {
     $this->properties[$name] = $value;
   }
 
   /**
    * @see ControllerMessage::getProperty()
    */
-  public function getProperty($name) {
+  public function getProperty(string $name) {
     if (isset($this->properties[$name])) {
       return $this->properties[$name];
     }
@@ -285,35 +285,35 @@ abstract class AbstractControllerMessage implements ControllerMessage {
   /**
    * @see ControllerMessage::addError()
    */
-  public function addError(ApplicationError $error) {
+  public function addError(ApplicationError $error): void {
     $this->errors[] = $error;
   }
 
   /**
    * @see ControllerMessage::setErrors()
    */
-  public function setErrors(array $errors) {
+  public function setErrors(array $errors): void {
     $this->errors = $errors;
   }
 
   /**
    * @see ControllerMessage::getErrors()
    */
-  public function getErrors() {
+  public function getErrors(): array {
     return $this->errors;
   }
 
  /**
    * @see ControllerMessage::clearErrors()
    */
-  public function clearErrors() {
+  public function clearErrors(): void {
     $this->errors = [];
   }
 
   /**
    * @see ControllerMessage::hasErrors()
    */
-  public function hasErrors() {
+  public function hasErrors(): bool {
     return sizeof($this->errors) > 0;
   }
 
@@ -321,15 +321,15 @@ abstract class AbstractControllerMessage implements ControllerMessage {
    * Get the Formatter instance
    * @return Formatter
    */
-  protected function getFormatter() {
+  protected function getFormatter(): Formatter {
     return $this->formatter;
   }
 
   /**
    * Get a string representation of the message
-   * @return The string
+   * @return string
    */
-  public function __toString() {
+  public function __toString(): string {
     $str = 'sender='.$this->sender.', ';
     $str .= 'context='.$this->context.', ';
     $str .= 'action='.$this->action.', ';

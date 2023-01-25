@@ -30,18 +30,18 @@ interface Message {
    * flipped.
    * @note Implementations must return the original message, if no translation is found,
    * or the translation string is empty.
-   * @param $message The message to translate (%0%, %1%, ... will be replaced by given parameters).
-   * @param $parameters An array of values for parameter substitution in the message.
+   * @param string $message The message to translate (%0%, %1%, ... will be replaced by given parameters).
+   * @param array<string> $parameters An array of values for parameter substitution in the message.
    * @param $lang The language (optional, default: '')
-   * @return The localized string
+   * @return string The localized string
    */
-  public function getText($message, $parameters=null, $lang='');
+  public function getText(string $message, array $parameters=null, string $lang=''): string;
 
   /**
    * Get a list of all localized strings.
-   * @param $lang The language (optional, default: '')
-   * @return An array of localized strings
+   * @param string $lang The language (optional, default: '')
+   * @return array An array of localized strings
    */
-  public function getAll($lang='');
+  public function getAll(string $lang=''): array;
 }
 ?>

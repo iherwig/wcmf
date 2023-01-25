@@ -10,12 +10,13 @@
  */
 namespace wcmf\lib\util;
 
-use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\impl\DefaultFactory;
 use wcmf\lib\core\impl\MonologFileLogger;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\presentation\Request;
+use wcmf\lib\presentation\Response;
 
 /**
  * TestUtil provides helper methods for testing wCMF functionality.
@@ -56,39 +57,6 @@ class TestUtil {
     $configuration->addConfiguration('test.ini');
 
     ObjectFactory::getInstance('dynamicCache')->clearAll();
-  }
-
-  /**
-   * Create the test database, if sqlite is configured
-   * @return Associative array with connection parameters and key 'connection'
-   */
-  public static function createDatabase() {
-    // get connection from first entity type
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    $types = $persistenceFacade->getKnownTypes();
-    $mapper = $persistenceFacade->getMapper($types[0]);
-    $pdo = $mapper->getConnection();
-
-    // create db
-    $params = $mapper->getConnectionParams();
-    switch($params['dbType']) {
-      case 'sqlite':
-        $numTables = $pdo->query('SELECT count(*) FROM sqlite_master WHERE type = "table"')->fetchColumn();
-        if ($numTables == 0) {
-          $schema = file_get_contents(WCMF_BASE.'install/tables_sqlite.sql');
-          $pdo->exec($schema);
-        }
-        break;
-      case 'mysql':
-        $numTables = $pdo->query('SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "'.$params['dbName'].'"')->fetchColumn();
-        if ($numTables == 0) {
-          $schema = file_get_contents(WCMF_BASE.'install/tables_mysql.sql');
-          $pdo->exec($schema);
-        }
-        break;
-    }
-    $params['connection'] = $pdo;
-    return $params;
   }
 
   /**
@@ -146,9 +114,9 @@ class TestUtil {
   /**
    * Process a request as if it was sent to main.php
    * @param $request The Request instance
-   * @return The Response instance (result of the last ActionMapper::processAction call)
+   * @return Response instance (result of the last ActionMapper::processAction call)
    */
-  public static function simulateRequest($request) {
+  public static function simulateRequest(Request $request): Response {
     // set format
     $request->setFormat('null');
     $request->setResponseFormat('null');
@@ -164,10 +132,10 @@ class TestUtil {
    * Start a session. This is useful for simulateRequest calls
    * @param $user The name of the user
    * @param $password The password of the user
-   * @return The session id. Use this as data['sid'] parameter for
+   * @return string The session id. Use this as data['sid'] parameter for
    *    subsequent simulateRequest calls
    */
-  public static function startSession($user, $password) {
+  public static function startSession(string $user, string $password): string {
     $session = ObjectFactory::getInstance('session');
     $authManager = ObjectFactory::getInstance('authenticationManager');
     $authUser = $authManager->login([
