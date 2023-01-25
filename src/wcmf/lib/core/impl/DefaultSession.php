@@ -35,7 +35,7 @@ class DefaultSession implements Session {
    */
   public function __construct(Configuration $configuration) {
     // NOTE: prevent "headers already sent" errors in phpunit tests
-    if (!headers_sent()) {
+    if (!headers_sent() && session_status() == PHP_SESSION_NONE) {
       // session configuration
       ini_set('session.cookie_lifetime', 0);
       ini_set('session.use_cookies', 1);

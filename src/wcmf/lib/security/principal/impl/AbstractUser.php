@@ -132,14 +132,14 @@ abstract class AbstractUser extends Node implements User {
   /**
    * @see PersistentObject::beforeInsert()
    */
-  public function beforeInsert() {
+  public function beforeInsert(): void {
     $this->ensureHashedPassword();
   }
 
   /**
    * @see PersistentObject::beforeUpdate()
    */
-  public function beforeUpdate() {
+  public function beforeUpdate(): void {
     $this->ensureHashedPassword();
     $this->setRoleConfig();
   }
@@ -147,7 +147,7 @@ abstract class AbstractUser extends Node implements User {
   /**
    * @see PersistentObject::beforeDelete()
    */
-  public function beforeDelete() {
+  public function beforeDelete(): void {
     if ($this->isSuperUser()) {
       $message = ObjectFactory::getInstance("message");
       throw new \Exception($message->getText("Super users cannot be deleted"));
@@ -190,18 +190,19 @@ abstract class AbstractUser extends Node implements User {
   /**
    * @see PersistentObject::setValue()
    */
-  public function setValue($name, $value, $forceSet=false, $trackChange=true) {
+  public function setValue(string $name, $value, bool $forceSet=false, bool $trackChange=true): bool {
     // prevent overwriting the password with an empty value
     // the password is expected to be stored in the 'password' value
     if (!($name == 'password' && strlen(trim($value)) == 0)) {
-      parent::setValue($name, $value, $forceSet, $trackChange);
+      return parent::setValue($name, $value, $forceSet, $trackChange);
     }
+    return false;
   }
 
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value) {
+  public function validateValue(string $name, $value): void {
     parent::validateValue($name, $value);
     $message = ObjectFactory::getInstance('message');
 

@@ -14,7 +14,7 @@ use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\EventManager;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\i18n\Localization;
 use wcmf\lib\model\NodeIterator;
 use wcmf\lib\model\NodeValueIterator;
@@ -56,6 +56,7 @@ use wcmf\lib\persistence\PersistentObjectProxy;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultLocalization implements Localization {
+  use LogTrait;
 
   private $persistenceFacade = null;
   private $configuration = null;
@@ -70,7 +71,6 @@ class DefaultLocalization implements Localization {
   private $createdTranslations = [];
 
   private static $isDebugEnabled = false;
-  private static $logger = null;
 
   /**
    * Configuration
@@ -84,10 +84,7 @@ class DefaultLocalization implements Localization {
   public function __construct(PersistenceFacade $persistenceFacade,
       Configuration $configuration, EventManager $eventManager,
       $defaultLanguage, $translationType, $languageType) {
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
-    self::$isDebugEnabled = self::$logger->isDebugEnabled();
+    self::$isDebugEnabled = self::logger()->isDebugEnabled();
 
     $this->persistenceFacade = $persistenceFacade;
     $this->configuration = $configuration;
@@ -161,7 +158,7 @@ class DefaultLocalization implements Localization {
    */
   public function loadTranslation(PersistentObject $object, $lang, $useDefaults=true, $recursive=true, $marker=null) {
     if (self::$isDebugEnabled) {
-      self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Load translation [".$lang."] for: ".$object->getOID());
+      self::logger()->debug(($marker != null ? strstr($marker, '@').': ' : '')."Load translation [".$lang."] for: ".$object->getOID());
     }
     $translatedObject = $this->loadTranslationImpl($object, $lang, $useDefaults);
 
@@ -181,7 +178,7 @@ class DefaultLocalization implements Localization {
             $relatives = $isMultivalued ? $relationValue : [$relationValue];
             foreach ($relatives as $relative) {
               if (self::$isDebugEnabled) {
-                self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Process relative: ".$relative->getOID());
+                self::logger()->debug(($marker != null ? strstr($marker, '@').': ' : '')."Process relative: ".$relative->getOID());
               }
               // skip proxies
               if (!$relative instanceof PersistentObjectProxy) {
@@ -189,14 +186,14 @@ class DefaultLocalization implements Localization {
                     $this->loadTranslation($relative, $lang, $useDefaults, $recursive, $marker) :
                     $this->loadTranslationImpl($relative, $lang, $useDefaults);
                 if (self::$isDebugEnabled) {
-                  self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Add relative: ".$relative->getOID());
+                  self::logger()->debug(($marker != null ? strstr($marker, '@').': ' : '')."Add relative: ".$relative->getOID());
                 }
                 $translatedObject->deleteNode($relative, $role);
                 $translatedObject->addNode($translatedRelative, $role);
               }
               else {
                 if (self::$isDebugEnabled) {
-                  self::$logger->debug(($marker != null ? strstr($marker, '@').': ' : '')."Skip proxy relative: ".$relative->getOID());
+                  self::logger()->debug(($marker != null ? strstr($marker, '@').': ' : '')."Skip proxy relative: ".$relative->getOID());
                 }
               }
             }

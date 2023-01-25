@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\presentation\format\impl;
 
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\io\Cache;
 use wcmf\lib\model\NodeSerializer;
 use wcmf\lib\presentation\format\impl\CacheTrait;
@@ -32,11 +32,10 @@ use wcmf\lib\presentation\Response;
  * @author ingo herwig <ingo@wemove.com>
  */
 class JsonFormat extends HierarchicalFormat {
+  use LogTrait;
   use CacheTrait;
 
   const CACHE_SECTION = 'jsonformat';
-
-  private static $logger = null;
 
   protected $cache = null;
   protected $serializer = null;
@@ -49,9 +48,6 @@ class JsonFormat extends HierarchicalFormat {
   public function __construct(NodeSerializer $serializer, Cache $dynamicCache) {
     $this->serializer = $serializer;
     $this->cache = $dynamicCache;
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
   }
 
   /**
@@ -84,9 +80,9 @@ class JsonFormat extends HierarchicalFormat {
     if (!$caching || !$this->isCached($response)) {
       // encode data
       $payload = json_encode($response->getValues());
-      if (self::$logger->isDebugEnabled()) {
-        self::$logger->debug($response->getValues());
-        self::$logger->debug($payload);
+      if (self::logger()->isDebugEnabled()) {
+        self::logger()->debug($response->getValues());
+        self::logger()->debug($payload);
       }
       // cache result
       if ($caching) {

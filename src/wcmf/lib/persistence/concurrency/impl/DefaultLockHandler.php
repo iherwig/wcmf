@@ -37,8 +37,6 @@ class DefaultLockHandler implements LockHandler {
   private $session = null;
   private $lockType = null;
 
-  private static $logger = null;
-
   /**
    * Constructor
    * @param $persistenceFacade
@@ -51,9 +49,6 @@ class DefaultLockHandler implements LockHandler {
     $this->persistenceFacade = $persistenceFacade;
     $this->session = $session;
     $this->lockType = $lockType;
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
   }
 
   /**

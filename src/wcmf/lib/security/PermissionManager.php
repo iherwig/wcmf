@@ -41,21 +41,16 @@ interface PermissionManager {
   public function authorize($resource, $context, $action, $login=null, $applyDefaultPolicy=true);
 
   /**
-   * Add a temporary permission for the current user. The permission
-   * is valid only until end of execution or a call to
-   * PermissionManager::removeTempPermission() or PermissionManager::clearTempPermissions().
-   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @return String handle, to be used when calling PermissionManager::removeTempPermission()
+   * Execute a function with a temporary permission for the current user. The permission
+   * is valid only until end of execution of the function.
+   * @param $callable The function to execute.
+   * @param $permissions Array of permission definition arrays containing
+   *      - The resource to authorize (e.g. class name of the Controller or ObjectId) at index 0,
+   *      - The context in which the action takes place at index 1,
+   *      - The action to process at index 2
+   * @return mixed The result of the call to the function
    */
-  public function addTempPermission($resource, $context, $action);
-
-  /**
-   * Remove a temporary permission for the current user.
-   * @param $handle The handle obtained from PermissionManager::addTempPermission()
-   */
-  public function removeTempPermission($handle);
+  public function withTempPermissions(callable $callable, array ...$permissions);
 
   /**
    * Check if a temporary permission for the current user exists.
@@ -65,11 +60,6 @@ interface PermissionManager {
    * @return Boolean
    */
   public function hasTempPermission($resource, $context, $action);
-
-  /**
-   * Reset all temporary permissions
-   */
-  public function clearTempPermissions();
 
   /**
    * Permission management

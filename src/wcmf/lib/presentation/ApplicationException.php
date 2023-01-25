@@ -21,8 +21,8 @@ use wcmf\lib\presentation\Response;
  */
 class ApplicationException extends \Exception {
 
-  private $request = null;
-  private $response = null;
+  private Request $request = null;
+  private Response $response = null;
   private $error = null;
 
   /**
@@ -46,23 +46,23 @@ class ApplicationException extends \Exception {
 
   /**
    * Get the current request
-   * @return The Request instance
+   * @return Request
    */
-  public function getRequest() {
+  public function getRequest(): Request {
     return $this->request;
   }
 
   /**
    * Get the current response
-   * @return The Response instance
+   * @return Response
    */
-  public function getResponse() {
+  public function getResponse(): Response {
     return $this->response;
   }
 
   /**
    * Get the error
-   * @return The ApplicationError instance
+   * @return ApplicationError
    */
   public function getError() {
     return $this->error;
@@ -70,7 +70,7 @@ class ApplicationException extends \Exception {
 
   /**
    * Get a string representation of the exception
-   * @return String
+   * @return string
    */
   public function __toString() {
     $str = $this->error->__toString().", ";

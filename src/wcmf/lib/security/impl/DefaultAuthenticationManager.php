@@ -13,7 +13,6 @@ namespace wcmf\lib\security\impl;
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\security\AuthenticationManager;
-use wcmf\lib\security\principal\PrincipalFactory;
 
 /**
  * DefaultAuthenticationManager uses PrincipalFactory to get a User instance
@@ -22,16 +21,6 @@ use wcmf\lib\security\principal\PrincipalFactory;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultAuthenticationManager implements AuthenticationManager {
-
-  private $principalFactory = null;
-
-  /**
-   * Constructor
-   * @param $principalFactory PrincipalFactory instance
-   */
-  public function __construct(PrincipalFactory $principalFactory) {
-    $this->principalFactory = $principalFactory;
-  }
 
   /**
    * @see AuthenticationManager::login()
@@ -48,7 +37,8 @@ class DefaultAuthenticationManager implements AuthenticationManager {
     $password = $credentials['password'];
 
     // try to receive the user with given credentials
-    $user = $this->principalFactory->getUser($login, true);
+    $principalFactory = ObjectFactory::getInstance('principalFactory');
+    $user = $principalFactory->getUser($login, true);
 
     // check if user exists
     $loginOk = false;

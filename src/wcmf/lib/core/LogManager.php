@@ -10,7 +10,9 @@
  */
 namespace wcmf\lib\core;
 
-ini_set('html_errors', false);
+use wcmf\lib\config\ConfigurationException;
+
+ini_set('html_errors', 'false');
 
 /**
  * LogManager is used to retrieve Logger instances.
@@ -19,22 +21,25 @@ ini_set('html_errors', false);
  */
 class LogManager {
 
-  private static $logger = null;
+  private static ?Logger $logger = null;
 
   /**
    * Configure the manager.
-   * @param $logger Logger instance
+   * @param Logger $logger Logger instance
    */
-  public static function configure(Logger $logger) {
+  public static function configure(Logger $logger): void {
     self::$logger = $logger;
   }
 
   /**
    * Get the logger with the given name
-   * @param $name The logger name
+   * @param string $name The logger name
    * @return Logger
    */
-  public static function getLogger($name) {
+  public static function getLogger(string $name): Logger {
+    if (self::$logger == null) {
+      throw new ConfigurationException('LogManager is not configured. Did you call the configure() method?');
+    }
     return self::$logger->getLogger($name);
   }
 }

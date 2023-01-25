@@ -1,0 +1,30 @@
+suites:
+    unit:
+        path: .
+        actor: UnitTester
+        modules:
+            enabled:
+                # add more modules here
+                - Asserts
+                - Helper\Unit
+                - Helper\Controller
+                - Db:
+                    dsn: 'sqlite:../src/app/test-db.sq3'
+                    user: 'root'
+                    password: ''
+                    dump:
+                        - '../src/install/tables_sqlite.sql'
+                        - 'tests/_data/fixtures.sql'
+                    populate: true # run populator before all tests
+                    cleanup: true # run populator before each test
+                    reconnect: true
+        step_decorators: ~
+settings:
+    shuffle: true
+    lint: true
+paths:
+    tests: tests
+    output: tests/_output
+    support: tests/_support
+    data: tests
+bootstrap: bootstrap.php

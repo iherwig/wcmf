@@ -29,14 +29,14 @@ class NodeUtil {
 
   /**
    * Get the shortest paths that connect a type to another type.
-   * @param $type The type to start from
-   * @param $otherRole The role of the type at the other end (maybe null, if only type shoudl match)
-   * @param $otherType The type at the other end (maybe null, if only role shoudl match)
-   * @param $hierarchyType The hierarchy type that the other type has in relation to this type
+   * @param string $type The type to start from
+   * @param string $otherRole The role of the type at the other end (maybe null, if only type shoudl match)
+   * @param string $otherType The type at the other end (maybe null, if only role shoudl match)
+   * @param string $hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations (default: 'all')
-   * @return An array of PathDescription instances
+   * @return array<PathDescription>
    */
-  public static function getConnections($type, $otherRole, $otherType, $hierarchyType='all') {
+  public static function getConnections(string $type, string $otherRole, string $otherType, string $hierarchyType='all'): array {
     $paths = [];
     self::getConnectionsImpl($type, $otherRole, $otherType, $hierarchyType, $paths);
     $minLength = -1;
@@ -56,16 +56,16 @@ class NodeUtil {
 
   /**
    * Get the relations that connect a type to another type.
-   * @param $type The type to start from
-   * @param $otherRole The role of the type at the other end (maybe null, if only type shoudl match)
-   * @param $otherType The type at the other end (maybe null, if only role shoudl match)
-   * @param $hierarchyType The hierarchy type that the other type has in relation to this type
+   * @param string $type The type to start from
+   * @param string $otherRole The role of the type at the other end (maybe null, if only type shoudl match)
+   * @param string $otherType The type at the other end (maybe null, if only role shoudl match)
+   * @param string $hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations (default: 'all')
-   * @param $result Array of PathDescriptions after execution
-   * @param $currentPath Internal use only
+   * @param array $result Array of PathDescriptions after execution
+   * @param array $currentPath Internal use only
    */
-  protected static function getConnectionsImpl($type, $otherRole, $otherType,
-          $hierarchyType, array &$result=[], array $currentPath=[]) {
+  protected static function getConnectionsImpl(string $type, string $otherRole, string $otherType,
+      string $hierarchyType, array &$result=[], array $currentPath=[]) {
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
     $mapper = $persistenceFacade->getMapper($type);
 
@@ -110,11 +110,11 @@ class NodeUtil {
 
   /**
    * Get the query condition used to select all related Nodes of a given role.
-   * @param $node The Node to select the relatives for
-   * @param $otherRole The role of the other nodes
-   * @return The condition string to be used with StringQuery.
+   * @param Node $node The Node to select the relatives for
+   * @param string $otherRole The role of the other nodes
+   * @return string condition string to be used with StringQuery.
    */
-  public static function getRelationQueryCondition($node, $otherRole) {
+  public static function getRelationQueryCondition(Node $node, string $otherRole): string {
     $mapper = $node->getMapper();
     $relationDescription = $mapper->getRelation($otherRole);
     $otherType = $relationDescription->getOtherType();
@@ -141,35 +141,35 @@ class NodeUtil {
   }
 
   /**
-   * Get the display value for a Node defined by the 'displayValues' property.
-   * If the 'displayValues' property is an array the items will be put together with ' '.
+   * Get the display value for a PersistentObject defined by the 'displayValues' property.
+   * If the 'displayValues' property is an array the items will be put together with ' - '.
    * If the 'displayValues' property is empty the function returns an empty string.
    * Example: 'name,text' shows the name of the Node together with the content of the text attribute
-   * @param $node Node instance to display
-   * @param $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
-   * @return String
+   * @param PersistentObject $object PersistentObject instance to display
+   * @param string $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
+   * @return string
    */
-  public static function getDisplayValue(Node $node, $language=null) {
-    return join(' ', array_values(self::getDisplayValues($node, $language)));
+  public static function getDisplayValue(PersistentObject $object, string $language=null): string {
+    return join(' - ', array_values(self::getDisplayValues($object, $language)));
   }
 
   /**
    * Does the same as NodeUtil::getDisplayValue but returns the display values as associative array
-   * @param $node Node instance to display
-   * @param $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
-   * @return Array of strings
+   * @param PersistentObject $object PersistentObject instance to display
+   * @param string $language The language if values should be localized. Optional, default is Localization::getDefaultLanguage()
+   * @return array<string>
    */
-  public static function getDisplayValues(Node $node, $language=null) {
+  public static function getDisplayValues(PersistentObject $object, string $language=null): array {
     // localize node if requested
     $localization = ObjectFactory::getInstance('localization');
     if ($language != null) {
-      $node = $localization->loadTranslation($node, $language);
+      $object = $localization->loadTranslation($object, $language);
     }
 
     $displayArray = [];
-    $displayValuesNames = $node->getProperty('displayValues');
+    $displayValuesNames = $object->getProperty('displayValues');
     if (sizeof($displayValuesNames) > 0) {
-      $mapper = $node->getMapper();
+      $mapper = $object->getMapper();
       foreach($displayValuesNames as $displayValueName) {
         $inputType = ''; // needed for the translation of a list value
         if ($displayValueName != '') {
@@ -177,14 +177,17 @@ class NodeUtil {
             $attribute = $mapper->getAttribute($displayValueName);
             $inputType = $attribute->getInputType();
           }
-          $tmpDisplay = $node->getValue($displayValueName);
+          $tmpDisplay = $object->getValue($displayValueName);
         }
 
         // translate any list value
         $tmpDisplay = ValueListProvider::translateValue($tmpDisplay, $inputType, $language);
-        if (strlen($tmpDisplay) > 0) {
-          $displayArray[$displayValueName] = $tmpDisplay;
+        if (strlen($tmpDisplay) == 0) {
+          // fallback to oid
+          $tmpDisplay = $object->getOID();
         }
+
+        $displayArray[$displayValueName] = $tmpDisplay;
       }
     }
     return $displayArray;
@@ -192,14 +195,14 @@ class NodeUtil {
 
   /**
    * Make all urls matching a given base url in a Node relative.
-   * @param $node Node instance that holds the value
-   * @param $baseUrl The baseUrl to which matching urls will be made relative
-   * @param $recursive Boolean whether to recurse into child Nodes or not (default: true)
+   * @param PersistentObject $object PersistentObject instance that holds the value
+   * @param string $baseUrl The baseUrl to which matching urls will be made relative
+   * @param bool $recursive Boolean whether to recurse into child Nodes or not (default: true)
    */
-  public static function makeNodeUrlsRelative(Node $node, $baseUrl, $recursive=true) {
+  public static function makeNodeUrlsRelative(PersistentObject $object, string $baseUrl, bool $recursive=true) {
     // use NodeValueIterator to iterate over all Node values
     // and call the global convert function on each
-    $iter = new NodeValueIterator($node, $recursive);
+    $iter = new NodeValueIterator($object, $recursive);
     for($iter->rewind(); $iter->valid(); $iter->next()) {
       self::makeValueUrlsRelative($iter->currentNode(), $iter->key(), $baseUrl);
     }
@@ -207,11 +210,11 @@ class NodeUtil {
 
   /**
    * Make the urls matching a given base url in a PersistentObject value relative.
-   * @param $node Node instance that holds the value
-   * @param $valueName The name of the value
-   * @param $baseUrl The baseUrl to which matching urls will be made relative
+   * @param PersistentObject $object PersistentObject instance that holds the value
+   * @param string $valueName The name of the value
+   * @param string $baseUrl The baseUrl to which matching urls will be made relative
    */
-  private static function makeValueUrlsRelative(PersistentObject $object, $valueName, $baseUrl) {
+  private static function makeValueUrlsRelative(PersistentObject $object, string $valueName, string $baseUrl) {
     $value = $object->getValue($valueName);
 
     // find urls in texts
@@ -234,19 +237,19 @@ class NodeUtil {
   }
 
   /**
-   * Translate all list values in a list of Nodes.
+   * Translate all list values in a list of PersistentObject instances.
    * @note Translation in this case refers to mapping list values from the key to the value
    * and should not be confused with localization, although values maybe localized using the
    * language parameter.
-   * @param $nodes A reference to the array of Node instances
-   * @param $language The language code, if the translated values should be localized.
+   * @param array $objects A reference to the array of PersistentObject instances
+   * @param string $language The language code, if the translated values should be localized.
    *                 Optional, default is Localizat$objectgetDefaultLanguage()
-   * @param $itemDelim Delimiter string for array values (optional, default: ", ")
+   * @param string $itemDelim Delimiter string for array values (optional, default: ", ")
    */
-  public static function translateValues(&$nodes, $language=null, $itemDelim=", ") {
+  public static function translateValues(array &$objects, string $language=null, string $itemDelim=", ") {
     // translate the node values
-    for($i=0; $i<sizeof($nodes); $i++) {
-      $iter = new NodeValueIterator($nodes[$i], false);
+    for($i=0; $i<sizeof($objects); $i++) {
+      $iter = new NodeValueIterator($objects[$i], false);
       for($iter->rewind(); $iter->valid(); $iter->next()) {
         self::translateValue($iter->currentNode(), $iter->key(), $language, $itemDelim);
       }
@@ -255,12 +258,12 @@ class NodeUtil {
 
   /**
    * Translate a PersistentObject list value.
-   * @param $object The object whose value to translate
-   * @param $valueName The name of the value to translate
-   * @param $language The language to use
-   * @param $itemDelim Delimiter string for array values (optional, default: ", ")
+   * @param PersistentObject $object The object whose value to translate
+   * @param string $valueName The name of the value to translate
+   * @param string $language The language to use
+   * @param string $itemDelim Delimiter string for array values (optional, default: ", ")
    */
-  public static function translateValue(PersistentObject $object, $valueName, $language, $itemDelim=", ") {
+  public static function translateValue(PersistentObject $object, string $valueName, string $language, string $itemDelim=", ") {
     $value = $object->getValue($valueName);
     // translate list values
     $value = ValueListProvider::translateValue($value, $object->getValueProperty($valueName, 'input_type'), $language, $itemDelim);
@@ -269,30 +272,30 @@ class NodeUtil {
   }
 
   /**
-   * Remove all values from a Node that are not a display value.
-   * @param $node The Node instance
+   * Remove all values from a PersistentObject that are not a display value.
+   * @param PersistentObject $node The PersistentObject instance
    */
-  public static function removeNonDisplayValues(Node $node) {
-    $displayValues = $node->getProperty('displayValues');
-    $valueNames = $node->getValueNames();
+  public static function removeNonDisplayValues(PersistentObject $object) {
+    $displayValues = $object->getProperty('displayValues');
+    $valueNames = $object->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $displayValues)) {
-        $node->removeValue($name);
+        $object->removeValue($name);
       }
     }
   }
 
   /**
-   * Remove all values from a Node that are not a primary key value.
-   * @param $node The Node instance
+   * Remove all values from a PersistentObject that are not a primary key value.
+   * @param PersistentObject $object The PersistentObject instance
    */
-  public static function removeNonPkValues(Node $node) {
-    $mapper = $node->getMapper();
+  public static function removeNonPkValues(PersistentObject $object) {
+    $mapper = $object->getMapper();
     $pkValues = $mapper->getPkNames();
-    $valueNames = $node->getValueNames();
+    $valueNames = $object->getValueNames();
     foreach($valueNames as $name) {
       if (!in_array($name, $pkValues)) {
-        $node->removeValue($name);
+        $object->removeValue($name);
       }
     }
   }

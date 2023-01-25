@@ -13,7 +13,7 @@ namespace wcmf\lib\util;
 use PDO;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\persistence\PersistenceException;
@@ -25,6 +25,7 @@ use Laminas\Db\Adapter\Adapter;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DBUtil {
+  use LogTrait;
 
   private static function createConnection($connectionParams) {
     // connect
@@ -86,9 +87,8 @@ class DBUtil {
    * @return Boolean whether execution succeeded or not.
    */
   public static function executeScript($file, $initSection) {
-    $logger = LogManager::getLogger(__CLASS__);
     if (file_exists($file)) {
-      $logger->info('Executing SQL script '.$file.' ...');
+      self::logger()->info('Executing SQL script '.$file.' ...');
 
       // find init params
       $config = ObjectFactory::getInstance('configuration');
@@ -98,7 +98,7 @@ class DBUtil {
       // connect to the database
       $conn = self::createConnection($connectionParams);
 
-      $logger->debug('Starting transaction ...');
+      self::logger()->debug('Starting transaction ...');
       $conn->beginTransaction();
 
       $exception = null;
@@ -107,7 +107,7 @@ class DBUtil {
         while (!feof($fh)) {
           $command = fgets($fh, 8192);
           if (strlen(trim($command)) > 0) {
-            $logger->debug('Executing command: '.preg_replace('/[\n]+$/', '', $command));
+            self::logger()->debug('Executing command: '.preg_replace('/[\n]+$/', '', $command));
             try {
               $conn->query($command);
             }
@@ -120,18 +120,18 @@ class DBUtil {
         fclose($fh);
       }
       if ($exception == null) {
-        $logger->debug('Execution succeeded, committing ...');
+        self::logger()->debug('Execution succeeded, committing ...');
         $conn->commit();
       }
       else {
-        $logger->error('Execution failed. Reason'.$exception->getMessage());
-        $logger->debug('Rolling back ...');
+        self::logger()->error('Execution failed. Reason'.$exception->getMessage());
+        self::logger()->debug('Rolling back ...');
         $conn->rollBack();
       }
-      $logger->debug('Finished SQL script '.$file.'.');
+      self::logger()->debug('Finished SQL script '.$file.'.');
     }
     else {
-      $logger->error('SQL script '.$file.' not found.');
+      self::logger()->error('SQL script '.$file.' not found.');
     }
   }
 
@@ -144,7 +144,6 @@ class DBUtil {
    * @param $password The password
    */
   public static function copyDatabase($srcName, $destName, $server, $user, $password) {
-    $logger = LogManager::getLogger(__CLASS__);
     if ($srcName && $destName && $server && $user) {
       self::createDatabase($destName, $server, $user, $password);
 
@@ -163,7 +162,7 @@ class DBUtil {
         foreach ($conn->query("SHOW TABLES FROM $srcName") as $row) {
           // create new table
           $sqlStmt = "CREATE TABLE $destName.$row[0] LIKE $srcName.$row[0]";
-          $logger->debug($sqlStmt);
+          self::logger()->debug($sqlStmt);
           $result = $conn->query($sqlStmt);
           if (!$result) {
             throw new PersistenceException("Couldn't create table: ".$conn->errorInfo());
@@ -171,7 +170,7 @@ class DBUtil {
 
           // insert data
           $sqlStmt = "INSERT INTO $destName.$row[0] SELECT * FROM $srcName.$row[0]";
-          $logger->debug($sqlStmt);
+          self::logger()->debug($sqlStmt);
           $result = $conn->query($sqlStmt);
           if (!$result) {
             throw new PersistenceException("Couldn't copy data: ".$conn->errorInfo());

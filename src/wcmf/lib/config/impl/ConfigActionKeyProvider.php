@@ -21,16 +21,16 @@ use wcmf\lib\config\Configuration;
  */
 class ConfigActionKeyProvider implements ActionKeyProvider {
 
-  private $configuration = null;
-  private $configSection = null;
-  private $id = null;
+  private ?Configuration $configuration = null;
+  private ?string $configSection = null;
+  private ?string $id = null;
 
   /**
    * Constructor
-   * @param $configuration Configuration instance
-   * @param $configSection The configuration section to search in
+   * @param Configurtion $configuration Configuration instance
+   * @param string $configSection The configuration section to search in
    */
-  public function __construct(Configuration $configuration, $configSection) {
+  public function __construct(Configuration $configuration, string $configSection) {
     $this->configuration = $configuration;
     $this->configSection = $configSection;
     $this->id = null;
@@ -39,14 +39,14 @@ class ConfigActionKeyProvider implements ActionKeyProvider {
   /**
    * @see ActionKeyProvider::containsKey()
    */
-  public function containsKey($actionKey) {
+  public function containsKey(string $actionKey): bool {
     return $this->configuration->hasValue($actionKey, $this->configSection);
   }
 
   /**
    * @see ActionKeyProvider::getKeyValue()
    */
-  public function getKeyValue($actionKey) {
+  public function getKeyValue(string $actionKey): ?string {
     if ($this->containsKey($actionKey)) {
       return $this->configuration->getValue($actionKey, $this->configSection);
     }
@@ -56,7 +56,7 @@ class ConfigActionKeyProvider implements ActionKeyProvider {
   /**
    * @see ActionKeyProvider::getId()
    */
-  public function getId() {
+  public function getId(): string {
     if ($this->id == null) {
       $this->id = str_replace('\\', '.', __CLASS__).'.'.$this->configSection;
     }

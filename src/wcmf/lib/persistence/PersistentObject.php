@@ -29,74 +29,75 @@ interface PersistentObject {
 
   /**
    * Get the type of the object.
-   * @return The objects type.
+   * @return string
    */
-  public function getType();
+  public function getType(): string;
 
   /**
    * Get the PersistenceMapper of the object.
    * @return PersistenceMapper
    */
-  public function getMapper();
+  public function getMapper(): PersistenceMapper;
 
   /**
    * Get the object id of the PersistentObject.
    * @return ObjectId
    */
-  public function getOID();
+  public function getOID(): ObjectId;
 
   /**
    * Set the object id of the PersistentObject.
    * @param $oid The PersistentObject's oid.
    */
-  public function setOID(ObjectId $oid);
+  public function setOID(ObjectId $oid): void;
 
   /**
-   * Get the object's state:
-   * @return One of the STATE constant values:
+   * Get the object's state (one of the STATE constant values)
+   * @return int
    */
-  public function getState();
+  public function getState(): int;
 
   /**
    * Set the state of the object to one of the STATE constants.
+   * @param int The state
    */
-  public function setState($state);
+  public function setState(int $state): void;
 
   /**
    * Delete the object
    */
-  public function delete();
+  public function delete(): void;
 
   /**
    * Get a copy of the object (ChangeListeners and Lock are not copied)
-   * @return PersistentObject
+   * @return self
    */
   public function __clone();
 
   /**
    * Copy all non-empty values to a given instance (ChangeListeners are triggered)
-   * @param $object PersistentObject instance to copy the values to.
-   * @param $copyPkValues Boolean whether primary key values should be copied
+   * @param PersistentObject $object PersistentObject instance to copy the values to.
+   * @param bool $copyPkValues Boolean whether primary key values should be copied
    */
-  public function copyValues(PersistentObject $object, $copyPkValues=true);
+  public function copyValues(PersistentObject $object, ?bool $copyPkValues=true): void;
 
   /**
    * Copy all values, that don't exist yet from a given instance
    * (ChangeListeners are not triggered)
-   * @param $object PersistentObject instance to copy the values from.
+   * @param PersistentObject $object PersistentObject instance to copy the values from.
    */
-  public function mergeValues(PersistentObject $object);
+  public function mergeValues(PersistentObject $object): void;
 
   /**
    * Clear all values. Set each value to null except
    * for the primary key values
    */
-  public function clearValues();
+  public function clearValues(): void;
 
   /**
    * Reset all values to their original values
    */
-  public function reset();
+  public function reset(): void;
 
   /**
    * <!--
@@ -108,42 +109,42 @@ interface PersistentObject {
    * This method is called once after creation of this object. At this time it
    * is not known in the store.
    */
-  public function afterCreate();
+  public function afterCreate(): void;
 
   /**
    * This method is called once before inserting the newly created object into the store.
    */
-  public function beforeInsert();
+  public function beforeInsert(): void;
 
   /**
    * This method is called once after inserting the newly created object into the store.
    */
-  public function afterInsert();
+  public function afterInsert(): void;
 
   /**
    * This method is called always after loading the object from the store.
    */
-  public function afterLoad();
+  public function afterLoad(): void;
 
   /**
    * This method is called always before updating the modified object in the store.
    */
-  public function beforeUpdate();
+  public function beforeUpdate(): void;
 
   /**
    * This method is called always after updating the modified object in the store.
    */
-  public function afterUpdate();
+  public function afterUpdate(): void;
 
   /**
    * This method is called once before deleting the object from the store.
    */
-  public function beforeDelete();
+  public function beforeDelete(): void;
 
   /**
    * This method is called once after deleting the object from the store.
    */
-  public function afterDelete();
+  public function afterDelete(): void;
 
   /**
    * <!--
@@ -153,123 +154,123 @@ interface PersistentObject {
 
   /**
    * Get the value of an attribute.
-   * @param $name The name of the attribute.
-   * @return The value of the attribute / null if it doesn't exist.
+   * @param string $name The name of the attribute.
+   * @return mixed
    */
-  public function getValue($name);
+  public function getValue(string $name);
 
   /**
    * Set the value of an attribute if it exists.
-   * @param $name The name of the attribute to set.
-   * @param $value The value of the attribute.
-   * @param $forceSet Boolean whether to set the value even if it is already set
+   * @param string $name The name of the attribute to set.
+   * @param mixed $value The value of the attribute.
+   * @param bool $forceSet Boolean whether to set the value even if it is already set
    *   and to bypass validation (used to notify listeners) (default: _false_)
-   * @param $trackChange Boolean whether to track the change (change state, notify listeners) or not (default: _true_)
+   * @param bool $trackChange Boolean whether to track the change (change state, notify listeners) or not (default: _true_)
    *      Only set this false, if you know, what you are doing
-   * @return Boolean whether the operation succeeds or not
+   * @return bool
    */
-  public function setValue($name, $value, $forceSet=false, $trackChange=true);
+  public function setValue(string $name, $value, bool $forceSet=false, bool $trackChange=true): bool;
 
   /**
    * Check if the object has a given attribute.
-   * @param $name The name of the attribute.
-   * @return Boolean whether the attribute exists or not.
+   * @param string $name The name of the attribute.
+   * @return bool
    */
-  public function hasValue($name);
+  public function hasValue(string $name): bool;
 
   /**
    * Remove an attribute.
-   * @param $name The name of the attribute to remove.
+   * @param string $name The name of the attribute to remove.
    */
-  public function removeValue($name);
+  public function removeValue(string $name): void;
 
   /**
    * Get the names of all attributes.
-   * @param $excludeTransient Boolean whether to exclude transient values (default: _false_)
-   * @return An array of attribute names.
+   * @param bool $excludeTransient Boolean whether to exclude transient values (default: _false_)
+   * @return array
    */
-  public function getValueNames($excludeTransient=false);
+  public function getValueNames(bool $excludeTransient=false): array;
 
   /**
    * Validate all values by calling PersistentObject::validateValue()
    * Throws a ValidationException in case of invalid data.
    */
-  public function validateValues();
+  public function validateValues(): void;
 
   /**
    * Check if data may be set. The method is also called, when setting a value.
    * Controller may call this method before setting data and saving the object.
    * Throws a ValidationException in case of invalid data.
-   * @param $name The name of the attribute to set.
-   * @param $value The value of the attribute.
+   * @param string $name The name of the attribute to set.
+   * @param mixed $value The value of the attribute.
    * The default implementation calls PersistentObject::validateValueAgainstValidateType().
    */
-  public function validateValue($name, $value);
+  public function validateValue(string $name, $value): void;
 
   /**
    * Get the list of changed attributes since creation, loading.
-   * @return Array of value names
+   * @return array
    */
-  public function getChangedValues();
+  public function getChangedValues(): array;
 
   /**
    * Get the original of an attribute provided to the initialize method.
-   * @param $name The name of the attribute.
-   * @return The value of the attribute / null if it doesn't exist.
+   * @param string $name The name of the attribute.
+   * @return mixed
    */
-  public function getOriginalValue($name);
+  public function getOriginalValue(string $name);
 
   /**
    * Get the list of objects that must exist in the store, before
    * this object may be persisted. Implementing classes may use this method to
    * manage dependencies.
-   * @return Array of PersistentObject instances
+   * @return array
    */
-  public function getIndispensableObjects();
+  public function getIndispensableObjects(): array;
 
   /**
    * Get the value of a named property in the object.
-   * @param $name The name of the property.
-   * @return The value of the property / null if it doesn't exist.
+   * @param string $name The name of the property.
+   * @return mixed
    */
-  public function getProperty($name);
+  public function getProperty(string $name);
 
   /**
    * Set the value of a named property in the object.
-   * @param $name The name of the property to set.
-   * @param $value The value of the property to set.
+   * @param string $name The name of the property to set.
+   * @param mixed $value The value of the property to set.
    */
-  public function setProperty($name, $value);
+  public function setProperty(string $name, $value): void;
 
   /**
    * Get the names of all properties in the object. Properties are
    * either defined by using the PersistentObject::setProperty() method
    * or by the PersistentMapper.
-   * @return An array consisting of the names.
+   * @return array
    */
-  public function getPropertyNames();
+  public function getPropertyNames(): array;
 
   /**
    * Get the value of one property of an attribute.
-   * @param $name The name of the attribute to get its properties.
-   * @param $property The name of the property to get.
-   * @return The value property/null if not found.
+   * @param string $name The name of the attribute to get its properties.
+   * @param string $property The name of the property to get.
+   * @return mixed
    */
-  public function getValueProperty($name, $property);
+  public function getValueProperty(string $name, string $property);
 
   /**
    * Set the value of one property of an attribute.
-   * @param $name The name of the attribute to set its properties.
-   * @param $property The name of the property to set.
-   * @param $value The value to set on the property.
+   * @param string $name The name of the attribute to set its properties.
+   * @param string $property The name of the property to set.
+   * @param mixed $value The value to set on the property.
    */
-  public function setValueProperty($name, $property, $value);
+  public function setValueProperty(string $name, string $property, $value): void;
 
   /**
    * Get the names of all properties of a value in the object.
-   * @return An array consisting of the names.
+   * @return array
    */
-  public function getValuePropertyNames($name);
+  public function getValuePropertyNames(string $name): array;
 
   /**
    * <!--
@@ -279,14 +280,14 @@ interface PersistentObject {
 
   /**
    * Get the value of the object used for display.
-   * @return The value.
+   * @return string
    */
-  public function getDisplayValue();
+  public function getDisplayValue(): string;
 
   /**
    * Get a string representation of the values of the PersistentObject.
-   * @return String
+   * @return string
    */
-  public function dump();
+  public function dump(): string;
 }
 ?>

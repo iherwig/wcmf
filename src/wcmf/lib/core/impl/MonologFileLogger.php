@@ -16,9 +16,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
 use wcmf\lib\config\ConfigurationException;
-use wcmf\lib\core\impl\AbstractLogger;
 use wcmf\lib\io\FileUtil;
-use wcmf\lib\util\StringUtil;
 
 /**
  * MonologFileLogger is a wrapper for the Monolog library that logs to files.
@@ -33,34 +31,30 @@ use wcmf\lib\util\StringUtil;
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger {
+class MonologFileLogger extends Logger implements \wcmf\lib\core\Logger {
 
   const ROOT_SECTION_NAME = 'Root';
   const LOGGER_SECTION_NAME = 'Logger';
 
-  private $monologLogger = null;
-  private $level = Logger::ERROR;
-
   private static $defaultLevel = Logger::ERROR;
   private static $logTarget = '';
-  private static $levels = [];
+  private static $configLevels = [];
 
   /**
    * Constructor
-   * @param $name The logger name (channel in Monolog)
-   * @param $configFile A configuration file name
+   * @param string $name The logger name (channel in Monolog)
+   * @param string $configFile A configuration file name
    */
-  public function __construct($name, $configFile='') {
+  public function __construct(string $name, string $configFile='') {
     if (strlen($configFile) > 0) {
-      self::configure($configFile);
+      $this->configure($configFile);
       if (!$this->isStreamTarget(self::$logTarget)) {
         $fileUtil = new FileUtil();
         self::$logTarget = $fileUtil->realpath(WCMF_BASE.self::$logTarget).'/';
         $fileUtil->mkdirRec(self::$logTarget);
       }
     }
-    $level = isset(self::$levels[$name]) ? self::$levels[$name] : self::$defaultLevel;
-    $this->level = $level;
+    $level = isset(self::$configLevels[$name]) ? self::$configLevels[$name] : self::$defaultLevel;
 
     $output = "[%datetime%] %level_name%: %channel%:%extra.line%: %message%\n";
     $formatter = new LineFormatter($output, null, true);
@@ -75,91 +69,56 @@ class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger 
     $handler->setFormatter($formatter);
     $handler->pushProcessor($processor);
 
-    $this->monologLogger = new Logger($name, [$handler]);
-  }
-
-  /**
-   * @see Logger::debug()
-   */
-  public function debug($message) {
-    $this->monologLogger->addDebug($this->prepareMessage($message));
-  }
-
-  /**
-   * @see Logger::info()
-   */
-  public function info($message) {
-    $this->monologLogger->addInfo($this->prepareMessage($message));
-  }
-
-  /**
-   * @see Logger::warn()
-   */
-  public function warn($message) {
-    $this->monologLogger->addWarning($this->prepareMessage($message));
-  }
-
-  /**
-   * @see Logger::error()
-   */
-  public function error($message) {
-    $this->monologLogger->addError($this->prepareMessage($message));
-  }
-
-  /**
-   * @see Logger::fatal()
-   */
-  public function fatal($message) {
-    $this->monologLogger->addCritical($this->prepareMessage($message));
-  }
-
-  /**
-   * @see Logger::isDebugEnabled()
-   */
-  public function isDebugEnabled() {
-    return $this->level <= Logger::DEBUG;
+    parent::__construct($name, [$handler], [$processor]);
   }
 
   /**
    * @see Logger::isInfoEnabled()
    */
-  public function isInfoEnabled() {
-    return $this->level <= Logger::INFO;
+  public function isInfoEnabled(): bool {
+    return parent::isHandling(self::INFO);
   }
 
   /**
-   * @see Logger::isWarnEnabled()
+   * @see Logger::isDebugEnabled()
    */
-  public function isWarnEnabled() {
-    return $this->level <= Logger::WARNING;
+  public function isDebugEnabled(): bool {
+    return parent::isHandling(self::DEBUG);
   }
 
   /**
-   * @see Logger::isErrorEnabled()
+   * @see Logger::logByErrorType()
    */
-  public function isErrorEnabled() {
-    return $this->level <= Logger::ERROR;
-  }
-
-  /**
-   * @see Logger::isFatalEnabled()
-   */
-  public function isFatalEnabled() {
-    return $this->level <= Logger::CRITICAL;
+  public function logByErrorType(int $type, string $message): void {
+    switch ($type) {
+      case E_NOTICE:
+      case E_USER_NOTICE:
+      case E_STRICT:
+      case E_DEPRECATED:
+      case E_USER_DEPRECATED:
+        $this->info($message);
+        break;
+      case E_WARNING:
+      case E_USER_WARNING:
+        $this->warning($message);
+        break;
+      default:
+        $this->error($message);
+    }
   }
 
   /**
    * @see Logger::getLogger()
    */
-  public static function getLogger($name) {
-    return new MonologFileLogger($name);
+  public static function getLogger(string $name): \wcmf\lib\core\Logger {
+    return new self($name);
   }
 
   /**
    * Configure logging
-   * @param $configFile
+   * @param string $configFile
    */
-  private function configure($configFile) {
+  private function configure(string $configFile): void {
     if (!file_exists($configFile)) {
       throw new ConfigurationException('Configuration file '.$configFile.' not found');
     }
@@ -176,30 +135,19 @@ class MonologFileLogger extends AbstractLogger implements \wcmf\lib\core\Logger 
     }
 
     // log levels
-    self::$levels = isset($config[self::LOGGER_SECTION_NAME]) ?
+    self::$configLevels = isset($config[self::LOGGER_SECTION_NAME]) ?
             $config[self::LOGGER_SECTION_NAME] : [];
-    foreach (self::$levels as $key => $val) {
-      self::$levels[$key] = constant('Monolog\Logger::'.strtoupper($val));
+    foreach (self::$configLevels as $key => $val) {
+      self::$configLevels[$key] = constant('Monolog\Logger::'.strtoupper($val));
     }
   }
 
   /**
-   * Prepare a message to be used with the internal logger
-   * @param $message
-   * @return String
-   */
-  private function prepareMessage($message) {
-    return is_string($message) ? $message :
-      (is_object($message) && method_exists($message, '__toString') ? $message->__toString() :
-            StringUtil::getDump($message));
-  }
-
-  /**
    * Check if the given target is a stream resource
-   * @param $target
-   * @return Boolean
+   * @param string $target
+   * @return bool
    */
-  private function isStreamTarget($target) {
+  private function isStreamTarget(string $target): bool {
     return preg_match('/^.+?:\/\//', $target);
   }
 }

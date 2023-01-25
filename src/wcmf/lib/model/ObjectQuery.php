@@ -11,7 +11,7 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\AbstractQuery;
 use wcmf\lib\model\mapper\RDBManyToManyRelationDescription;
@@ -104,6 +104,7 @@ use wcmf\lib\persistence\ValueChangeEvent;
  * @author ingo herwig <ingo@wemove.com>
  */
 class ObjectQuery extends AbstractQuery {
+  use LogTrait;
 
   const PROPERTY_COMBINE_OPERATOR = "object_query_combine_operator";
   const PROPERTY_TABLE_NAME = "object_query_table_name";
@@ -122,8 +123,6 @@ class ObjectQuery extends AbstractQuery {
   private $observedObjects = [];
   private $parameterCriteriaMap = [];
 
-  private static $logger = null;
-
   /**
    * Constructor.
    * @param $type The type to search for
@@ -135,19 +134,14 @@ class ObjectQuery extends AbstractQuery {
     $this->typeNode = $mapper->create($type, BuildDepth::SINGLE);
     $this->rootNodes[] = $this->typeNode;
     $this->id = $queryId == null ? SelectStatement::NO_CACHE : $queryId;
-    ObjectFactory::getInstance('eventManager')->addListener(ValueChangeEvent::NAME,
-      [$this, 'valueChanged']);
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
+    ObjectFactory::getInstance('eventManager')->addListener(ValueChangeEvent::NAME, [$this, 'valueChanged']);
   }
 
   /**
    * Destructor.
    */
   public function __destruct() {
-    ObjectFactory::getInstance('eventManager')->removeListener(ValueChangeEvent::NAME,
-      [$this, 'valueChanged']);
+    ObjectFactory::getInstance('eventManager')->removeListener(ValueChangeEvent::NAME, [$this, 'valueChanged']);
   }
 
   /**

@@ -16,7 +16,6 @@ use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\impl\DefaultUnionQueryProvider;
-use wcmf\lib\persistence\ObjectComparator;
 use wcmf\lib\persistence\ObjectId;
 use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
@@ -24,8 +23,8 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\StateChangeEvent;
+use wcmf\lib\persistence\Transaction;
 use wcmf\lib\persistence\UnionQuery;
-use wcmf\lib\persistence\UnionQueryProvider;
 
 /**
  * Default PersistenceFacade implementation.
@@ -34,41 +33,41 @@ use wcmf\lib\persistence\UnionQueryProvider;
  */
 class DefaultPersistenceFacade implements PersistenceFacade {
 
-  private $mappers = [];
-  private $simpleToFqNames = [];
-  private $createdOIDs = [];
-  private $eventManager = null;
-  private $currentTransaction = null;
-  private $logStrategy = null;
+  /** @var array<string, mixed> */
+  private array $mappers = [];
+  /** @var array<string, string> */
+  private array $simpleToFqNames = [];
+  /** @var array<string, array<ObjectId>> */
+  private array $createdOIDs = [];
+  private EventManager $eventManager;
+  private ?Transaction $currentTransaction = null;
+  private OutputStrategy $logStrategy;
 
   /**
    * Constructor
-   * @param $eventManager
-   * @param $logStrategy OutputStrategy used for logging persistence actions.
+   * @param EventManager $eventManager
+   * @param OutputStrategy $logStrategy OutputStrategy used for logging persistence actions.
    */
-  public function __construct(EventManager $eventManager,
-    OutputStrategy $logStrategy) {
+  public function __construct(EventManager $eventManager, OutputStrategy $logStrategy) {
       $this->eventManager = $eventManager;
       $this->logStrategy = $logStrategy;
       // register as change listener to track the created oids, after save
-      $this->eventManager->addListener(StateChangeEvent::NAME,
-        [$this, 'stateChanged']);
+      $this->eventManager->addListener(StateChangeEvent::NAME, [$this, 'stateChanged']);
   }
 
   /**
    * Destructor
    */
   public function __destruct() {
-    $this->eventManager->removeListener(StateChangeEvent::NAME,
-      [$this, 'stateChanged']);
+    $this->eventManager->removeListener(StateChangeEvent::NAME, [$this, 'stateChanged']);
   }
 
   /**
    * Set the PersistentMapper instances.
-   * @param $mappers Associative array with the fully qualified
+   * @param array<string, PersistenceMapper> $mappers Associative array with the fully qualified
    *   mapped class names as keys and the mapper instances as values
    */
-  public function setMappers($mappers) {
+  public function setMappers(array $mappers): void {
     $this->mappers = $mappers;
     foreach ($mappers as $fqName => $mapper) {
       // register simple type names
@@ -92,21 +91,21 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::getKnownTypes()
    */
-  public function getKnownTypes() {
+  public function getKnownTypes(): array {
     return array_values($this->simpleToFqNames);
   }
 
   /**
    * @see PersistenceFacade::isKnownType()
    */
-  public function isKnownType($type) {
+  public function isKnownType($type): bool {
     return (isset($this->mappers[$type]));
   }
 
   /**
    * @see PersistenceFacade::getFullyQualifiedType()
    */
-  public function getFullyQualifiedType($type) {
+  public function getFullyQualifiedType(string $type): string {
     if (isset($this->simpleToFqNames[$type])) {
       return $this->simpleToFqNames[$type];
     }
@@ -119,7 +118,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::getSimpleType()
    */
-  public function getSimpleType($type) {
+  public function getSimpleType(string $type): string {
     $simpleType = $this->calculateSimpleType($type);
     // if there is a entry for the type name but not for the simple type name,
     // the type is ambiquous and we return the type name
@@ -130,7 +129,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
+  public function load(ObjectId $oid, int $buildDepth=BuildDepth::SINGLE): ?PersistentObject {
     if ($buildDepth < 0 && !in_array($buildDepth, [BuildDepth::INFINITE, BuildDepth::SINGLE])) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
@@ -149,7 +148,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::create()
    */
-  public function create($type, $buildDepth=BuildDepth::SINGLE) {
+  public function create(string $type, int $buildDepth=BuildDepth::SINGLE): PersistentObject {
     if ($buildDepth < 0 && !in_array($buildDepth, [BuildDepth::INFINITE, BuildDepth::SINGLE, BuildDepth::REQUIRED])) {
       throw new IllegalArgumentException("Build depth not supported: $buildDepth");
     }
@@ -166,7 +165,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::getLastCreatedOID()
    */
-  public function getLastCreatedOID($type) {
+  public function getLastCreatedOID(string $type): ?ObjectId {
     $fqType = $this->getFullyQualifiedType($type);
     if (isset($this->createdOIDs[$fqType]) && sizeof($this->createdOIDs[$fqType]) > 0) {
       return $this->createdOIDs[$fqType][sizeof($this->createdOIDs[$fqType])-1];
@@ -177,7 +176,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::getOIDs()
    */
-  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  public function getOIDs(string $type, array $criteria=null, array $orderby=null, PagingInfo $pagingInfo=null): array {
     $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
@@ -189,7 +188,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::getFirstOID()
    */
-  public function getFirstOID($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  public function getFirstOID(string $type, array $criteria=null, array $orderby=null, PagingInfo $pagingInfo=null): ?ObjectId {
     if ($pagingInfo == null) {
       $pagingInfo = new PagingInfo(1, true);
     }
@@ -205,7 +204,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::loadObjects()
    */
-  public function loadObjects($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  public function loadObjects($typeOrTypes, int $buildDepth=BuildDepth::SINGLE, array $criteria=null, array $orderby=null, PagingInfo $pagingInfo=null): array {
     $this->checkArrayParameter($criteria, 'criteria', 'wcmf\lib\persistence\Criteria');
     $this->checkArrayParameter($orderby, 'orderby');
 
@@ -224,7 +223,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::loadFirstObject()
    */
-  public function loadFirstObject($typeOrTypes, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  public function loadFirstObject($typeOrTypes, int $buildDepth=BuildDepth::SINGLE, array $criteria=null, array $orderby=null, PagingInfo $pagingInfo=null): ?PersistentObject {
     if ($pagingInfo == null) {
       $pagingInfo = new PagingInfo(1, true);
     }
@@ -240,7 +239,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::getTransaction()
    */
-  public function getTransaction() {
+  public function getTransaction(): Transaction {
     if ($this->currentTransaction == null) {
       $this->currentTransaction = ObjectFactory::getInstance('transaction');
     }
@@ -250,7 +249,7 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::getMapper()
    */
-  public function getMapper($type) {
+  public function getMapper(string $type): PersistenceMapper {
     if ($this->isKnownType($type)) {
       $mapper = $this->mappers[$type];
       return $mapper;
@@ -263,30 +262,27 @@ class DefaultPersistenceFacade implements PersistenceFacade {
   /**
    * @see PersistenceFacade::setMapper()
    */
-  public function setMapper($type, PersistenceMapper $mapper) {
+  public function setMapper(string $type, PersistenceMapper $mapper): void {
     $this->mappers[$type] = $mapper;
   }
 
   /**
-   * Check if the given value is either null or an array and
-   * throw an exception if not
-   * @param $param The parameter
-   * @param $paramName The name of the parameter (used in the exception text)
-   * @param $className Class name to match if, instances of a specific type are expected (optional)
+   * Check if the given value is either null or an array and throw an exception if not
+   * @param mixed $param The parameter
+   * @param string $paramName The name of the parameter (used in the exception text)
+   * @param string $className Class name to match if, instances of a specific type are expected (optional)
    */
-  private function checkArrayParameter($param, $paramName, $className=null) {
+  private function checkArrayParameter($param, string $paramName, ?string $className=null): void {
     if ($param == null) {
       return;
     }
     if (!is_array($param)) {
-      throw new IllegalArgumentException("The parameter '".$paramName.
-        "' is expected to be null or an array");
+      throw new IllegalArgumentException("The parameter '".$paramName."' is expected to be null or an array");
     }
     if ($className != null) {
       foreach ($param as $instance) {
         if (!($instance instanceof $className)) {
-          throw new IllegalArgumentException("The parameter '".$paramName.
-            "' is expected to contain only instances of '".$className."'");
+          throw new IllegalArgumentException("The parameter '".$paramName."' is expected to contain only instances of '".$className."'");
         }
       }
     }
@@ -294,9 +290,9 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 
   /**
    * Listen to StateChangeEvents
-   * @param $event StateChangeEvent instance
+   * @param StateChangeEvent $event
    */
-  public function stateChanged(StateChangeEvent $event) {
+  public function stateChanged(StateChangeEvent $event): void {
     $oldState = $event->getOldValue();
     $newState = $event->getNewValue();
     // store the object id in the internal registry if the object was saved after creation
@@ -312,10 +308,10 @@ class DefaultPersistenceFacade implements PersistenceFacade {
 
   /**
    * Calculate the simple type name for a given fully qualified type name.
-   * @param $type Type name with namespace
-   * @return Simple type name (without namespace)
+   * @param string $type Type name with namespace
+   * @return string type name (without namespace)
    */
-  protected function calculateSimpleType($type) {
+  protected function calculateSimpleType($type): string {
     $pos = strrpos($type, '.');
     if ($pos !== false) {
       return substr($type, $pos+1);

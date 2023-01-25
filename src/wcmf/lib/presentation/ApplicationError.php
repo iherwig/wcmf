@@ -74,7 +74,7 @@ class ApplicationError {
 
   /**
    * Get the error code
-   * @return String
+   * @return string
    */
   public function getCode() {
     return $this->code;
@@ -82,7 +82,7 @@ class ApplicationError {
 
   /**
    * Get the error level
-   * @return String
+   * @return string
    */
   public function getLevel() {
     return $this->level;
@@ -90,7 +90,7 @@ class ApplicationError {
 
   /**
    * Get the associated HTTP status code
-   * @return Integer
+   * @return int
    */
   public function getStatusCode() {
     return $this->statusCode;
@@ -98,7 +98,7 @@ class ApplicationError {
 
   /**
    * Get the error message
-   * @return String
+   * @return string
    */
   public function getMessage() {
     return $this->message;
@@ -115,7 +115,7 @@ class ApplicationError {
 
   /**
    * Get the error data
-   * @return Mixed
+   * @return mixed
    */
   public function getData() {
     return $this->data;
@@ -123,7 +123,7 @@ class ApplicationError {
 
   /**
    * Get a string representation of the error
-   * @return String
+   * @return string
    */
   public function __toString() {
     $str = strtoupper($this->level).": ".$this->code." (".$this->statusCode.

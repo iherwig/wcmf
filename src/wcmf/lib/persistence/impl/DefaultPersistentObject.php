@@ -14,6 +14,7 @@ use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\persistence\impl\NullMapper;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\PropertyChangeEvent;
 use wcmf\lib\persistence\ReferenceDescription;
@@ -33,17 +34,17 @@ use wcmf\lib\validation\Validator;
  */
 class DefaultPersistentObject implements PersistentObject, \Serializable {
 
-  private $oid = null;                // object identifier
-  private $type = '';                 // the object type
-  private $data = [];            // associative array holding the data
-  private $properties = [];      // associative array holding the object properties
-  private $valueProperties = []; // associative array holding the value properties
-  private $state = self::STATE_CLEAN; // the state of the PersistentObject
-  private $changedAttributes = []; // used to track changes, see setValue method
-  private $originalData = [];    // data provided to the initialize method
-  private $mapper = null;             // mapper instance
+  private ObjectId $oid;                  // object identifier
+  private string $type = '';              // the object type
+  private array $data = [];               // associative array holding the data
+  private array $properties = [];         // associative array holding the object properties
+  private array $valueProperties = [];    // associative array holding the value properties
+  private int $state = self::STATE_CLEAN; // the state of the PersistentObject
+  private array $changedAttributes = [];  // used to track changes, see setValue method
+  private array $originalData = [];       // data provided to the initialize method
+  private ?PersistenceMapper $mapper = null; // mapper instance
 
-  private static $nullMapper = null;
+  private static ?PersistenceMapper $nullMapper = null;
 
   // TODO: add static cache for frequently requested entity type data
 
@@ -53,12 +54,12 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * if the PersistenceFacade knows the type. The object id is needed to extract
    * the type. If the id parameter of the object id is a dummy id, the object
    * is supposed to be a newly created object (@see ObjectId::containsDummyIds()).
-   * @param $oid ObjectId instance (optional)
-   * @param $initialData Associative array with initial attribute data to override default data (optional)
+   * @param ObjectId $oid ObjectId instance (optional)
+   * @param array $initialData Associative array with initial attribute data to override default data (optional)
    */
-  public function __construct(ObjectId $oid=null, array $initialData=null) {
+  public function __construct(ObjectId $oid=null, ?array $initialData=null) {
     // set oid and state (avoid calling listeners)
-    if ($oid == null || !ObjectId::isValid($oid)) {
+    if ($oid == null) {
       $oid = ObjectId::NULL_OID();
     }
     $this->type = $oid->getType();
@@ -93,36 +94,29 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   }
 
   /**
-   * Initialize the PersistenceMapper instance
-   */
-  private function initializeMapper() {
-    // set the mapper
-    $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-    if ($persistenceFacade->isKnownType($this->type)) {
-      $this->mapper = $persistenceFacade->getMapper($this->type);
-    }
-    else {
-      // initialize null mapper if not done already
-      if (self::$nullMapper == null) {
-        self::$nullMapper = new NullMapper();
-      }
-      $this->mapper = self::$nullMapper;
-    }
-  }
-
-  /**
    * @see PersistentObject::getType()
    */
-  public function getType() {
+  public function getType(): string {
     return $this->type;
   }
 
   /**
    * @see PersistentObject::getMapper()
    */
-  public function getMapper() {
+  public function getMapper(): PersistenceMapper {
     if ($this->mapper == null) {
-      $this->initializeMapper();
+      // set the mapper
+      $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+      if ($persistenceFacade->isKnownType($this->type)) {
+        $this->mapper = $persistenceFacade->getMapper($this->type);
+      }
+      else {
+        // initialize null mapper if not done already
+        if (self::$nullMapper == null) {
+          self::$nullMapper = new NullMapper();
+        }
+        $this->mapper = self::$nullMapper;
+      }
     }
     return $this->mapper;
   }
@@ -130,14 +124,14 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::getOID()
    */
-  public function getOID() {
+  public function getOID(): ObjectId {
     return $this->oid;
   }
 
   /**
    * @see PersistentObject::setOID()
    */
-  public function setOID(ObjectId $oid) {
+  public function setOID(ObjectId $oid): void {
     $this->setOIDInternal($oid, true);
   }
 
@@ -147,7 +141,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * @param $triggerListeners Boolean, whether value CahngeListeners should be
    * notified or not
    */
-  protected function setOIDInternal(ObjectId $oid, $triggerListeners) {
+  protected function setOIDInternal(ObjectId $oid, bool $triggerListeners): void {
     $this->type = $oid->getType();
     $this->oid = $oid;
     // update the primary key attributes
@@ -166,14 +160,14 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::getState()
    */
-  public function getState() {
+  public function getState(): int {
     return $this->state;
   }
 
   /**
    * @see PersistentObject::setState()
    */
-  public function setState($state) {
+  public function setState(int $state): void {
     $oldState = $this->state;
     switch ($oldState) {
       // new object must stay new when it's modified
@@ -197,15 +191,14 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
         $this->state = $state;
     }
     if ($oldState != $this->state) {
-      ObjectFactory::getInstance('eventManager')->dispatch(StateChangeEvent::NAME,
-              new StateChangeEvent($this, $oldState, $this->state));
+      ObjectFactory::getInstance('eventManager')->dispatch(StateChangeEvent::NAME, new StateChangeEvent($this, $oldState, $this->state));
     }
   }
 
   /**
    * @see PersistentObject::delete()
    */
-  public function delete() {
+  public function delete(): void {
     // delete the object (will be done in the transaction)
     $this->setState(self::STATE_DELETED);
   }
@@ -231,7 +224,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::copyValues()
    */
-  public function copyValues(PersistentObject $object, $copyPkValues=true) {
+  public function copyValues(PersistentObject $object, ?bool $copyPkValues=true): void {
     $pkNames = $this->getMapper()->getPkNames();
     $iter = new NodeValueIterator($this, false);
     foreach($iter as $valueName => $value) {
@@ -244,7 +237,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::mergeValues()
    */
-  public function mergeValues(PersistentObject $object) {
+  public function mergeValues(PersistentObject $object): void {
     $iter = new NodeValueIterator($object, false);
     foreach($iter as $valueName => $value) {
       if (!$this->hasValue($valueName) && strlen($value) > 0) {
@@ -256,7 +249,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::clearValues()
    */
-  public function clearValues() {
+  public function clearValues(): void {
     $pkNames = $this->getMapper()->getPkNames();
     $iter = new NodeValueIterator($this, false);
     for($iter->rewind(); $iter->valid(); $iter->next()) {
@@ -271,7 +264,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::reset()
    */
-  public function reset() {
+  public function reset(): void {
     $this->data = $this->originalData;
     $this->changedAttributes = [];
   }
@@ -279,12 +272,12 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * Recalculate the object id
    */
-  private function updateOID() {
+  private function updateOID(): void {
     $pkValues = [];
     // collect the values of the primary keys and compose the oid from them
     $pkNames = $this->getMapper()->getPkNames();
     foreach ($pkNames as $pkName) {
-      $pkValues[] = self::getValue($pkName);
+      $pkValues[] = $this->getValue($pkName);
     }
     $this->oid = new ObjectId($this->getType(), $pkValues);
   }
@@ -293,54 +286,54 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * @see PersistentObject::afterCreate()
    * @note The default implementation does nothing
    */
-  public function afterCreate() {}
+  public function afterCreate(): void {}
 
   /**
    * @see PersistentObject::beforeInsert()
    * @note The default implementation does nothing
    */
-  public function beforeInsert() {}
+  public function beforeInsert(): void {}
 
   /**
    * @see PersistentObject::afterInsert()
    * @note The default implementation does nothing
    */
-  public function afterInsert() {}
+  public function afterInsert(): void {}
 
   /**
    * @see PersistentObject::afterLoad()
    * @note The default implementation does nothing
    */
-  public function afterLoad() {}
+  public function afterLoad(): void {}
 
   /**
    * @see PersistentObject::beforeUpdate()
    * @note The default implementation does nothing
    */
-  public function beforeUpdate() {}
+  public function beforeUpdate(): void {}
 
   /**
    * @see PersistentObject::afterUpdate()
    * @note The default implementation does nothing
    */
-  public function afterUpdate() {}
+  public function afterUpdate(): void {}
 
   /**
    * @see PersistentObject::beforeDelete()
    * @note The default implementation does nothing
    */
-  public function beforeDelete() {}
+  public function beforeDelete(): void {}
 
   /**
    * @see PersistentObject::afterDelete()
    * @note The default implementation does nothing
    */
-  public function afterDelete() {}
+  public function afterDelete(): void {}
 
   /**
    * @see PersistentObject::getValue()
    */
-  public function getValue($name) {
+  public function getValue(string $name) {
     if (isset($this->data[$name])) {
       return $this->data[$name];
     }
@@ -350,18 +343,18 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::setValue()
    */
-  public function setValue($name, $value, $forceSet=false, $trackChange=true) {
+  public function setValue(string $name, $value, bool $forceSet=false, bool $trackChange=true): bool {
     if (!$forceSet) {
       $this->validateValue($name, $value);
     }
-    $oldValue = self::getValue($name);
+    $oldValue = $this->getValue($name);
     if ($forceSet || $oldValue !== $value) {
       $this->setValueInternal($name, $value);
       if (in_array($name, $this->getMapper()->getPKNames())) {
         $this->updateOID();
       }
       if ($trackChange) {
-        self::setState(self::STATE_DIRTY);
+        $this->setState(self::STATE_DIRTY);
         $this->changedAttributes[$name] = true;
         ObjectFactory::getInstance('eventManager')->dispatch(ValueChangeEvent::NAME,
             new ValueChangeEvent($this, $name, $oldValue, $value));
@@ -374,24 +367,24 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * Internal (fast) version to set a value without any validation, state change,
    * listener notification etc.
-   * @param $name The name of the value
-   * @param $value The value
+   * @param string $name The name of the value
+   * @param mixed $value The value
    */
-  protected function setValueInternal($name, $value) {
+  protected function setValueInternal(string $name, $value): void {
     $this->data[$name] = $value;
   }
 
   /**
    * @see PersistentObject::hasValue()
    */
-  public function hasValue($name) {
+  public function hasValue(string $name): bool {
     return array_key_exists($name, $this->data);
   }
 
   /**
    * @see PersistentObject::removeValue()
    */
-  public function removeValue($name) {
+  public function removeValue(string $name): void {
     if ($this->hasValue($name)) {
       unset($this->data[$name]);
     }
@@ -400,7 +393,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::validateValues()
    */
-  public function validateValues() {
+  public function validateValues(): void {
     $errorMessage = '';
     $iter = new NodeValueIterator($this, false);
     for($iter->rewind(); $iter->valid(); $iter->next()) {
@@ -420,7 +413,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value) {
+  public function validateValue(string $name, $value): void {
     $this->validateValueAgainstValidateType($name, $value);
   }
 
@@ -428,10 +421,10 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * Check a value's value against the validation type set on it. This method uses the
    * validateType property of the attribute definition.
    * Throws a ValidationException if the value is not valid.
-   * @param $name The name of the item to set.
-   * @param $value The value of the item.
+   * @param string $name The name of the item to set.
+   * @param mixed $value The value of the item.
    */
-  protected function validateValueAgainstValidateType($name, $value) {
+  protected function validateValueAgainstValidateType(string $name, $value): void {
     // don't validate referenced values
     $mapper = $this->getMapper();
     if ($mapper->hasAttribute($name) && $mapper->getAttribute($name) instanceof ReferenceDescription) {
@@ -459,14 +452,14 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::getChangedValues()
    */
-  public function getChangedValues() {
+  public function getChangedValues(): array {
     return array_keys($this->changedAttributes);
   }
 
   /**
    * @see PersistentObject::getOriginalValue()
    */
-  public function getOriginalValue($name) {
+  public function getOriginalValue(string $name) {
     if (isset($this->originalData[$name])) {
       return $this->originalData[$name];
     }
@@ -476,14 +469,14 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::getIndispensableObjects()
    */
-  public function getIndispensableObjects() {
+  public function getIndispensableObjects(): array {
     return [];
   }
 
   /**
    * @see PersistentObject::getProperty()
    */
-  public function getProperty($name) {
+  public function getProperty(string $name) {
     if (isset($this->properties[$name])) {
       return $this->properties[$name];
     }
@@ -500,7 +493,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::setProperty()
    */
-  public function setProperty($name, $value) {
+  public function setProperty(string $name, $value): void {
     $oldValue = $this->getProperty($name);
     $this->properties[$name] = $value;
     ObjectFactory::getInstance('eventManager')->dispatch(PropertyChangeEvent::NAME,
@@ -510,7 +503,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::getPropertyNames()
    */
-  public function getPropertyNames() {
+  public function getPropertyNames(): array {
     $result = array_keys($this->getMapper()->getProperties());
     return array_merge($result, array_keys($this->properties));
   }
@@ -518,7 +511,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::getValueProperty()
    */
-  public function getValueProperty($name, $property) {
+  public function getValueProperty(string $name, string $property) {
     if (!isset($this->valueProperties[$name]) || !isset($this->valueProperties[$name][$property])) {
       // get the default property value from the mapper
       $mapper = $this->getMapper();
@@ -540,7 +533,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::setValueProperty()
    */
-  public function setValueProperty($name, $property, $value) {
+  public function setValueProperty(string $name, string $property, $value): void {
     if (!isset($this->valueProperties[$name])) {
       $this->valueProperties[$name] = [];
     }
@@ -550,7 +543,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::getValuePropertyNames()
    */
-  public function getValuePropertyNames($name) {
+  public function getValuePropertyNames(string $name): array {
     $result = [];
     $mapper = $this->getMapper();
     if ($mapper->hasAttribute($name)) {
@@ -565,7 +558,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * @see PersistentObject::getValueNames()
    */
-  public function getValueNames($excludeTransient=false) {
+  public function getValueNames(bool $excludeTransient=false): array {
     if ($excludeTransient) {
       // get only value names from mapper
       $names = [];
@@ -584,20 +577,20 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * @see PersistentObject::getDisplayValue()
    * @note Subclasses will override this for special application requirements
    */
-  public function getDisplayValue() {
+  public function getDisplayValue(): string {
     return $this->getOID()->__toString();
   }
 
   /**
    * @see PersistentObject::dump()
    */
-  public function dump() {
+  public function dump(): string {
     $str = $this->getOID()->__toString()."\n";
     foreach ($this->getValueNames() as $valueName) {
-      $value = self::getValue($valueName);
+      $value = $this->getValue($valueName);
       $valueStr = null;
       if (is_array($value)) {
-        $valueStr = self::dumpArray($value)."\n";
+        $valueStr = $this->dumpArray($value)."\n";
       }
       else {
         if (is_object($value)) {
@@ -615,9 +608,9 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   /**
    * Get a string representation of an array of values.
    * @param $array The array to dump
-   * @return String
+   * @return string
    */
-  private static function dumpArray(array $array) {
+  private static function dumpArray(array $array): string {
     $str = "[";
     foreach ($array as $value) {
       if (is_object($value)) {
@@ -635,16 +628,16 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
    * Get a string representation of the PersistentObject.
    * @return String
    */
-  public function __toString() {
-    return self::getDisplayValue();
+  public function __toString(): string {
+    return $this->getDisplayValue();
   }
 
-  public function serialize() {
+  public function serialize(): string {
     $this->mapper = null;
     return serialize(get_object_vars($this));
   }
 
-  public function unserialize($serialized) {
+  public function unserialize($serialized): void {
     $values = unserialize($serialized);
     foreach ($values as $key => $value) {
       $this->$key = $value;

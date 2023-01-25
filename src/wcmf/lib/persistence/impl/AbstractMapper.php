@@ -12,9 +12,10 @@ namespace wcmf\lib\persistence\impl;
 
 use wcmf\lib\core\ErrorHandler;
 use wcmf\lib\core\EventManager;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\i18n\Message;
+use wcmf\lib\persistence\AttributeDescription;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\concurrency\ConcurrencyManager;
 use wcmf\lib\persistence\ObjectId;
@@ -27,6 +28,7 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceMapper;
 use wcmf\lib\persistence\PersistentObject;
 use wcmf\lib\persistence\ReferenceDescription;
+use wcmf\lib\persistence\RelationDescription;
 use wcmf\lib\security\AuthorizationException;
 use wcmf\lib\security\PermissionManager;
 
@@ -39,18 +41,17 @@ use wcmf\lib\security\PermissionManager;
  * @author ingo herwig <ingo@wemove.com>
  */
 abstract class AbstractMapper implements PersistenceMapper {
+  use LogTrait;
 
-  private $logStrategy = null;
+  private ?OutputStrategy $logStrategy = null;
 
-  private $attributes = [];
-  private $relations = [];
+  private array $attributes = [];
+  private array $relations = [];
 
-  private static $logger = null;
-
-  protected $persistenceFacade = null;
-  protected $permissionManager = null;
-  protected $concurrencyManager = null;
-  protected $eventManager = null;
+  protected PersistenceFacade $persistenceFacade;
+  protected PermissionManager $permissionManager;
+  protected ConcurrencyManager $concurrencyManager;
+  protected EventManager $eventManager;
 
   /**
    * Constructor
@@ -63,9 +64,6 @@ abstract class AbstractMapper implements PersistenceMapper {
           PermissionManager $permissionManager,
           ConcurrencyManager $concurrencyManager,
           EventManager $eventManager) {
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
     $this->persistenceFacade = $persistenceFacade;
     $this->permissionManager = $permissionManager;
     $this->concurrencyManager = $concurrencyManager;
@@ -73,31 +71,30 @@ abstract class AbstractMapper implements PersistenceMapper {
   }
 
   /**
-   * Set the OutputStrategy used for logging persistence actions.
-   * @param $logStrategy
+   * @see PersistenceMapper::setLogStrategy()
    */
-  public function setLogStrategy(OutputStrategy $logStrategy) {
+  public function setLogStrategy(OutputStrategy $logStrategy): void {
     $this->logStrategy = $logStrategy;
   }
 
   /**
    * @see PersistenceMapper::getTypeDisplayName()
    */
-  public function getTypeDisplayName(Message $message) {
+  public function getTypeDisplayName(Message $message): string {
     return $message->getText($this->getType());
   }
 
   /**
    * @see PersistenceMapper::getTypeDescription()
    */
-  public function getTypeDescription(Message $message) {
+  public function getTypeDescription(Message $message): string {
     return $message->getText("");
   }
 
   /**
    * @see PersistenceMapper::hasRelation()
    */
-  public function hasRelation($roleName) {
+  public function hasRelation(string $roleName): bool {
     $this->initRelations();
     return isset($this->relations['byrole'][$roleName]);
   }
@@ -105,7 +102,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::getRelation()
    */
-  public function getRelation($roleName) {
+  public function getRelation(string $roleName): ?RelationDescription {
     if ($this->hasRelation($roleName)) {
       return $this->relations['byrole'][$roleName];
     }
@@ -115,7 +112,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::getRelationsByType()
    */
-  public function getRelationsByType($type) {
+  public function getRelationsByType(string $type): array {
     $this->initRelations();
     if (isset($this->relations['bytype'][$type])) {
       return $this->relations['bytype'][$type];
@@ -126,7 +123,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::hasAttribute()
    */
-  public function hasAttribute($name) {
+  public function hasAttribute(string $name): bool {
     $this->initAttributes();
     return isset($this->attributes['byname'][$name]);
   }
@@ -134,7 +131,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::getAttribute()
    */
-  public function getAttribute($name) {
+  public function getAttribute(string $name): AttributeDescription {
     if ($this->hasAttribute($name)) {
       return $this->attributes['byname'][$name];
     }
@@ -144,7 +141,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::getReferences()
    */
-  public function getReferences() {
+  public function getReferences(): array {
     $this->initAttributes();
     return $this->attributes['refs'];
   }
@@ -152,31 +149,31 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::getAttributeDisplayName()
    */
-  public function getAttributeDisplayName($name, Message $message) {
+  public function getAttributeDisplayName(string $name, Message $message): string {
     return $message->getText($name);
   }
 
   /**
    * @see PersistenceMapper::getAttributeDescription()
    */
-  public function getAttributeDescription($name, Message $message) {
+  public function getAttributeDescription(string $name, Message $message): string {
     return $message->getText("");
   }
 
   /**
    * @see PersistenceMapper::getProperties()
    */
-  public function getProperties() {
+  public function getProperties(): array {
     return [];
   }
 
   /**
    * @see PersistenceMapper::load()
    */
-  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE) {
+  public function load(ObjectId $oid, ?int $buildDepth=BuildDepth::SINGLE): ?PersistentObject {
     if (!$this->checkAuthorization($oid, PersistenceAction::READ)) {
       $this->authorizationFailedError($oid, PersistenceAction::READ);
-      return;
+      return null;
     }
 
     if (!ObjectId::isValid($oid) || $oid->containsDummyIds()) {
@@ -194,7 +191,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::create()
    */
-  public function create($type, $buildDepth=BuildDepth::SINGLE) {
+  public function create(string $type, ?int $buildDepth=BuildDepth::SINGLE): PersistentObject {
     // Don't check rights here, because object creation may be needed
     // for internal purposes. That newly created objects may not be saved
     // to the storage unless they are valid and the user is authorized
@@ -210,7 +207,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::save()
    */
-  public function save(PersistentObject $object) {
+  public function save(PersistentObject $object): void {
     $isDirty = ($object->getState() == PersistentObject::STATE_DIRTY);
     $isNew = ($object->getState() == PersistentObject::STATE_NEW);
 
@@ -268,11 +265,11 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::delete()
    */
-  public function delete(PersistentObject $object) {
+  public function delete(PersistentObject $object): bool {
     $oid = $object->getOID();
     if (!$this->checkAuthorization($oid, PersistenceAction::DELETE)) {
       $this->authorizationFailedError($oid, PersistenceAction::DELETE);
-      return;
+      return false;
     }
 
     if (!ObjectId::isValid($oid)) {
@@ -301,7 +298,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::getOIDs()
    */
-  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null) {
+  public function getOIDs(string $type, ?array $criteria=null, ?array $orderby=null, ?PagingInfo $pagingInfo=null): array {
     $oids = $this->getOIDsImpl($type, $criteria, $orderby, $pagingInfo);
     $tx = $this->persistenceFacade->getTransaction();
 
@@ -322,9 +319,8 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::loadObjects()
    */
-  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null) {
-    $objects = $this->loadObjectsImpl($type, $buildDepth, $criteria, $orderby, $pagingInfo);
+  public function loadObjects($typeOrTypes, int $buildDepth=BuildDepth::SINGLE, array $criteria=null, array $orderby=null, PagingInfo $pagingInfo=null): array {
+    $objects = $this->loadObjectsImpl($typeOrTypes, $buildDepth, $criteria, $orderby, $pagingInfo);
     $tx = $this->persistenceFacade->getTransaction();
 
     // remove objects for which the user is not authorized
@@ -348,8 +344,8 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * @see PersistenceMapper::loadRelation()
    */
-  public function loadRelation(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null) {
+  public function loadRelation(array $objects, string $role, int $buildDepth=BuildDepth::SINGLE, ?array $criteria=null, ?array $orderby=null,
+    ?PagingInfo $pagingInfo=null): array {
     $relatedObjects = $this->loadRelationImpl($objects, $role, $buildDepth, $criteria, $orderby, $pagingInfo);
     $tx = $this->persistenceFacade->getTransaction();
 
@@ -378,7 +374,7 @@ abstract class AbstractMapper implements PersistenceMapper {
    * Log the state of the given object
    * @param $obj PersistentObject instance
    */
-  protected function logAction(PersistentObject $obj) {
+  protected function logAction(PersistentObject $obj): void {
     if ($this->logStrategy) {
       $this->logStrategy->writeObject($obj);
     }
@@ -388,9 +384,9 @@ abstract class AbstractMapper implements PersistenceMapper {
    * Check authorization on a resource (type/instance/instance property) and a given action.
    * @param $resource Resource to authorize
    * @param $action Action to authorize
-   * @return Boolean depending on success of authorization
+   * @return bool depending on success of authorization
    */
-  protected function checkAuthorization($resource, $action) {
+  protected function checkAuthorization(string $resource, string $action): bool {
     return $this->permissionManager->authorize($resource, '', $action);
   }
 
@@ -400,12 +396,12 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @param $action
    * @throws AuthorizationException
    */
-  protected function authorizationFailedError($resource, $action) {
+  protected function authorizationFailedError(string $resource, string $action): void {
     // when reading only log the error to avoid errors on the display
     $msg = ObjectFactory::getInstance('message')->
             getText("Authorization failed for action '%0%' on '%1%'.", [$action, $resource]);
     if ($action == PersistenceAction::READ) {
-      self::$logger->error($msg."\n".ErrorHandler::getStackTrace());
+      self::logger()->error($msg."\n".ErrorHandler::getStackTrace());
     }
     else {
       throw new AuthorizationException($msg);
@@ -415,7 +411,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * Initialize relations.
    */
-  private function initRelations() {
+  private function initRelations(): void {
     if ($this->relations == null) {
       $this->relations = [];
       $this->relations['byrole'] = [];
@@ -437,7 +433,7 @@ abstract class AbstractMapper implements PersistenceMapper {
   /**
    * Initialize attributes.
    */
-  private function initAttributes() {
+  private function initAttributes(): void {
     if ($this->attributes == null) {
       $this->attributes = [];
       $this->attributes['byname'] = [];
@@ -457,41 +453,41 @@ abstract class AbstractMapper implements PersistenceMapper {
    * @see PersistenceFacade::load()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function loadImpl(ObjectId $oid, $buildDepth=BuildDepth::SINGLE);
+  abstract protected function loadImpl(ObjectId $oid, int $buildDepth=BuildDepth::SINGLE): ?PersistentObject;
 
   /**
    * @see PersistenceFacade::create()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function createImpl($type, $buildDepth=BuildDepth::SINGLE);
+  abstract protected function createImpl(string $type, int $buildDepth=BuildDepth::SINGLE): PersistentObject;
 
   /**
    * @see PersistenceMapper::save()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function saveImpl(PersistentObject $object);
+  abstract protected function saveImpl(PersistentObject $object): void;
 
   /**
    * @see PersistenceMapper::delete()
    * @note Precondition: Object rights have been checked already
    */
-  abstract protected function deleteImpl(PersistentObject $object);
+  abstract protected function deleteImpl(PersistentObject $object): bool;
 
   /**
    * @see PersistenceMapper::getOIDs()
    */
-  abstract protected function getOIDsImpl($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  abstract protected function getOIDsImpl(string $type, ?array $criteria=null, ?array $orderby=null, ?PagingInfo $pagingInfo=null): array;
 
   /**
    * @see PersistenceMapper::loadObjects()
    */
-  abstract protected function loadObjectsImpl($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null);
+  abstract protected function loadObjectsImpl(string $type, int $buildDepth=BuildDepth::SINGLE, ?array $criteria=null, ?array $orderby=null,
+    ?PagingInfo $pagingInfo=null): array;
 
   /**
    * @see PersistenceMapper::loadRelation()
    */
-  abstract protected function loadRelationImpl(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null,
-    $orderby=null, PagingInfo $pagingInfo=null);
+  abstract protected function loadRelationImpl(array $objects, string $role, int $buildDepth=BuildDepth::SINGLE, ?array $criteria=null,
+  ?array $orderby=null, ?PagingInfo $pagingInfo=null): array;
 }
 ?>

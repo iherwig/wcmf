@@ -21,41 +21,41 @@ use wcmf\lib\config\ActionKeyProvider;
  */
 class ActionKey {
 
-  private static $actionDelimiter = '?';
+  private static string $actionDelimiter = '?';
 
   /**
    * Create an action key from the given values
-   * @param $resource The resource
-   * @param $context The context
-   * @param $action The action
-   * @return String
+   * @param string $resource The resource
+   * @param string $context The context
+   * @param string $action The action
+   * @return string
    */
-  public static function createKey($resource, $context, $action) {
+  public static function createKey(?string $resource, ?string $context, ?string $action): string {
     return $resource.self::$actionDelimiter.$context.self::$actionDelimiter.$action;
   }
 
   /**
    * Parse an action
-   * @param $actionKey The action key
-   * @return Associative array with keys 'resouce', 'context', 'action'
+   * @param string $actionKey The action key
+   * @return array{'resource': string, 'context': string, 'action': string}
    */
-  public static function parseKey($actionKey) {
+  public static function parseKey(string $actionKey): array {
     list($resource, $context, $action) = explode(self::$actionDelimiter, $actionKey);
     return ['resource' => $resource, 'context' => $context, 'action' => $action];
   }
 
   /**
    * Get an action key that matches a given combination of resource, context, action best.
-   * @param $actionKeyProvider ActionKeyProvider instance used to search action keys
-   * @param $resource The given resource
-   * @param $context The given context
-   * @param $action The given action
-   * @return The best matching key or an empty string if nothing matches.
+   * @param ActionKeyProvider $actionKeyProvider ActionKeyProvider instance used to search action keys
+   * @param string $resource The given resource
+   * @param string $context The given context
+   * @param string $action The given action
+   * @return string The best matching key or an empty string if nothing matches.
    */
-  public static function getBestMatch(ActionKeyProvider $actionKeyProvider, $resource, $context, $action) {
-    $hasResource = strlen($resource) > 0;
-    $hasContext = strlen($context) > 0;
-    $hasAction = strlen($action) > 0;
+  public static function getBestMatch(ActionKeyProvider $actionKeyProvider, ?string $resource, ?string $context, ?string $action): string {
+    $hasResource = $resource != null && strlen($resource) > 0;
+    $hasContext = $context != null && strlen($context) > 0;
+    $hasAction = $action != null && strlen($action) > 0;
 
     // check resource?context?action
     if ($hasResource && $hasContext && $hasAction) {

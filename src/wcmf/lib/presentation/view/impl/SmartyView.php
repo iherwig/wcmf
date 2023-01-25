@@ -37,7 +37,6 @@ class SmartyView implements View {
 
   private static $sharedView = null;
   private static $actionKeyProvider = null;
-  private static $logger = null;
 
   protected $view = null;
 
@@ -45,9 +44,6 @@ class SmartyView implements View {
    * Constructor
    */
   public function __construct() {
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
     $this->view = new \Smarty();
     $this->view->error_reporting = E_ALL;
 

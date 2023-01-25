@@ -13,8 +13,8 @@ namespace wcmf\lib\persistence;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
+use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
-use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
 
@@ -26,125 +26,134 @@ use wcmf\lib\persistence\PersistentObject;
 interface PersistenceMapper {
 
   /**
-   * Get the entity type that this mapper handles.
-   * @return String
+   * Set the OutputStrategy used for logging persistence actions.
+   * @param OutputStrategy $logStrategy
    */
-  public function getType();
+  public function setLogStrategy(OutputStrategy $logStrategy): void;
+
+  /**
+   * Get the entity type that this mapper handles.
+   * @return string
+   */
+  public function getType(): string;
 
   /**
    * Get the display name of the type.
-   * @param $message Message instance used for translation
+   * @param Message $message Message instance used for translation
+   * @return string
    */
-  public function getTypeDisplayName(Message $message);
+  public function getTypeDisplayName(Message $message): string;
 
   /**
    * Get the description of the type.
-   * @param $message Message instance used for translation
+   * @param Message $message Message instance used for translation
+   * @return string
    */
-  public function getTypeDescription(Message $message);
+  public function getTypeDescription(Message $message): string;
 
   /**
    * Get the names of the primary key values.
-   * @return Array with the value names.
+   * @return array<string>
    */
-  public function getPkNames();
+  public function getPkNames(): array;
 
   /**
    * Get the relations for this type
-   * @param $hierarchyType The hierarchy type that the other type has in relation to this type
+   * @param string $hierarchyType The hierarchy type that the other type has in relation to this type
    *                      'parent', 'child', 'undefined' or 'all' to get all relations (default: 'all')
-   * @return Array of RelationDescription instances
+   * @return array<RelationDescription>
    */
-  public function getRelations($hierarchyType='all');
+  public function getRelations(string $hierarchyType='all'): array;
 
   /**
    * Check if a named relation is defined.
-   * @param $roleName The role name of the relation
-   * @return Boolean
+   * @param string $roleName The role name of the relation
+   * @return bool
    */
-  public function hasRelation($roleName);
+  public function hasRelation(string $roleName): bool;
 
   /**
    * Get the definition for a relation
-   * @param $roleName The role name of the relation
+   * @param string $roleName The role name of the relation
    * @return RelationDescription or null if the relation does not exist
    */
-  public function getRelation($roleName);
+  public function getRelation(string $roleName): ?RelationDescription;
 
   /**
    * Get the definitions for relations to a given type
-   * @param $type The type name
-   * @return Array of RelationDescription instances
+   * @param string $type The type name
+   * @return array<RelationDescription>
    */
-  public function getRelationsByType($type);
+  public function getRelationsByType(string $type): array;
 
   /**
    * PersistentObject values may be tagged with application specific tags.
    * This method gets the attributes belonging to the given tags.
-   * @param $tags An array of tags that the attribute should match. Empty array means all attributes independent of the given matchMode (default: empty array)
-   * @param $matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags (default: 'all')
-   * @return Array of AttributeDescription instances
+   * @param array<string> $tags An array of tags that the attribute should match. Empty array means all attributes independent of the given matchMode (default: empty array)
+   * @param string $matchMode One of 'all', 'none', 'any', defines how the attribute's tags should match the given tags (default: 'all')
+   * @return array<AttributeDescription>
    */
-  public function getAttributes(array $tags=[], $matchMode='all');
+  public function getAttributes(array $tags=[], string $matchMode='all'): array;
 
   /**
    * Check if a named attribute is defined.
-   * @param $name The attribute name
-   * @return Boolean
+   * @param string $name The attribute name
+   * @return bool
    */
-  public function hasAttribute($name);
+  public function hasAttribute(string $name): bool;
 
   /**
    * Get the definition for an attribute.
-   * @param $name The attribute name
+   * @param string $name The attribute name
    * @return AttributeDescription or null if the attribute does not exist
    */
-  public function getAttribute($name);
+  public function getAttribute(string $name): AttributeDescription;
 
   /**
    * Get the display name of the type.
-   * @param $name The attribute name
-   * @param $message Message instance used for translation
+   * @param string $name The attribute name
+   * @param Message $message Message instance used for translation
+   * @return string
    */
-  public function getAttributeDisplayName($name, Message $message);
+  public function getAttributeDisplayName(string $name, Message $message): string;
 
   /**
    * Get the description of the attribute.
-   * @param $name The attribute name
-   * @param $message Message instance used for translation
+   * @param string $name The attribute name
+   * @param Message $message Message instance used for translation
+   * @return string
    */
-  public function getAttributeDescription($name, Message $message);
+  public function getAttributeDescription(string $name, Message $message): string;
 
   /**
    * Get the references to other entities
-   * @return Array of ReferenceDescription instances
+   * @return array<ReferenceDescription>
    */
-  public function getReferences();
+  public function getReferences(): array;
 
   /**
    * Get meta information on the mapped class.
-   * @return Associative array of key value pairs
+   * @return array<string, mixed> of key value pairs
    */
-  public function getProperties();
+  public function getProperties(): array;
 
   /**
    * Check if this type may be explicitly sorted by the user using a persistent
    * attribute which stores the order. The roleName parameter allows to ask
    * for the order with respect to a specific role.
-   * @param $roleName The role name of the relation (optional, default: _null_)
-   * @return Boolean
+   * @param string $roleName The role name of the relation (optional, default: _null_)
+   * @return bool
    */
-  public function isSortable($roleName=null);
+  public function isSortable(string $roleName=null): bool;
 
   /**
    * Get the persistent attribute that is used to store the order of the type
    * as explicitly defined by the user. The roleName parameter allows to ask
    * for the order with respect to a specific role.
-   * @param $roleName The role name of the relation (optional, default: _null_)
-   * @return Assciative array with the keys sortType, sortFieldName, sortDirection
-   * (ASC or DESC) and isSortkey (Boolean) or null, if the type is not sortable
+   * @param string $roleName The role name of the relation (optional, default: _null_)
+   * @return array{'sortType': string, 'sortFieldName': string, 'sortDirection': string, 'isSortKey': bool|null}
    */
-  public function getSortkey($roleName=null);
+  public function getSortkey(string $roleName=null): array;
 
   /**
    * Get the names of the type and attributes to order by default and the sort directions
@@ -153,115 +162,125 @@ interface PersistenceMapper {
    * for the order with respect to a specific role.
    * In a many to many relation the attributes may not be contained in the mapped type,
    * so sortType may be different from the mapper type.
-   * @param $roleName The role name of the relation (optional, default: _null_)
-   * @return An array of assciative arrays with the keys sortType, sortFieldName, sortDirection
-   * (ASC or DESC) and isSortkey (Boolean)
+   * @param string $roleName The role name of the relation (optional, default: _null_)
+   * @return array{'sortType': string, 'sortFieldName': string, 'sortDirection': string, 'isSortKey': bool|null}
    */
-  public function getDefaultOrder($roleName=null);
+  public function getDefaultOrder(string $roleName=null): array;
 
   /**
    * Load a PersistentObject instance from the storage.
    * @note PersistentMapper implementations must call the PersistentObject::afterLoad()
    * lifecycle callcack on each loaded object and attach it to the current transaction using
    * the Transaction::attach() method.
-   * @param $oid The object id of the object to construct
-   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param ObjectId $oid The object id of the object to construct
+   * @param int $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)
-   * @return PersistentObject, null if oid does not exist or a given condition prevents loading.
+   * @return PersistentObject or null if oid does not exist or a given condition prevents loading.
    */
-  public function load(ObjectId $oid, $buildDepth=BuildDepth::SINGLE);
+  public function load(ObjectId $oid, int $buildDepth=BuildDepth::SINGLE): ?PersistentObject;
 
   /**
    * Construct a PersistentObject instance of a given type.
    * @note PersistentMapper implementations must call the PersistentObject::afterCreate()
    * lifecycle callcack on each created object.
-   * @param $type The type of object to build
-   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param string $type The type of object to build
+   * @param int $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::INFINITE, BuildDepth::PROXIES_ONLY) (default: _BuildDepth::SINGLE_)
    * @return PersistentObject
    */
-  public function create($type, $buildDepth=BuildDepth::SINGLE);
+  public function create(string $type, int $buildDepth=BuildDepth::SINGLE): PersistentObject;
 
   /**
    * Save a PersistentObject instance.
    * @note PersistentMapper implementations must call the PersistentObject::beforeUpdate()/
    * PersistentObject::afterUpdate() or PersistentObject::beforeInsert()/
-   * PersistentObject::afterInsert() lifecycle callcacks on each object depending
+   * PersistentObject::afterInsert() lifecycle callbacks on each object depending
    * on it's state.
-   * @param $object PersistentObject
+   * @param PersistentObject $object
    */
-  public function save(PersistentObject $object);
+  public function save(PersistentObject $object): void;
 
   /**
    * Delete a PersistentObject instance.
    * @note PersistentMapper implementations must call the PersistentObject::beforeDelete()/
-   * PersistentObject::afterDelete() lifecycle callcacks on each object.
-   * @param $object PersistentObject
+   * PersistentObject::afterDelete() lifecycle callbacks on each object.
+   * @param PersistentObject $object
+   * @return bool
    */
-  public function delete(PersistentObject $object);
+  public function delete(PersistentObject $object): bool;
 
   /**
-   * @see PersistenceFacade::getOIDs()
+   * Get the object ids of objects matching a given criteria. If a PagingInfo instance is passed it will be used and updated.
+   * @param string $type The type of the object (either fully qualified or simple, if not ambiguous)
+   * @param array<Criteria> $criteria An array of Criteria instances that define conditions on the type's attributes (optional, default: _null_)
+   * @param array<string> $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param PagingInfo $pagingInfo A reference PagingInfo instance. (default: _null_)
+   * @return array<ObjectId> containing the ObjectId instances
    */
-  public function getOIDs($type, $criteria=null, $orderby=null, PagingInfo $pagingInfo=null);
+  public function getOIDs(string $type, array $criteria=null, array $orderby=null, PagingInfo $pagingInfo=null): array;
 
   /**
-   * @see PersistenceFacade::loadObjects()
+   * Load the objects matching a given condition. If a PagingInfo instance is passed it will be used and updated.
+   * @param string|array<string> $typeOrTypes The type or types array of objects (either fully qualified or simple, if not ambiguous)
+   * @param int $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
+   * @param array<Criteria> $criteria An array of Criteria instances that define conditions on the object's attributes (optional, default: _null_)
+   * @param array<string> $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param PagingInfo $pagingInfo A reference PagingInfo instance (optional, default: _null_)
+   * @return array<PersistentObject>
    */
-  public function loadObjects($type, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null);
+  public function loadObjects($typeOrTypes, int $buildDepth=BuildDepth::SINGLE, array $criteria=null, array $orderby=null, PagingInfo $pagingInfo=null): array;
 
   /**
    * Load the objects for the specified role. The implementation must check the navigability of
    * the relation and return null, if the requested direction is not navigable. The result
    * depends on the multiplicity of the relation (singlevalued or multivalued).
-   * @param $objects Array of PersistentObject or PersstentObjectProxy instances for which the related objects are loaded
-   * @param $role The role of the objects in relation to the given objects
-   * @param $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
+   * @param array<PersistentObject>|array<PersistentObjectProxy> $objects Array of PersistentObject or PersstentObjectProxy instances for which the related objects are loaded
+   * @param string $role The role of the objects in relation to the given objects
+   * @param int $buildDepth One of the BUILDDEPTH constants or a number describing the number of generations to build
    *        (except BuildDepth::REQUIRED, BuildDepth::PROXIES_ONLY) (default: BuildDepth::SINGLE)
-   * @param $criteria An array of Criteria instances that define conditions on the object's attributes (optional, default: _null_)
-   * @param $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
-   * @param $pagingInfo A reference PagingInfo instance (optional, default: _null_)
-   * @return Associative array with the object ids of the origin objects as keys and arrays of related
+   * @param array<Criteria> $criteria An array of Criteria instances that define conditions on the object's attributes (optional, default: _null_)
+   * @param array<string> $orderby An array holding names of attributes to order by, maybe appended with 'ASC', 'DESC' (optional, default: _null_)
+   * @param PagingInfo $pagingInfo A reference PagingInfo instance (optional, default: _null_)
+   * @return array<string, array<PersistentObject>> of object ids of the origin objects as keys and arrays of related
    * PersistentObject instances as values or null, if not navigable
    */
-  public function loadRelation(array $objects, $role, $buildDepth=BuildDepth::SINGLE, $criteria=null, $orderby=null,
-    PagingInfo $pagingInfo=null);
+  public function loadRelation(array $objects, string $role, int $buildDepth=BuildDepth::SINGLE, array $criteria=null, array $orderby=null, PagingInfo $pagingInfo=null): array;
 
   /**
    * Execute a PersistenceOperation. PersistenceOperation.type must be the type that
    * is mapped by this mapper.
-   * @param $operation The operation
+   * @param PersistenceOperation $operation The operation
    * @return int The number of affected rows.
    */
-  public function executeOperation(PersistenceOperation $operation);
+  public function executeOperation(PersistenceOperation $operation): int;
 
   /**
    * Start a transaction on the transactional resource (e.g. database) of
    * this mapper. Nested transactions are not supported, so the implementation should
    * ignore consecutive calls, if a transaction is already started.
    */
-  public function beginTransaction();
+  public function beginTransaction(): void;
 
   /**
    * Commit the transaction on the transactional resource (e.g. database) of
    * this mapper. The implementation should ignore calls, if no transaction
    * is started yet.
    */
-  public function commitTransaction();
+  public function commitTransaction(): void;
 
   /**
    * Rollback the transaction on the transactional resource (e.g. database) of
    * this mapper. The implementation should ignore calls, if no transaction
    * is started yet.
    */
-  public function rollbackTransaction();
+  public function rollbackTransaction(): void;
 
   /**
    * Get a list of all insert/update/delete statements that where executed in the last transaction.
    * @note Different mapper implementations may return different representations
-   * @return Array of statements
+   * @return array of statements
    */
-  public function getStatements();
+  public function getStatements(): array;
 }
 ?>

@@ -94,8 +94,6 @@ class UserController extends Controller {
   public function changePassword() {
     $this->requireTransaction();
     $session = $this->getSession();
-    $permissionManager = $this->getPermissionManager();
-    $request = $this->getRequest();
     $response = $this->getResponse();
 
     // load model
@@ -103,11 +101,19 @@ class UserController extends Controller {
     if ($authUser) {
       // add permissions for this operation
       $oidStr = $authUser->getOID()->__toString();
-      $this->tempPermissions[] = $permissionManager->addTempPermission($oidStr, '', PersistenceAction::READ);
-      $this->tempPermissions[] = $permissionManager->addTempPermission($oidStr.'.password', '', PersistenceAction::UPDATE);
-
-      $this->changePasswordImpl($authUser, $request->getValue('oldpassword'),
-          $request->getValue('newpassword1'), $request->getValue('newpassword2'));
+      $requiredPermissions = [
+        [$oidStr, '', PersistenceAction::READ],
+        [$oidStr.'.password', '', PersistenceAction::UPDATE],
+      ];
+      $this->getPermissionManager()->withTempPermissions(function () use ($authUser) {
+        $request = $this->getRequest();
+        $this->changePasswordImpl(
+          $authUser,
+          $request->getValue('oldpassword'),
+          $request->getValue('newpassword1'),
+          $request->getValue('newpassword2')
+        );
+      }, $requiredPermissions);
     }
     // success
     $response->setAction('ok');
@@ -210,20 +216,6 @@ class UserController extends Controller {
     }
     // set password
     $user->setPassword($newPassword);
-  }
-
-  /**
-   * Remove temporary permissions after commit
-   * @param $event
-   */
-  public function afterCommit(TransactionEvent $event) {
-    if ($event->getPhase() == TransactionEvent::AFTER_COMMIT) {
-      // remove temporary permissions
-      $permissionManager = $this->getPermissionManager();
-      foreach ($this->tempPermissions as $permission) {
-        $permissionManager->removeTempPermission($permission);
-      }
-    }
   }
 }
 ?>

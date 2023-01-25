@@ -10,7 +10,7 @@
  */
 namespace wcmf\lib\presentation\link;
 
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\model\NodeValueIterator;
 use wcmf\lib\presentation\link\InternalLink;
@@ -27,6 +27,7 @@ use wcmf\lib\util\URIUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 class LinkProcessor {
+  use LogTrait;
 
  /**
    * Check and convert links in the given node.
@@ -42,7 +43,6 @@ class LinkProcessor {
       return;
     }
     $invalidURLs = [];
-    $logger = LogManager::getLogger(__CLASS__);
 
     // iterate over all node values
     $iter = new NodeValueIterator($node, $recursive);
@@ -89,7 +89,7 @@ class LinkProcessor {
         }
         else {
           // invalid url
-          $logger->error("Invalid URL found: ".$url);
+          self::logger()->error("Invalid URL found: ".$url);
           $oidStr = $currentNode->getOID()->__toString();
           if (!isset($invalidURLs[$oidStr])) {
             $invalidURLs[] = [];
@@ -138,11 +138,10 @@ class LinkProcessor {
     if (InternalLink::isLink($url)) {
       $oid = InternalLink::getReferencedOID($url);
       $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $logger = LogManager::getLogger(__CLASS__);
       if ($oid != null) {
         $object = $persistenceFacade->load($oid);
         if (!$object) {
-          $logger->error("Linked object ".$oid." does not exist");
+          self::logger()->error("Linked object ".$oid." does not exist");
           return false;
         }
         else if (!$strategy->isValidTarget($object)) {
@@ -150,7 +149,7 @@ class LinkProcessor {
         }
       }
       else {
-        $logger->error("Type of linked object ".$oid." is unknown");
+        self::logger()->error("Type of linked object ".$oid." is unknown");
         return false;
       }
     }

@@ -41,7 +41,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   /**
    * @see Response::setRequest()
    */
-  public function setRequest(Request $request) {
+  public function setRequest(Request $request): void {
     $this->request = $request;
     if ($request->getResponse() !== $this) {
       $request->setResponse($this);
@@ -51,42 +51,42 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   /**
    * @see Response::getRequest()
    */
-  public function getRequest() {
+  public function getRequest(): Request {
     return $this->request;
   }
 
   /**
    * @see Response::setCacheId()
    */
-  public function setCacheId($cacheId) {
+  public function setCacheId($cacheId): void {
     $this->cacheId = $cacheId;
   }
 
   /**
    * @see Response::getCacheId()
    */
-  public function getCacheId() {
+  public function getCacheId(): ?string {
     return $this->cacheId;
   }
 
   /**
    * @see Response::setCacheLifetime()
    */
-  public function setCacheLifetime($seconds) {
+  public function setCacheLifetime($seconds): void {
     $this->cacheLifetime = $seconds !== null ? intval($seconds) : null;
   }
 
   /**
    * @see Response::getCacheLifetime()
    */
-  public function getCacheLifetime() {
+  public function getCacheLifetime(): int {
     return $this->cacheLifetime;
   }
 
   /**
    * @see Response::isCached()
    */
-  public function isCached() {
+  public function isCached(): bool {
     $format = $this->formatter->getFormat($this->getFormat());
     return $this->getCacheId() != null && $format->isCached($this);
   }
@@ -94,7 +94,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   /**
    * @see Response::getCacheDate()
    */
-  public function getCacheDate() {
+  public function getCacheDate(): ?\DateTime {
     $format = $this->formatter->getFormat($this->getFormat());
     return $this->isCached() ? $format->getCacheDate($this) : null;
   }
@@ -102,21 +102,21 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   /**
    * @see Response::setStatus()
    */
-  public function setStatus($status) {
+  public function setStatus($status): void {
     $this->status = $status;
   }
 
   /**
    * @see Response::getStatus()
    */
-  public function getStatus() {
+  public function getStatus(): int {
     return $this->status;
   }
 
   /**
    * @see Response::setFile()
    */
-  public function setFile($filename, $isDownload, $content='', $type='') {
+  public function setFile($filename, $isDownload, $content='', $type=''): void {
     $document = (strlen($content) > 0) ?
       new MemoryDocument($content, $type, $isDownload, $filename) :
       new FileDocument($filename, $isDownload);
@@ -126,7 +126,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   /**
    * @see Response::getFile()
    */
-  public function getFile() {
+  public function getFile(): array|null {
     if ($this->document) {
       return [
           'isDownload' => $this->document->isDownload(),
@@ -141,7 +141,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   /**
    * @see Response::setDocument()
    */
-  public function setDocument(ResponseDocument $document) {
+  public function setDocument(ResponseDocument $document): void {
     $this->document = $document;
     $this->setFormat('download');
   }
@@ -149,7 +149,7 @@ class DefaultResponse extends AbstractControllerMessage implements Response {
   /**
    * @see Response::getDocument()
    */
-  public function getDocument() {
+  public function getDocument(): ResponseDocument {
     return $this->document;
   }
 }

@@ -25,20 +25,20 @@ interface EventManager {
    * @param $eventName The event name
    * @param $callback A php callback
    */
-  public function addListener($eventName, $callback);
+  public function addListener(string $eventName, callable $callback);
 
   /**
    * Remove a listener for a given event
    * @param $eventName The event name
    * @param $callback A php callback
    */
-  public function removeListener($eventName, $callback);
+  public function removeListener(string $eventName, callable $callback);
 
   /**
    * Notify listeners about the given event.
    * @param $eventName The event name
    * @param $event An Event instance
    */
-  public function dispatch($eventName, Event $event);
+  public function dispatch(string $eventName, Event $event);
 }
 ?>

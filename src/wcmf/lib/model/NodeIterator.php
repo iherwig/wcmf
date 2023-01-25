@@ -11,6 +11,7 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\model\Node;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
  * NodeIterator is used to iterate over a tree/list built of Nodes
@@ -35,20 +36,20 @@ use wcmf\lib\model\Node;
  */
 class NodeIterator implements \Iterator {
 
-  protected $end;              // indicates if the iteration is ended
-  protected $nodeList;         // the list of seen nodes
-  protected $processedOidList; // the list of processed object ids
-  protected $currentNode;      // the node the iterator points to
-  protected $startNode;        // the start node
-  protected $aggregationKinds; // array of aggregation kind values to follow (empty: all)
+  protected bool $end;              // indicates if the iteration is ended
+  protected array $nodeList;         // the list of seen nodes
+  protected array $processedOidList; // the list of processed object ids
+  protected PersistentObject $currentNode;      // the node the iterator points to
+  protected PersistentObject $startNode;        // the start node
+  protected array $aggregationKinds; // array of aggregation kind values to follow (empty: all)
 
   /**
    * Constructor.
-   * @param $node The node to start from.
-   * @param $aggregationKinds Array of aggregation kind values of relations to follow
+   * @param PersistentObject $node The node to start from.
+   * @param array<string> $aggregationKinds Array of aggregation kind values of relations to follow
    *   possible values: 'none', 'shared', 'composite'. Empty array means all (default: empty)
    */
-  public function __construct($node, $aggregationKinds=[]) {
+  public function __construct(PersistentObject $node, array $aggregationKinds=[]) {
     $this->end = false;
     $this->nodeList = [];
     $this->processedOidList = [];
@@ -59,24 +60,24 @@ class NodeIterator implements \Iterator {
 
   /**
    * Return the current element
-   * @return Node instance
+   * @return PersistentObject instance
    */
-  public function current() {
+  public function current(): PersistentObject {
     return $this->currentNode;
   }
 
   /**
    * Return the key of the current element
-   * @return String, the serialized object id
+   * @return string The serialized object id
    */
-  public function key() {
+  public function key(): string {
     return $this->currentNode->getOID()->__toString();
   }
 
   /**
    * Move forward to next element
    */
-  public function next() {
+  public function next(): void {
     // the current node was processed
     $this->processedOidList[] = $this->currentNode->getOID()->__toString();
 
@@ -117,13 +118,12 @@ class NodeIterator implements \Iterator {
     else {
       $this->end = true;
     }
-    return $this;
   }
 
   /**
    * Rewind the Iterator to the first element
    */
-  public function rewind() {
+  public function rewind(): void {
     $this->end = false;
     $this->nodeList = [];
     $this->processedOidList = [];
@@ -132,16 +132,17 @@ class NodeIterator implements \Iterator {
 
   /**
    * Checks if current position is valid
+   * @return bool
    */
-  public function valid() {
+  public function valid(): bool {
     return !$this->end;
   }
 
   /**
    * Add nodes to the processing queue.
-   * @param $nodeList An array of nodes.
+   * @param array<PersistentObject> $nodeList An array of nodes.
    */
-  protected function addToQueue($nodeList) {
+  protected function addToQueue(array $nodeList): void {
     for ($i=sizeof($nodeList)-1; $i>=0; $i--) {
       if ($nodeList[$i] instanceof Node) {
         $this->nodeList[] = $nodeList[$i];

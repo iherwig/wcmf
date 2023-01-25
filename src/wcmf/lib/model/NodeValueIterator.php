@@ -12,6 +12,7 @@ namespace wcmf\lib\model;
 
 use wcmf\lib\model\Node;
 use wcmf\lib\model\NodeIterator;
+use wcmf\lib\persistence\PersistentObject;
 
 /**
  * NodeValueIterator is used to iterate over all persistent values of a Node
@@ -42,18 +43,18 @@ use wcmf\lib\model\NodeIterator;
  */
 class NodeValueIterator implements \Iterator {
 
-  protected $end;               // indicates if the iteration is ended
-  protected $recursive;         // indicates if the iterator should also process child nodes
-  protected $nodeIterator;      // the NodeIterator used internally
-  protected $currentAttributes; // the list of attributes of the current node
-  protected $currentAttribute;  // the attribute the iterator points to
+  protected bool $end;                  // indicates if the iteration is ended
+  protected bool $recursive;            // indicates if the iterator should also process child nodes
+  protected NodeIterator $nodeIterator; // the NodeIterator used internally
+  protected array $currentAttributes;   // the list of attributes of the current node
+  protected string $currentAttribute;   // the attribute the iterator points to
 
   /**
    * Constructor.
-   * @param $node The node to start from.
-   * @param $recursive Boolean whether the iterator should also process child nodes
+   * @param PersistentObject $node The node to start from.
+   * @param bool $recursive Boolean whether the iterator should also process child nodes
    */
-  public function __construct($node, $recursive) {
+  public function __construct(PersistentObject $node, bool $recursive) {
     $this->recursive = $recursive;
     $this->nodeIterator = new NodeIterator($node);
     $this->currentAttributes = $node->getValueNames(false);
@@ -63,7 +64,7 @@ class NodeValueIterator implements \Iterator {
 
   /**
    * Return the current element
-   * @return Value of the current attribute
+   * @return mixed Value of the current attribute
    */
   public function current() {
     $node = $this->nodeIterator->current();
@@ -72,16 +73,16 @@ class NodeValueIterator implements \Iterator {
 
   /**
    * Return the key of the current element
-   * @return String, the name of the current attribute
+   * @return string Name of the current attribute
    */
-  public function key() {
+  public function key(): string {
     return $this->currentAttribute;
   }
 
   /**
    * Move forward to next element
    */
-  public function next() {
+  public function next(): void {
     $next = next($this->currentAttributes);
     if ($next !== false) {
       $this->currentAttribute = $next;
@@ -102,13 +103,12 @@ class NodeValueIterator implements \Iterator {
         $this->end = true;
       }
     }
-    return $this;
   }
 
   /**
    * Rewind the Iterator to the first element
    */
-  public function rewind() {
+  public function rewind(): void {
     $this->nodeIterator->rewind();
     $this->currentAttributes = $this->nodeIterator->current()->getValueNames(false);
     $this->currentAttribute = current($this->currentAttributes);
@@ -117,16 +117,17 @@ class NodeValueIterator implements \Iterator {
 
   /**
    * Checks if current position is valid
+   * @return bool
    */
-  public function valid() {
+  public function valid(): bool {
     return !$this->end;
   }
 
   /**
    * Get the current node
-   * @return Node instance
+   * @return PersistentObject instance
    */
-  public function currentNode() {
+  public function currentNode(): PersistentObject {
     return $this->nodeIterator->current();
   }
 }

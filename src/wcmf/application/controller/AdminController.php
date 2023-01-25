@@ -38,7 +38,7 @@ class AdminController extends Controller {
   /**
    * @see Controller::doExecute()
    */
-  protected function doExecute($method=null) {
+  protected function doExecute(string $method=null): void {
     $request = $this->getRequest();
     $response = $this->getResponse();
 

@@ -11,6 +11,7 @@
 namespace wcmf\lib\presentation\format\impl;
 
 use wcmf\lib\config\ConfigurationException;
+use wcmf\lib\presentation\format\Format;
 use wcmf\lib\presentation\format\Formatter;
 use wcmf\lib\presentation\Request;
 use wcmf\lib\presentation\Response;
@@ -35,7 +36,7 @@ class DefaultFormatter implements Formatter {
   /**
    * @see Formatter::getFormat()
    */
-  public function getFormat($name) {
+  public function getFormat(string $name): Format {
     if (isset($this->formats[$name])) {
       return $this->formats[$name];
     }
@@ -45,7 +46,7 @@ class DefaultFormatter implements Formatter {
   /**
    * @see Formatter::getFormatFromMimeType()
    */
-  public function getFormatFromMimeType($mimeType) {
+  public function getFormatFromMimeType(?string $mimeType): ?string {
     $firstFormat = null;
     foreach ($this->formats as $name => $instance) {
       $firstFormat = $firstFormat == null ? $name : $firstFormat;
@@ -63,7 +64,7 @@ class DefaultFormatter implements Formatter {
   /**
    * @see Formatter::deserialize()
    */
-  public function deserialize(Request $request) {
+  public function deserialize(Request $request): void {
     // get the format that should be used for this request format
     $formatName = $request->getFormat();
     if (strlen($formatName) == 0) {
@@ -77,7 +78,7 @@ class DefaultFormatter implements Formatter {
   /**
    * @see Formatter::serialize()
    */
-  public function serialize(Response $response) {
+  public function serialize(Response $response): void {
     // handle caching
     $responseSent = false;
     $cacheId = $response->getCacheId();

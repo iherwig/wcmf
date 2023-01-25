@@ -1,0 +1,9 @@
+parameters:
+  level: 8
+  ignoreErrors:
+    - '#Constant WCMF_BASE not found\.#'
+  paths:
+    - src
+    - tests
+  excludes_analyse:
+    - vendor

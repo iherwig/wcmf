@@ -113,7 +113,7 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::getInstance()
    */
-  public function getInstance($name, $dynamicConfiguration=[]) {
+  public function getInstance(string $name, array $dynamicConfiguration=[]) {
     $instance = null;
     if (in_array($name, $this->currentStack)) {
       throw new \Exception("Circular dependency detected: ".join(' - ', $this->currentStack)." - [".$name."]");
@@ -141,7 +141,7 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::getNewInstance()
    */
-  public function getNewInstance($name, $dynamicConfiguration=[]) {
+  public function getNewInstance(string $name, array $dynamicConfiguration=[]) {
     $configuration = array_merge([
         '__shared' => false
     ], $dynamicConfiguration);
@@ -153,7 +153,7 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::getInstanceOf()
    */
-  public function getInstanceOf($class, $dynamicConfiguration=[]) {
+  public function getInstanceOf(string $class, array $dynamicConfiguration=[]): object {
     $configuration = array_merge([
         '__class' => $class,
         '__shared' => false
@@ -166,7 +166,7 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::registerInstance()
    */
-  public function registerInstance($name, $instance) {
+  public function registerInstance(string $name, $instance) {
     $instanceKey = strtolower($name);
     $this->instances[$instanceKey] = $instance;
   }
@@ -188,9 +188,9 @@ class DefaultFactory implements Factory {
   /**
    * Get the setter method name for a property.
    * @param $property
-   * @return String
+   * @return string
    */
-  protected function getSetterName($property) {
+  protected function getSetterName(string $property): string {
     return 'set'.ucfirst(StringUtil::underScoreToCamelCase($property, true));
   }
 
@@ -205,9 +205,9 @@ class DefaultFactory implements Factory {
    * - '__shared' optional, if true, the instance may be reused using Factory::getInstance())
    * - '__ref' optional, defines this instance as an alias of the referenced instance
    * @param $instanceKey The name under which the instance is registered for later retrieval
-   * @return Object
+   * @return object or array
    */
-  protected function createInstance($name, $configuration, $instanceKey) {
+  protected function createInstance(string $name, array $configuration, ?string $instanceKey) {
     $instance = null;
 
     // return referenced instance, if the instance is an alias
@@ -226,8 +226,22 @@ class DefaultFactory implements Factory {
         // collect constructor parameters
         $cParams = [];
         $refClass = new \ReflectionClass($className);
-        if ($refClass->hasMethod('__construct')) {
-          $refConstructor = new \ReflectionMethod($className, '__construct');
+
+        // create the instance without constructor for early registration
+        // the constructor will be called later
+        $obj = $refClass->newInstanceWithoutConstructor();
+
+        // register the instance if it is shared (default)
+        // NOTE we do this before setting the instance properties in order
+        // to allow to resolve circular dependencies (dependent objects that
+        // are injected into the current instance via property injection can
+        // already use this instance)
+        if (!isset($configuration['__shared']) || $configuration['__shared'] == 'true') {
+          $this->registerInstance($instanceKey, $obj);
+        }
+
+        $refConstructor = $refClass->getConstructor();
+        if ($refConstructor !== null) {
           $refParameters = $refConstructor->getParameters();
           foreach ($refParameters as $param) {
             $paramName = $param->name;
@@ -244,7 +258,7 @@ class DefaultFactory implements Factory {
               // parameter exists in configuration
               $cParams[$paramName] = $this->getInstance($paramName);
             }
-            elseif (($paramClass = $param->getClass()) != null) {
+            elseif (($paramClass = $param->getType()) != null) {
               // check for parameter's class from type hint
               // will cause an exception, if the class does not exist
               $cParams[$paramName] = $this->getInstanceOf($paramClass->name);
@@ -256,25 +270,15 @@ class DefaultFactory implements Factory {
             // delete resolved parameters from configuration
             unset($configuration[$paramName]);
           }
-        }
 
-        // create the instance
-        $obj = $refClass->newInstanceArgs($cParams);
+          $refConstructor->invokeArgs($obj, $cParams);
+        }
 
         // check against interface
         $interface = $this->getInterface($name);
         if ($interface != null && !($obj instanceof $interface)) {
           throw new ConfigurationException('Class \''.$className.
                   '\' is required to implement interface \''.$interface.'\'.');
-        }
-
-        // register the instance if it is shared (default)
-        // NOTE we do this before setting the instance properties in order
-        // to allow to resolve circular dependencies (dependent objects that
-        // are injected into the current instance via property injection can
-        // already use this instance)
-        if (!isset($configuration['__shared']) || $configuration['__shared'] == 'true') {
-          $this->registerInstance($instanceKey, $obj);
         }
 
         // set the instance properties from the remaining configuration
@@ -317,8 +321,8 @@ class DefaultFactory implements Factory {
         }
       }
       // always register maps
-      $this->registerInstance($instanceKey, $configuration);
       $instance = $configuration;
+      $this->registerInstance($instanceKey, $instance);
     }
     return $instance;
   }
@@ -326,7 +330,7 @@ class DefaultFactory implements Factory {
   /**
    * Resolve a configuration value into a parameter
    * @param $value
-   * @return Mixed
+   * @return mixed
    */
   protected function resolveValue($value) {
     // special treatments, if value is a string
@@ -371,9 +375,9 @@ class DefaultFactory implements Factory {
   /**
    * Get the interface that is required to be implemented by the given instance
    * @param $name The name of the instance
-   * @return Interface or null, if undefined
+   * @return interface or null, if undefined
    */
-  protected function getInterface($name) {
+  protected function getInterface(string $name) {
     if (isset($this->requiredInterfaces[$name])) {
       return $this->requiredInterfaces[$name];
     }

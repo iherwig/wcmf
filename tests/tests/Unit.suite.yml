@@ -1,0 +1,12 @@
+# Codeception Test Suite Configuration
+#
+# Suite for unit or integration tests.
+
+actor: UnitTester
+modules:
+    enabled:
+        - Db    
+        - Asserts
+        - Tests\Support\Helper\Unit
+        - Tests\Support\Helper\Controller
+    step_decorators: ~

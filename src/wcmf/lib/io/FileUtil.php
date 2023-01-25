@@ -70,7 +70,7 @@ class FileUtil {
     if (self::fileExists($file)) {
       if (class_exists('\FileInfo')) {
         // use FileInfo extension
-        $fileInfo = new finfo(FILEINFO_MIME);
+        $fileInfo = new \finfo(FILEINFO_MIME);
         $fileType = $fileInfo->file(file_get_contents($file));
       }
       else {

@@ -14,7 +14,7 @@ use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\config\impl\InifileConfiguration;
-use wcmf\lib\core\LogManager;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\Session;
 use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\impl\AbstractPermissionManager;
@@ -28,13 +28,12 @@ use wcmf\lib\util\StringUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 class StaticPermissionManager extends AbstractPermissionManager implements PermissionManager {
+  use LogTrait;
 
   const AUTHORIZATION_SECTION = 'authorization';
 
   private $configuration = null;
   private $actionKeyProvider = null;
-
-  private static $logger = null;
 
   /**
    * Constructor
@@ -46,9 +45,6 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
           Session $session,
           Configuration $configuration) {
     parent::__construct($persistenceFacade, $session);
-    if (self::$logger == null) {
-      self::$logger = LogManager::getLogger(__CLASS__);
-    }
     $this->configuration = $configuration;
     $this->actionKeyProvider = new ConfigActionKeyProvider($this->configuration,
             self::AUTHORIZATION_SECTION);
@@ -63,8 +59,8 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
     if (strlen($actionKey) > 0) {
       $result = $this->deserializePermissions($this->actionKeyProvider->getKeyValue($actionKey));
     }
-    if (self::$logger->isDebugEnabled()) {
-      self::$logger->debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)));
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Permissions for $resource?$context?$action (->$actionKey): ".trim(StringUtil::getDump($result)));
     }
     return $result;
   }
