@@ -22,6 +22,7 @@ use wcmf\lib\search\IndexedSearch;
 use wcmf\lib\search\impl\DefaultIndexStrategy;
 use wcmf\lib\util\StringUtil;
 use ZendSearch\Lucene\Analysis\Analyzer\Analyzer;
+use ZendSearch\Lucene\Analysis\Analyzer\Common\Utf8Num\CaseInsensitive;
 use ZendSearch\Lucene\Analysis\TokenFilter\StopWords;
 use ZendSearch\Lucene\Index\Term;
 use ZendSearch\Lucene\Lucene;
@@ -336,7 +337,7 @@ class LuceneSearch implements IndexedSearch {
     if (!$this->index || $create) {
       $indexPath = $this->getIndexPath();
 
-      $analyzer = new LuceneUtf8Analyzer();
+      $analyzer = new CaseInsensitive(); // extends Utf8Num
 
       // add stop words filter
       $stopWords = $this->getStopWords();
