@@ -71,7 +71,7 @@ class DefaultIndexStrategy implements IndexStrategy {
             $doc->addField(Field::unStored($valueName, $value, 'UTF-8'));
           }
           else {
-            $field = Field::keyword($valueName, $value, 'UTF-8');
+            $field = Field::text($valueName, $value, 'UTF-8');
             $field->isStored = false;
             $doc->addField($field);
           }
