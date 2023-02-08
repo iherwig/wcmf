@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"name" : "wcmf/wcmf",
 	"type" : "library",
 	"description" : "The wCMF web application framework",
@@ -59,4 +60,59 @@
       "Tests\\": "tests/"
 		}
 	}
+=======
+    "name": "wcmf/wcmf",
+    "type": "library",
+    "description": "The wCMF web application framework",
+    "keywords": ["framework", "mvc", "model-driven", "wcmf"],
+    "homepage": "https://wcmf.wemove.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ingo Herwig",
+            "email": "ingo@wemove.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "olympos/chronos-generator",
+                "version": "1.0.25",
+                "dist": {
+                    "url": "https://downloads.sourceforge.net/project/olympos/ChronosGenerator-wCMF/ChronosGenerator-wCMF-1.0.25.zip",
+                    "type": "zip"
+                }
+            }
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "olympos/chronos-generator": "1.0.*",
+        "monolog/monolog": "~1.27",
+        "laminas/laminas-db": "^2.17.0",
+        "handcraftedinthealps/zendsearch": "^2.1",
+        "laminas/laminas-eventmanager": "^3.10",
+        "econea/nusoap": "~0.9.13",
+        "lcobucci/jwt": "~4.3",
+        "symfony/cache": "~6.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9",
+        "misantron/dbunit": "~5"
+    },
+    "suggest": {
+        "smarty/smarty": "Use this package to render Smarty views via SmartyView",
+        "nao-pon/elfinder-nightly": "Use this package to integrate elFinder with MediaController",
+        "eventviva/php-image-resize": "Use this package to resize images using Smarty plugins",
+        "setasign/fpdi": "Use this package to generate PDF files",
+        "setasign/tfpdf": "Use this package to generate PDF files",
+        "php-webdriver/webdriver": "Use this package, if you want to run tests with SeleniumTestCase"
+    },
+    "autoload": {
+        "psr-4": {
+            "wcmf\\": "src/wcmf/"
+        }
+    }
+>>>>>>> bdc971275 (Updated pdf dependencies for using unicode fonts)
 }

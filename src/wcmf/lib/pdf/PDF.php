@@ -10,19 +10,37 @@
  */
 namespace wcmf\lib\pdf;
 
-use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\Tfpdf\Fpdi;
 
-if (!class_exists('setasign\Fpdi\Fpdi')) {
+if (!class_exists('setasign\Fpdi\Tfpdf\Fpdi')) {
     throw new \wcmf\lib\config\ConfigurationException(
             'wcmf\lib\pdf\PDF requires '.
-            'Fpdi. If you are using composer, add setasign/fpdf and setasign/fpdi '.
+            'Fpdi. If you are using composer, add setasign/tfpdf and setasign/fpdi '.
             'as dependency to your project');
 }
 
 /**
- * PDF extends setasign\Fpdi\Fpdi.
+ * NOTE ON USING FONTS
+ * 
+ * If tFPDF (https://github.com/Setasign/tFPDF) is used as base class, proceed as follows:
+ * 
+ * 1. Create a fonts directory and set FPDF_FONTPATH accordingly:
+ * 
+ * define('FPDF_FONTPATH', dirname(__FILE__).'/fonts/');
+ * 
+ * 2. Create a unifont directory inside the font directory and put ttfonts.php from the tFPDF package inside
+ * 3. Put *.ttf fonts inside the unifont directory (no need for any conversion) and add them to the PDF instance:
+ * 
+ * $this->AddFont('Roboto-Regular', '', 'Roboto-Regular.ttf', true);
+ * 
+ * (NOTE the 3rd parameter holds the font file name and the 4th parameter is set to true)
+ */
+
+
+/**
+ * PDF extends setasign\Fpdi\Tfpdf\Fpdi.
  *
- * @note This class requires setasign\Fpdi\Fpdi
+ * @note This class requires setasign\Fpdi\Tfpdf\Fpdi
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -157,7 +175,7 @@ class PDF extends Fpdi {
       if($c==' ') {
         $sep=$i;
       }
-      $l+=$cw[$c];
+      $l+=isset($cw[$c]) ? intval($cw[$c]) : 0;
       if($l>$wmax) {
         if($sep==-1) {
           if($i==$j) {

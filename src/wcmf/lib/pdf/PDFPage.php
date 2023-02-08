@@ -12,7 +12,7 @@ namespace wcmf\lib\pdf;
 
 /**
  * PDFPage instances define the content of a pdf page by using a
- * set of FPDF/FPDI commands inside the PDFPage::render method.
+ * set of tFPDF/FPDI commands inside the PDFPage::render method.
  *
  * @author ingo herwig <ingo@wemove.com>
  */
@@ -20,7 +20,7 @@ interface PDFPage {
 
   /**
    * Render data onto a pdf.
-   * @param $pdf FPDF/FPDI instance to render onto
+   * @param $pdf tFPDF/FPDI instance to render onto
    * @param $page The page number in the pdf document
    * @param $data An optional data object to get data from.
    */
