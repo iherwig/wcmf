@@ -168,7 +168,7 @@ class NodeUtil {
 
     $displayArray = [];
     $displayValuesNames = $node->getProperty('displayValues');
-    if (sizeof($displayValuesNames) > 0) {
+    if ($displayValuesNames && sizeof($displayValuesNames) > 0) {
       $mapper = $node->getMapper();
       foreach($displayValuesNames as $displayValueName) {
         $inputType = ''; // needed for the translation of a list value
