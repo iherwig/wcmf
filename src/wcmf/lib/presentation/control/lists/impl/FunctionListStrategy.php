@@ -41,7 +41,7 @@ class FunctionListStrategy implements ListStrategy {
    */
   public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['name'])) {
-      throw new ConfigurationException("No 'name' given in list options: "+StringUtil::getDump($options));
+      throw new ConfigurationException("No 'name' given in list options: ".StringUtil::getDump($options));
     }
     $name = $options['name'];
     $params = isset($options['params']) ? $options['params'] : null;

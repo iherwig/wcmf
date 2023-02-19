@@ -62,7 +62,7 @@ class SuggestListStrategy implements ListStrategy {
    */
   public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['attributes'])) {
-      throw new ConfigurationException("No 'attributes' given in list options: "+StringUtil::getDump($options));
+      throw new ConfigurationException("No 'attributes' given in list options: ".StringUtil::getDump($options));
     }
     $localization = ObjectFactory::getInstance('localization');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

@@ -63,7 +63,7 @@ class RemoteDocument extends AbstractDocument {
     $error = curl_error($ch);
     curl_close($ch);
     if ($error) {
-      throw new IOException("Error retrieving remote document: "+$error);
+      throw new IOException("Error retrieving remote document: ".$error);
     }
   }
 

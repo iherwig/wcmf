@@ -37,7 +37,7 @@ class ConfigListStrategy implements ListStrategy {
    */
   public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['section'])) {
-      throw new ConfigurationException("No 'pattern' given in list options: "+StringUtil::getDump($options));
+      throw new ConfigurationException("No 'pattern' given in list options: ".StringUtil::getDump($options));
     }
     $section = $options['section'];
     $listKey = $section.$language;
