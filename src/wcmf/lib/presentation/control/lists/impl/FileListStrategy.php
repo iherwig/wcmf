@@ -41,7 +41,7 @@ class FileListStrategy implements ListStrategy {
    */
   public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['paths']) || !is_array($options['paths'])) {
-      throw new ConfigurationException("No array 'paths' given in list options: "+StringUtil::getDump($options));
+      throw new ConfigurationException("No array 'paths' given in list options: ".StringUtil::getDump($options));
     }
     $paths = $options['paths'];
     $pattern = $valuePattern ? $valuePattern : (isset($options['pattern']) ? '/'.$options['pattern'].'/' : '/./');

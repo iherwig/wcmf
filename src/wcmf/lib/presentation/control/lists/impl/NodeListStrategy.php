@@ -68,7 +68,7 @@ class NodeListStrategy implements ListStrategy {
    */
   public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['types'])) {
-      throw new ConfigurationException("No 'types' given in list options: "+StringUtil::getDump($options));
+      throw new ConfigurationException("No 'types' given in list options: ".StringUtil::getDump($options));
     }
     $localization = ObjectFactory::getInstance('localization');
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');

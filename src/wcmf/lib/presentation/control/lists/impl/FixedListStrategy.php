@@ -40,7 +40,7 @@ class FixedListStrategy implements ListStrategy {
    */
   public function getList($options, $valuePattern=null, $key=null, $language=null) {
     if (!isset($options['items'])) {
-      throw new ConfigurationException("No 'items' given in list options: "+StringUtil::getDump($options));
+      throw new ConfigurationException("No 'items' given in list options: ".StringUtil::getDump($options));
     }
     $items = $options['items'];
 
