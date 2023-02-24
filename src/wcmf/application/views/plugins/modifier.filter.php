@@ -26,9 +26,9 @@
  * @return Array
  */
 function smarty_modifier_filter($objects, $attribute, $regex, $invert=false) {
-  return array_filter($objects, function($obj) use ($attribute, $regex, $invert) {
+  return is_array($objects) ? array_filter($objects, function($obj) use ($attribute, $regex, $invert) {
     $match = preg_match($regex, $obj->getValue($attribute));
     return $invert ? !$match : $match;
-  });
+  }) : [];
 }
 ?>
