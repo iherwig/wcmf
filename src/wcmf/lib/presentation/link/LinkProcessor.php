@@ -54,10 +54,13 @@ class LinkProcessor {
       $oldValue = $value;
 
       // find links in texts
-      $urls = array_fill_keys(StringUtil::getUrls($value), 'embedded');
-      // find direct attribute urls
-      if (preg_match('/^[a-zA-Z]+:\/\//', $value) || InternalLink::isLink($value)) {
-        $urls[$value] = 'direct';
+      $urls = [];
+      if (is_string($value)) {
+        $urls = array_fill_keys(StringUtil::getUrls($value), 'embedded');
+        // find direct attribute urls
+        if (preg_match('/^[a-zA-Z]+:\/\//', $value) || InternalLink::isLink($value)) {
+          $urls[$value] = 'direct';
+        }
       }
 
       // process urls
