@@ -184,7 +184,7 @@ class LinkProcessor {
       }
       $anchorOID = InternalLink::getAnchorOID($url);
       if ($anchorOID != null) {
-        if (strrpos($urlConv) !== 0) {
+        if (strrpos($urlConv, '#') !== 0) {
           $urlConv .= '#';
         }
         $urlConv .= $anchorOID;
@@ -192,7 +192,7 @@ class LinkProcessor {
       else {
         $anchorName = InternalLink::getAnchorName($url);
         if ($anchorName != null) {
-          if (strrpos($urlConv) !== 0) {
+          if (strrpos($urlConv, '#') !== 0) {
             $urlConv .= '#';
           }
           $urlConv .= $anchorName;
