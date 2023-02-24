@@ -64,7 +64,7 @@ class ErrorHandler {
    * @throws ErrorException
    */
   public function handleError($errno, $errstr, $errfile, $errline) {
-    $errorIsEnabled = (bool)($errno & ini_get('error_reporting'));
+    $errorIsEnabled = (bool)($errno & error_reporting());
 
     // FATAL ERROR
     if(isset(self::$fatalErrors[$errno]) && $errorIsEnabled) {
