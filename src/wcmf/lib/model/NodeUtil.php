@@ -167,15 +167,9 @@ class NodeUtil {
     }
 
     $displayArray = [];
-<<<<<<< HEAD
-    $displayValuesNames = $object->getProperty('displayValues');
-    if (sizeof($displayValuesNames) > 0) {
-      $mapper = $object->getMapper();
-=======
     $displayValuesNames = $node->getProperty('displayValues');
     if ($displayValuesNames && sizeof($displayValuesNames) > 0) {
       $mapper = $node->getMapper();
->>>>>>> df02f05e3 (Fix PHP 8.2 deprecation error)
       foreach($displayValuesNames as $displayValueName) {
         $inputType = ''; // needed for the translation of a list value
         if ($displayValueName != '') {

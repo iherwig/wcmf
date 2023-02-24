@@ -1,66 +1,4 @@
 {
-<<<<<<< HEAD
-	"name" : "wcmf/wcmf",
-	"type" : "library",
-	"description" : "The wCMF web application framework",
-	"keywords" : [
-		"framework",
-		"mvc",
-		"model-driven",
-		"wcmf"
-	],
-	"homepage" : "https://wcmf.wemove.com",
-	"license" : "MIT",
-	"authors" : [{
-			"name" : "Ingo Herwig",
-			"email" : "ingo@wemove.com"
-		}
-	],
-	"repositories" : [{
-			"type" : "package",
-			"package" : {
-				"name" : "olympos/chronos-generator",
-				"version" : "1.0.25",
-				"dist" : {
-					"url" : "https://downloads.sourceforge.net/project/olympos/ChronosGenerator-wCMF/ChronosGenerator-wCMF-1.0.25.zip",
-					"type" : "zip"
-				}
-			}
-		}
-	],
-	"require" : {
-		"php" : "^8.0",
-    "psr/log": "^3.0",
-		"monolog/monolog" : "^3.2",
-		"laminas/laminas-db" : "^2.16.0",
-		"handcraftedinthealps/zendsearch": "^2.0",
-		"laminas/laminas-eventmanager" : "^3.2",
-		"econea/nusoap" : "~0.9.7",
-		"lcobucci/jwt" : "~4.2",
-		"symfony/cache" : "~6.2"
-	},
-	"require-dev" : {
-    "olympos/chronos-generator" : "1.0.*",
-		"codeception/codeception" : "^5.0",
-		"codeception/module-asserts" : "^3.0",
-		"codeception/module-db" : "^3.1",
-    "codeception/module-phpbrowser": "^2.0",
-		"phpstan/phpstan" : "^1.9",
-		"vimeo/psalm": "^5.1"
-	},
-	"suggest" : {
-		"smarty/smarty" : "Use this package to render Smarty views via SmartyView",
-		"nao-pon/elfinder-nightly" : "Use this package to integrate elFinder with MediaController",
-		"eventviva/php-image-resize" : "Use this package to resize images using Smarty plugins",
-		"setasign/fpdi-fpdf" : "Use this package to generate PDF files"
-	},
-	"autoload" : {
-		"psr-4" : {
-			"wcmf\\": "src/wcmf/",
-      "Tests\\": "tests/"
-		}
-	}
-=======
     "name": "wcmf/wcmf",
     "type": "library",
     "description": "The wCMF web application framework",
@@ -114,5 +52,4 @@
             "wcmf\\": "src/wcmf/"
         }
     }
->>>>>>> bdc971275 (Updated pdf dependencies for using unicode fonts)
 }
