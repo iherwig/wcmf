@@ -91,6 +91,14 @@ class FileCache implements Cache {
   }
 
   /**
+   * @see Cache::remove()
+   */
+  public function remove($section, $key) {
+    $cache = $this->getCache($section);
+    $cache->deleteItem($this->sanitizeKey($key));
+  }
+
+  /**
    * @see Cache::clear()
    */
   public function clear($section) {
