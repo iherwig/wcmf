@@ -54,6 +54,13 @@ interface Cache {
   public function put($section, $key, $value, $lifetime=null);
 
   /**
+   * Remove the specified cache entry.
+   * @param $section The cache section
+   * @param $key The key
+   */
+  public function remove($section, $key);
+
+  /**
    * Clear the given cache section. The wildcard char '*'
    * may be added to the section name in order to
    * clear all matching sections.

@@ -61,6 +61,7 @@ class SelectStatement extends Select {
     else {
       $selectStmt = $cache->get($cacheSection, $cacheId);
       if (!$selectStmt) {
+        $cache->remove($cacheSection, $cacheId);
         $selectStmt = new SelectStatement($mapper, $id);
       }
       $selectStmt->adapter = $mapper->getAdapter();
