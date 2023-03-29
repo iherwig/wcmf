@@ -37,6 +37,7 @@ class SelectStatement extends Select {
   private $adapter = null;
 
   private static $logger = null;
+  private static $isCaching = null;
 
   /**
    * Get the SelectStatement instance with the given id.
@@ -46,18 +47,17 @@ class SelectStatement extends Select {
    * @return SelectStatement
    */
   public static function get(RDBMapper $mapper, $id=self::NO_CACHE) {
-    $cache = ObjectFactory::getInstance('staticCache');
-    $cacheSection = self::getCacheSection($mapper->getType());
-    $cacheId = self::getCacheId($id);
-    if ($id == self::NO_CACHE || !$cache->exists($cacheSection, $cacheId)) {
+    $isCaching = self::isCaching() && $id !== self::NO_CACHE;
+    if ($isCaching) {
+      $cache = ObjectFactory::getInstance('staticCache');
+      $cacheSection = self::getCacheSection($mapper->getType());
+      $cacheId = self::getCacheId($id);
+    }
+    if (!$isCaching || !$cache->exists($cacheSection, $cacheId)) {
       $selectStmt = new SelectStatement($mapper, $id);
     }
     else {
       $selectStmt = $cache->get($cacheSection, $cacheId);
-      if (!$selectStmt) {
-        $cache->remove($cacheSection, $cacheId);
-        $selectStmt = new SelectStatement($mapper, $id);
-      }
       $selectStmt->adapter = $mapper->getAdapter();
     }
     return $selectStmt;
@@ -108,7 +108,7 @@ class SelectStatement extends Select {
    */
   public function isCached() {
     $cache = ObjectFactory::getInstance('staticCache');
-    return $this->id == self::NO_CACHE ? false :
+    return (!self::isCaching() || $this->id == self::NO_CACHE) ? false :
             $cache->exists(self::getCacheSection($this->type), self::getCacheId($this->id));
   }
 
@@ -209,7 +209,7 @@ class SelectStatement extends Select {
    * Put the statement into the cache
    */
   public function save() {
-    if ($this->id != self::NO_CACHE) {
+    if (self::isCaching() && $this->id != self::NO_CACHE) {
       $cache = ObjectFactory::getInstance('staticCache');
       $cache->put(self::getCacheSection($this->type), self::getCacheId($this->id), $this);
     }
@@ -316,12 +316,24 @@ class SelectStatement extends Select {
   }
 
   /**
+   * Check if statements are cached
+   * @return Boolean
+   */
+  protected static function isCaching() {
+    if (self::$isCaching == null) {
+      $configuration = ObjectFactory::getInstance('configuration');
+      self::$isCaching = !$configuration->hasValue('statementCaching', 'persistenceFacade') || $configuration->getBooleanValue('statementCaching', 'persistenceFacade') === true;
+    }
+    return self::$isCaching;
+  }
+
+  /**
    * Get the cache section
    * @param $type The type
    * @return String
    */
   protected static function getCacheSection($type) {
-    return self::CACHE_KEY.'/'.$type;
+    return self::CACHE_KEY.'.'.$type;
   }
 
   /**

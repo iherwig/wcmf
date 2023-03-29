@@ -294,7 +294,7 @@ class ObjectQuery extends AbstractQuery {
     $tableName = self::processTableName($this->typeNode);
     $attributes = $buildDepth === false ? $mapper->getPkNames() : null;
     $selectStmt = $mapper->getSelectSQL(null, $tableName['alias'], $attributes, null, $pagingInfo, $this->getId());
-    if (!$selectStmt->isCached() || !$selectStmt->getMeta('parameterCriteriaMap')) {
+    if (!$selectStmt->isCached()) {
       // initialize the statement
       $selectStmt->quantifier(SelectStatement::QUANTIFIER_DISTINCT);
 
