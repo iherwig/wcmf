@@ -145,7 +145,7 @@ class TreeController extends Controller {
     }
     $oid = $node->getOID();
     $isFolder = $oid->containsDummyIds();
-    $hasChildren = $this->isRootTypeNode($oid) || sizeof($node->getNumChildren()) > 0;
+    $hasChildren = $this->isRootTypeNode($oid) || $node->getNumChildren() > 0;
     return [
       'oid' => $node->getOID()->__toString(),
       'displayText' => $displayText,
