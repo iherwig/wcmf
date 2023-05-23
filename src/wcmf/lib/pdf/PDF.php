@@ -21,18 +21,18 @@ if (!class_exists('setasign\Fpdi\Tfpdf\Fpdi')) {
 
 /**
  * NOTE ON USING FONTS
- * 
+ *
  * If tFPDF (https://github.com/Setasign/tFPDF) is used as base class, proceed as follows:
- * 
+ *
  * 1. Create a fonts directory and set FPDF_FONTPATH accordingly:
- * 
+ *
  * define('FPDF_FONTPATH', dirname(__FILE__).'/fonts/');
- * 
+ *
  * 2. Create a unifont directory inside the font directory and put ttfonts.php from the tFPDF package inside
  * 3. Put *.ttf fonts inside the unifont directory (no need for any conversion) and add them to the PDF instance:
- * 
+ *
  * $this->AddFont('Roboto-Regular', '', 'Roboto-Regular.ttf', true);
- * 
+ *
  * (NOTE the 3rd parameter holds the font file name and the 4th parameter is set to true)
  */
 
@@ -124,8 +124,33 @@ class PDF extends Fpdi {
   }
 
   /**
+   * The following code is taken from FPDF Add-On 'Clipping'
+   * @see http://fpdf.de/Addon-78-clipping.html
+   */
+
+  /**
+   * Create a clipping area that restricts the display and prevents any elements from showing outside of it
+   * @param $x
+   * @param $y
+   * @param $w
+   * @param $h
+   * @param $outline
+   */
+  public function ClippingRect($x, $y, $w, $h, $outline=false) {
+    $op = $outline ? 'S' : 'n';
+    $this->_out(sprintf('q %.2F %.2F %.2F %.2F re W %s', $x*$this->k, ($this->h-$y)*$this->k, $w*$this->k, -$h*$this->k, $op));
+  }
+
+  /**
+   * Close the clipping area created with ClippingRect()
+   */
+  public function UnsetClipping() {
+    $this->_out('Q');
+  }
+
+  /**
    * The following code is taken from FPDF Add-On 'Table with MultiCells'
-   * @see http://www.fpdf.de/downloads/addons/3/
+   * @see http://fpdf.de/Addon-3-table-with-multicells.html
    */
 
   /**
