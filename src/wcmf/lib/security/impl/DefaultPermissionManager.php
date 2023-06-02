@@ -18,8 +18,9 @@ use wcmf\lib\model\ObjectQuery;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\security\impl\AbstractPermissionManager;
 use wcmf\lib\security\PermissionManager;
+use wcmf\lib\security\impl\AbstractPermissionManager;
+use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -37,12 +38,13 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
 
   /**
    * Constructor
-   * @param $persistenceFacade
-   * @param $session
+   * @param PersistenceFacade $persistenceFacade
+   * @param Session $session
    */
   public function __construct(PersistenceFacade $persistenceFacade,
-          Session $session) {
-    parent::__construct($persistenceFacade, $session);
+          Session $session,
+          PrincipalFactory $principalFactory) {
+    parent::__construct($persistenceFacade, $session, $principalFactory);
     $this->actionKeyProvider = new PersistenceActionKeyProvider();
     $this->actionKeyProvider->setValueMap([
         'resource' => 'resource',
@@ -54,9 +56,9 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
 
   /**
    * Set the entity type name of Permission instances.
-   * @param $permissionType String
+   * @param string $permissionType
    */
-  public function setPermissionType($permissionType) {
+  public function setPermissionType(string $permissionType): void {
     $this->permissionType = $permissionType;
     $this->actionKeyProvider->setEntityType($this->permissionType);
   }
@@ -64,7 +66,7 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
   /**
    * @see PermissionManager::getPermissions()
    */
-  public function getPermissions($resource, $context, $action) {
+  public function getPermissions(string $resource, string $context, string $action): ?array {
     $result = null;
     $actionKey = ActionKey::getBestMatch($this->actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
@@ -79,7 +81,7 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
   /**
    * @see PermissionManager::setPermissions()
    */
-  public function setPermissions($resource, $context, $action, $permissions) {
+  public function setPermissions(string $resource, string $context, string $action, ?array $permissions): void {
     $permissionInstance = $this->getPermissionInstance($resource, $context, $action);
     $isChanged = false;
 
@@ -108,28 +110,28 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
   /**
    * @see PermissionManager::createPermission()
    */
-  public function createPermission($resource, $context, $action, $role, $modifier) {
+  public function createPermission(string $resource, string $context, string $action, string $role, string $modifier): bool {
     return self::modifyPermission($resource, $context, $action, $role, $modifier);
   }
 
   /**
    * @see PermissionManager::removePermission()
    */
-  public function removePermission($resource, $context, $action, $role) {
+  public function removePermission(string $resource, string $context, string $action, string $role): bool {
     return self::modifyPermission($resource, $context, $action, $role, null);
   }
 
   /**
    * Modify a permission for the given role.
-   * @param $resource The resource (e.g. class name of the Controller or object id).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @param $role The role to authorize.
-   * @param $modifier One of the PERMISSION_MODIFIER_ constants, null, if the permission
+   * @param string $resource The resource (e.g. class name of the Controller or object id).
+   * @param string $context The context in which the action takes place.
+   * @param string $action The action to process.
+   * @param string $role The role to authorize.
+   * @param string $modifier One of the PERMISSION_MODIFIER_ constants, null, if the permission
    *    should be removed.
-   * @return boolean
+   * @return bool
    */
-  protected function modifyPermission($resource, $context, $action, $role, $modifier) {
+  protected function modifyPermission(string $resource, string $context, string $action, string $role, string $modifier) {
     // define roles value (empty if no modifier is given)
     $permVal = $modifier != null ? $modifier.$role : '';
 
@@ -156,12 +158,12 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
 
   /**
    * Get the permission object that matches the given parameters
-   * @param $resource Resource
-   * @param $context Context
-   * @param $action Action
-   * @return Instance of _permissionType or null
+   * @param string $resource Resource
+   * @param string $context Context
+   * @param string $action Action
+   * @return mixed Instance of permissionType or null
    */
-  protected function getPermissionInstance($resource, $context, $action) {
+  protected function getPermissionInstance(string $resource, string $context, string $action) {
     $query = new ObjectQuery($this->permissionType, __CLASS__.__METHOD__);
     $tpl = $query->getObjectTemplate($this->permissionType);
     $tpl->setValue('resource', Criteria::asValue('=', $resource));
@@ -173,13 +175,13 @@ class DefaultPermissionManager extends AbstractPermissionManager implements Perm
 
   /**
    * Create a permission object with the given parameters
-   * @param $resource Resource
-   * @param $context Context
-   * @param $action Action
-   * @param $roles String representing the permissions as returned from serializePermissions()
-   * @return Instance of _permissionType
+   * @param string $resource Resource
+   * @param string $context Context
+   * @param string $action Action
+   * @param string $roles String representing the permissions as returned from serializePermissions()
+   * @return mixed Instance of permissionType
    */
-  protected function createPermissionObject($resource, $context, $action, $roles) {
+  protected function createPermissionObject(string $resource, string $context, string $action, string $roles) {
     $permission = $this->persistenceFacade->create($this->permissionType);
     $permission->setValue('resource', $resource);
     $permission->setValue('context', $context);

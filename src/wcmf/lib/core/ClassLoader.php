@@ -21,7 +21,7 @@ class ClassLoader {
 
   /**
    * Constructor.
-   * @param $baseDir Base directory from which namespaces will be resolved
+   * @param string $baseDir Base directory from which namespaces will be resolved
    *    (usually WCMF_BASE)
    */
   public function __construct(string $baseDir) {
@@ -35,9 +35,9 @@ class ClassLoader {
 
   /**
    * Load the given class definition
-   * @param $className The class name
+   * @param string $className The class name
    */
-  public function load(string $className) {
+  public function load(string $className): void {
     // search under baseDir assuming that namespaces match directories
     $filename = $this->baseDir.str_replace("\\", "/", $className).'.php';
     if (file_exists($filename)) {

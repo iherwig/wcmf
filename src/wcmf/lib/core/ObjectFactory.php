@@ -27,24 +27,24 @@ class ObjectFactory {
 
   /**
    * Configure the factory.
-   * @param $factory Factory instance that actually does the instantiation.
+   * @param Factory $factory Factory instance that actually does the instantiation.
    */
-  public static function configure(Factory $factory) {
+  public static function configure(Factory $factory): void {
     self::$factory = $factory;
   }
 
   /**
    * Check if the factory is configured.
-   * @return Boolean
+   * @return bool
    */
-  public static function isConfigured() {
+  public static function isConfigured(): bool {
     return self::$factory != null;
   }
 
   /**
    * @see Factory::getInstance()
    */
-  public static function getInstance($name, $dynamicConfiguration=[]) {
+  public static function getInstance(string $name, array $dynamicConfiguration=[]): object|array {
     self::checkConfig();
     return self::$factory->getInstance($name, $dynamicConfiguration);
   }
@@ -52,7 +52,7 @@ class ObjectFactory {
   /**
    * @see Factory::getNewInstance()
    */
-  public static function getNewInstance($name, $dynamicConfiguration=[]) {
+  public static function getNewInstance(string $name, array $dynamicConfiguration=[]): object|array {
     self::checkConfig();
     return self::$factory->getNewInstance($name, $dynamicConfiguration);
   }
@@ -60,7 +60,7 @@ class ObjectFactory {
   /**
    * @see Factory::getInstanceOf()
    */
-  public static function getInstanceOf($class, $dynamicConfiguration=[]) {
+  public static function getInstanceOf(string $class, array $dynamicConfiguration=[]): object|array {
     self::checkConfig();
     return self::$factory->getInstanceOf($class, $dynamicConfiguration);
   }
@@ -68,7 +68,7 @@ class ObjectFactory {
   /**
    * @see Factory::registerInstance()
    */
-  public static function registerInstance($name, $instance) {
+  public static function registerInstance(string $name, object|array $instance): void {
     self::checkConfig();
     self::$factory->registerInstance($name, $instance);
   }
@@ -76,7 +76,7 @@ class ObjectFactory {
   /**
    * @see Factory::addInterfaces()
    */
-  public function addInterfaces($interfaces) {
+  public function addInterfaces(array $interfaces): void {
     self::checkConfig();
     self::$factory->addInterfaces($interfaces);
   }
@@ -84,7 +84,7 @@ class ObjectFactory {
   /**
    * @see Factory::clear()
    */
-  public static function clear() {
+  public static function clear(): void {
     if (self::$factory != null) {
       self::$factory->clear();
     }
@@ -94,7 +94,7 @@ class ObjectFactory {
   /**
    * Check if the configuration is valid.
    */
-  private static function checkConfig() {
+  private static function checkConfig(): void {
     if (self::$factory == null) {
       throw new ConfigurationException('No Factory instance provided. Do this by calling the configure() method.');
     }

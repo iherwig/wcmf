@@ -10,13 +10,17 @@
  */
 namespace wcmf\lib\core\impl;
 
+use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Configuration as JwtConfiguration;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\ValidationData;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Validation\Constraint\IssuedBy;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\core\TokenBasedSession;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 use wcmf\lib\util\StringUtil;
@@ -33,11 +37,13 @@ class ClientSideSession implements TokenBasedSession {
   const AUTH_TYPE = 'Bearer';
   const AUTH_USER_NAME = 'auth_user';
 
-  private $cookiePrefix = '';
-  private $tokenName = '';
-  private $token = null;
+  private string $cookiePrefix = '';
+  private string $tokenName = '';
+  private string $tokenIssuer = '';
 
-  private $key = null;
+  private ?JwtConfiguration $tokenConfig = null;
+
+  private ?string $token = null;
 
   /**
    * Constructor
@@ -46,27 +52,36 @@ class ClientSideSession implements TokenBasedSession {
   public function __construct(Configuration $configuration) {
     $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
     $this->tokenName = $this->getCookiePrefix().'-auth-token';
-    $this->key = $configuration->getValue('secret', 'application');
+    $this->tokenIssuer = URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'];
+    $this->tokenConfig = JwtConfiguration::forSymmetricSigner(
+        new Sha256(),
+        InMemory::plainText($configuration->getValue('secret', 'application'))
+    );
+    $this->tokenConfig->setValidationConstraints(
+        new IssuedBy($this->tokenIssuer),
+        new LooseValidAt(SystemClock::fromSystemTimezone()),
+        new SignedWith($this->tokenConfig->signer(), $this->tokenConfig->signingKey()),
+    );
   }
 
   /**
    * @see TokenBasedSession::getHeaderName()
    */
-  public function getHeaderName() {
+  public function getHeaderName(): string {
     return self::TOKEN_HEADER;
   }
 
   /**
    * @see TokenBasedSession::getCookieName()
    */
-  public function getCookieName() {
+  public function getCookieName(): string {
     return $this->tokenName;
   }
 
   /**
    * @see Session::isStarted()
    */
-  public function isStarted() {
+  public function isStarted(): bool {
     return sizeof(array_filter(array_keys($_COOKIE), function($key) {
       return strpos($key, $this->getCookiePrefix()) === 0;
     })) > 0;
@@ -75,14 +90,14 @@ class ClientSideSession implements TokenBasedSession {
   /**
    * @see Session::getID()
    */
-  public function getID() {
-    return null;
+  public function getID(): string {
+    return '';
   }
 
   /**
    * @see Session::get()
    */
-  public function get($key, $default=null) {
+  public function get(string $key, mixed $default=null): mixed {
     $value = $default;
     if ($key === self::AUTH_USER_NAME) {
       // auth user is stored in the token cookie
@@ -97,7 +112,7 @@ class ClientSideSession implements TokenBasedSession {
   /**
    * @see Session::set()
    */
-  public function set($key, $value) {
+  public function set(string $key, mixed $value): void {
     // don't encode auth token value
     $encodedValue = ($key !== $this->getCookieName())  ? $this->serializeValue($value) : $value;
     if (!headers_sent()) {
@@ -109,7 +124,7 @@ class ClientSideSession implements TokenBasedSession {
   /**
    * @see Session::remove()
    */
-  public function remove($key) {
+  public function remove(string $key): void {
     if (!headers_sent()) {
       setcookie($key, false, 0, '/', '', URIUtil::isHttps(), true);
     }
@@ -119,7 +134,7 @@ class ClientSideSession implements TokenBasedSession {
   /**
    * @see Session::exist()
    */
-  public function exist($key) {
+  public function exist(string $key): bool {
     $result = isset($_COOKIE[$key]);
     return $result;
   }
@@ -127,7 +142,7 @@ class ClientSideSession implements TokenBasedSession {
   /**
    * @see Session::clear()
    */
-  public function clear() {
+  public function clear(): void {
     foreach(array_keys($_COOKIE) as $key) {
       $this->remove($key);
     }
@@ -136,7 +151,7 @@ class ClientSideSession implements TokenBasedSession {
   /**
    * @see Session::destroy()
    */
-  public function destroy() {
+  public function destroy(): void {
     // TODO invalidate jwt
     $this->clear();
   }
@@ -144,7 +159,7 @@ class ClientSideSession implements TokenBasedSession {
   /**
    * @see Session::setAuthUser()
    */
-  public function setAuthUser($login) {
+  public function setAuthUser(string $login): void {
     $this->token = $this->createToken($login);
     $this->set($this->tokenName, $this->token);
   }
@@ -152,8 +167,8 @@ class ClientSideSession implements TokenBasedSession {
   /**
    * @see Session::getAuthUser()
    */
-  public function getAuthUser() {
-    $login = AnonymousUser::USER_GROUP_NAME;
+  public function getAuthUser(): string {
+    $login = AnonymousUser::NAME;
     // check for auth user in token
     if (($data = $this->getTokenData()) !== null && isset($data[self::AUTH_USER_NAME])) {
       $login = $data[self::AUTH_USER_NAME]->getValue();
@@ -163,48 +178,34 @@ class ClientSideSession implements TokenBasedSession {
 
   /**
    * Get the cookie prefix
-   * @return String
+   * @return string
    */
-  protected function getCookiePrefix() {
+  protected function getCookiePrefix(): string {
     return $this->cookiePrefix;
   }
 
   /**
    * Create the token for the given login
-   * @param $login
-   * @return String
+   * @param string $login
+   * @return string
    */
-  protected function createToken($login) {
+  protected function createToken(string $login): string {
+    $now = new \DateTimeImmutable('now', new \DateTimeZone(date_default_timezone_get()));
+    $exp = $now->add(\DateInterval::createFromDateString('1 hour'));
     $jwt = (new Builder())
-            ->issueBy($this->getTokenIssuer())
-            ->issuedAt(time())
-            ->expiresAt(time()+3600)
+            ->issuedBy($this->tokenIssuer)
+            ->issuedAt($now)
+            ->expiresAt($exp)
             ->withClaim(self::AUTH_USER_NAME, $login)
-            ->getToken($this->getTokenSigner(), $this->key);
+            ->getToken($this->tokenConfig->signer(), $this->tokenConfig->signingKey());
     return $jwt->__toString();
   }
 
   /**
-   * Get the token issuer
-   * @return String
-   */
-  protected function getTokenIssuer() {
-    return URIUtil::getProtocolStr().$_SERVER['HTTP_HOST'];
-  }
-
-  /**
-   * Get the token issuer
-   * @return String
-   */
-  protected function getTokenSigner() {
-    return new Sha256();
-  }
-
-  /**
    * Get the claims stored in the JWT
-   * @return Associative array
+   * @return array
    */
-  protected function getTokenData() {
+  protected function getTokenData(): array {
     $result = null;
 
     $request = ObjectFactory::getInstance('request');
@@ -214,10 +215,8 @@ class ClientSideSession implements TokenBasedSession {
       $jwt = (new Parser())->parse((string)$token);
 
       // validate
-      $data = new ValidationData();
-      $data->setIssuer($this->getTokenIssuer());
-      if ($jwt->validate($data) && $jwt->verify($this->getTokenSigner(), $this->key)) {
-        $result = $jwt->getClaims();
+      if ($this->tokenConfig->validator()->validate($jwt)) {
+        $result = $jwt->headers()->all();
       }
     }
     return $result;
@@ -225,19 +224,19 @@ class ClientSideSession implements TokenBasedSession {
 
   /**
    * Serialize a value to be used in a cookie
-   * @param $value
-   * @return String
+   * @param mixed $value
+   * @return string
    */
-  protected function serializeValue($value) {
+  protected function serializeValue(mixed $value): string {
     return json_encode($value);
   }
 
   /**
    * Unserialize a value used in a cookie
-   * @param $value
-   * @return String
+   * @param string $value
+   * @return mixed
    */
-  protected function unserializeValue($value) {
+  protected function unserializeValue(string $value): mixed {
     return json_decode($value, true);
   }
 }

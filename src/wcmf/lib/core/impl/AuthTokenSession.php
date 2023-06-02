@@ -29,8 +29,8 @@ class AuthTokenSession extends DefaultSession implements TokenBasedSession {
 
   const TOKEN_HEADER = 'X-Auth-Token';
 
-  private $tokenName = '';
-  private $isTokenValid = false;
+  private string $tokenName = '';
+  private bool $isTokenValid = false;
 
   /**
    * Constructor
@@ -45,25 +45,25 @@ class AuthTokenSession extends DefaultSession implements TokenBasedSession {
   /**
    * @see TokenBasedSession::getHeaderName()
    */
-  public function getHeaderName() {
+  public function getHeaderName(): string {
     return self::TOKEN_HEADER;
   }
 
   /**
    * @see TokenBasedSession::getCookieName()
    */
-  public function getCookieName() {
+  public function getCookieName(): string {
     return $this->tokenName;
   }
 
   /**
    * @see Session::setAuthUser()
    */
-  public function setAuthUser($login) {
+  public function setAuthUser(string $login): void {
     parent::setAuthUser($login);
 
     // set auth-token cookie for authenticated user
-    if ($login !== AnonymousUser::USER_GROUP_NAME) {
+    if ($login !== AnonymousUser::NAME) {
       // generate a token, set it in the session and send it to the client
       $token = base64_encode(openssl_random_pseudo_bytes(32));
       $this->isTokenValid = true;
@@ -82,15 +82,15 @@ class AuthTokenSession extends DefaultSession implements TokenBasedSession {
   /**
    * @see Session::getAuthUser()
    */
-  public function getAuthUser() {
+  public function getAuthUser(): string {
     $login = parent::getAuthUser();
-    return $this->isTokenValid() ? $login : AnonymousUser::USER_GROUP_NAME;
+    return $this->isTokenValid() ? $login : AnonymousUser::NAME;
   }
 
   /**
    * Check if the request contains a valid token
    */
-  protected function isTokenValid() {
+  protected function isTokenValid(): bool {
     if ($this->isTokenValid) {
       // already validated
       return true;

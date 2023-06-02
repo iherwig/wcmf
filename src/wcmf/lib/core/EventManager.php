@@ -22,23 +22,23 @@ interface EventManager {
 
   /**
    * Register a listener for a given event
-   * @param $eventName The event name
-   * @param $callback A php callback
+   * @param string $eventName The event name
+   * @param callable $callback A php callback
    */
-  public function addListener(string $eventName, callable $callback);
+  public function addListener(string $eventName, callable $callback): void;
 
   /**
    * Remove a listener for a given event
-   * @param $eventName The event name
-   * @param $callback A php callback
+   * @param string $eventName The event name
+   * @param callable $callback A php callback
    */
-  public function removeListener(string $eventName, callable $callback);
+  public function removeListener(string $eventName, callable $callback): void;
 
   /**
    * Notify listeners about the given event.
-   * @param $eventName The event name
-   * @param $event An Event instance
+   * @param string $eventName The event name
+   * @param Event $event An Event instance
    */
-  public function dispatch(string $eventName, Event $event);
+  public function dispatch(string $eventName, Event $event): void;
 }
 ?>

@@ -28,7 +28,7 @@ class NullPermissionManager implements PermissionManager {
   /**
    * @see PermissionManager::authorize()
    */
-  public function authorize($resource, $context, $action, $login=null, $applyDefaultPolicy=true) {
+  public function authorize(string $resource, string $context, string $action, string $login=null, bool $applyDefaultPolicy=true): bool {
     return true;
   }
 
@@ -42,34 +42,34 @@ class NullPermissionManager implements PermissionManager {
   /**
    * @see PermissionManager::hasTempPermission()
    */
-  public function hasTempPermission($resource, $context, $action) {
+  public function hasTempPermission(string $resource, string $context, string $action): bool {
     return true;
   }
 
   /**
    * @see PermissionManager::getPermissions()
    */
-  public function getPermissions($resource, $context, $action) {
+  public function getPermissions(string $resource, string $context, string $action): ?array {
     return self::$policies;
   }
 
   /**
    * @see PermissionManager::setPermissions()
    */
-  public function setPermissions($resource, $context, $action, $permissions) {
+  public function setPermissions(string $resource, string $context, string $action, ?array $permissions): void {
   }
 
   /**
    * @see PermissionManager::createPermission()
    */
-  public function createPermission($resource, $context, $action, $role, $modifier) {
+  public function createPermission(string $resource, string $context, string $action, string $role, string $modifier): bool {
     return false;
   }
 
   /**
    * @see PermissionManager::removePermission()
    */
-  public function removePermission($resource, $context, $action, $role) {
+  public function removePermission(string $resource, string $context, string $action, string $role): bool {
     return false;
   }
 }

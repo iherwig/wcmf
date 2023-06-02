@@ -27,11 +27,11 @@ class DefaultSession implements Session {
 
   const AUTH_USER_NAME = 'auth_user';
 
-  private $cookiePrefix = '';
+  private string $cookiePrefix = '';
 
   /**
    * Constructor
-   * @param $configuration
+   * @param Configuration $configuration
    */
   public function __construct(Configuration $configuration) {
     // NOTE: prevent "headers already sent" errors in phpunit tests
@@ -62,21 +62,21 @@ class DefaultSession implements Session {
   /**
    * @see Session::isStarted()
    */
-  public function isStarted() {
+  public function isStarted(): bool {
     return isset($_COOKIE[$this->getCookieName()]);
   }
 
   /**
    * @see Session::getID()
    */
-  public function getID() {
+  public function getID(): string {
     return session_id();
   }
 
   /**
    * @see Session::get()
    */
-  public function get($key, $default=null) {
+  public function get(string $key, mixed $default=null): mixed {
     $this->start();
     $value = $default;
     if (isset($_SESSION[$key])) {
@@ -88,7 +88,7 @@ class DefaultSession implements Session {
   /**
    * @see Session::set()
    */
-  public function set($key, $value) {
+  public function set(string $key, mixed $value): void {
     $this->start();
     $_SESSION[$key] = $value;
   }
@@ -96,7 +96,7 @@ class DefaultSession implements Session {
   /**
    * @see Session::remove()
    */
-  public function remove($key) {
+  public function remove(string $key): void {
     $this->start();
     unset($_SESSION[$key]);
   }
@@ -104,7 +104,7 @@ class DefaultSession implements Session {
   /**
    * @see Session::exist()
    */
-  public function exist($key) {
+  public function exist(string $key): bool {
     $this->start();
     $result = isset($_SESSION[$key]);
     return $result;
@@ -113,7 +113,7 @@ class DefaultSession implements Session {
   /**
    * @see Session::clear()
    */
-  public function clear() {
+  public function clear(): void {
     $this->start();
     $_SESSION = [];
   }
@@ -121,7 +121,7 @@ class DefaultSession implements Session {
   /**
    * @see Session::destroy()
    */
-  public function destroy() {
+  public function destroy(): void {
     $this->start();
     $_SESSION = [];
     @session_destroy();
@@ -130,7 +130,7 @@ class DefaultSession implements Session {
   /**
    * @see Session::setAuthUser()
    */
-  public function setAuthUser($login) {
+  public function setAuthUser(string $login): void {
     $this->set(self::AUTH_USER_NAME, $login);
     // NOTE: prevent "headers already sent" errors in phpunit tests
     if (session_status() === PHP_SESSION_ACTIVE && !headers_sent()) {
@@ -141,8 +141,8 @@ class DefaultSession implements Session {
   /**
    * @see Session::getAuthUser()
    */
-  public function getAuthUser() {
-    $login = AnonymousUser::USER_GROUP_NAME;
+  public function getAuthUser(): string {
+    $login = AnonymousUser::NAME;
     // check for auth user in session
     if ($this->exist(self::AUTH_USER_NAME)) {
       $login = $this->get(self::AUTH_USER_NAME);
@@ -153,7 +153,7 @@ class DefaultSession implements Session {
   /**
    * Start the session, if it is not started already
    */
-  private function start() {
+  private function start(): void {
     if (session_status() == PHP_SESSION_NONE) {
       // NOTE: prevent "headers already sent" errors in phpunit tests
       if (!headers_sent()) {
@@ -166,7 +166,7 @@ class DefaultSession implements Session {
    * Get the cookie prefix
    * @return String
    */
-  protected function getCookiePrefix() {
+  protected function getCookiePrefix(): string {
     return $this->cookiePrefix;
   }
 
@@ -174,7 +174,7 @@ class DefaultSession implements Session {
    * Get the cookie name
    * @return String
    */
-  private function getCookieName() {
+  private function getCookieName(): string {
     return $this->cookiePrefix.'-session';
   }
 }

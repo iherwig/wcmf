@@ -12,13 +12,15 @@ namespace wcmf\lib\security\impl;
 
 use wcmf\lib\config\ActionKey;
 use wcmf\lib\config\Configuration;
+use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\config\impl\InifileConfiguration;
 use wcmf\lib\core\LogTrait;
 use wcmf\lib\core\Session;
 use wcmf\lib\persistence\PersistenceFacade;
-use wcmf\lib\security\impl\AbstractPermissionManager;
 use wcmf\lib\security\PermissionManager;
+use wcmf\lib\security\impl\AbstractPermissionManager;
+use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -37,14 +39,15 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
 
   /**
    * Constructor
-   * @param $persistenceFacade
-   * @param $session
-   * @param $configuration
+   * @param PersistenceFacade $persistenceFacade
+   * @param Session $session
+   * @param Configuration $configuration
    */
   public function __construct(PersistenceFacade $persistenceFacade,
           Session $session,
+          PrincipalFactory $principalFactory,
           Configuration $configuration) {
-    parent::__construct($persistenceFacade, $session);
+    parent::__construct($persistenceFacade, $session, $principalFactory);
     $this->configuration = $configuration;
     $this->actionKeyProvider = new ConfigActionKeyProvider($this->configuration,
             self::AUTHORIZATION_SECTION);
@@ -53,7 +56,7 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
   /**
    * @see PermissionManager::getPermissions()
    */
-  public function getPermissions($resource, $context, $action) {
+  public function getPermissions(string $resource, string $context, string $action): ?array {
     $result = null;
     $actionKey = ActionKey::getBestMatch($this->actionKeyProvider, $resource, $context, $action);
     if (strlen($actionKey) > 0) {
@@ -68,7 +71,7 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
   /**
    * @see PermissionManager::setPermissions()
    */
-  public function setPermissions($resource, $context, $action, $permissions) {
+  public function setPermissions(string $resource, string $context, string $action, ?array $permissions): void {
     $permKey = ActionKey::createKey($resource, $context, $action);
     $config = $this->getConfigurationInstance();
     $configInstance = $config['instance'];
@@ -96,29 +99,28 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
   /**
    * @see PermissionManager::createPermission()
    */
-  public function createPermission($resource, $context, $action, $role, $modifier) {
+  public function createPermission(string $resource, string $context, string $action, string $role, string $modifier): bool {
     return self::modifyPermission($resource, $context, $action, $role, $modifier);
   }
 
   /**
    * @see PermissionManager::removePermission()
    */
-  public function removePermission($resource, $context, $action, $role) {
+  public function removePermission(string $resource, string $context, string $action, string $role): bool {
     return self::modifyPermission($resource, $context, $action, $role, null);
   }
 
   /**
    * Modify a permission for the given role.
-   * @param $resource The resource (e.g. class name of the Controller or object id).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @param $role The role to authorize.
-   * @param $modifier One of the PERMISSION_MODIFIER_ constants, null, if the permission
+   * @param string $resource The resource (e.g. class name of the Controller or object id).
+   * @param string $context The context in which the action takes place.
+   * @param string $action The action to process.
+   * @param string $role The role to authorize.
+   * @param string $modifier One of the PERMISSION_MODIFIER_ constants, null, if the permission
    *    should be removed.
-   * @return boolean
+   * @return bool
    */
-  protected function modifyPermission($resource, $context, $action, $role, $modifier) {
-
+  protected function modifyPermission(string $resource, string $context, string $action, string $role, string $modifier): bool {
     $permKey = ActionKey::createKey($resource, $context, $action);
     $permVal = '';
     if ($modifier != null) {
@@ -148,13 +150,13 @@ class StaticPermissionManager extends AbstractPermissionManager implements Permi
 
   /**
    * Get the configuration instance and file that is used to store the permissions.
-   * @return Associative array with keys 'instance' and 'file'.
+   * @return array{'instance': Configuration, 'file': string}
    */
-  protected function getConfigurationInstance() {
+  protected function getConfigurationInstance(): array {
     // get config file to modify
     $configFiles = $this->configuration->getConfigurations();
     if (sizeof($configFiles) == 0) {
-      return false;
+      throw new ConfigurationException('No configuration files exist');
     }
 
     // create a writable configuration and modify the permission

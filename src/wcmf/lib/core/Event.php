@@ -22,7 +22,7 @@ abstract class Event {
   /**
    * Stop further processing of the event
    */
-  public function stopPropagation() {
+  public function stopPropagation(): void {
     $this->isStopped = true;
   }
 

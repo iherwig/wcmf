@@ -19,13 +19,13 @@ interface TokenBasedSession extends Session {
 
   /**
    * Get the name of the auth token header.
-   * @return String
+   * @return string
    */
-  public function getHeaderName();
+  public function getHeaderName(): string;
 
   /**
    * Get the name of the auth token cookie.
-   * @return String
+   * @return string
    */
-  public function getCookieName();
+  public function getCookieName(): string;
 }

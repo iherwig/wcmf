@@ -25,21 +25,21 @@ abstract class AbstractRole extends Node implements Role {
   /**
    * @see Role::setName()
    */
-  public function setName($name) {
+  public function setName(string $name): void {
     $this->setValue('name', $name);
   }
 
   /**
    * @see Role::getName()
    */
-  public function getName() {
+  public function getName(): string {
     return $this->getValue('name');
   }
 
   /**
    * @see PersistentObject::validateValue()
    */
-  public function validateValue($name, $value) {
+  public function validateValue(string $name, $value): void {
     parent::validateValue($name, $value);
 
     // validate the name property

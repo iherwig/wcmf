@@ -36,9 +36,9 @@ class MonologFileLogger extends Logger implements \wcmf\lib\core\Logger {
   const ROOT_SECTION_NAME = 'Root';
   const LOGGER_SECTION_NAME = 'Logger';
 
-  private static $defaultLevel = Logger::ERROR;
-  private static $logTarget = '';
-  private static $configLevels = [];
+  private static int $defaultLevel = Logger::ERROR;
+  private static string $logTarget = '';
+  private static array $configLevels = [];
 
   /**
    * Constructor

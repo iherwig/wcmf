@@ -21,10 +21,10 @@ interface DynamicRole {
 
   /**
    * Check if this role matches for a user and resource.
-   * @param $user The user instance.
-   * @param $resource The resource string.
-   * @return Boolean whether the role matches or not, null if the result is undefined
+   * @param User $user The user instance.
+   * @param string $resource The resource string.
+   * @return bool whether the role matches or not, null if the result is undefined
    */
-  public function match(User $user, $resource);
+  public function match(User $user, string $resource): bool;
 }
 ?>

@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\security;
 
+use wcmf\lib\security\principal\User;
+
 /**
  * AuthenticationManager implementations are used to handle all authentication
  * requests.
@@ -20,9 +22,9 @@ interface AuthenticationManager {
 
   /**
    * Authenticate using the given credentials.
-   * @param $credentials Associative array with implementation specific keys
+   * @param array $credentials Array with implementation specific keys
    * @return User instance if successful, null else
    */
-  public function login($credentials);
+  public function login(array $credentials): ?User;
 }
 ?>

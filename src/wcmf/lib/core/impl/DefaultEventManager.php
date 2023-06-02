@@ -25,7 +25,7 @@ class DefaultEventManager implements EventManager {
   /**
    * @see EventManager::addListener()
    */
-  public function addListener($eventName, $callback) {
+  public function addListener(string $eventName, callable $callback): void {
     if (!isset($this->listeners[$eventName])) {
       $this->listeners[$eventName] = [];
     }
@@ -35,7 +35,7 @@ class DefaultEventManager implements EventManager {
   /**
    * @see EventManager::removeListener()
    */
-  public function removeListener($eventName, $callback) {
+  public function removeListener(string $eventName, callable $callback): void {
     if (isset($this->listeners[$eventName])) {
       $listeners = [];
       for ($i=0, $count=sizeof($this->listeners[$eventName]); $i<$count; $i++) {
@@ -51,7 +51,7 @@ class DefaultEventManager implements EventManager {
   /**
    * @see EventManager::dispatch()
    */
-  public function dispatch($eventName, Event $event) {
+  public function dispatch(string $eventName, Event $event): void {
     if (isset($this->listeners[$eventName])) {
       for ($i=0, $count=sizeof($this->listeners[$eventName]); $i<$count; $i++) {
         $curCallback = $this->listeners[$eventName][$i];

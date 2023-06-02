@@ -13,6 +13,7 @@ namespace wcmf\lib\core\impl;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\Factory;
+use wcmf\lib\core\LogTrait;
 use wcmf\lib\util\StringUtil;
 
 /**
@@ -58,6 +59,7 @@ use wcmf\lib\util\StringUtil;
  * @author ingo herwig <ingo@wemove.com>
  */
 class DefaultFactory implements Factory {
+  use LogTrait;
 
   /**
    * Interfaces that must be implemented by the given instances used
@@ -92,14 +94,14 @@ class DefaultFactory implements Factory {
   /**
    * The registry for already created instances
    */
-  protected $instances = [];
+  protected array $instances = [];
 
   /**
    * The Configuration instance that holds the instance definitions
    */
-  protected $configuration = null;
+  protected ?Configuration $configuration = null;
 
-  protected $currentStack = [];
+  protected array $currentStack = [];
 
   /**
    * Constructor.
@@ -113,7 +115,11 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::getInstance()
    */
-  public function getInstance(string $name, array $dynamicConfiguration=[]) {
+  public function getInstance(string $name, array $dynamicConfiguration=[]): object|array {
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Creating instance '$name'...");
+      self::logger()->debug("Current stack: ".json_encode($this->currentStack));
+    }
     $instance = null;
     if (in_array($name, $this->currentStack)) {
       throw new \Exception("Circular dependency detected: ".join(' - ', $this->currentStack)." - [".$name."]");
@@ -135,13 +141,16 @@ class DefaultFactory implements Factory {
       $instance = $this->createInstance($name, $configuration, $instanceKey);
     }
     array_pop($this->currentStack);
+    if (self::logger()->isDebugEnabled()) {
+      self::logger()->debug("Finished creating instance '$name'");
+    }
     return $instance;
   }
 
   /**
    * @see Factory::getNewInstance()
    */
-  public function getNewInstance(string $name, array $dynamicConfiguration=[]) {
+  public function getNewInstance(string $name, array $dynamicConfiguration=[]): object|array {
     $configuration = array_merge([
         '__shared' => false
     ], $dynamicConfiguration);
@@ -153,7 +162,7 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::getInstanceOf()
    */
-  public function getInstanceOf(string $class, array $dynamicConfiguration=[]): object {
+  public function getInstanceOf(string $class, array $dynamicConfiguration=[]): object|array {
     $configuration = array_merge([
         '__class' => $class,
         '__shared' => false
@@ -166,7 +175,7 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::registerInstance()
    */
-  public function registerInstance(string $name, $instance) {
+  public function registerInstance(string $name, object|array $instance): void {
     $instanceKey = strtolower($name);
     $this->instances[$instanceKey] = $instance;
   }
@@ -174,20 +183,20 @@ class DefaultFactory implements Factory {
   /**
    * @see Factory::addInterfaces()
    */
-  public function addInterfaces(array $interfaces) {
+  public function addInterfaces(array $interfaces): void {
     $this->requiredInterfaces = array_merge($this->requiredInterfaces, $interfaces);
   }
 
   /**
    * @see Factory::clear()
    */
-  public function clear() {
+  public function clear(): void {
     $this->instances = [];
   }
 
   /**
    * Get the setter method name for a property.
-   * @param $property
+   * @param string $property
    * @return string
    */
   protected function getSetterName(string $property): string {
@@ -196,18 +205,18 @@ class DefaultFactory implements Factory {
 
   /**
    * Create an instance from the given configuration array.
-   * @param $name The name by which the instance may be retrieved later
+   * @param string $name The name by which the instance may be retrieved later
    * using Factory::getInstance(). The name is also used to check the interface
    * (see Factory::addInterfaces())
-   * @param $configuration Associative array with key value pairs for instance properties
+   * @param array $configuration Array with key value pairs for instance properties
    * passed to the constructor, setters or public properties and the special keys:
    * - '__class': optional, denotes the instance class name
    * - '__shared' optional, if true, the instance may be reused using Factory::getInstance())
    * - '__ref' optional, defines this instance as an alias of the referenced instance
-   * @param $instanceKey The name under which the instance is registered for later retrieval
-   * @return object or array
+   * @param ?string $instanceKey The name under which the instance is registered for later retrieval
+   * @return object|array
    */
-  protected function createInstance(string $name, array $configuration, ?string $instanceKey) {
+  protected function createInstance(string $name, array $configuration, ?string $instanceKey): object|array {
     $instance = null;
 
     // return referenced instance, if the instance is an alias
@@ -261,7 +270,7 @@ class DefaultFactory implements Factory {
             elseif (($paramClass = $param->getType()) != null) {
               // check for parameter's class from type hint
               // will cause an exception, if the class does not exist
-              $cParams[$paramName] = $this->getInstanceOf($paramClass->name);
+              $cParams[$paramName] = $this->getInstanceOf($paramClass->getName());
             }
             elseif (!$param->isDefaultValueAvailable()) {
               throw new ConfigurationException('Constructor parameter \''.$paramName.
@@ -329,10 +338,10 @@ class DefaultFactory implements Factory {
 
   /**
    * Resolve a configuration value into a parameter
-   * @param $value
+   * @param mixed $value
    * @return mixed
    */
-  protected function resolveValue($value) {
+  protected function resolveValue(mixed $value): mixed {
     // special treatments, if value is a string
     if (is_string($value)) {
       // replace variables denoted by a leading $
@@ -375,9 +384,9 @@ class DefaultFactory implements Factory {
   /**
    * Get the interface that is required to be implemented by the given instance
    * @param $name The name of the instance
-   * @return interface or null, if undefined
+   * @return string or null, if undefined
    */
-  protected function getInterface(string $name) {
+  protected function getInterface(string $name): ?string {
     if (isset($this->requiredInterfaces[$name])) {
       return $this->requiredInterfaces[$name];
     }

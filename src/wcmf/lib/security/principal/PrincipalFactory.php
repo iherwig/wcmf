@@ -20,32 +20,32 @@ interface PrincipalFactory {
 
   /**
    * Get a User instance by login.
-   * @param $login The user's login
-   * @param $useTempPermission Boolean whether to set a temporary permission
+   * @param string $login The user's login
+   * @param bool $useTempPermission Boolean whether to set a temporary permission
    *   for reading or not (uselfull in the login process, where no authenticated
    *   user exists yet) (optional, default: false)
-   * @return User instance
+   * @return User instance or null
    */
-  public function getUser($login, $useTempPermission=false);
+  public function getUser(string $login, bool $useTempPermission=false): ?User;
 
   /**
    * Get the Role instances associated with the given User instance.
-   * @param $user The User instance
-   * @param $useTempPermission Boolean whether to set a temporary permission
+   * @param User $user The User instance
+   * @param bool $useTempPermission Boolean whether to set a temporary permission
    *   for reading or not (uselfull in the login process, where no authenticated
    *   user exists yet) (optional, default: false)
-   * @return Array of Role instances
+   * @return array<Role>
    */
-  public function getUserRoles(User $user, $useTempPermission=false);
+  public function getUserRoles(User $user, bool $useTempPermission=false): array;
 
   /**
    * Get a Role instance by name.
-   * @param $name The role's name
-   * @param $useTempPermission Boolean whether to set a temporary permission
+   * @param string $name The role's name
+   * @param bool $useTempPermission Boolean whether to set a temporary permission
    *   for reading or not (uselfull in the login process, where no authenticated
    *   user exists yet) (optional, default: false)
-   * @return Role instance
+   * @return Role instance or null
    */
-  public function getRole($name, $useTempPermission=false);
+  public function getRole(string $name, bool $useTempPermission=false): ?Role;
 }
 ?>

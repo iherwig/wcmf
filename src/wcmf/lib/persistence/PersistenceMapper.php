@@ -13,10 +13,10 @@ namespace wcmf\lib\persistence;
 use wcmf\lib\i18n\Message;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\output\OutputStrategy;
 use wcmf\lib\persistence\PagingInfo;
 use wcmf\lib\persistence\PersistenceOperation;
 use wcmf\lib\persistence\PersistentObject;
+use wcmf\lib\persistence\output\OutputStrategy;
 
  /**
  * PersistenceMapper defines the interface for all mapper classes.
@@ -107,7 +107,7 @@ interface PersistenceMapper {
    * @param string $name The attribute name
    * @return AttributeDescription or null if the attribute does not exist
    */
-  public function getAttribute(string $name): AttributeDescription;
+  public function getAttribute(string $name): ?AttributeDescription;
 
   /**
    * Get the display name of the type.

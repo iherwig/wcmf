@@ -10,9 +10,8 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\security\principal\DynamicRole;
+use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\principal\User;
 
 /**
@@ -23,30 +22,30 @@ use wcmf\lib\security\principal\User;
  */
 class OtherSuperUserRole {
 
-  private $initialized = false;
-  private $persistenceFacade = null;
+  private bool $initialized = false;
+  private ?PersistenceFacade $persistenceFacade = null;
+
+  /**
+   * Constructor
+   * @param PersistenceFacade $persistenceFacade
+   */
+  public function __construct(PersistenceFacade $persistenceFacade) {
+    $this->persistenceFacade = $persistenceFacade;
+  }
 
   /**
    * @see DynamicRole::match()
    */
-  public function match(User $user, $resource) {
+  public function match(User $user, string $resource): bool {
     if ($user->isSuperUser()) {
       $extensionRemoved = preg_replace('/\.[^\.]*?$/', '', $resource);
       if (($oidObj = ObjectId::parse($resource)) !== null || ($oidObj = ObjectId::parse($extensionRemoved)) !== null) {
-        $this->initialize();
         if (($obj = $this->persistenceFacade->load($oidObj)) !== null && $obj instanceof \wcmf\lib\security\principal\User) {
           return $user->getLogin() != $obj->getLogin();
         }
       }
     }
     return false;
-  }
-
-  private function initialize() {
-    if (!$this->initialized) {
-      $this->persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
-      $this->initialized = true;
-    }
   }
 }
 ?>

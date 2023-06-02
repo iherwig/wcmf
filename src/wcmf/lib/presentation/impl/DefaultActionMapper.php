@@ -84,7 +84,7 @@ class DefaultActionMapper implements ActionMapper {
     // check authorization for controller/context/action triple
     if (!$this->permissionManager->authorize($referrer, $context, $action)) {
       $authUserLogin = $this->session->getAuthUser();
-      if ($authUserLogin == AnonymousUser::USER_GROUP_NAME) {
+      if ($authUserLogin == AnonymousUser::NAME) {
         self::logger()->debug("Session invalid. The request was: ".$request->__toString());
         throw new ApplicationException($request, $response, ApplicationError::get('SESSION_INVALID'));
       }

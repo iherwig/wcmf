@@ -10,9 +10,11 @@
  */
 namespace wcmf\lib\security\impl;
 
+use wcmf\lib\config\Configuration;
 use wcmf\lib\core\IllegalArgumentException;
-use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\security\AuthenticationManager;
+use wcmf\lib\security\principal\PrincipalFactory;
+use wcmf\lib\security\principal\User;
 
 /**
  * DefaultAuthenticationManager uses PrincipalFactory to get a User instance
@@ -22,23 +24,36 @@ use wcmf\lib\security\AuthenticationManager;
  */
 class DefaultAuthenticationManager implements AuthenticationManager {
 
+  protected ?Configuration $configuration = null;
+  protected ?PrincipalFactory $principalFactory = null;
+
+  /**
+   * Constructor
+   * @param PersistenceFacade $persistenceFacade
+   * @param Session $session
+   * @param array<DynamicRole>
+   */
+  public function __construct(Configuration $configuration,
+          PrincipalFactory $principalFactory) {
+    $this->configuration = $configuration;
+    $this->principalFactory = $principalFactory;
+  }
+
   /**
    * @see AuthenticationManager::login()
    *
-   * @param $credentials Associative array with the keys 'login' and 'password'
+   * @param array{'login': string, 'password': string} $credentials
    */
-  public function login($credentials) {
+  public function login(array $credentials): ?User {
     if (!isset($credentials['login']) || !isset($credentials['password'])) {
       throw new IllegalArgumentException("The parameters 'login' and 'password' are required");
     }
-    $config = ObjectFactory::getInstance('configuration');
 
     $login = $credentials['login'];
     $password = $credentials['password'];
 
     // try to receive the user with given credentials
-    $principalFactory = ObjectFactory::getInstance('principalFactory');
-    $user = $principalFactory->getUser($login, true);
+    $user = $this->principalFactory->getUser($login, true);
 
     // check if user exists
     $loginOk = false;
@@ -49,7 +64,7 @@ class DefaultAuthenticationManager implements AuthenticationManager {
         // load user config initially
         $userConfig = $user->getConfig();
         if (strlen($userConfig) > 0) {
-          $config->addConfiguration($userConfig);
+          $this->configuration->addConfiguration($userConfig);
         }
         return $user;
       }

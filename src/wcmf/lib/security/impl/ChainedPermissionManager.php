@@ -23,16 +23,16 @@ class ChainedPermissionManager extends AbstractPermissionManager implements Perm
 
   /**
    * Set the PermissionManager instances to delegate to.
-   * @param $managers Array of PermissionManager instances
+   * @param array<PermissionManager> $managers Array of PermissionManager instances
    */
-  public function setManagers($managers) {
+  public function setManagers(array $managers): void {
     $this->managers = $managers;
   }
 
   /**
    * @see PermissionManager::getPermissions()
    */
-  public function getPermissions($resource, $context, $action) {
+  public function getPermissions(string $resource, string $context, string $action): ?array {
     foreach ($this->managers as $manager) {
       $permissions = $manager->getPermissions($resource, $context, $action);
       if ($permissions != null) {
@@ -45,7 +45,7 @@ class ChainedPermissionManager extends AbstractPermissionManager implements Perm
   /**
    * @see PermissionManager::setPermissions()
    */
-  public function setPermissions($resource, $context, $action, $permissions) {
+  public function setPermissions(string $resource, string $context, string $action, ?array $permissions): void {
     if (sizeof($this->managers) > 0) {
       $this->managers[0]->setPermissions($resource, $context, $action, $permissions);
     }
@@ -54,19 +54,21 @@ class ChainedPermissionManager extends AbstractPermissionManager implements Perm
   /**
    * @see PermissionManager::createPermission()
    */
-  public function createPermission($resource, $context, $action, $role, $modifier) {
+  public function createPermission(string $resource, string $context, string $action, string $role, string $modifier): bool {
     if (sizeof($this->managers) > 0) {
-      $this->managers[0]->createPermission($resource, $context, $action, $role, $modifier);
+      return $this->managers[0]->createPermission($resource, $context, $action, $role, $modifier);
     }
+    return false;
   }
 
   /**
    * @see PermissionManager::removePermission()
    */
-  public function removePermission($resource, $context, $action, $role) {
+  public function removePermission(string $resource, string $context, string $action, string $role): bool {
     if (sizeof($this->managers) > 0) {
-      $this->managers[0]->removePermission($resource, $context, $action, $role);
+      return $this->managers[0]->removePermission($resource, $context, $action, $role);
     }
+    return false;
   }
 }
 ?>

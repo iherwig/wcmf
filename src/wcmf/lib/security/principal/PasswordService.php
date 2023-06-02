@@ -19,30 +19,30 @@ class PasswordService {
 
   /**
    * Check if the given password is hashed
-   * @param $password
-   * @return boolean
+   * @param string $password
+   * @return bool
    */
-  public static function isHashed($password) {
+  public static function isHashed(string $password): bool {
     $info = password_get_info($password);
     return $info['algo'] == PASSWORD_BCRYPT;
   }
 
   /**
    * Hash the given cleartext password
-   * @param $password
-   * @return String
+   * @param string $password
+   * @return string
    */
-  public static function hash($password) {
+  public static function hash(string $password): string {
     return password_hash($password, PASSWORD_BCRYPT);
   }
 
   /**
    * Check if the given hash represents the given password
-   * @param $password
-   * @param $passwordHash
-   * @return String
+   * @param string $password
+   * @param string $passwordHash
+   * @return bool
    */
-  public static function verify($password, $passwordHash) {
+  public static function verify(string $password, string $passwordHash): bool {
     return password_verify($password, $passwordHash);
   }
 }

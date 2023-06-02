@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
+use wcmf\lib\core\IllegalArgumentException;
+use wcmf\lib\model\Node;
 use wcmf\lib\persistence\BuildDepth;
 use wcmf\lib\persistence\Criteria;
 use wcmf\lib\persistence\PersistenceAction;
@@ -17,6 +19,7 @@ use wcmf\lib\persistence\PersistenceFacade;
 use wcmf\lib\security\PermissionManager;
 use wcmf\lib\security\principal\PrincipalFactory;
 use wcmf\lib\security\principal\User;
+use wcmf\lib\security\principal\Role;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 
 /**
@@ -27,23 +30,23 @@ use wcmf\lib\security\principal\impl\AnonymousUser;
  */
 class DefaultPrincipalFactory implements PrincipalFactory {
 
-  private $persistenceFacade = null;
-  private $permissionManager = null;
-  private $userType = null;
-  private $roleType = null;
-  private $users = [];
+  private ?PersistenceFacade $persistenceFacade = null;
+  private ?PermissionManager $permissionManager = null;
+  private ?string $userType = null;
+  private ?string $roleType = null;
+  private array $users = [];
 
   private $roleRelationNames = null;
 
   /**
    * Constructor
-   * @param $persistenceFacade
-   * @param $permissionManager
-   * @param $userType Entity type name of User instances
-   * @param $roleType Entity type name of Role instances
+   * @param PersistenceFacade $persistenceFacade
+   * @param PermissionManager $permissionManager
+   * @param string $userType Entity type name of User instances
+   * @param string $roleType Entity type name of Role instances
    */
   public function __construct(PersistenceFacade $persistenceFacade,
-          PermissionManager $permissionManager, $userType, $roleType) {
+          PermissionManager $permissionManager, string $userType, string $roleType) {
     $this->persistenceFacade = $persistenceFacade;
     $this->permissionManager = $permissionManager;
     $this->userType = $userType;
@@ -53,9 +56,9 @@ class DefaultPrincipalFactory implements PrincipalFactory {
   /**
    * @see PrincipalFactory::getUser()
    */
-  public function getUser($login, $useTempPermission=false) {
+  public function getUser(string $login, bool $useTempPermission=false): ?User {
     // load user if not done before
-    if ($login != AnonymousUser::USER_GROUP_NAME && !isset($this->users[$login])) {
+    if ($login != AnonymousUser::NAME && !isset($this->users[$login])) {
       $loadUser = function() use ($login) {
         return $this->persistenceFacade->loadFirstObject($this->userType, BuildDepth::SINGLE,
           [new Criteria($this->userType, 'login', '=', $login)], null);
@@ -65,13 +68,17 @@ class DefaultPrincipalFactory implements PrincipalFactory {
         $this->permissionManager->withTempPermissions($loadUser, [$this->userType, '', PersistenceAction::READ]) :
         $loadUser();
     }
-    return $login == AnonymousUser::USER_GROUP_NAME ? new AnonymousUser() : $this->users[$login];
+    return $login == AnonymousUser::NAME ? new AnonymousUser() : $this->users[$login];
   }
 
   /**
    * @see PrincipalFactory::getUserRoles()
    */
-  public function getUserRoles(User $user, $useTempPermission=false) {
+  public function getUserRoles(User $user, bool $useTempPermission=false): array {
+    if (!($user instanceof Node)) {
+      throw new IllegalArgumentException('Node instance expected');
+    }
+
     $loadUserRoles = function() use ($user) {
       // initialize role relation definition
       if ($this->roleRelationNames == null) {
@@ -99,7 +106,7 @@ class DefaultPrincipalFactory implements PrincipalFactory {
   /**
    * @see PrincipalFactory::getRole()
    */
-  public function getRole($name, $useTempPermission=false) {
+  public function getRole(string $name, bool $useTempPermission=false): ?Role {
     $loadRole = function() use ($name) {
       return $this->persistenceFacade->loadFirstObject($this->roleType, BuildDepth::SINGLE,
         [new Criteria($this->roleType, 'name', '=', $name)], null);

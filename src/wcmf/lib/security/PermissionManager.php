@@ -31,20 +31,20 @@ interface PermissionManager {
    * - Object id (e.g. `app.src.model.wcmf.User:123`)
    * - Object id and property name (e.g. `app.src.model.wcmf.User:123.login`)
    *
-   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @param $login The login of the user to use for authorization (optional, default: the value of Session::getAuthUser())
-   * @param $applyDefaultPolicy Boolean whether to apply a default policy, if no authorization rule is set for this request (optional, default: true)
-   * @return Boolean whether authorization succeeded/failed or null, if no rule is set and no default policy is applied
+   * @param string $resource The resource to authorize (e.g. class name of the Controller or ObjectId instance).
+   * @param string $context The context in which the action takes place.
+   * @param string $action The action to process.
+   * @param string $login The login of the user to use for authorization (optional, default: the value of Session::getAuthUser())
+   * @param bool $applyDefaultPolicy Boolean whether to apply a default policy, if no authorization rule is set for this request (optional, default: true)
+   * @return bool whether authorization succeeded/failed or null, if no rule is set and no default policy is applied
    */
-  public function authorize($resource, $context, $action, $login=null, $applyDefaultPolicy=true);
+  public function authorize(string $resource, string $context, string $action, string $login=null, bool $applyDefaultPolicy=true): bool;
 
   /**
    * Execute a function with a temporary permission for the current user. The permission
    * is valid only until end of execution of the function.
-   * @param $callable The function to execute.
-   * @param $permissions Array of permission definition arrays containing
+   * @param callable $callable The function to execute.
+   * @param array $permissions Array of permission definition arrays containing
    *      - The resource to authorize (e.g. class name of the Controller or ObjectId) at index 0,
    *      - The context in which the action takes place at index 1,
    *      - The action to process at index 2
@@ -54,12 +54,12 @@ interface PermissionManager {
 
   /**
    * Check if a temporary permission for the current user exists.
-   * @param $resource The resource to authorize (e.g. class name of the Controller or ObjectId).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @return Boolean
+   * @param string $resource The resource to authorize (e.g. class name of the Controller or ObjectId).
+   * @param string $context The context in which the action takes place.
+   * @param string $action The action to process.
+   * @return bool
    */
-  public function hasTempPermission($resource, $context, $action);
+  public function hasTempPermission(string $resource, string $context, string $action): bool;
 
   /**
    * Permission management
@@ -67,43 +67,43 @@ interface PermissionManager {
 
   /**
    * Get the permissions on a resource, context, action combination.
-   * @param $resource The resource (e.g. class name of the Controller or ObjectId).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @return Assoziative array with keys 'default' (boolean) and 'allow', 'deny'
-   * (arrays of role names) or null, if no permissions are defined.
+   * @param string $resource The resource (e.g. class name of the Controller or ObjectId).
+   * @param string $context The context in which the action takes place.
+   * @param string $action The action to process.
+   * @return array{'default': bool, 'allow': array<string>, 'deny': array<string>}
+   *     with allow and deny arrays containing role names or null, if no permissions are defined.
    */
-  public function getPermissions($resource, $context, $action);
+  public function getPermissions(string $resource, string $context, string $action): ?array;
 
   /**
    * Set the permissions on a resource, context, action combination.
-   * @param $resource The resource (e.g. class name of the Controller or ObjectId).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @param $permissions Assoziative array with keys 'default' (boolean) and
-   * 'allow', 'deny' (arrays of role names) or null if all permissions should be deleted.
+   * @param string $resource The resource (e.g. class name of the Controller or ObjectId).
+   * @param string $context The context in which the action takes place.
+   * @param string $action The action to process.
+   * @param array{'default': bool, 'allow': array<string>, 'deny': array<string>} $permissions
+   *     with allow and deny arrays containing role names or null, if all permissions should be deleted.
    */
-  public function setPermissions($resource, $context, $action, $permissions);
+  public function setPermissions(string $resource, string $context, string $action, ?array $permissions): void;
 
   /**
    * Create/Change a permission for a role on a resource, context, action combination.
-   * @param $resource The resource (e.g. class name of the Controller or ObjectId).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @param $role The role to authorize.
-   * @param $modifier One of the PERMISSION_MODIFIER constants.
-   * @return Boolean whether creation succeded/failed.
+   * @param string $resource The resource (e.g. class name of the Controller or ObjectId).
+   * @param string $context The context in which the action takes place.
+   * @param string $action The action to process.
+   * @param string $role The role to authorize.
+   * @param string $modifier One of the PERMISSION_MODIFIER constants.
+   * @return bool whether creation succeded/failed.
    */
-  public function createPermission($resource, $context, $action, $role, $modifier);
+  public function createPermission(string $resource, string $context, string $action, string $role, string $modifier): bool;
 
   /**
    * Remove a role from a permission on a resource, context, action combination.
-   * @param $resource The resource (e.g. class name of the Controller or ObjectId).
-   * @param $context The context in which the action takes place.
-   * @param $action The action to process.
-   * @param $role The role to remove.
-   * @return Boolean whether removal succeded/failed.
+   * @param string $resource The resource (e.g. class name of the Controller or ObjectId).
+   * @param string $context The context in which the action takes place.
+   * @param string $action The action to process.
+   * @param string $role The role to remove.
+   * @return bool whether removal succeded/failed.
    */
-  public function removePermission($resource, $context, $action, $role);
+  public function removePermission(string $resource, string $context, string $action, string $role): bool;
 }
 ?>

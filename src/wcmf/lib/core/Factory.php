@@ -22,8 +22,6 @@ namespace wcmf\lib\core;
  * the instance will be an associative array. Values starting with $ will be resolved
  * as instances, if the remaining value denotes a configuration section.
  *
- * @todo Use union type (object|array) in PHP8
- *
  * @author ingo herwig <ingo@wemove.com>
  */
 interface Factory {
@@ -32,49 +30,49 @@ interface Factory {
    * Get an instance from the configuration. Instances created with this method
    * might be shared (depending on the __shared configuration property).
    * @note Instance names are treated case insensitive
-   * @param $name The name of the instance (section, where the instance is defined)
-   * @param $dynamicConfiguration Associative array with key value pairs for
+   * @param string $name The name of the instance (section, where the instance is defined)
+   * @param array $dynamicConfiguration Array with key value pairs for
    * dynamic instance properties (optional)
-   * @return object or array
+   * @return object|array
    */
-  public function getInstance(string $name, array $dynamicConfiguration=[]);
+  public function getInstance(string $name, array $dynamicConfiguration=[]): object|array;
 
   /**
    * Get a new instance from the configuration. Instances created with this method are not shared.
    * @note Instance names are treated case insensitive
-   * @param $name The name of the instance (section, where the instance is defined)
-   * @param $dynamicConfiguration Associative array with key value pairs for
+   * @param string $name The name of the instance (section, where the instance is defined)
+   * @param array $dynamicConfiguration Array with key value pairs for
    * dynamic instance properties (optional)
-   * @return object or array
+   * @return object|array
    */
-  public function getNewInstance(string $name, array $dynamicConfiguration=[]);
+  public function getNewInstance(string $name, array $dynamicConfiguration=[]): object|array;
 
   /**
    * Create an instance of a class. Instances created with this method are not shared.
-   * @param $class The name of the class
-   * @param $dynamicConfiguration Associative array with key value pairs for
+   * @param string $class The name of the class
+   * @param array $dynamicConfiguration Array with key value pairs for
    * dynamic instance properties (optional)
-   * @return object
+   * @return object|array
    */
-  public function getInstanceOf(string $class, array $dynamicConfiguration=[]): object;
+  public function getInstanceOf(string $class, array $dynamicConfiguration=[]): object|array;
 
   /**
    * Register a shared instance with a given name.
    * @note Instance names are treated case insensitive
-   * @param $name The name of the instance.
-   * @param $instance The instance (object or array)
+   * @param string $name The name of the instance.
+   * @param object|array $instance The instance (object or array)
    */
-  public function registerInstance(string $name, $instance);
+  public function registerInstance(string $name, object|array $instance): void;
 
   /**
    * Add interfaces that instances must implement.
-   * @param $interfaces Associative array with instance names as keys and interface names as values.
+   * @param array $interfaces Array with instance names as keys and interface names as values.
    */
-  public function addInterfaces(array $interfaces);
+  public function addInterfaces(array $interfaces): void;
 
   /**
    * Delete all created instances.
    */
-  public function clear();
+  public function clear(): void;
 }
 ?>

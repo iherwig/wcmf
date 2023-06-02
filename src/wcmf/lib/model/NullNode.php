@@ -11,7 +11,6 @@
 namespace wcmf\lib\model;
 
 use wcmf\lib\persistence\ObjectId;
-use wcmf\lib\persistence\PersistentObject;
 
 /**
  * NullNode is an implementation of the NullObject pattern,
@@ -28,7 +27,7 @@ class NullNode extends Node {
   /**
    * @see PersistentObject::getOID()
    */
-  public function getOID() {
+  public function getOID(): ObjectId {
     return new ObjectId($this->getType(), null);
   }
 }

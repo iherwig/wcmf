@@ -20,63 +20,63 @@ interface Session {
 
   /**
    * Check if the session is started.
-   * @return boolean.
+   * @return bool
    */
-  public function isStarted();
+  public function isStarted(): bool;
 
   /**
    * Get the id of the session.
    * @return string
    */
-  public function getID();
+  public function getID(): string;
 
   /**
    * Returns the value of a session variable
-   * @param $key The key (name) of the session vaiable.
-   * @param $default The default value if the key is not defined (optional, default: _null_)
+   * @param string $key The key (name) of the session vaiable.
+   * @param mixed $default The default value if the key is not defined (optional, default: _null_)
    * @return mixed or null if it doesn't exist.
    */
-  public function get($key, $default=null);
+  public function get(string $key, mixed $default=null): mixed;
 
   /**
    * Sets the value of a session variable.
-   * @param $key The key (name) of the session vaiable.
-   * @param $value The value of the session variable.
+   * @param string $key The key (name) of the session vaiable.
+   * @param mixed $value The value of the session variable.
    */
-  public function set($key, $value);
+  public function set(string $key, mixed $value): void;
 
   /**
    * Remove a session variable.
-   * @param $key The key (name) of the session variable.
+   * @param string $key The key (name) of the session variable.
    */
-  public function remove($key);
+  public function remove(string $key): void;
 
   /**
    * Tests, if a certain session variable is defined.
-   * @param $key The key (name) of the session variable.
-   * @return boolean whether the session variable is set or not.
+   * @param string $key The key (name) of the session variable.
+   * @return bool whether the session variable is set or not.
    */
-  public function exist($key);
+  public function exist(string $key): bool;
 
   /**
    * Clear the session data.
    */
-  public function clear();
+  public function clear(): void;
 
   /**
    * Destroy the session.
    */
-  public function destroy();
+  public function destroy(): void;
 
   /**
    * Set the login of authenticated user.
-   * @param $login Login name of the user
+   * @param string $login Login name of the user
    */
-  public function setAuthUser($login);
+  public function setAuthUser(string $login): void;
 
   /**
    * Get the login of the authenticated user.
    * @return string
    */
-  public function getAuthUser();
+  public function getAuthUser(): string;
 }

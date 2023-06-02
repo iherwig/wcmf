@@ -8,25 +8,29 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-namespace wcmf\lib\security\principal;
+namespace wcmf\lib\security\principal\impl;
+
+use wcmf\lib\security\principal\Role;
 
 /**
- * Role is the interface for user roles.
+ * Anonymous role
  *
  * @author ingo herwig <ingo@wemove.com>
  */
-interface Role {
+class AnonymousRole implements Role {
+
+  const NAME = 'anonymous';
 
   /**
-   * Set the name of the role.
-   * @param string $name The name of the role.
+   * @see Role::setName()
    */
-  public function setName(string $name): void;
+  public function setName(string $name): void {}
 
   /**
-   * Get name of the role.
-   * @return string
+   * @see Role::getName()
    */
-  public function getName(): string;
+  public function getName(): string {
+    return self::NAME;
+  }
 }
 ?>

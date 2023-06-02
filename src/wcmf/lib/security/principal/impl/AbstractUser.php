@@ -24,91 +24,91 @@ use wcmf\lib\validation\ValidationException;
  */
 abstract class AbstractUser extends Node implements User {
 
-  private $roles = null;
+  private ?array $roles = null;
 
-  private static $roleConfig = null;
+  private static ?array $roleConfig = null;
 
   /**
    * @see User::setLogin()
    */
-  public function setLogin($login) {
+  public function setLogin(string $login): void {
     $this->setValue('login', $login);
   }
 
   /**
    * @see User::getLogin()
    */
-  public function getLogin() {
+  public function getLogin(): string {
     return $this->getValue('login');
   }
 
   /**
    * @see User::setPassword()
    */
-  public function setPassword($password) {
+  public function setPassword(string $password): void {
     $this->setValue('password', $password);
   }
 
   /**
    * @see User::getPassword()
    */
-  public function getPassword() {
+  public function getPassword(): string {
     return $this->getValue('password');
   }
 
   /**
    * @see User::verifyPassword()
    */
-  public function verifyPassword($password) {
+  public function verifyPassword(string $password): bool {
     return PasswordService::verify($password, $this->getPassword());
   }
 
   /**
    * @see User::setIsActive()
    */
-  public function setIsActive($isActive) {
+  public function setIsActive(bool $isActive): void {
     $this->setValue('active', $isActive);
   }
 
   /**
    * @see User::isActive()
    */
-  public function isActive() {
+  public function isActive(): bool {
     return intval($this->getValue('active')) === 1;
   }
 
   /**
    * @see User::setIsSuperUser()
    */
-  public function setIsSuperUser($isSuperUser) {
+  public function setIsSuperUser(bool $isSuperUser): void {
     $this->setValue('super_user', $isSuperUser);
   }
 
   /**
    * @see User::isSuperUser()
    */
-  public function isSuperUser() {
+  public function isSuperUser(): bool {
     return intval($this->getValue('super_user')) === 1;
   }
 
   /**
    * @see User::setConfig()
    */
-  public function setConfig($config) {
+  public function setConfig(string $config): void {
     $this->setValue('config', $config);
   }
 
   /**
    * @see User::getConfig()
    */
-  public function getConfig() {
+  public function getConfig(): string {
     return $this->getValue('config');
   }
 
   /**
    * @see User::hasRole()
    */
-  public function hasRole($roleName) {
+  public function hasRole(string $roleName): bool {
     $roles = $this->getRoles();
     for ($i=0, $count=sizeof($roles); $i<$count; $i++) {
       if ($roles[$i]->getName() == $roleName) {
@@ -121,7 +121,7 @@ abstract class AbstractUser extends Node implements User {
   /**
    * @see User::getRoles()
    */
-  public function getRoles() {
+  public function getRoles(): array {
     if (!$this->roles) {
       $principalFactory = ObjectFactory::getInstance('principalFactory');
       $this->roles = $principalFactory->getUserRoles($this, true);
@@ -157,7 +157,7 @@ abstract class AbstractUser extends Node implements User {
   /**
    * Hash password property if not done already.
    */
-  protected function ensureHashedPassword() {
+  protected function ensureHashedPassword(): void {
     // the password is expected to be stored in the 'password' value
     $password = $this->getValue('password');
     if (strlen($password) > 0 && !PasswordService::isHashed($password)) {
@@ -169,7 +169,7 @@ abstract class AbstractUser extends Node implements User {
    * Set the configuration of the currently associated role, if no
    * configuration is set already.
    */
-  protected function setRoleConfig() {
+  protected function setRoleConfig(): void {
     if (strlen($this->getConfig()) == 0) {
       // check added nodes for Role instances
       foreach ($this->getAddedNodes() as $relationName => $nodes) {
@@ -211,9 +211,9 @@ abstract class AbstractUser extends Node implements User {
       if (strlen(trim($value)) == 0) {
         throw new ValidationException($name, $value, $message->getText("The user requires a login name"));
       }
-      if ($value == AnonymousUser::USER_GROUP_NAME) {
+      if ($value == AnonymousUser::NAME) {
         throw new ValidationException($name, $value, $message->getText("The login '%0%' is not allowed",
-                [AnonymousUser::USER_GROUP_NAME]));
+                [AnonymousUser::NAME]));
       }
       $principalFactory = ObjectFactory::getInstance('principalFactory');
       $user = $principalFactory->getUser($value);
@@ -232,9 +232,9 @@ abstract class AbstractUser extends Node implements User {
 
   /**
    * Get the role configurations from the application configuration
-   * @return Array with role names as keys and config file names as values
+   * @return array with role names as keys and config file names as values
    */
-  protected static function getRoleConfigs() {
+  protected static function getRoleConfigs(): array {
     if (self::$roleConfig == null) {
       // load role config if existing
       $config = ObjectFactory::getInstance('configuration');
@@ -249,7 +249,7 @@ abstract class AbstractUser extends Node implements User {
    * Get the currently authenticated user
    * @return User
    */
-  protected function getAuthUser() {
+  protected function getAuthUser(): User {
     $principalFactory = ObjectFactory::getInstance('principalFactory');
     $session = ObjectFactory::getInstance('session');
     return $principalFactory->getUser($session->getAuthUser());

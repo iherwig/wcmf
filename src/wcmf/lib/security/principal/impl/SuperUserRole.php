@@ -10,7 +10,6 @@
  */
 namespace wcmf\lib\security\principal\impl;
 
-use wcmf\lib\security\principal\DynamicRole;
 use wcmf\lib\security\principal\User;
 
 /**
@@ -23,7 +22,7 @@ class SuperUserRole {
   /**
    * @see DynamicRole::match()
    */
-  public function match(User $user, $resource) {
+  public function match(User $user, string $resource): bool {
     return $user->isSuperUser();
   }
 }
