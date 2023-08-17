@@ -10,13 +10,14 @@
  */
 namespace wcmf\lib\core\impl;
 
+use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\JwtFacade;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\ValidationData;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Validation\Constraint;
 use wcmf\lib\config\Configuration;
 use wcmf\lib\core\ObjectFactory;
-use wcmf\lib\core\Session;
 use wcmf\lib\core\TokenBasedSession;
 use wcmf\lib\security\principal\impl\AnonymousUser;
 use wcmf\lib\util\StringUtil;
@@ -46,7 +47,7 @@ class ClientSideSession implements TokenBasedSession {
   public function __construct(Configuration $configuration) {
     $this->cookiePrefix = strtolower(StringUtil::slug($configuration->getValue('title', 'application')));
     $this->tokenName = $this->getCookiePrefix().'-auth-token';
-    $this->key = $configuration->getValue('secret', 'application');
+    $this->key = InMemory::plainText($configuration->getValue('secret', 'application'));
   }
 
   /**
@@ -156,7 +157,7 @@ class ClientSideSession implements TokenBasedSession {
     $login = AnonymousUser::USER_GROUP_NAME;
     // check for auth user in token
     if (($data = $this->getTokenData()) !== null && isset($data[self::AUTH_USER_NAME])) {
-      $login = $data[self::AUTH_USER_NAME]->getValue();
+      $login = $data[self::AUTH_USER_NAME];
     }
     return $login;
   }
@@ -175,13 +176,16 @@ class ClientSideSession implements TokenBasedSession {
    * @return String
    */
   protected function createToken($login) {
-    $jwt = (new Builder())
-            ->issueBy($this->getTokenIssuer())
-            ->issuedAt(time())
-            ->expiresAt(time()+3600)
-            ->withClaim(self::AUTH_USER_NAME, $login)
-            ->getToken($this->getTokenSigner(), $this->key);
-    return $jwt->__toString();
+    $jwt = (new JwtFacade())->issue(
+      $this->getTokenSigner(),
+      $this->key,
+      function(Builder $builder, \DateTimeImmutable $issuedAt) use ($login): Builder {
+        return $builder
+          ->issuedBy($this->getTokenIssuer())
+          ->expiresAt($issuedAt->modify('+1 hours'))
+          ->withClaim(self::AUTH_USER_NAME, $login);
+      });
+    return $jwt->toString();
   }
 
   /**
@@ -194,7 +198,7 @@ class ClientSideSession implements TokenBasedSession {
 
   /**
    * Get the token issuer
-   * @return String
+   * @return \Lcobucci\JWT\Signer
    */
   protected function getTokenSigner() {
     return new Sha256();
@@ -211,13 +215,16 @@ class ClientSideSession implements TokenBasedSession {
     $token = $request->hasHeader(self::TOKEN_HEADER) ?
         trim(str_replace(self::AUTH_TYPE, '', $request->getHeader(self::TOKEN_HEADER))) : $this->token;
     if ($token !== null) {
-      $jwt = (new Parser())->parse((string)$token);
-
-      // validate
-      $data = new ValidationData();
-      $data->setIssuer($this->getTokenIssuer());
-      if ($jwt->validate($data) && $jwt->verify($this->getTokenSigner(), $this->key)) {
-        $result = $jwt->getClaims();
+      try {
+        $jwt = (new JwtFacade())->parse((string)$token,
+          new Constraint\SignedWith($this->getTokenSigner(), $this->key),
+          new Constraint\StrictValidAt(SystemClock::fromSystemTimezone()),
+          new Constraint\IssuedBy($this->getTokenIssuer())
+        );
+        $result = $jwt->claims()->all();
+      }
+      catch(\Exception $ex) {
+        // invalid token
       }
     }
     return $result;
