@@ -306,7 +306,7 @@ class DefaultFactory implements Factory {
 
       foreach ($configuration as $key => $value) {
         // create instances for variables denoted by a leading $
-        if (strpos($value, '$') === 0) {
+        if (is_string($value) && strpos($value, '$') === 0) {
           $obj = $this->getInstance(preg_replace('/^\$/', '', $value));
           // check against interface
           if ($interface != null && !($obj instanceof $interface)) {
