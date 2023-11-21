@@ -106,6 +106,13 @@ class UnionQuery {
     }
     $cacheKey = self::getCacheKey($queryIds, $buildDepth, $orderby, $pagingInfo);
     $cache->put($cacheSection, $cacheKey, $offsets);
+
+    // remove objects for which the user is not authorized
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $result = array_filter($result, function($object) use ($permissionManager) {
+      return $permissionManager->authorize($object->getOID(), '', PersistenceAction::READ);
+    });
+
     return $result;
   }
 

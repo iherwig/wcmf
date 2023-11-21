@@ -12,6 +12,7 @@ namespace wcmf\lib\persistence\impl;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\UnionQueryProvider;
 
 /**
@@ -71,9 +72,13 @@ class DefaultUnionQueryProvider implements UnionQueryProvider {
       throw new IllegalArgumentException('Query id '.$queryId.' is unknown');
     }
     $persistenceFacade = ObjectFactory::getInstance('persistenceFacade');
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
     $type = $queryDef['type'];
     $criteria = $queryDef['criteria'];
-    return $persistenceFacade->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
+    $tmpPerm = $permissionManager->addTempPermission($type, '', PersistenceAction::READ);
+    $result = $persistenceFacade->loadObjects($type, $buildDepth, $criteria, $orderby, $pagingInfo);
+    $permissionManager->removeTempPermission($tmpPerm);
+    return $result;
   }
 }
 ?>
