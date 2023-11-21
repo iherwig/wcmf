@@ -25,6 +25,7 @@ interface UnionQueryProvider {
 
   /**
    * Execute a single query
+   * NOTE Queries must load all objects regardless of set permissions. Authorization will be done in UnionQuery
    * @param $queryId
    * @param $buildDepth
    * @param $orderby

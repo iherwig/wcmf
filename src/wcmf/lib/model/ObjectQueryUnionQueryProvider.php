@@ -12,6 +12,7 @@ namespace wcmf\lib\model;
 
 use wcmf\lib\core\IllegalArgumentException;
 use wcmf\lib\core\ObjectFactory;
+use wcmf\lib\persistence\PersistenceAction;
 use wcmf\lib\persistence\UnionQueryProvider;
 
 /**
@@ -52,7 +53,11 @@ class ObjectQueryUnionQueryProvider implements UnionQueryProvider {
     if (!$query) {
       throw new IllegalArgumentException('Query id '.$queryId.' is unknown');
     }
-    return $query->execute($buildDepth, $orderby, $pagingInfo);
+    $permissionManager = ObjectFactory::getInstance('permissionManager');
+    $tmpPerm = $permissionManager->addTempPermission($query->getQueryType(), '', PersistenceAction::READ);
+    $result = $query->execute($buildDepth, $orderby, $pagingInfo);
+    $permissionManager->removeTempPermission($tmpPerm);
+    return $result;
   }
 
   /**
