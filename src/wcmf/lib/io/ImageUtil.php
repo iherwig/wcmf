@@ -14,10 +14,10 @@ use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\URIUtil;
 
-if (!class_exists('\Gumlet\ImageResize')) {
+if (!class_exists('\Intervention\Image\ImageManager')) {
     throw new ConfigurationException(
-            'ImageUtil requires ImageResize to resize images. '.
-            'If you are using composer, add gumlet/php-image-resize '.
+            'ImageUtil requires ImageManager to resize images. '.
+            'If you are using composer, add intervention/image '.
             'as dependency to your project');
 }
 
@@ -300,8 +300,11 @@ class ImageUtil {
    * @param $width
    */
   private static function resizeImage($sourceFile, $destFile, $width) {
-    $image = new \Gumlet\ImageResize($sourceFile);
-    $image->resizeToWidth($width);
+    $manager = new \Intervention\Image\ImageManager(
+      new \Intervention\Image\Drivers\Gd\Driver()
+    );
+    $image = $manager->read($sourceFile);
+    $image->scaleDown(width: $width);
     $image->save($destFile);
   }
 
