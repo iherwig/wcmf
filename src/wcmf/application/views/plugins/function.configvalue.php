@@ -21,10 +21,10 @@ use wcmf\lib\core\ObjectFactory;
  * @param $params Array with keys:
  *        - key: The key in the configuration section
  *        - section: The name of the configuration section
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_function_configvalue(array $params, Smarty_Internal_Template $template) {
+function smarty_function_configvalue(array $params, \Smarty\Template $template) {
   $config = ObjectFactory::getInstance('configuration');
   echo $config->getValue($params['key'], $params['section']);
 }

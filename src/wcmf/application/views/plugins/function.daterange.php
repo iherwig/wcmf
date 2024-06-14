@@ -28,10 +28,10 @@
  *        - formattype: Format type used in formats parameter (optional, 'strftime'|'date'|'auto', default: 'auto')
  *        - displaytime: Also take time into account (optional, default: false)
  * @note The automatic decision for a format type is based on the existance of a % char in the formats parameter.
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_function_daterange(array $params, Smarty_Internal_Template $template) {
+function smarty_function_daterange(array $params, \Smarty\Template $template) {
   $hasFrom = strlen($params['from']) > 0;
   $hasTo = strlen($params['to']) > 0;
   if (!$hasFrom && !$hasTo) {

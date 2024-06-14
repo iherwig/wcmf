@@ -13,10 +13,10 @@
  * Remove closing slashes from void tags according to html5.
  *
  * @param $output
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_outputfilter_html5_void_tags($output, Smarty_Internal_Template $template) {
+function smarty_outputfilter_html5_void_tags($output, \Smarty\Template $template) {
   // remove slashes from image tags
   $output = preg_replace('/<img([^>]+) ?\/\>/i', "<img $1>", $output);
   // replace brs

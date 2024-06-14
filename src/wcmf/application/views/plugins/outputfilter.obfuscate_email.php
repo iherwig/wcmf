@@ -14,10 +14,10 @@
  * @see https://stackoverflow.com/questions/12592363/looking-for-a-php-only-email-address-obfuscator-function#12592364
  *
  * @param $output
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_outputfilter_obfuscate_email($output, Smarty_Internal_Template $template) {
+function smarty_outputfilter_obfuscate_email($output, \Smarty\Template $template) {
   $encodePercentage = 50;
 
   // encoding functions

@@ -22,10 +22,10 @@ use wcmf\lib\core\ObjectFactory;
  *        - text: The text to translate
  *        - r0, r1, ...: Values for text variables (%0%, %1%, ...)
  *        - lang: The language to translate to
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_function_translate($params, Smarty_Internal_Template $template) {
+function smarty_function_translate($params, \Smarty\Template $template) {
   $variables = [];
   foreach (array_keys($params) as $key) {
     if (preg_match("/^r[0-9]+$/", $key)) {

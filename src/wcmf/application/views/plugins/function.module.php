@@ -35,10 +35,10 @@ use wcmf\lib\core\ObjectFactory;
  *        - name: The name of the module that must exist as a key in the configuration section named 'ContentModule'
  *        + additional module specific parameters
  *        NOTE: All variables from the including template are passed to the module template.
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_function_module($params, Smarty_Internal_Template $template) {
+function smarty_function_module($params, \Smarty\Template $template) {
   $requiredInterface = 'wcmf\lib\presentation\ContentModule';
   $config = ObjectFactory::getInstance('configuration');
   $modules = $config->getSection('ContentModule');

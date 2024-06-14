@@ -21,10 +21,10 @@
  *        - node: The Node instance to extract the value from
  *        - attribute: The name of the attribute (will be appended with "_$lang")
  *        - lang: Language of the attribute
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_function_localize(array $params, Smarty_Internal_Template $template) {
+function smarty_function_localize(array $params, \Smarty\Template $template) {
   $language = $params['lang'];
   $node = $params['node'];
   $attribute = $params['attribute'];

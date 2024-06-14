@@ -79,25 +79,26 @@ use wcmf\lib\io\ImageUtil;
  *        - widths: Comma separated, sorted list of width values to be used in the srcset attribute
  *        - type: Indicates how width values should be used (optional, default: w)
  *          - w: Values will be used as pixels, e.g. widths="1600,960" results in srcset="... 1600w, ... 960w"
- *          - x: Values will be used as pixel ration, e.g. widths="1600,960" results in srcset="... 2x, ... 1x"
+ *          - x: Values will be used as pixel ratio, e.g. widths="1600,960" results in srcset="... 2x, ... 1x"
  *        - sizes: Media queries to define image size in relation of the viewport (optional)
+ *        - formats: Associative array of with format names ('jpeg', 'webp', 'png', 'gif', 'avif', 'jpeg2000') as keys and quality values as values (optional)
  *        - useDataAttributes: Boolean indicating whether to replace src, srcset, sizes by data-src, data-srcset, data-sizes (optional, default: __false__)
  *        - alt: Alternative text (optional)
  *        - class: Image class (optional)
- *        - title: Image title (optional
  *        - data: Associative array of key/value pairs to be used as data attributes
  *        - width: Width in pixels to output for the width attribute, the height attribute will be calculated according to the aspect ration (optional)
  *        - default: The default file, if src does not exist (optional)
  *        - generate: Boolean indicating whether to generate the images or not (optional, default: __false__)
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_function_image($params, Smarty_Internal_Template $template) {
+function smarty_function_image($params, \Smarty\Template $template) {
   $file = $params['src'];
   $default = isset($params['default']) ? $params['default'] : '';
   $widths = array_map('trim', isset($params['widths']) ? explode(',', $params['widths']) : []);
   $type = isset($params['type']) ? $params['type'] : 'w';
   $sizes = isset($params['sizes']) ? $params['sizes'] : '';
+  $formats = isset($params['formats']) && is_array($params['formats'])  ? $params['formats'] : [];
   $useDataAttributes = isset($params['useDataAttributes']) ? $params['useDataAttributes'] : false;
   $generate = isset($params['generate']) ? $params['generate'] : false;
   $alt = isset($params['alt']) ? $params['alt'] : '';
@@ -106,7 +107,7 @@ function smarty_function_image($params, Smarty_Internal_Template $template) {
   $data = isset($params['data']) && is_array($params['data'])  ? $params['data'] : [];
   $width = isset($params['width']) ? $params['width'] : null;
 
-  return ImageUtil::getImageTag($file, $widths, $type, $sizes,
+  return ImageUtil::getImageTag($file, $widths, $type, $sizes, $formats,
           $useDataAttributes, $alt, $class, $title, $data, $width, $default, $generate);
 }
 ?>

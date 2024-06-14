@@ -54,6 +54,8 @@ class FileDocument extends AbstractDocument {
    * @see ResponseDocument::output()
    */
   public function output() {
+    // make sure that no unwanted content is returned
+    ob_end_clean();
     echo $this->content;
   }
 }

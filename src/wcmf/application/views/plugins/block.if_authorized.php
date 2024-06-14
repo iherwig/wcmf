@@ -29,11 +29,11 @@ use wcmf\lib\core\ObjectFactory;
  *   - action: The action to process
  *   - alternative_content: The content to display if not authorized
  * @param $content
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @param $repeat
  * @return String
  */
-function smarty_block_if_authorized($params, $content, \Smarty_Internal_Template $template, &$repeat) {
+function smarty_block_if_authorized($params, $content, \Smarty\Template $template, &$repeat) {
   if(!$repeat) {
     $permissionManager = ObjectFactory::getInstance('permissionManager');
     if ($permissionManager->authorize($params['resource'], $params['context'], $params['action'])) {

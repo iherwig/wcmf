@@ -20,7 +20,7 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 
 if (!class_exists('\Facebook\WebDriver\Remote\RemoteWebDriver')) {
     throw new ConfigurationException(
-            'SeleniumTestCase requires Facebook\WebDriver. '.
+            '\wcmf\test\lib\SeleniumTestCase requires \Facebook\WebDriver. '.
             'If you are using composer, add facebook/webdriver '.
             'as dependency to your project');
 }

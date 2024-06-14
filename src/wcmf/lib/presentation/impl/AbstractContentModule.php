@@ -31,11 +31,12 @@ abstract class AbstractContentModule {
   private $tpl = null;
   private $params = [];
   private $logger = null;
+  private $cacheId = null;
 
   /**
    * @see ContentModule::initialize()
    */
-  public function initialize(\Smarty_Internal_Template $parentTemplate, array $params) {
+  public function initialize(\Smarty\Template $parentTemplate, array $params) {
     $this->name = $params['name'];
     $this->tpl = $this->getTemplateFile();
     if (!file_exists($this->tpl)) {
