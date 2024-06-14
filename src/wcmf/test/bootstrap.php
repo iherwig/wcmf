@@ -1,6 +1,6 @@
 <?php
 require_once('config.php');
-if (!class_exists('wcmf\lib\core\ClassLoader')) {
+if (!class_exists('\wcmf\lib\core\ClassLoader')) {
   require_once(dirname(WCMF_BASE)."/vendor/autoload.php");
 }
 

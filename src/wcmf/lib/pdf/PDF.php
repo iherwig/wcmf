@@ -12,10 +12,10 @@ namespace wcmf\lib\pdf;
 
 use setasign\Fpdi\Tfpdf\Fpdi;
 
-if (!class_exists('setasign\Fpdi\Tfpdf\Fpdi')) {
+if (!class_exists('\setasign\Fpdi\Tfpdf\Fpdi')) {
     throw new \wcmf\lib\config\ConfigurationException(
-            'wcmf\lib\pdf\PDF requires '.
-            'Fpdi. If you are using composer, add setasign/tfpdf and setasign/fpdi '.
+            '\wcmf\lib\pdf\PDF requires '.
+            '\setasign\Fpdi\Tfpdf\Fpdi. If you are using composer, add setasign/tfpdf and setasign/fpdi '.
             'as dependency to your project');
 }
 

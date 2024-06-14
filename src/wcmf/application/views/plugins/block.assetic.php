@@ -8,7 +8,6 @@
  * See the LICENSE file distributed with this work for
  * additional information.
  */
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\util\StringUtil;
@@ -24,8 +23,8 @@ use Assetic\Filter\CssRewriteFilter;
 use Assetic\Filter\ScssphpFilter;
 use Minifier\MinFilter;
 
-if (!class_exists('Assetic\Asset\AssetCollection')) {
-    throw new ConfigurationException(
+if (!class_exists('\Assetic\Asset\AssetCollection')) {
+    throw new \wcmf\lib\config\ConfigurationException(
             'smarty_block_assetic requires '.
             'Assetic. If you are using composer, add kriswallsmith/assetic '.
             'as dependency to your project');
@@ -55,11 +54,11 @@ if (!class_exists('Assetic\Asset\AssetCollection')) {
  *   - scssImportPaths: Array of paths to add to the import paths of the scss compiler (relative to WCMF_BASE)
  *   - debug: Boolean, if true the content will be returned as is
  * @param string $content
- * @param Smarty_Internal_Template $template Smarty_Internal_Template
+ * @param \Smarty\Template $template \Smarty\Template
  * @param bool $repeat
  * @return string
  */
-function smarty_block_assetic($params, $content, Smarty_Internal_Template $template, &$repeat) {
+function smarty_block_assetic($params, $content, \Smarty\Template $template, &$repeat) {
   if (!$repeat) {
     if (isset($content)) {
       $debug = $params['debug'];

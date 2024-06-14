@@ -10,20 +10,24 @@
  */
 
 /**
- * Output the cache location of the given image and width
+ * Output the cache location of the given image and width, type and quality
  *
  * Example:
  * @code
  * <img src={$image|image_cache:800}">
+ * <img src={$image|image_cache:800:'webp'}">
+ * <img src={$image|image_cache:800:'webp':85}">
  * @endcode
  *
  * @param $image The path to the image
  * @param $width
+ * @param $type
+ * @param $quality
  * @return String
  */
 use wcmf\lib\io\ImageUtil;
 
-function smarty_modifier_image_cache($image, $width) {
-  return ImageUtil::getCacheLocation($image, $width);
+function smarty_modifier_image_cache($image, $width, $type=null, $quality=null) {
+  return ImageUtil::getCacheLocation($image, $width, $type, $quality);
 }
 ?>

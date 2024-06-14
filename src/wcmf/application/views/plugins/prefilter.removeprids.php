@@ -13,10 +13,10 @@
  * Remove protected region ids (used by wCMFGenerator).
  *
  * @param $output
- * @param $template Smarty_Internal_Template
+ * @param $template \Smarty\Template
  * @return String
  */
-function smarty_prefilter_removeprids($output, Smarty_Internal_Template $template) {
+function smarty_prefilter_removeprids($output, \Smarty\Template $template) {
   // remove protected regions
   $output = preg_replace("/<!-- PROTECTED REGION .*? -->/U", "", $output);
 

@@ -10,13 +10,12 @@
  */
 namespace wcmf\lib\io;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\URIUtil;
 
 if (!class_exists('\Intervention\Image\ImageManager')) {
-    throw new ConfigurationException(
-            'ImageUtil requires ImageManager to resize images. '.
+    throw new \wcmf\lib\config\ConfigurationException(
+            '\wcmf\lib\io\ImageUtil requires \Intervention\Image\ImageManager to resize images. '.
             'If you are using composer, add intervention/image '.
             'as dependency to your project');
 }
@@ -30,6 +29,10 @@ class ImageUtil {
 
   const IMAGE_CACHE_SECTION = 'images';
 
+  const SUPPORTED_FORMATS = ['jpeg', 'webp', 'png', 'gif', 'avif', 'jpeg2000'];
+
+  const DEFAULT_QUALITY = 85;
+
   private static $scriptDirAbs = null;
 
   /**
@@ -40,8 +43,9 @@ class ImageUtil {
    * @param $widths Array of sorted width values to be used in the srcset attribute
    * @param $type Indicates how width values should be used (optional, default: w)
    *        - w: Values will be used as pixels, e.g. widths="1600,960" results in srcset="... 1600w, ... 960w"
-   *        - x: Values will be used as pixel ration, e.g. widths="1600,960" results in srcset="... 2x, ... 1x"
+   *        - x: Values will be used as pixel ratio, e.g. widths="1600,960" results in srcset="... 2x, ... 1x"
    * @param $sizes String of media queries to define image size in relation of the viewport (optional)
+   * @param $formats Associative array of with format names ('jpeg', 'webp', 'png', 'gif', 'avif', 'jpeg2000') as keys and quality values as values (optional)
    * @param $useDataAttributes Boolean indicating whether to replace src, srcset, sizes by data-src, data-srcset, data-sizes (optional, default: __false__)
    * @param $alt Alternative text (optional)
    * @param $class Image class (optional)
@@ -50,9 +54,9 @@ class ImageUtil {
    * @param $width Width in pixels to output for the width attribute, the height attribute will be calculated according to the aspect ration (optional)
    * @param $fallbackFile The image file to use, if imageFile does not exist (optional)
    * @param $generate Boolean indicating whether to generate the images or not (optional, default: __false__)
-   * @return String
+   * @return string
    */
-  public static function getImageTag($imageFile, $widths, $type='w', $sizes='',
+  public static function getImageTag($imageFile, $widths, $type='w', $sizes='', $formats=[],
           $useDataAttributes=false, $alt='', $class='', $title='', array $data=[], $width=null, $fallbackFile='',
           $generate=false) {
     // check if the image files exist
@@ -93,59 +97,87 @@ class ImageUtil {
           FileUtil::mkdirRec($directory);
         }
 
-        for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
-          $curWidth = intval($widths[$i]);
-          if ($curWidth > 0) {
-            $resizedFile = self::makeRelative($directory.$curWidth.'-'.$baseName);
+        // calculate sources for all formats
+        // NOTE there will be at least one srcset called 'default'
+        foreach (array_merge(['default' => null], $formats) as $format => $quality) {
+          for ($i=0, $count=sizeof($widths); $i<$count; $i++) {
+            $curWidth = intval($widths[$i]);
+            if ($curWidth > 0) {
+              $resizedFile = self::makeRelative($directory.self::makeFileName($baseName, $curWidth, $format == 'default' ? '' : $format, $quality));
 
-            // create the cached file if requested
-            if ($generate) {
-              // only if the requested width is smaller than the image width
-              if ($curWidth < $imageInfo[0]) {
-                // if the file does not exist in the cache or is older
-                // than the source file, we create it
-                $dateOrig = @filemtime($fixedFile);
-                $dateCache = @filemtime($resizedFile);
-                if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
-                  self::resizeImage($fixedFile, $resizedFile, $curWidth);
-                }
+              // create the cached file if requested
+              if ($generate) {
+                // only if the requested width is smaller than the image width
+                if ($curWidth < $imageInfo[0]) {
+                  // if the file does not exist in the cache or is older
+                  // than the source file, we create it
+                  $dateOrig = @filemtime($fixedFile);
+                  $dateCache = @filemtime($resizedFile);
+                  if (!file_exists($resizedFile) || $dateOrig > $dateCache) {
+                    self::getCachedImage($resizedFile, true);
+                  }
 
-                // fallback to source file, if cached file could not be created
-                if (!file_exists($resizedFile)) {
-                  $resizedFile = $imageFile;
+                  // fallback to source file, if cached file could not be created
+                  if (!file_exists($resizedFile)) {
+                    $resizedFile = $imageFile;
+                  }
                 }
               }
-            }
 
-            if ($hasSrcSet) {
-              // add to source set
-              $srcset[] = FileUtil::urlencodeFilename($resizedFile).' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
-            }
-            else {
-              // replace main source for single source entry
-              $imageFile = $resizedFile;
+              if ($hasSrcSet) {
+                // add to source set
+                if (!isset($srcset[$format])) {
+                  $srcset[$format] = [];
+                }
+                $srcset[$format][] = FileUtil::urlencodeFilename($resizedFile).' '.($type === 'w' ? $curWidth.'w' : ($count-$i).'x');
+              }
+              else if ($format == 'default') {
+                // replace main source for single source entry
+                $imageFile = $resizedFile;
+              }
             }
           }
         }
       }
     }
 
-    $tag = '<img '.($useDataAttributes ? 'data-' : '').'src="'.FileUtil::urlencodeFilename($imageFile).'" alt="'.$alt.'"'.
-      (strlen($class) > 0 ? ' class="'.$class.'"' : '').
-      (strlen($title) > 0 ? ' title="'.$title.'"' : '');
-    foreach ($data as $name => $value) {
-      $tag .= ' data-'.$name.'="'.str_replace('"', '\"', $value).'"';
-    }
-    if (sizeof($srcset) > 0) {
-      $tag .= ' '.($useDataAttributes ? 'data-' : '').'srcset="'.join(', ', $srcset).'"'.
-        ' '.(strlen($sizes) > 0 ? ($useDataAttributes ? 'data-' : '').'sizes="'.$sizes.'"' : '');
-    }
+    // collect image tag attributes
+    $imageData = [
+      'src' => FileUtil::urlencodeFilename($imageFile),
+      'alt' => $alt,
+      'class' => $class,
+      'title' => $title,
+    ];
     if ($width != null) {
-      $width = intval($width);
-      $height = intval($width * $imageInfo[1] / $imageInfo[0]);
-      $tag .= ' width="'.$width.'" height="'.$height.'"';
+      $imageData['width'] = intval($width);
+      $imageData['height'] = intval($width * $imageInfo[1] / $imageInfo[0]);
     }
-    $tag = trim($tag).'>';
+    if (isset($srcset['default']) && sizeof($srcset['default']) > 0) {
+      $imageData['srcset'] = join(', ', $srcset['default']);
+      if (strlen($sizes) > 0) {
+        $imageData['sizes'] = $sizes;
+      }
+    }
+    foreach ($data as $name => $value) {
+      $imageData['data-'.$name] = str_replace('"', '\"', $value).'"';
+    }
+
+    $imageTag = '<img '.self::makeImageAttributeString($imageData, $useDataAttributes, null, ['src', 'alt']).'>';
+
+    $tag = $imageTag;
+    if (count($formats) > 0) {
+      $tag = '<picture>';
+      foreach ($formats as $format => $quality) {
+        if (isset($srcset[$format])) {
+          // update srcset with current format
+          $imageData['srcset'] = join(', ', $srcset[$format]);
+        }
+        $tag .= '<source '.self::makeImageAttributeString($imageData, $useDataAttributes, ['srcset', 'sizes'], []).' type="image/'.$format.'">';
+      }
+      $tag .= $imageTag;
+      $tag .= '</picture>';
+    }
+
     return $tag;
   }
 
@@ -162,27 +194,22 @@ class ImageUtil {
     // strip the cache base from the location
     $cacheLocation = substr($location, strlen(self::IMAGE_CACHE_SECTION.'/'));
 
-    // determine the width and source file from the location
-    // the location is supposed to follow the pattern directory/{width}-basename
-    $width = null;
-    $basename = FileUtil::basename($cacheLocation);
-    if (preg_match('/^([0-9]+)-/', $basename, $matches)) {
-      // get required width from location and remove it from location
-      $width = $matches[1];
-      $basename = preg_replace('/^'.$width.'-/', '', $basename);
-    }
-    $sourceFile = self::getSourceDir($cacheLocation).$basename;
+    // extract transformation information from the cache location
+    $transform = self::extractTransformationInfo($cacheLocation);
 
-    // create the resized image file, if not existing
+    // get the original file location
+    $sourceFile = self::getSourceDir($cacheLocation).$transform['basename'];
+
+    // create the resized/re-encoded image file, if not existing
     $resizedFile = self::getCacheRoot().$cacheLocation;
     if (FileUtil::fileExists($sourceFile) && !FileUtil::fileExists($resizedFile)) {
       FileUtil::mkdirRec(pathinfo($resizedFile, PATHINFO_DIRNAME));
       $fixedFile = FileUtil::fixFilename($sourceFile);
-      if ($width !== null) {
-        self::resizeImage($fixedFile, $resizedFile, $width);
+      if ($transform['width'] !== null || $transform['type'] !== null || $transform['quality'] !== null) {
+        self::resizeImage($fixedFile, $resizedFile, $transform['width'], $transform['type'], $transform['quality']);
       }
       else {
-        // just copy in case of undefined width
+        // just copy in case of undefined width, type or quality
         copy($fixedFile, $resizedFile);
       }
       if (is_callable($callback)) {
@@ -203,20 +230,62 @@ class ImageUtil {
   }
 
   /**
-   * Get the cache location for the given image and width
+   * Get the cache location for the given image, width and optionally type and quality
    * @param $imageFile Image file located inside the upload directory of the application given as path relative to WCMF_BASE
    * @param $width
-   * @return String
+   * @param $type
+   * @param $quality
+   * @return string
    */
-  public static function getCacheLocation($imageFile, $width) {
-    // don't resize animated gifs
+  public static function getCacheLocation($imageFile, $width, $type=null, $quality=null) {
+    // don't change animated gifs
     if (self::isAnimated($imageFile)) {
       return $imageFile;
     }
     // get file name and cache directory
     $baseName = FileUtil::basename($imageFile);
     $directory = self::getCacheDir($imageFile);
-    return self::makeRelative($directory.(strlen($width) > 0 ? $width.'-' : '').$baseName);
+    $filename = $directory.self::makeFileName($baseName, $width, $type, $quality);
+    return self::makeRelative($filename);
+  }
+
+  /**
+   * Extract width, height and original filename from the given file location.
+   * The location is supposed to follow one of the following patterns:
+   * - directory/{width}-basename
+   * - directory/{width}-{type}-basename.{type}
+   * - directory/{width}-{type@quality}-basename.{type}
+   * - directory/{type}-basename.{type}
+   * - directory/{type@quality}-basename.{type}
+   * where width is a positive number and type is one of SUPPORTED_FORMATS optionally appended with a positive number indicating the quality value (@{quality})
+   * @param $file
+   * @return array{'width': int|null, 'type': string|null, 'quality': int|null, 'basename': string}
+   */
+  public static function extractTransformationInfo($file) {
+    $basename = FileUtil::basename($file);
+    $typesPattern = '/^('.join('|', self::SUPPORTED_FORMATS).')(@[0-9]+)?$/';
+
+    // extract with and height and determine original basename
+    $width = null;
+    $type = null;
+    $quality = null;
+    $parts = explode('-', $basename);
+    if (count($parts) > 0) {
+      if (is_numeric($parts[0])) {
+        $width = array_shift($parts);
+        if (count($parts) > 0 && preg_match($typesPattern, $parts[0])) {
+          [$type, $quality] = explode('@', array_shift($parts));
+        }
+      }
+      else if (preg_match($typesPattern, $parts[0])) {
+        [$type, $quality] = explode('@', array_shift($parts));
+      }
+      $basename = join('-', $parts);
+      if ($type) {
+        $basename = preg_replace('/\.'.$type.'$/', '', $basename);
+      }
+    }
+    return ['width' => $width, 'type' => $type, 'quality' => $quality, 'basename' => $basename];
   }
 
   /**
@@ -226,7 +295,6 @@ class ImageUtil {
   public static function invalidateCache($imageFile) {
     if (strlen($imageFile) > 0) {
       $imageFile = URIUtil::makeRelative($imageFile, self::getMediaRootRelative());
-      $fixedFile = FileUtil::fixFilename($imageFile);
 
       // get file name and cache directory
       $baseName = FileUtil::basename($imageFile);
@@ -234,14 +302,22 @@ class ImageUtil {
 
       // delete matches of the form ([0-9]+)-$fixedFile
       if (is_dir($directory)) {
+        $typesPattern = '('.join('|', self::SUPPORTED_FORMATS).')';
         foreach (FileUtil::getFiles($directory) as $file) {
           $matches = [];
-          if (preg_match('/^([0-9]+)-/', $file, $matches) && $matches[1].'-'.$baseName === $file) {
+          if (preg_match('/^([0-9]+|'.$typesPattern.')(-'.$typesPattern.')?-/', $file, $matches) && $matches[1].'-'.$baseName === $file) {
             unlink($directory.$file);
           }
         }
       }
     }
+  }
+
+  private static function getImageManager() {
+    $manager = new \Intervention\Image\ImageManager(
+      new \Intervention\Image\Drivers\Gd\Driver()
+    );
+    return $manager;
   }
 
   /**
@@ -294,17 +370,23 @@ class ImageUtil {
   }
 
   /**
-   * Resize the given image to the given width
+   * Resize the given image to the given width and optionally type and quality
    * @param $sourceFile
    * @param $destFile
    * @param $width
+   * @param $type Image type, if the image should be re-encoded to another format, (will be determined from image, if not specified)
+   * @param $quality Quality percentage value (empty, if the quality should not be changed)
    */
-  private static function resizeImage($sourceFile, $destFile, $width) {
-    $manager = new \Intervention\Image\ImageManager(
-      new \Intervention\Image\Drivers\Gd\Driver()
-    );
+  private static function resizeImage($sourceFile, $destFile, $width, $type=null, $quality=null) {
+    $manager = self::getImageManager();
     $image = $manager->read($sourceFile);
     $image->scaleDown(width: $width);
+    // re-encode if type or quality are specified
+    if ($type || $quality) {
+      $type = $type ?? mime_content_type($sourceFile);
+      $quality = $quality ?? self::DEFAULT_QUALITY;
+      $image = $image->encodeByMediaType('image/'.$type, quality: intval($quality));
+    }
     $image->save($destFile);
   }
 
@@ -314,25 +396,51 @@ class ImageUtil {
    * @return boolean
    */
   private static function isAnimated($imageFile) {
-    if (!($fh = @fopen($imageFile, 'rb'))) {
+    if (!FileUtil::fileExists($imageFile)) {
       return false;
     }
-    $count = 0;
-    //an animated gif contains multiple "frames", with each frame having a
-    //header made up of:
-    // * a static 4-byte sequence (\x00\x21\xF9\x04)
-    // * 4 variable bytes
-    // * a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
+    $manager = self::getImageManager();
+    return $manager->read($imageFile)->isAnimated();
+  }
 
-    // We read through the file til we reach the end of the file, or we've found
-    // at least 2 frame headers
-    while (!feof($fh) && $count < 2) {
-      $chunk = fread($fh, 1024 * 100); //read 100kb at a time
-      $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+  /**
+   * Get the filename for the given image, width and optionally type and quality
+   * @param $filename
+   * @param $width
+   * @param $type
+   * @param $quality
+   * @return string
+   */
+  public static function makeFileName($filename, $width, $type=null, $quality=null) {
+    $hasWidth = strlen($width) > 0;
+    $hasType = strlen($type) > 0;
+    $hasQuality = strlen($quality) > 0;
+    $typeAndQualityValues = [];
+    if ($hasType) {
+      $typeAndQualityValues[] = $type;
     }
+    if ($hasQuality) {
+      $typeAndQualityValues[] = $quality;
+    }
+    $typeAndQuality = join('@', $typeAndQualityValues);
+    $hasTypeAndQuality = strlen($typeAndQuality) > 0;
+    return ($hasWidth ? $width.'-'.($hasTypeAndQuality ? $typeAndQuality.'-' : '') : '').$filename.($hasType ? '.'.$type : '');
+  }
 
-    fclose($fh);
-    return $count > 1;
+  /**
+   * Format the given data into HTML image attribute string
+   */
+  private static function makeImageAttributeString($data, $useDataAttributes, $includeAttributes=null, $mandatoryAttributes=null) {
+    $possibleDataAttributes = ['src', 'srcset', 'sizes'];
+    return trim(array_reduce(array_keys($data), function($result, $name) use ($includeAttributes, $data, $useDataAttributes, $mandatoryAttributes, $possibleDataAttributes) {
+      $isValidAttribute = $includeAttributes == null || in_array($name, $includeAttributes);
+      $isMandatoryAttribute = $mandatoryAttributes != null && in_array($name, $mandatoryAttributes);
+      if ($isValidAttribute && ($isMandatoryAttribute || strlen($data[$name]) > 0)) {
+        $attributeName = ($useDataAttributes && in_array($name, $possibleDataAttributes) ? 'data-' : '').$name;
+        $result .= ' '.$attributeName.'="'.$data[$name].'"';
+      }
+      return $result;
+    }, ''));
   }
 }
 ?>

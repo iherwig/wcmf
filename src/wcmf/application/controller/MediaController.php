@@ -10,15 +10,14 @@
  */
 namespace wcmf\application\controller;
 
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\Controller;
 use wcmf\lib\util\URIUtil;
 
 if (!class_exists('\elFinder')) {
-    throw new ConfigurationException(
-            'wcmf\application\controller\MediaController requires '.
-            'elFinder. If you are using composer, add studio-42/elfinder '.
+    throw new \wcmf\lib\config\ConfigurationException(
+            '\wcmf\application\controller\MediaController requires '.
+            '\elFinder. If you are using composer, add studio-42/elfinder '.
             'as dependency to your project');
 }
 

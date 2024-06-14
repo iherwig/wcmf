@@ -11,17 +11,16 @@
 namespace wcmf\lib\presentation\view\impl;
 
 use wcmf\lib\config\ActionKey;
-use wcmf\lib\config\ConfigurationException;
 use wcmf\lib\config\impl\ConfigActionKeyProvider;
 use wcmf\lib\core\LogManager;
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\io\FileUtil;
 use wcmf\lib\presentation\view\View;
 
-if (!class_exists('Smarty')) {
-    throw new ConfigurationException(
-            'wcmf\lib\presentation\view\impl\SmartyView requires '.
-            'Smarty. If you are using composer, add smarty/smarty '.
+if (!class_exists('\Smarty\Smarty')) {
+    throw new \wcmf\lib\config\ConfigurationException(
+            '\wcmf\lib\presentation\view\impl\SmartyView requires '.
+            '\Smarty\Smarty. If you are using composer, add smarty/smarty '.
             'as dependency to your project');
 }
 
@@ -48,7 +47,7 @@ class SmartyView implements View {
     if (self::$logger == null) {
       self::$logger = LogManager::getLogger(__CLASS__);
     }
-    $this->view = new \Smarty();
+    $this->view = new \Smarty\Smarty();
     $this->view->error_reporting = E_ALL;
 
     // set plugins directories
@@ -82,7 +81,7 @@ class SmartyView implements View {
    * @param $caching Boolean
    */
   public function setCaching($caching) {
-    $this->view->caching = $caching ? \Smarty::CACHING_LIFETIME_CURRENT : \Smarty::CACHING_OFF;
+    $this->view->caching = $caching ? \Smarty\Smarty::CACHING_LIFETIME_CURRENT : \Smarty\Smarty::CACHING_OFF;
   }
 
   /**
@@ -212,7 +211,7 @@ class SmartyView implements View {
       return null;
     }
     $tpl = self::$sharedView->view->createTemplate($tplFile, $cacheId);
-    return (new \DateTime())->setTimeStamp($tpl->cached->timestamp);
+    return (new \DateTime())->setTimeStamp($tpl->getCached()->timestamp);
   }
 
   /**
