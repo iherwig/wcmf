@@ -53,8 +53,8 @@ function smarty_modifier_localize_date($date, $lang) {
   ];
   foreach ($names as $name) {
     $localizeName = $message->getText($name, null, $lang);
-    $localizeShortName = substr($localizeName, 0, 3);
-    $date = strtr($date, [$name => $localizeName, substr($name, 0, 3) => $localizeShortName]);
+    $localizeShortName = mb_substr($localizeName, 0, 3);
+    $date = strtr($date, [$name => $localizeName, mb_substr($name, 0, 3) => $localizeShortName]);
   }
   return $date;
 }
