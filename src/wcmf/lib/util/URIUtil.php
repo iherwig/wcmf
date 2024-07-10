@@ -22,9 +22,12 @@ class URIUtil {
    * code from http://www.webmasterworld.com/forum88/334.htm
    * @param $absUri Absolute URI at which the path should end, may have a trailing filename
    * @param $base Absolute URI from which the relative should start
-   * @return String
+   * @return string
    */
   public static function makeRelative($absUri, $base) {
+    if ($absUri == $base) {
+      return '';
+    }
     // normalize slashes and remove drive names
     list($absUri, $base) = self::normalizePaths(
             self::removeProtocols(self::normalizeSlashes([$absUri, $base])));

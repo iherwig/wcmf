@@ -437,5 +437,20 @@ class StringUtil {
 
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
   }
+
+  /**
+   * Find the longest common prefix
+   * Code from https://stackoverflow.com/questions/1336207/finding-common-prefix-of-array-of-strings#answer-35838357
+   * @param mixed $stringList
+   * @return string
+   */
+  public static function longestCommonPrefix(array $stringList): string {
+    sort($stringList);
+    $s1 = $stringList[0];
+    $s2 = $stringList[count($stringList)-1];
+    $len = min(strlen($s1), strlen($s2));
+    for ($i=0; $i<$len && $s1[$i]==$s2[$i]; $i++);
+    return substr($s1, 0, $i);
+  }
 }
 ?>
