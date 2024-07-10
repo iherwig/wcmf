@@ -12,6 +12,7 @@ namespace wcmf\lib\io;
 
 use wcmf\lib\core\ObjectFactory;
 use wcmf\lib\util\URIUtil;
+use wcmf\lib\util\StringUtil;
 
 if (!class_exists('\Intervention\Image\ImageManager')) {
     throw new \wcmf\lib\config\ConfigurationException(
@@ -39,7 +40,7 @@ class ImageUtil {
    * Create an HTML image tag using srcset and sizes attributes.
    * The image locations in the srcset attribute will point to the frontend cache directory
    * (_FrontendCache_ configuration section).
-   * @param $imageFile The image file location relative to the upload directory
+   * @param $imageFile The image file location inside the upload directory relative to the executed script
    * @param $widths Array of sorted width values to be used in the srcset attribute
    * @param $type Indicates how width values should be used (optional, default: w)
    *        - w: Values will be used as pixels, e.g. widths="1600,960" results in srcset="... 1600w, ... 960w"
@@ -186,7 +187,7 @@ class ImageUtil {
    * @param $location
    * @param $returnLocation Boolean indicating if only the file location should be returned (optional)
    * @param $callback Function called, after the cached image is created, receives the original and cached image as parameters (optional)
-   * @return String, if returnLocation is true
+   * @return string, if returnLocation is true
    */
   public static function getCachedImage($location, $returnLocation=false, $callback=null) {
     $location = rawurldecode($location);
@@ -231,7 +232,7 @@ class ImageUtil {
 
   /**
    * Get the cache location for the given image, width and optionally type and quality
-   * @param $imageFile Image file located inside the upload directory of the application given as path relative to WCMF_BASE
+   * @param $imageFile The image file location inside the upload directory relative to the executed script
    * @param $width
    * @param $type
    * @param $quality
@@ -290,11 +291,11 @@ class ImageUtil {
 
   /**
    * Delete the cached images for the given image file
-   * @param $imageFile Image file located inside the upload directory of the application given as path relative to WCMF_BASE
+   * @param $imageFile The image file location inside the upload directory as stored in the database
    */
   public static function invalidateCache($imageFile) {
     if (strlen($imageFile) > 0) {
-      $imageFile = URIUtil::makeRelative($imageFile, self::getMediaRootRelative());
+      $imageFile = URIUtil::makeRelative(URIUtil::makeAbsolute($imageFile, WCMF_BASE), self::getMediaRoot());
 
       // get file name and cache directory
       $baseName = FileUtil::basename($imageFile);
@@ -302,10 +303,12 @@ class ImageUtil {
 
       // delete matches of the form ([0-9]+)-$fixedFile
       if (is_dir($directory)) {
-        $typesPattern = '('.join('|', self::SUPPORTED_FORMATS).')';
+        $typesPattern = '('.join('|', self::SUPPORTED_FORMATS).')(@[0-9]+)?';
         foreach (FileUtil::getFiles($directory) as $file) {
           $matches = [];
-          if (preg_match('/^([0-9]+|'.$typesPattern.')(-'.$typesPattern.')?-/', $file, $matches) && $matches[1].'-'.$baseName === $file) {
+          // regex for matching the transformation prefix of the file ($matches[0])
+          $prefixRegex = '/^(([0-9]+|'.$typesPattern.')(-'.$typesPattern.')?-)/';
+          if (preg_match($prefixRegex, $file, $matches) && strpos($file, $matches[0].$baseName) === 0) {
             unlink($directory.$file);
           }
         }
@@ -323,25 +326,24 @@ class ImageUtil {
   /**
    * Get the cache directory for the given source image file
    * @param $imageFile
-   * @return String
+   * @return string
    */
   private static function getCacheDir($imageFile) {
-    $mediaRoot = self::getMediaRootRelative();
-    return self::getCacheRoot().dirname(substr($imageFile, strlen($mediaRoot))).'/';
+    return self::getCacheRoot().dirname($imageFile).'/';
   }
 
   /**
    * Get the source directory for the given cached image location
    * @param $location
-   * @return String
+   * @return string
    */
   private static function getSourceDir($location) {
-    return self::getMediaRootRelative().dirname($location).'/';
+    return self::makeRelative(self::getMediaRoot()).dirname($location).'/';
   }
 
   /**
    * Get the absolute image cache root directory
-   * @return String
+   * @return string
    */
   private static function getCacheRoot() {
     $config = ObjectFactory::getInstance('configuration');
@@ -349,18 +351,21 @@ class ImageUtil {
   }
 
   /**
-   * Get the media root directory relative to the executed script
-   * @return String
+   * Get the absolute media root directory
+   * @return string
    */
-  private static function getMediaRootRelative() {
-    // images are located in the same or subdirectory of the directory of the executed script
-    return '';
+  private static function getMediaRoot() {
+    // images are located in the common parent directory of the media and cache directory
+    $config = ObjectFactory::getInstance('configuration');
+    $mediaRootAbs = $config->getDirectoryValue('uploadDir', 'Media');
+    $cacheRootAbs = $config->getDirectoryValue('cacheDir', 'FrontendCache');
+    return StringUtil::longestCommonPrefix([$mediaRootAbs, $cacheRootAbs]);
   }
 
   /**
    * Make the current location relative to the executed script
    * @param $location
-   * @return String
+   * @return string
    */
   private static function makeRelative($location) {
     if (self::$scriptDirAbs == null) {
