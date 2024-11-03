@@ -157,7 +157,11 @@ class StringUtil {
         if ($node instanceof \DomText) {
           $totalLen += $nodeLen = strlen($node->nodeValue);
           if ($totalLen > $length) {
-            $spacePos = strrpos($node->nodeValue, ' ');
+            $spacePos = strpos($node->nodeValue, ' ', $nodeLen-($totalLen-$length)-1);
+            if (!$spacePos) {
+              // take last space, if no space is found after offset
+              $spacePos = strrpos($node->nodeValue, ' ');
+            }
             $node->nodeValue = $exact ? substr($node->nodeValue, 0, $nodeLen-($totalLen-$length)) : substr($node->nodeValue, 0, $spacePos);
             // don't add suffix to empty node
             $node->nodeValue .= (strlen($node->nodeValue) > 0 ? $suffix : '');
