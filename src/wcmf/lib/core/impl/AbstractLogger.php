@@ -26,7 +26,6 @@ abstract class AbstractLogger implements Logger {
     switch ($type) {
       case E_NOTICE:
       case E_USER_NOTICE:
-      case E_STRICT:
       case E_DEPRECATED:
       case E_USER_DEPRECATED:
         $this->info($message);
