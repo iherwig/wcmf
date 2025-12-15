@@ -10,6 +10,8 @@
  */
 namespace wcmf\lib\persistence\concurrency;
 
+use wcmf\lib\model\Node;
+
 /**
  * Lock represents a lock on an object.
  *
@@ -83,7 +85,15 @@ class Lock implements \Serializable {
    * @param $currentState PersistentObject instance or null
    */
   public function setCurrentState($currentState) {
-    $this->currentState = serialize($currentState);
+    // serialize object without relations to prevent infinite recursion
+    // NOTE the lock content will be checked with NodeValueIterator which ignores relations
+    $clone = $currentState->__clone();
+    if ($clone instanceof Node) {
+      foreach ($clone->getRelationNames() as $rel) {
+        $clone->setValue($rel, null);
+      }
+    }
+    $this->currentState = serialize($clone);
   }
 
   /**
