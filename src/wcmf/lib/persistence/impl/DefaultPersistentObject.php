@@ -44,6 +44,7 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   private $mapper = null;             // mapper instance
 
   private static $nullMapper = null;
+  private static $serializing = [];
 
   // TODO: add static cache for frequently requested entity type data
 
@@ -640,23 +641,48 @@ class DefaultPersistentObject implements PersistentObject, \Serializable {
   }
 
   public function serialize() {
-    return $this->__serialize()['data'];
+    return serialize($this->__serialize());
   }
 
   public function __serialize() {
-    $this->mapper = null;
-    return ['data' => serialize(get_object_vars($this))];
+    $id = spl_object_id($this);
+    if (isset(self::$serializing[$id])) {
+      return ['__recursive_reference__' => true];
+    }
+
+    self::$serializing[$id] = true;
+    try {
+      $this->mapper = null;
+      return [
+        'oid' => $this->oid,
+        'type' => $this->type,
+        'data' => $this->data,
+        'properties' => $this->properties,
+        'valueProperties' => $this->valueProperties,
+        'state' => $this->state,
+        'changedAttributes' => $this->changedAttributes,
+        'originalData' => $this->originalData,
+      ];
+    }
+    finally {
+      unset(self::$serializing[$id]);
+    }
   }
 
   public function unserialize($data) {
-    $this->__unserialize($data);
+    $this->__unserialize(unserialize($data));
   }
 
   public function __unserialize($serialized) {
-    $values = unserialize($serialized['data']);
-    foreach ($values as $key => $value) {
-      $this->$key = $value;
+    $values = is_string($serialized) ? unserialize($serialized) : $serialized;
+    if (is_array($values)) {
+      foreach (['oid', 'type', 'data', 'properties', 'valueProperties', 'state', 'changedAttributes', 'originalData'] as $key) {
+        if (array_key_exists($key, $values)) {
+          $this->$key = $values[$key];
+        }
+      }
     }
+    $this->mapper = null;
   }
 }
 ?>
