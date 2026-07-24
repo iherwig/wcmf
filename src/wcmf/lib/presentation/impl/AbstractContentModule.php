@@ -45,7 +45,7 @@ abstract class AbstractContentModule {
     $this->view = ObjectFactory::getInstance('view');
     $this->logger = LogManager::getLogger(get_class($this));
 
-    $isCaching = !$parentTemplate->cached->has_nocache_code;
+    $isCaching = $this->isContentCacheable();
 
     // calculate cache id
     $this->cacheId = $isCaching ? $parentTemplate->cache_id.'-'.$this->name.(isset($params['cacheId']) ? $params['cacheId'] : '') : null;
@@ -90,6 +90,12 @@ abstract class AbstractContentModule {
     }
     return $this->view->render($this->tpl, $this->cacheId, null, false);
   }
+
+  /**
+   * Check if the module content is cacheable (should return false for e.g. forms)
+   * @return bool
+   */
+  protected abstract function isContentCacheable(): bool;
 
   /**
    * Get the names of the scalar template variables required from the parent template,
